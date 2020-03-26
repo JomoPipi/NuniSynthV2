@@ -1,0 +1,45 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title> Nuni-Core </title>
+
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    
+    <script src="dist/setup.js" defer></script>
+    <script src="dist/nunigraph.js" defer></script>
+    <script src="dist/graphRenderer.js" defer></script>
+    <script src="dist/app.js" defer></script>
+    <script src="dist/resize.js" defer></script>
+    <script src="dist/attachHandlers.js" defer></script>
+    
+</head>
+<body>
+    
+    <div id="main" >
+
+        <canvas id="nunigraph"></canvas>
+
+        <div id="node-options">
+
+            <div id="injected-node-value-ui"></div>
+
+            <br>
+
+            <button id="create-gain"        class="new-node-btns"> new gain         </button>
+            <button id="create-oscillator"  class="new-node-btns"> new oscillator   </button>
+            <button id="create-filter"      class="new-node-btns"> new filter       </button>
+        
+            <br> <br>
+
+            <button id="connect-node"> connect node </button>
+
+        </div>
+
+        <div id="connection-type-prompt"></div>
+        
+    </div>
+
+</body>
+</html>
