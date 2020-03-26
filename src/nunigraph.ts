@@ -188,7 +188,7 @@ const G = (_ => {
 
         deleteSelectedNode: function () {
             const node = this.selectedNode
-            if (D('connection-type-prompt')) {
+            if (D('connection-type-prompt')!.style.display !== 'none') {
                 alert("Please finish what you're doing, first.")
                 return;
             }
