@@ -20,7 +20,7 @@ body, html {
     bottom:0;
     right:0;
     width: 100%;
-    height: 39%;
+    height: 50%;
     background-color: #333;
 }
 
@@ -37,6 +37,13 @@ body, html {
     left: 50%;
     border: 4px solid burlywood;
     box-sizing: border-box;
+}
+
+.number-grab {
+    cursor: grab;
+}
+.number-grabbing {
+    cursor: grabbing;
 }
 
 .connection-button {

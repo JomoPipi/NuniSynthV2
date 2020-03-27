@@ -145,19 +145,23 @@ const GraphCanvas = (_ => {
     }
 
     const onmousemove = function(e : MouseEvent) {
-        if (e.which !== 1) return;
+        // drag nodes
+        const leftClickHeld = e.buttons === 1
+        
+        if (!leftClickHeld || !G.selectedNode) return;
         const W = canvas.width
         const H = canvas.height
-        const nodes = G.nodes
+        const node = G.selectedNode
         const [x,y] = [e.clientX, e.clientY]
-        for (const node of nodes) {
-            if (G.selectedNode === node) {
-                node.x = x/W
-                node.y = y/H
-                render()
-                return;
-            }
+        const [X,Y] = [node.x*W, node.y*H]
+
+        if (((x-X)**2 + (y-Y)**2)**0.5 > nodeRadius*2) {
+            G.unselectNode()
+        } else {
+            node.x = x/W
+            node.y = y/H
         }
+        render()
     }
 
     canvas.onmousedown = onmousedown
