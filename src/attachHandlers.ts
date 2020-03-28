@@ -81,6 +81,8 @@ D('from-string-button')!.onclick = function() {
 G.selectNodeFunc = () => {
 
     // INJECT HTML
+    D('connect-node')!.style.display = G.selectedNode ?
+        'inline' : 'none'
 
     const E = (x:string) => document.createElement(x)
     const node = G.selectedNode as NuniGraphNode
@@ -129,6 +131,7 @@ G.selectNodeFunc = () => {
                 const newV = Math.min(20000, Math.max(0, node[param].value + (pos - x) * 0.1))
                 input.value = newV.toString()
                 G.selectedNode.setValueOfParam(param, newV)
+                x = pos
             }
             else
                 input.classList.remove('number-grabbing')
@@ -141,6 +144,7 @@ G.selectNodeFunc = () => {
     }
     const deleteNode = E('button')
     deleteNode.innerHTML = 'delete this node'
+    deleteNode.style.float = 'right'
     deleteNode.onclick = _ => G.deleteSelectedNode()
     controls.append(deleteNode)
 }

@@ -29,7 +29,7 @@ const GraphCanvas = (_ => {
         const m = (ya - yb) / (xa - xb)
         const theta = Math.atan(m)
         const h = xa >= xb ? 10 : -10
-        const dt = 0.4
+        const dt = 0.5
         const dt1 = theta + dt
         const dt2 = theta - dt
 
@@ -45,7 +45,6 @@ const GraphCanvas = (_ => {
         ctx.lineTo(0,0)
 
         ctx.fill()
-        ctx.stroke()
 
         ctx.closePath()
         ctx.rotate(-dt2)
@@ -58,39 +57,54 @@ const GraphCanvas = (_ => {
         const W = canvas.width = canvas.offsetWidth
         const H = canvas.height = canvas.offsetHeight
 
-        const connectionTypeColors : { [key:string] : string } =
-        {
-            channel: '#333',
-            frequency: 'blue',
-            gain: 'red',
-            detune: 'green',
-            Q: 'violet'
-        }
-
         ctx.font = '15px Arial '
         ctx.lineWidth = 2
 
-        const color = G.isPromptingUserToSelectConnectee ? 'blue' : 'black'
+        const color = G.isPromptingUserToSelectConnectee ? 'blue' : 'transparent'
 
         ctx.clearRect(0,0,W,H)
         ctx.fillStyle = 'cyan'
 
         for (const id1 in G.oneWayConnections) {
-            for (const { id, connectionType } of G.oneWayConnections[id1]) {
-                
-                const a = nodes.find(node => node.id === +id1)!
-                const b = nodes.find(node => node.id === id)!
-                
-                const [xa,ya] = [a.x*W, a.y*H]
-                const [xb,yb] = [b.x*W, b.y*H]
-                
-                // draw lines connecting nodes
-                let s : string
-                s = connectionType
-                ctx.strokeStyle = connectionTypeColors[s]
+            // Draws lines connecting nodes
+            const idGroups = G.oneWayConnections[id1].reduce((groups : { [key:number] : undefined | ConnecteeDatum[] }, v) => {
+                const group = groups[v.id]
+                if (group) {
+                    group.push(v)
+                } else {
+                    groups[v.id] = [v]
+                }
+                return groups
+            }, {})
+            
+            for (const i in idGroups) {
+                const groups = idGroups[i]!
+                const connections = groups.length
+                groups.forEach((data,i) => {
+                    const { id, connectionType } = data
 
-                line(xa,ya,xb,yb)
-                drawDirectionTriangle(xa,ya,xb,yb)
+                    const a = nodes.find(node => node.id === +id1)!
+                    const b = nodes.find(node => node.id === id)!
+                    
+                    const shift = 10
+                    const I = i - (connections-1) / 2.0
+                    const [xa,ya] = [ a.x*W, a.y*H ]
+                    const [xb,yb] = [ b.x*W, b.y*H ]
+                    const m = -(xa-xb)/(ya-yb)
+                    const theta = Math.atan(m)
+                    const dy = Math.sin(theta) * shift
+                    const dx = Math.cos(theta) * shift
+                    
+                    const [x1,x2] = [xa + dx * I, xb + dx * I]
+                    const [y1,y2] = [ya + dy * I, yb + dy * I]
+                    
+                    let s : ConnectionType
+                    s = connectionType
+                    ctx.strokeStyle = ConnectionTypeColors[s]
+    
+                    line(x1,y1,x2,y2)
+                    drawDirectionTriangle(x1,y1,x2,y2)
+                })
             }
         }
 
@@ -102,6 +116,7 @@ const GraphCanvas = (_ => {
             
             const [X,Y] = [node.x * W, node.y * H]
 
+            ctx.strokeStyle = NodeTypeColors[node.type]
             circle(X, Y, nodeRadius)
 
             ctx.fillStyle = 'white'
@@ -154,13 +169,9 @@ const GraphCanvas = (_ => {
         const node = G.selectedNode
         const [x,y] = [e.clientX, e.clientY]
         const [X,Y] = [node.x*W, node.y*H]
-
-        if (((x-X)**2 + (y-Y)**2)**0.5 > nodeRadius*2) {
-            G.unselectNode()
-        } else {
-            node.x = x/W
-            node.y = y/H
-        }
+        node.x = x/W
+        node.y = y/H
+        
         render()
     }
 
