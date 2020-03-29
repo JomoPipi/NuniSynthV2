@@ -7,7 +7,7 @@ enum NodeTypes {
     PANNER = 'panner',
     DELAY = 'delay'
 }
-type AudioNodeTypes = GainNode | OscillatorNode | BiquadFilterNode | StereoPannerNode | DelayNode
+
 type AudioParamString = 'gain' | 'frequency' | 'detune' | 'pan' | 'Q' | 'delayTime'
 type ConnectionType = AudioParamString | 'channel'
 type ConnecteeDatum = { id : number, connectionType : ConnectionType }

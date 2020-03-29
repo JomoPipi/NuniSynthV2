@@ -9,34 +9,39 @@
  * 
  */
 
+
 class NuniGraphNode {
     /**
      * Each NuniGraphNode holds and updates an AudioNode.
-     * It knows nothing about other NuniGraphNodes
+     * It knows nothing about other NuniGraphNodes, but the AudioNode
+     * that it holds gets connected to other NuniGraphNodes' AudioNodes
      */
     id: number
     type: NodeTypes
-    audioNode: any// AudioNode & {[param:string]:AudioParam}
+    audioNode:  Indexible
     x:number
     y:number
     audioNodeType: string
-    [param: string]: any
+    audioParamValues: Indexible
     
     constructor( id : number, type : NodeTypes, options : {
             display: {x:number, y:number},
-            audioParamValues: { [param:string]: number }
+            audioParamValues: Indexible
             audioNodeType: string
         } ) {
-        this.id = id
-        this.type = type
+
         const { display: {x,y}, audioParamValues, audioNodeType } = options
 
+        this.id = id
+        this.type = type
         this.x = x
         this.y = y
+
 
         this.audioNode = audioCtx[createAudioNode[type]]()
         this.audioNodeType = audioNodeType || this.audioNode.type
         this.audioNode.type = this.audioNodeType
+        this.audioParamValues = audioParamValues
 
         if (MustBeStarted[type])
             this.audioNode.start(0)
@@ -44,14 +49,12 @@ class NuniGraphNode {
         for (const param of AudioNodeParams[type]) {
 
             const value = audioParamValues[param] || DefaultParamValues[param]
-            this[param] = { value: value } 
-
             this.setValueOfParam(param, value)
         }
     }
     setValueOfParam(param : string, value: number) {
         
-        this[param].value = value
+        this.audioParamValues[param] = value
         this.audioNode[param].setValueAtTime(value, 0)
     }
 }
@@ -70,7 +73,7 @@ const G = (_ => {
         (type : NodeTypes, 
         options : null | 
             { display: { x:number, y:number }, 
-              audioParamValues: {},
+              audioParamValues: Indexible,
               audioNodeType: string
             }
     ) => {
@@ -96,15 +99,12 @@ const G = (_ => {
 
     const masterGainNode = newNode(NodeTypes.GAIN, options) 
     masterGainNode.audioNode.connect(audioCtx.destination)
-    
-    let selectedNode : any
-    selectedNode = null
 
     const setConnection = (connectionType : ConnectionType) => 
-        (x : any) => connectionType === 'channel' ? x : x[connectionType]
+        (x : Indexible) => connectionType === 'channel' ? x : x[connectionType]
 
     const oneWayConnections :
-        { [id1:number] : ConnecteeData }  = {}
+        { [id1 : number] : ConnecteeData }  = {}
 
     const connect = (node1 : NuniGraphNode, node2 : NuniGraphNode, connectionType : ConnectionType) => 
     {
@@ -123,6 +123,7 @@ const G = (_ => {
             oneWayConnections[node1.id].push(destinationData)
     }
 
+    const selectedNode : any = null
     const selectNodeFunc = function() {}
 
     return {
@@ -194,20 +195,22 @@ const G = (_ => {
         },
 
 // some graphs:
-// {"3":[Āidă0,"connectiĎTypeăČhaďel"}]ċ5ăą"ćă6ċčĞĒĔnĖĘĚcĜĞĠĢċ6ĦĆĈ:3ĬĎĐįĕėę:"frequencyġ]}:Ŗħĩ:Ċ"tņĚgain"ċxĉ.3558ŪŬūŭŭŀ"ŒŚ.1848341232ƀ7Ź8ċŠŢăĀvalŎŧ5}},ĽăŲŝĳňoscillatorŤ"Ŧŵ207ƧƩƨƪƭċŴ0.4597156398104265ċaudĔNodeĲŇ"sŢęċŊŌŎŐŴƉƋƍ:ƽ0Ƒ"ǊtuĐƈ"ƊƌŇǝƑƓ:ǂŜŞƘƚƜƞƠƢťŧƩƵ2ǹǻǸ7ƯƎ3080Ƹ8ƫ379ƷǃǅǇǉǋǯǎǐƣǓōŏőǤǦǚ3ǞǠǢŇǘǧĉƐƒĨľīǮƗ"ƆţǶŵ495ȰȲȱȳȳǭưƲ7ƹ033175ũȲǭȬșǙŇ5ǩ]
+// {"3":[Āidă0,"connectiĎTypeăČhaďel"}]ċ5ăą"ćă6ċčĞĒĔnĖĘĚcĜĞĠĢċ6ĦĆĈ:3ĬĎĐįĕėę:"frequencyġ]}:Ŗħĩ:Ċ"tņĚgain"ċxĉ.3558ŪŬūŭŭŀ"ŒŚ.1848341232ƀ7Ź8ċaudĔParamValŎsăĀŠŢŧ5}},ĽăŲŝĳňoscillatorŤ"Ŧŵ207ƱƳƲƴƷċŴ0.4597156398104265ƅƇƉƋƍƏƑeƓ:ĀŊŌŎŐŴǇśdetuĐĉƛ"ƆƈoNoǟĲŇ"sŢęƛƝ:ǌŜŞƢƤƦƨƪƬťŧƳƿ2ȂȄȁ7ƹƘ3080ǂ8Ƶ379ǁǍǨƊƌƎƐƒƔŉŋōŏőƞċǟǡǣŚǥǧĔǪǬǸǯǱġƜĨľīǷơ"Ɩţǿŵ495ȼȾȽȿȿǶƺƼ7ǃ033175ũȾǶȩoȗǑȚǔȜȸă50ƚ]
 
-// {"1":[Āidă0,"connectiĎTypeăČhaďel"}]ċ2ăą"ćă1ċčĞĒĔnĖĘĚfrequencyġģ"3ĦĆĈ:2ĬĎĐįĕėę:ěĝĐĠĢċ4łĨńņČňđēŋĳŎcĜĞŒ]}:ŧħĩ:Ċ"tŌĚgain"ċxĉ.5ċĽū.12ź"űųăĀvalĹŸ5}},ŃĪċŮş"oscillatorŵ"ŷŽ6806722Ƥ907563ŻŸ47045ƷƹƸƻ46ċaudĔNodeĲō"sųęċĵķĹĻżƆƈƊ:440Ǝ"ǆtuĐƅ"ƇƉōǚƎƐŅƒůŎƃŴŶƳ1830Ʀ5359ƴ7ſƁż0.488ưȄ3ȅȄƁǭǡǣǖ1ǴƍƏŗăƱŭǫƕƗƙƛƝƟǯŽ1ư0ƀ2Ȏ08Ǚ3ȆřǾȀƬȭ0ȮȰƿǁǃǅǇȖsĸaĶƠǏĸĺļȋǕō2ǛǝǟōǔǤĉȐǨ4ǪƔƖƘƚƜƞƠƢǿǱ3193277ɚȯ24ȆƲŽɣɟɞɪƨɬɞɎ"ǀǂoǄǆǈĚȸuȺǍ"ȽǑɀ:ɉǖ3ɅeǞǠʀǢɂɋĢ
+// {"1":[Āidă0,"connectiĎTypeăČhaďel"}]ċ2ăą"ćă1ċčĞĒĔnĖĘĚfrequencyġģ"3ĦĆĈ:2ĬĎĐįĕėę:ěĝĐĠĢċ4łĨńņČňđēŋĳŎcĜĞŒ]}:ŧħĩ:Ċ"tŌĚgain"ċxĉ.5ċĽū.12ź"audĔParamValĹsăĀűųŸ5}},ŃĪċŮş"oscillatorŵ"ŷŽ6806722Ʈ907563ŻŸ47045ǁǃǂǅ46ċƃƅoƇƉƋƍƏƑ"ĵķĹĻż44ŬdetuĐĉƘƂƄĔNoǜĲō"sųęƘƚŅƜůŎƓŴŶƽ1830ư5359ƾ7ſƁż0.488ƺȌ3ȍȌƁǊƆƈƊƌƎeƐ:ƒŲŴ:1ǼƗƙŗăƻŭǳƟơƣƥƧƩǷŽ1ƺ0ƀ2ȟ08ǚ3ȎřȆȈƶȾ0ȿɁǉǤǌȔǏȗșĀǔĸĺļăřǜǞǠūǢȒoǦǨȧsĸƈǮȢŪ4ǲƞƠƢƤƦƨƪƬȇǹ3193277ɭɀ24ȎƼŽɶɲɱɽƲɿɱɡǣǋǍȕǐȘǒɋǖɎ:ȥɑǟō0ɕɄɘeǩĚɛuɝľ
 
-// this one doesn't seem to work in FireFox:// {"1":[Āidă2,"connectiĎTypeă"frequency"}]ċ2ăą"ćă4ċčďđēĕėę:ČhaĲlĥħ"4ĪĆĈ:0İĎĐĒĔnĖĘĚcĺļĥ,ŃĉŇĲŊĵŎĸĜĞĠĢĤ}ŔĬń5ŗŉĴŌĶĚŝğġģľċ5łŤă1ŧĳŋōķĹĻĐĽŢŕ:įČňŹŚżgainű"6ŴĭƃŸřŪś"ƊƌƎ7Ƒń6ƔũŻŏőſƎ1ĂĄƂƟƅŘơūĸƙƍĦċ1ĩƩŵ:ƧƠźƯŽŒĦ}:ǂīƒņ"tƽƱ"ċxă0.103Ƨ28404669260ƫĤŅǐǝ385809ǓǤǦ7ċǊ:ĀvalĠǎ.0ǹ05}ƁƸŷǇǉƋƍǌǷ420233Ǚ3ǒ5019ǙċǡǏ57649ǚ7ǗȘȚ9ǮƘȃăǲǴǶƹǺǽţƒĊȁƗoscillatorǋ"ǍǢ54Ș87ɀɂɄɁȣȖ.ǥǨǝǞɄɌȉȚċaudĔNodeƢĸsƌęċŭşŰǱ"ǳǵķ8Ţ"ɛtuĐȦɧȨķ0ȬƂƄǈƗǊȅǢȇ4ƵɁ13618677ǒȕǷʁ16Ǧ14ʀ2ʀʐƫǰȧɩăȎǹɷƸŦȰżȲȴȶȸȺȼȾǏǕȑ55ȚȈȊȌ63ʌǢ3ȓʈǖǜȊʹ78ɔɖɘɚɜƽɟɱɢĝŮŠɲɨȩɫċɮɰķʚȩɶǾƒƫɺƉȥɽǏ7ȋȍȏȑȓʮȯɊʃȎ3șȓȑȋǒșǯȥɦˎķǑȑǸǺ˺Ǻȋʟƒȣ˛ĚʤȵȷȹȻ˞.ˠˠɀ0ǦǞǓƵ9ʶȗʈ62ȞȓɁ̗̕ˁɗoəɛɝǇriĻglɡěˊɤǡ˕ɪɬ˒ɱ˴ɴǎ˾ńƺʢĚɼȽǷ88ʃ229ȘȒǖ4ʄ̓ɋ21ȐʉǞ53͋ȐˀȤƚ̳ʛ:ʝ˗ȭ̷ȯ́ĸ̃ʦ̆ʩ̽Ƀ͌̓˯ˠǜ9̒"ɊʯɀǑȒ̓Ͱʀ̝˃̡ˆɠȼɣṷ̊ɳ͘ːɭeɯ̵̲̮Ħ
+// this one doesn't seem to work in FireFox:
+// {"1":[Āidă2,"connectiĎTypeă"frequency"}]ċ2ăą"ćă4ċčďđēĕėę:ČhaĲlĥħ"4ĪĆĈ:0İĎĐĒĔnĖĘĚcĺļĥ,ŃĉŇĲŊĵŎĸĜĞĠĢĤ}ŔĬń5ŗŉĴŌĶĚŝğġģľċ5łŤă1ŧĳŋōķĹĻĐĽŢŕ:įČňŹŚżgainű"6ŴĭƃŸřŪś"ƊƌƎ7Ƒń6ƔũŻŏőſƎ1ĂĄƂƟƅŘơūĸƙƍĦċ1ĩƩŵ:ƧƠźƯŽŒĦ}:ǂīƒņ"tƽƱ"ċxă0.103Ƨ28404669260ƫĤŅǐǝ385809ǓǤǦ7ċaudĔParamValĠsăĀǊǢ0Ȃ05}ƁƸŷǇǉƋƍǌǎ.420233Ǚ3ǒ5019ǙċǡǏ57649ǚ7ǗȢȤ9Ǯ"ǰǲoǴǶǸǺǼǾƘȌŶȃȆţƒĊȊƗoscillatorǋ"ǍǢ54Ȣ87ɐɒɔɑȭȠ.ǥǨǝǞɔɜȓȤǯǱǳǵǷǹǻeǽ:ĀŭşŰ:8ċdetuĐǎŢȮɥoNoɵƢĸsƌęȇƒƄǈƗǊȎǢȑ4Ƶɑ13618677ǒȟȏʑ16Ǧ14ʐ2ʐʠƫȯɦȳɩȶɭȸƚ:ȘȂȼƂŦɀżɂɄɆɈɊɌɎǏǕț55ȤȒȔȖ63ʜǢ3ȝʘǖǜȔˎ7ɳɼȰȲɨȵɫȷɯůǡ˕ɵɷɹŅɻʩɾʀeʂ"ʄɹʇƞċʊƉȹʍǏ7ȕȗșțȝ˃ȿɚʓȘ3ȣȝțȕǒȣɤ˗ɧȴɪɬǿȹƹȂ1.ȃ̔̔ȕʴƸȭ˱ĚʹɅɇɉɋ˴.˶˶ɐ0ǦǞǓƵ9ˋȡʘ62Ȩȝɑ̯̱̈ʪ˙̌˜ĝŮŠăˠɶɸķ0˥ɽɿʁƽtriĻglʆȽńƺʷĚʌɍȏ88ʓ229ȢȜǖ4ʔ̭ɛ21ȚʙǞ53ͦȚ˕˦˘̋ʭ̎ʰʲ̈́ˮŶȿ̛ĸ̝ʻ̠ʾ͘ɓͧ̅͞˶ǜ9̬"ɚ˄ɐǑȜ͞Όʐ̷ȱ̊ʬ˛ʮ˝̾ɲɴ́ˣ̈́Γ͇˩ƽˬʆ]
 
-// {"1":[Āidă0,"connectiĎTypeăČhaďel"}]ċ2ăą"ćă1ċčĞĒĔnĖĘĚfrequencyġģ"3ĦĆĈ:2ĬĎĐįĕėę:ěĝĐĠĢċ4łĨńņČňđēŋĳŎcĜĞŒ]}:ŧħĩ:Ċ"tŌĚgain"ċxĉ.5039123630672926ċĽū.1Ƃ82Ż9ŽƎ0Ɛ05ċűųăĀvalĹŸ4}},ŃĪċŮş"oscillatorŵ"ŷƌ51685ż32584ƈ97ƊŸƀ80709ǀ4ǌǎǎċaudĔNodeĲō"sųęċĵķĹĻƋƞƠƢ:101.żƓǵǶ9ǅƦ"ǞtuĐƝ"Ɵơō0ƥƧŗăřƫǡƛŴŶǋ5Ɠ3740219ǐſ3Ǌƌ34ǄǸ004ǓȠ8ǸƚŲŴ:Ǭȃă55.Ƒȣȵȶȣ3Ȇƨ:ȜŭůŎƮưƲƴƶƸƺ0ƍ787ǀ8ƂǓƇſǉ"ƋɈ4Ɓ356ǈǴ5271ɋǗǙǛǝǟȿǢĸaĶƸǧĸĺļȀȂǮȹċǼǾōȮǮȅƦȻ4ƪɨɁƱƳƵƷȏƌɡ3Șǂ77ʊȚǓƉɔŸ24ʍɟʘƅʚɟɿ"ǘǚoǜǞǠĚsɪɬǦĶɯǪɲǭō2Ǻɷǿȭȁʮĉƥ]
+// {"1":[Āidă0,"connectiĎTypeăČhaďel"}]ċ2ăą"ćă1ċčĞĒĔnĖĘĚfrequencyġģ"3ĦĆĈ:2ĬĎĐįĕėę:ěĝĐĠĢċ4łĨńņČňđēŋĳŎcĜĞŒ]}:ŧħĩ:Ċ"tŌĚgain"ċxĉ.5039123630672926ċĽū.1Ƃ82Ż9ŽƎ0Ɛ05ċaudĔParamValĹsăĀűųŸ4}},ŃĪċŮş"oscillatorŵ"ŷƌ51685ż32584ƈ97ƊŸƀ80709Ǌ4ǖǘǘƚƜƞƠƢƤƦeƨ:ĀĵķĹĻƋ101.żƓǶǷ9ǏċdetuĐĉư"ƛƝoNoǼĲō"sųęưƲŅƴůŎƫŴŶǕ5Ɠ3740219ǚſ3ǔƌ34ǎǹ004ǝȩ8ǹǡȅƟơƣƥƧƩ"Ȗă55.ƑȬɂɃȬ3ƯƱŗăȥŭȔƷƹƻƽƿǁȘƌ1787Ǌ8ƂǝƇſǓ"Ƌ0.4Ɓ356ǒǵ5271ɘȳǣȶǦȹǪ"ǬĸĺļɊǻǽǿō0ȂȄĔȇȉɍsĸƠȏɈŪ4ȓƶƸƺƼƾǀǂǄɣɯ3ȡǌ77ʚȣǝƉɡŸ24ʝɭʨƅʪɭʎȃǢoȵǥȸǨȺɸǮɻȒ"ǼǾȀūʂʯʅeȊĚʈuʊľ
 
-// {"3":[Āidă0,"connectiĎTypeăČhaďel"}]ċ4ăą"ćă3ċčĞĒĔnĖĘĚcĜĞĠĢċ5ĦĆĈ:6ĬĎĐįĕėę:ěĝĐĸģ"6ļĨľĊČłđēŅĳňĵŊğġ]}:šħĩ:œtņĚgain"ċxĉ.5ċyű12ų"ŪŬăĀvaluŇ0.05}},ĽĪċŧř"pŜrŮ"Űť.3907603464870067ŹŵƗ285097192ƴƠƴ04ċƑŭ:žƀƂă-1ƈƊőăƹ"ƎŇ"oscillatoƓůűƙƛƝƟơƣƥƧƩű49ƧƝŸ917Ƴ65ơċaudĔNodeĲǋsŬęċfreqƂncƪƾƁŇ2ƥƉ"ǶtuĐŽ"ſȇĉǄƋ:ŹǊĚǍǏǑǓǕƔƖƄ6ǩƚ18Ƭ681424ǈƪƄǣǥ0ǧȥ2ǬǮ"ǰǲoǴǶǸĚǺȐǽǿȁeȃȅȒƿȈƆȋȍȏŇȆǀťȖǆĿƍŨňƻĐǖƕűȤ9ȨǠơǤ631ī"ȱ.2Ɯ457883369ɵƸ7ƺĝȑȓɔǃĢ
+// {"1":[Āidă2,"connectiĎTypeăČhaďel"},ĆĈ:3ċčĞĒĔnĖĘĚpĝġ]ċ2ăą"ćă4ĨĎĐīĕėę:"frequencyġģĹĥ6ĽĪēŁįńınĳċ3ķĤă0ŔĿŖĭłĚcĜĞĠ}Ĵ"4şőăħČľđťĮŃěĝĐŬŐĺ:œŵŕĬŹŨŪŽŜ"6űƀŢƃŤƅŧńũżğĳ}:ƚĸƎċtƓ"gaiśċxš.49663137ƭ233879ċŎ:0.097192ǃ46ǃ0302ļ"audĔParamValŊsăĀƢƤƨǊ}ĢŠĦƞƠŚĐr"Ʀƨƴ3ƿƪ759Ƶ4ǊŴƺƼ285ƾǀǂǄǆ20ǌǎǐoǒǔǖǘǚǜ"Śă-1ǢſĥǌƟŘ"oscillatoǪǬƻƩ7353Ǆ25Ƕ9Ȅ7ƹƨ552915Ʊ6Ȩ8ƬƾċȆǑǓǕǗǙeǛ:ĀņňŊŌƺȃƏdetuĐšĢǍǏĔNoɓƆńtriĝglęǣŲƁǦșǨeȤ"ƧȦ6410ɷƫǋƭȰƱȳȦ3ɵȭ269ƿ8Ƕ1ȨɁɛȈɄȋɇɉĀȐ:ȓɩƀ1ɬźțȝȟȡȣǫɱȴƯ9ȵ7ʃȿȭǊɾǺȼ81Ǽ7451ǶƵƸɚȇȉɅȌɈȎɌŉŋōăǽċɓɕɗƻəɂoɝɟƠsƤɨȕĉʙĚǞƥʡȦʲƴȃǽȄʮƳǁƂǹ.ǯƾǻʦȺ0ǁ4ƵȲʸɃȊɆȍɊơƣśʔʀ.ʄʅ˽˾98ȔǤŴȘźfȞtɯʠɲƼ0ɴʳ61ȷǈǃ58̎ʫ˥ʲȺƳȮ211Ƭǉ5ʋʹʎ˳ʽ˵ʿɎ˂:4ǶċQăʘ˶ǟȦ̤"ˆɖŃ0ˊʌˍeɠ"lowısǛʖȖ˕ń̇l̉ɰ̌.Ǵʲ̎ȩƵ̑ǁȭ̙ȩ4̡̟ƭ̎ʄȮƂˋʺʏ˴ɋŇˀɏĻ̰"̲ʔċ˗ȴ˅ɔ̻ɘ̥ɜɞ́Ơ̈́͆a͈ĳ
 
-// {"1":[Āidă2,"connectiĎTypeăČhaďel"},ĆĈ:3ċčĞĒĔnĖĘĚpĝġ]ċ2ăą"ćă4ĨĎĐīĕėę:"frequencyġģĹĥ6ĽĪēŁįńınĳċ3ķĤă0ŔĿŖĭłĚcĜĞĠ}Ĵ"4şőăħČľđťĮŃěĝĐŬŐĺ:œŵŕĬŹŨŪŽŜ"6űƀŢƃŤƅŧńũżğĳ}:ƚĸƎċtƓ"gaiśċxš.49663137ƭ233879ċŎ:0.097192ǃ46ǃ0302ļơƣś:ĀvalŊƨǊ}ĢŠĦƞƠŚĐr"Ʀƨƴ3ƿƪ759Ƶ4ǊŴƺƼ285ƾǀǂǄǆ20ǌŚăǑǓǕ:-1ǘſĥǌƟŘ"oscillatoǠǢƻƩ7353Ǆ25Ǭ9Ǻ7ƹƨ552915Ʊ6Ș8ƬƾċaudĔNodeƆńtriĝglęċņňŊŌƺǾǔŃǹ0Ģ"ȸtuĐǽ"ǒɊšȄǚƂȈźǞeȔ"ƧȖ6410ɧƫǋƭȠƱȣȖ3ɥȝ269ƿ8Ǭ1ȘċǼǐɕǿŃȃǙŲ:1ǜȉȋȍȏȑȓǡɡȤƯ9ȥ7ɳȯȝǊɮǰȬ81ǲ7451ǬƵƸ"ȲȴoȶȸȺ"sƤɂŅŇŉŋōɔɖȀǳɎɐɒŃɉȀɍʂƀĊ"ɜĚƢƤʍɢƼʟƴǹǳǺʛƳǁƂǯ.ǥƾǱʓȪ0ǁ4ƵȢǍˇɽʶʀɰ.ɴɵ˨˩98əʃŴ˄ńfȎtɟˈǖɤʠ61ȧǈǃ580˓ǣʟȪƳȞ211Ƭǉ5ȱȳȵȷȹƠlowıssʍɄʲɇʵɿĻǬɎQ̞ɗʄɎˆǏʽŃƼ5ʹeɑɓˢ̟ƻ˭ƀȇƠ˲l˴ɠˉ.Ǫʟ́șƵ˺ǁȝʘ˕̇̉̋́ɴȞƂʦ̐ʪ̗̙̓̕ɃʱɆʴ̲̥4̡ċ̣͛Ȁȃċ̨̤ʾ.̭ċʺ̱̪ɘŭ
-        
-// {"1":[Āidă14,"connectiďTypeăčhaĐel"}]Č2ăą"ćĉČĎğēĕnėęěcĝğġ},ĆĈ:8ĬďđįĖĘĚ:ĜĞđĸĤ"5ħĻă6ĿĮĔŃĳņĵňĠĢĺĩļ1ŒŁŔıńĴĶŉśŏ:şčŀĒŢĲŅ"dĠayTimĚģČ6Ŏŝă2ŠŮİŰěfrequencyĢŋ8žĪ:0ƂłţŖŇķƐČ10ƓŞƗůŤņųlŵŷŹƝāĂĄũƟƣƄƥƛŧŻā3ơăƖŬœƳƚŘƜƷĊƺŪ3Ʋŕűǁƶŋ1ōƯſǆǈƙűpĞƐ}:ǚĨƔƼtƴgain"Čxƻ.50251Ǭ628Ċ070Ǉ"Əƕ.133Ƕ76940ǼǾ3ȀČǡǣăĀvalƋǨ5}ĹưČǟƚƧŵǥ"ǧǺǼ0653266ǽ1Ȣ8Ƿǹ0.3Ɵ42Ǯ86ǶȱȳǷȚŶŸŅȍȏȑǺȓȕǑƁ"ȘűoscilƨtorȜȞȮǪǬǮ5ǰǲȃǵȬǨȰ0ȲȴȶɠɢǷaudĕNoųƅņsǣĚČƇƉƋƍǹȿȐŅ200ĹŲetuđȌ"ȎɻƻȔŜƔ5ȗƴɊɌɎaɐɒǦǨ88Ȃ472361809ɡʎǸȒʟ58ȣȪʬʪő"ɨɪoɬɮƴɱʅɴƈƊƌƎʆʈɁɕʀųʃʅ:ɺˁʋũʰɈěȊǤʗǺʙ1ʤ95ʜ73ȵ93ʦȭȯȸɣȷɡȹȉǢǤˇʇɀŅ˙.ɽɾ˰˱ȄˊǑľɇǠ˧ɓʘʚ4ʜʞʠʢʤ4˞ǨˢɥȳǱɤ˦ȋ˩ˀŅȮ1˴ƔƱ˷ƚˏ˺ȟ˝67ȫ9˔59799Č˟˗Ȁ7ʡȃ˝ʜ̛Ɇ̗̍˫Ǩ˳Ʉ̓ūˍņʑɍɏɑ̘ɕɘɚǳɝǭ˶̦49ʙ̞˝Ǭ͇ʚČʲɫɭeɯ"ʸɳ"ɵʼɸʿ̲Ū6˃ʂʄȾ˪ʉƕ̒ŞǷ̸"ǖğʖȝɟȡȣȥȧȰȪ2̤ʧǺʣ̡̜2ǵǪ̣7̜Ƿͬͥ͜ɿ̵Şċ̕ű̗ˑ̐ǯǱ͂Ƕǭ7ʪ̥̅4˔ȡ8˙ʠΚʤ7̋˨ˈ̏ǩͧĉʦ̺ͪʓʕ̾ˠǎ5΂͉˽ʝʟɞǺ2Κ6ʫĊΚκȩʫɧɩ͑ʶƚ͖Ȝ͙ɷʾ̱ͥ8͠˅ͣ̎ʊģ
-        
+// {"1":[Āidă14,"connectiďTypeăčhaĐel"}]Č2ăą"ćĉČĎğēĕnėęěcĝğġ},ĆĈ:8ĬďđįĖĘĚ:ĜĞđĸĤ"5ħĻă6ĿĮĔŃĳņĵňĠĢĺĩļ1ŒŁŔıńĴĶŉśŏ:şčŀĒŢĲŅ"dĠayTimĚģČ6Ŏŝă2ŠŮİŰěfrequencyĢŋ8žĪ:0ƂłţŖŇķƐČ10ƓŞƗůŤņųlŵŷŹƝāĂĄũƟƣƄƥƛŧŻā3ơăƖŬœƳƚŘƜƷĊƺŪ3Ʋŕűǁƶŋ1ōƯſǆǈƙűpĞƐ}:ǚĨƔƼtƴgain"Čxƻ.50251Ǭ628Ċ070Ǉ"Əƕ.133Ƕ76940ǼǾ3ȀČaudĕParamValƋsăĀǡǣǨ5}ĹưČǟƚƧŵǥ"ǧǺǼ0653266ǽ1Ȭ8Ƿǹ0.3Ɵ42Ǯ86ǶȻȽǷȊȌoȎȐȒȔȖȘŲŴŶŸŅȸȝȟǑƁ"ȢűoscilƨtorȦȨɓǫǭǯǱǳǵȶǨȺ0ȼȾɀɯɱɄȋȍȏȑȓȕeȗ:ĀƇƉƋƍǹ20ƼųtuđƻĹ"ɅĕNoųƅņsǣźŜƔ5ȡƴɛɝɟaɡɣǦǨ88Ȃ472361809ɰʜǸȜʭ58ȭȴʺʸőʏɷɇɹɊɼɾʀƈƊƌƎȜČʉʋɒʎʐoʒʔƴʗʌɕƔʾəěȚǤʥǺʧ1ʲ95ʪ73ȿ93ʴȷȹɂɲɁɰɃȉˀɈɺɋɽɍ˝ă˧.ʆʇ̀́ȄȞʚļľɘǠǢ˞ȧʦʨ4ʪʬʮʰʲ4ˬǨ˰ɴȽǱɳ˴Ɇ˶˃Ɍɿ"˻ȩ̄ưǞ̉ț˟ȸǼ567ȵ9ˢ59799Č˭˥Ȁ7ʯȃ˫ʪ̯ɗˑ̟ɻ̡ș̊Ǩ̃˘Şū˛ņʟɞɠɢɤȜǮ̮ɪȃɬǭ̺̇49ʧ̲˫Ǭ͟ʨ̝ɸɉ͆˹̢ʁˈʄĉʾˍʌƕːˀ˓eʕ"˖ʙưǷ͏"ǖğʤ̌ǺǾȬȮȰȲȴ2̸ʵǺʱ̵̰2ǵǪ̷7̰ɶ̞˂ͪ˅΀Ǘʹ͌ĉċ̈ƚ˻̫ǻɩǲ͚Ƕǭ7ʸ̹̗4ˢȫ8˧ʮβʲ7ͧˁͩ˸Ν̤ɓ̦Ǒǎʝƚ͑ʡʣ͕΅1ǎ5Η̏͡ʫʭɭǺ2β6ʹĊβϖȳʹΙͨ˷˄ɍͭʃˊĽˌeʊͳ0͵Ɇͷ͹ͻƐ
+
+// binuaral beat
+// {"5":[Āidă7,"connectiĎTypeăČhaďel"}]ċ6ăą"ćă8ċčĞĒĔnĖĘĚcĜĞĠĢċ7ĦĆĈ:0ĬĎĐįĕėę:ěĝĐĸģ"8ļĨľŀČłđēŅĳňĵŊğġ]}:šħĩĿċtņĚgain"ċxă0.5ċyű.12Ŵ"audĔParamValuesăĀŪŬŷ2}},ĽăŻŧř"oscillatorŮ"ŰĿ.4474934036ƮƮ14ŵŷ55ƫƺ043227665ĊżžƀƂƄƆƈƊƌ"freqƉncŶ:50œdetuĐűƓǈſoNoǞĲŇ"sŬęƓƕ:6ŦŨňƛƝƟơƣƥƧŲ5Ǆ7ƻ61Ƭƶ24ī"ǙǿȀ1959ǅ4ȅ86ƬċŽǦƁƃƅƇƉƋ:ĀǒǔǖǘƖ0ŻǞǠǢĿǤȚĔǨǪǶǭǯġƔőĉǵƙpŜƤůŷƪ583ɅɆɇɅǴȋƐ7809798ǂ08Ʈ3ǇȰoȜǌȟǏȢ"Ƚŭ:-1ƒȸŤȊƘǬɢĐȿƦƹ6ƾ1ǄɵɶȗƸƨǂǄǆ0ɲ5187ǀșǉɛǋȞǎȡĀɢăɦĢ
+
         fromString: function(s : string) {
             s = decompressGraphString(s)
             this.clear()
@@ -216,22 +219,17 @@ const G = (_ => {
             if (nodes[0].id !== 0) throw 'Oh, I did not expect this.'
             this.nodes[0].x = nodes[0].x
             this.nodes[0].y = nodes[0].y
-            this.nodes[0].setValueOfParam('gain', nodes[0].gain.value)
+            this.nodes[0].setValueOfParam('gain', nodes[0].audioParamValues.gain)
             this.nodes[0].audioNode.disconnect()
             this.nodes[0].audioNode.connect(audioCtx.destination)
 
             // recreate the nodes
             for (const node of nodes.filter(
             (node : NuniGraphNode) => node.id !== 0)) {
-
-                const t : NodeTypes = node.type
-                const values : {[key:string] : number} = {}
-                for (const param of AudioNodeParams[t]) {
-                    values[param] = node[param].value
-                }
+                
                 const options = {
                     display: {x: node.x, y: node.y},
-                    audioParamValues: values,
+                    audioParamValues: node.audioParamValues,
                     audioNodeType: node.audioNodeType
                 }
 
@@ -329,7 +327,7 @@ function decompressGraphString(compressedStr : string) : string
     const compressed = 
         compressedStr.split('').map((c:string)=>c.charCodeAt(0))
     // Initialize Dictionary (inverse of compress)
-    let dictionary : any = {};
+    const dictionary : { [key:number]:string } = {};
     for (let i = 0; i < 256; i++)
     {
         dictionary[i] = String.fromCharCode(i);

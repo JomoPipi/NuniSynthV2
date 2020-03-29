@@ -15,7 +15,8 @@ body, html {
 
 #node-options {
     position: absolute;
-    display: block;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     color: wheat;
     bottom:0;
     right:0;

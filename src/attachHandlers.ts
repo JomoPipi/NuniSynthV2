@@ -1,11 +1,10 @@
-
-;[...document.getElementsByClassName('new-node-btns')]
-    .forEach((btn:any) => {
-        btn.onclick = () => {
-            G.newNode(btn.id.split('-')[1], null)
-            GraphCanvas.render()
-        }
-    })
+const buttons = [...document.getElementsByClassName('new-node-btns')] as HTMLButtonElement[]
+buttons.forEach(btn => {
+    btn.onclick = () => {
+        G.newNode(btn.id.split('-')[1] as NodeTypes, null)
+        GraphCanvas.render()
+    }
+})
 
 
 D('connect-node')!.onclick = function() {
@@ -118,7 +117,7 @@ G.selectNodeFunc = () => {
         const input = E('input') as HTMLInputElement
         input.type = 'number'
         input.classList.add('number-grab')
-        input.value = node[param].value
+        input.value = node.audioParamValues[param].toString()
         input.oninput = function() {
             G.selectedNode.setValueOfParam(param, +input.value)
         }
@@ -128,7 +127,13 @@ G.selectNodeFunc = () => {
                 input.classList.add('number-grabbing')
                 const pos = e.clientX 
                 if (!x) x = pos
-                const newV = Math.min(20000, Math.max(0, node[param].value + (pos - x) * 0.1))
+                const [min,max] = 
+                    [node.audioNode[param].minValue, 
+                     node.audioNode[param].maxValue]
+                const newV = 
+                    Math.min(max, Math.max(min, 
+                        node.audioParamValues[param] + (pos - x) * 0.1))
+
                 input.value = newV.toString()
                 G.selectedNode.setValueOfParam(param, newV)
                 x = pos
