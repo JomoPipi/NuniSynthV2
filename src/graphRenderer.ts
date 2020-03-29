@@ -52,7 +52,7 @@ const GraphCanvas = (_ => {
     }
 
 
-    const render = () => {
+    const render = (selectedNodes? : NuniGraphNode[]) => {
         const nodes = G.nodes
         const W = canvas.width = canvas.offsetWidth
         const H = canvas.height = canvas.offsetHeight
@@ -113,6 +113,10 @@ const GraphCanvas = (_ => {
         for (const node of nodes) {
 
             ctx.fillStyle = node === G.selectedNode ? 'green' : color
+
+            if (selectedNodes) {
+                ctx.fillStyle = selectedNodes.indexOf(node) >= 0 ? 'purple' : 'yellow'
+            }
             
             const [X,Y] = [node.x * W, node.y * H]
 
@@ -179,6 +183,7 @@ const GraphCanvas = (_ => {
     canvas.onmousemove = onmousemove
 
     return {
+        nodeRadius: nodeRadius,
         canvas: canvas,
         ctx: ctx,
         render: render, 

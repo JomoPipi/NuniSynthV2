@@ -50,3 +50,18 @@ body, html {
 #connect-node {
     display: none;
 }
+
+.record {
+    border-radius: 100%;
+    width: 40px;
+    height: 40px;
+    color:white;
+    background-color: #755;
+}
+.recording {
+    background-color: #f00;
+}
+
+.selected {
+    background-color: green;
+}
