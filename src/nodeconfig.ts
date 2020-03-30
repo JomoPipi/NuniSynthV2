@@ -56,14 +56,13 @@ const AudioNodeSubTypes = {
     [NodeTypes.DELAY]:  []
 }
 
-const DefaultParamValues : { [key in AudioParamString] : number } = 
+const NodeTypeColors : { [key in NodeTypes] : string } =
 {
-    gain: 0.5,
-    frequency: 440,
-    detune: 0,
-    Q: 1,
-    pan: 0,
-    delayTime: 0.25
+    [NodeTypes.GAIN]:   'red',
+    [NodeTypes.OSC]:    'blue',
+    [NodeTypes.FILTER]: 'green',
+    [NodeTypes.PANNER]: 'orange',
+    [NodeTypes.DELAY]:  'yellow'
 }
 
 const ConnectionTypeColors : { [key in ConnectionType] : string } =
@@ -77,11 +76,42 @@ const ConnectionTypeColors : { [key in ConnectionType] : string } =
     delayTime: 'yellow'
 }
 
-const NodeTypeColors : { [key in NodeTypes] : string } =
+const DefaultParamValues : { [key in AudioParamString] : number } = 
 {
-    [NodeTypes.GAIN]:   'red',
-    [NodeTypes.OSC]:    'blue',
-    [NodeTypes.FILTER]: 'green',
-    [NodeTypes.PANNER]: 'orange',
-    [NodeTypes.DELAY]:  'yellow'
+    gain:      0.5,
+    frequency: 440,
+    detune:    0,
+    Q:         1,
+    pan:       0,
+    delayTime: 0.25
+}
+
+const AudioParamRanges : { [key in AudioParamString] : [number,number] } = 
+{
+    gain:      [0, 24000],
+    frequency: [0, 24000],
+    detune:    [-153600, 153600],
+    Q:         [0 ,1000],
+    pan:       [-1.0, 1.0],
+    delayTime: [0, 1]
+}
+
+const hasLinearSlider : { [key in AudioParamString] : boolean } = 
+{
+    gain:      true,
+    frequency: false,
+    detune:    true,
+    Q:         true,
+    pan:       true,
+    delayTime: false
+}
+
+const sliderFactor : { [key in AudioParamString] : number } = 
+{
+    gain:      .02,
+    frequency: .1,
+    detune:    .1,
+    Q:         .05,
+    pan:       .005,
+    delayTime: .005
 }

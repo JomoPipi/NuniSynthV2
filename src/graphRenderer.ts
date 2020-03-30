@@ -7,7 +7,7 @@ const GraphCanvas = (_ => {
 
     const nodeRadius = 20
 
-    const circle = (x: number,y: number,r: number) => {
+    const circle = (x: number, y: number, r: number) => {
         ctx.beginPath()
         ctx.arc(x,y,r,0,7)
         ctx.fill()
@@ -23,6 +23,9 @@ const GraphCanvas = (_ => {
     }
     const drawDirectionTriangle = 
         (xa : number, ya : number, xb : number, yb : number) => {
+        /**
+         * Draws a directional triangle at the midpoint of a line.
+         */
 
         const [mx,my] = [(xa+xb)/2.0, (ya+yb)/2.0]
         
@@ -65,9 +68,12 @@ const GraphCanvas = (_ => {
         ctx.clearRect(0,0,W,H)
         ctx.fillStyle = 'cyan'
 
+        
+        // Draw the node connections with lines
         for (const id1 in G.oneWayConnections) {
-            // Draws lines connecting nodes
-            const idGroups = G.oneWayConnections[id1].reduce((groups : { [key:number] : undefined | ConnecteeDatum[] }, v) => {
+
+            // gather the groups of parallel connections
+            const idGroups = G.oneWayConnections[id1].reduce((groups, v) => {
                 const group = groups[v.id]
                 if (group) {
                     group.push(v)
@@ -75,7 +81,7 @@ const GraphCanvas = (_ => {
                     groups[v.id] = [v]
                 }
                 return groups
-            }, {})
+            }, {} as { [key:number] : undefined | ConnecteeDatum[] })
             
             for (const i in idGroups) {
                 const groups = idGroups[i]!
@@ -86,22 +92,19 @@ const GraphCanvas = (_ => {
                     const a = nodes.find(node => node.id === +id1)!
                     const b = nodes.find(node => node.id === id)!
                     
-                    const shift = 10
-                    const I = i - (connections-1) / 2.0
-                    const [xa,ya] = [ a.x*W, a.y*H ]
-                    const [xb,yb] = [ b.x*W, b.y*H ]
-                    const m = -(xa-xb)/(ya-yb)
+                    const shift = 10                    // parallel connection gap
+                    const I = i - (connections-1) / 2.0 // centering the connections
+                    const [xa,ya] = [ a.x*W, a.y*H ]    // node a coords
+                    const [xb,yb] = [ b.x*W, b.y*H ]    // node b coords
+                    const m = -(xa-xb)/(ya-yb)          // slope of perpendicular line
                     const theta = Math.atan(m)
-                    const dy = Math.sin(theta) * shift
+                    const dy = Math.sin(theta) * shift  
                     const dx = Math.cos(theta) * shift
                     
                     const [x1,x2] = [xa + dx * I, xb + dx * I]
                     const [y1,y2] = [ya + dy * I, yb + dy * I]
                     
-                    let s : ConnectionType
-                    s = connectionType
-                    ctx.strokeStyle = ConnectionTypeColors[s]
-    
+                    ctx.strokeStyle = ConnectionTypeColors[connectionType]
                     line(x1,y1,x2,y2)
                     drawDirectionTriangle(x1,y1,x2,y2)
                 })
@@ -134,6 +137,7 @@ const GraphCanvas = (_ => {
 
     }
     
+// the next 3 functions do more than just Render.
     const onmousedown = function(e : MouseEvent) {
         const W = canvas.width
         const H = canvas.height
@@ -142,9 +146,8 @@ const GraphCanvas = (_ => {
         for (const node of nodes) {
             if (((x-node.x*W)**2 + (y-node.y*H)**2)**0.5 < nodeRadius) {
 
-                if (G.isPromptingUserToSelectConnectee) 
+                if (G.isPromptingUserToSelectConnectee && G.selectedNode) 
                 {
-                    // the node cannot connect to itself
                     if (G.selectedNode === node) return;
 
                     prompUserToSelectConnectionType
@@ -159,7 +162,7 @@ const GraphCanvas = (_ => {
             }
         }
         G.isPromptingUserToSelectConnectee = false
-        G.unselectNode()
+        if (G.selectedNode) G.unselectNode()
         render()
     }
 
@@ -192,6 +195,17 @@ const GraphCanvas = (_ => {
 
 function prompUserToSelectConnectionType(
     node1 : NuniGraphNode, node2 : NuniGraphNode) {
+    if (node2.id === 0) {
+        /* 
+            No prompt neede, in this case. We'll make it easy for the user
+            and only allow channel connections to the master gain node. If they 
+            oscillate the gain of it, they wont be able to lower the volume 
+            of the entire graph through the node's intrinsic gain value, anymore.
+        */
+       G.connect(node1, node2, 'channel')
+       G.isPromptingUserToSelectConnectee = false
+       return;
+    }
     const prompt = D('connection-type-prompt')!
     const types = 
         (SupportsInputChannels[node2.type] ? ['channel'] : [])

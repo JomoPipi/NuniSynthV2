@@ -12,7 +12,6 @@ D('connect-node')!.onclick = function() {
         alert('Please select a node first')
         return;
     }
-    
     G.isPromptingUserToSelectConnectee = true
 
     GraphCanvas.render()
@@ -31,6 +30,9 @@ D('from-string-button')!.onclick = function() {
         input.value = 'invalid code'
     }
 }
+
+D('about')!.onclick = () =>
+    window.open('https://developer.mozilla.org/en-US/docs/Web/API/AudioNode/connect','_blank')
 
 
 
@@ -78,18 +80,21 @@ D('from-string-button')!.onclick = function() {
 
 
 G.selectNodeFunc = () => {
-
-    // INJECT HTML
-    D('connect-node')!.style.display = G.selectedNode ?
-        'inline' : 'none'
+    /** Injects HTML that allows manipulation of the selected node. **/
 
     const E = (x:string) => document.createElement(x)
     const node = G.selectedNode as NuniGraphNode
+
+    D('connect-node')!.style.display = node ?
+        'inline' : 'none'
+
     const controls = D('injected-node-value-ui')!
     controls.innerHTML = ''
-    if (!node) {
-        return;
-    }
+
+    D('node-options')!.style.gridTemplateColumns = node ?
+        '1fr 1fr' : '1fr'
+        
+    if (!node) return;
 
     const subtypes = AudioNodeSubTypes[node.type]
     
@@ -119,7 +124,7 @@ G.selectNodeFunc = () => {
         input.classList.add('number-grab')
         input.value = node.audioParamValues[param].toString()
         input.oninput = function() {
-            G.selectedNode.setValueOfParam(param, +input.value)
+            G.selectedNode!.setValueOfParam(param, +input.value)
         }
         let x = 0
         input.onmousemove = function(e) {
@@ -127,15 +132,21 @@ G.selectNodeFunc = () => {
                 input.classList.add('number-grabbing')
                 const pos = e.clientX 
                 if (!x) x = pos
-                const [min,max] = 
-                    [node.audioNode[param].minValue, 
-                     node.audioNode[param].maxValue]
+
+                const delta = sliderFactor[param]
+                const [min,max] = AudioParamRanges[param]
+                
                 const newV = 
                     Math.min(max, Math.max(min, 
-                        node.audioParamValues[param] + (pos - x) * 0.1))
+                        hasLinearSlider[param] ||
+                        G.selectedNode!.audioNode[param].value === 0 ? 
+                        // exponential won't work with 0 or panning
+                            node.audioParamValues[param] + (pos - x) * delta
+                        :
+                            (x > pos ? 1-delta : 1+delta) * node.audioParamValues[param] ))
 
                 input.value = newV.toString()
-                G.selectedNode.setValueOfParam(param, newV)
+                G.selectedNode!.setValueOfParam(param, newV)
                 x = pos
             }
             else
@@ -153,3 +164,5 @@ G.selectNodeFunc = () => {
     deleteNode.onclick = _ => G.deleteSelectedNode()
     controls.append(deleteNode)
 }
+
+
