@@ -111,10 +111,12 @@ G.selectNodeFunc = () => {
             node.audioNode.type = select.value
         }
         controls.appendChild(select)
+        controls.appendChild(E('span'))
     }
     
     for (const param of AudioNodeParams[node.type as NodeTypes]) {
         const box = E('div')
+        box.classList.add('box')
 
         const span = E('span')
         span.innerHTML = param

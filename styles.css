@@ -65,3 +65,8 @@ body, html {
 .selected {
     background-color: green;
 }
+
+.box {
+    display: grid;
+    grid-template-columns: 39% 61%;
+}

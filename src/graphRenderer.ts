@@ -14,6 +14,7 @@ const GraphCanvas = (_ => {
         ctx.stroke()
         ctx.closePath()
     }
+
     const line = (x1: number,y1: number, x2: number, y2: number) => {
         ctx.beginPath()
         ctx.moveTo(x1,y1)
@@ -21,6 +22,7 @@ const GraphCanvas = (_ => {
         ctx.stroke()
         ctx.closePath()
     }
+
     const drawDirectionTriangle = 
         (xa : number, ya : number, xb : number, yb : number) => {
         /**
@@ -54,22 +56,9 @@ const GraphCanvas = (_ => {
         ctx.translate(-mx,-my)
     }
 
-
-    const render = (selectedNodes? : NuniGraphNode[]) => {
-        const nodes = G.nodes
-        const W = canvas.width = canvas.offsetWidth
-        const H = canvas.height = canvas.offsetHeight
-
-        ctx.font = '15px Arial '
-        ctx.lineWidth = 2
-
-        const color = G.isPromptingUserToSelectConnectee ? 'blue' : 'transparent'
-
-        ctx.clearRect(0,0,W,H)
+    const drawNodeConnections = (nodes : NuniGraphNode[], H : number, W : number) => {
         ctx.fillStyle = 'cyan'
 
-        
-        // Draw the node connections with lines
         for (const id1 in G.oneWayConnections) {
 
             // gather the groups of parallel connections
@@ -110,9 +99,10 @@ const GraphCanvas = (_ => {
                 })
             }
         }
+    }
 
-        ctx.strokeStyle = 'gray'
-        ctx.fillStyle = 'black'
+    const drawNodes = (nodes : NuniGraphNode[], H : number, W : number, selectedNodes? : NuniGraphNode[]) => {
+        const color = G.isPromptingUserToSelectConnectee ? 'blue' : 'transparent'
         for (const node of nodes) {
 
             ctx.fillStyle = node === G.selectedNode ? 'green' : color
@@ -134,10 +124,23 @@ const GraphCanvas = (_ => {
                 Y - nodeRadius * 1.5
             )
         }
+    }
 
+    const render = (selectedNodes? : NuniGraphNode[]) => {
+        const nodes = G.nodes
+        const W = canvas.width = canvas.offsetWidth
+        const H = canvas.height = canvas.offsetHeight
+
+        ctx.font = '15px Arial '
+        ctx.lineWidth = 2
+
+        ctx.clearRect(0,0,W,H)
+
+        drawNodeConnections(nodes, H, W)
+        drawNodes(nodes, H, W, selectedNodes)
     }
     
-// the next 3 functions do more than just Render.
+    // node interaction
     const onmousedown = function(e : MouseEvent) {
         const W = canvas.width
         const H = canvas.height
