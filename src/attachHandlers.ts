@@ -6,17 +6,6 @@ buttons.forEach(btn => {
     }
 })
 
-
-D('connect-node')!.onclick = function() {
-    if (!G.selectedNode) {
-        alert('Please select a node first')
-        return;
-    }
-    G.isPromptingUserToSelectConnectee = true
-
-    GraphCanvas.render()
-}
-
 D('copy-graph-button')!.onclick = function() {
     (D('graph-copy-output') as HTMLInputElement).value = G.toString()
 }
@@ -84,9 +73,6 @@ G.selectNodeFunc = () => {
 
     const E = (x:string) => document.createElement(x)
     const node = G.selectedNode as NuniGraphNode
-
-    D('connect-node')!.style.display = node ?
-        'inline' : 'none'
 
     const controls = D('injected-node-value-ui')!
     controls.innerHTML = ''

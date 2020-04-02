@@ -33,11 +33,11 @@ const channelOutputs = [] as NuniGraphNode[]
                         {
                             channelOutputs.push(node)
                         }
-                        GraphCanvas.render(channelOutputs)
+                        GraphCanvas.render({ selectedNodes: channelOutputs })
                         return
                     }
             }
-            GraphCanvas.render(channelOutputs)
+            GraphCanvas.render({ selectedNodes: channelOutputs })
         } 
         else 
         {

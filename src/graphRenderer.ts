@@ -7,6 +7,23 @@ const GraphCanvas = (_ => {
 
     const nodeRadius = 20
 
+    const innerEdgeBoundary = nodeRadius / 1.5
+    const outerEdgeBoundary = nodeRadius * 1.1
+
+    const triangleRadiusFactor = nodeRadius / 5.0
+
+    let fromNode = null as NuniGraphNode | null
+
+    const connectionsCache : {
+        [id:string] : { 
+            x:number, 
+            y:number, 
+            fromId:number, 
+            toId:number, 
+            connectionType: ConnectionType 
+        }
+    } = {}
+
     const circle = (x: number, y: number, r: number) => {
         ctx.beginPath()
         ctx.arc(x,y,r,0,7)
@@ -23,22 +40,56 @@ const GraphCanvas = (_ => {
         ctx.closePath()
     }
 
+    const directedLine = (x1: number,y1: number, x2: number, y2: number, 
+    officialOptions? : { fromId: number, toId: number, connectionType: ConnectionType, clientX?: number, clientY?: number } ) => {
+        const m = (y1-y2)/(x1-x2)
+        const angle = Math.atan(m)
+        const dy = Math.sin(angle) * nodeRadius  
+        const dx = Math.cos(angle) * nodeRadius
+
+        const z = x1 >= x2 ? -1 : 1
+        const w = !officialOptions ? 0 : 1
+
+        ;((x,y,X,Y) => {
+            let d = Infinity
+            if (officialOptions) {
+                const { fromId, toId, connectionType, clientX, clientY } = officialOptions
+                const connectionId = `${fromId}:${toId}:${connectionType}`
+                if (!connectionId) throw 'what happened here'
+                // set the data in the connections cache
+                const data = connectionsCache[connectionId] = connectionsCache[connectionId] || {
+                    fromId: fromId,
+                    toId: toId,
+                    connectionType: connectionType
+                    }
+                data.x = X - dx * z * w / 3.0
+                data.y = Y - dy * z * w / 3.0
+
+                if (clientX && clientY)
+                    d = distance(clientX,clientY, data.x, data.y)
+            }
+            
+            line(x,y,X,Y)
+            
+            const highlight = d < nodeRadius / triangleRadiusFactor
+            ctx.fillStyle = highlight ? 'cyan' : 'white'
+            drawDirectionTriangle(X, Y, angle, x >= X)
+
+        })(x1 + dx * z,   y1 + dy * z,   x2 - dx * z * w,   y2 - dy * z * w)
+    }
+
     const drawDirectionTriangle = 
-        (xa : number, ya : number, xb : number, yb : number) => {
+        (x : number, y : number, angle: number, flipH : boolean) => {
         /**
-         * Draws a directional triangle at the midpoint of a line.
+         * Draws a directional triangle at the end of a line.
          */
 
-        const [mx,my] = [(xa+xb)/2.0, (ya+yb)/2.0]
-        
-        const m = (ya - yb) / (xa - xb)
-        const theta = Math.atan(m)
-        const h = xa >= xb ? 10 : -10
+        const h = (flipH ? 1 : -1) * nodeRadius / 2.0
         const dt = 0.5
-        const dt1 = theta + dt
-        const dt2 = theta - dt
+        const dt1 = angle + dt
+        const dt2 = angle - dt
 
-        ctx.translate(mx,my)
+        ctx.translate(x,y)
         ctx.rotate(dt1)
         ctx.beginPath()
 
@@ -53,11 +104,10 @@ const GraphCanvas = (_ => {
 
         ctx.closePath()
         ctx.rotate(-dt2)
-        ctx.translate(-mx,-my)
+        ctx.translate(-x,-y)
     }
 
-    const drawNodeConnections = (nodes : NuniGraphNode[], H : number, W : number) => {
-        ctx.fillStyle = 'cyan'
+    const drawNodeConnections = (nodes : NuniGraphNode[], H : number, W : number, { clientX, clientY } : { clientX?: number, clientY?: number }) => {
 
         for (const id1 in G.oneWayConnections) {
 
@@ -81,39 +131,47 @@ const GraphCanvas = (_ => {
                     const a = nodes.find(node => node.id === +id1)!
                     const b = nodes.find(node => node.id === id)!
                     
-                    const shift = 10                    // parallel connection gap
-                    const I = i - (connections-1) / 2.0 // centering the connections
                     const [xa,ya] = [ a.x*W, a.y*H ]    // node a coords
                     const [xb,yb] = [ b.x*W, b.y*H ]    // node b coords
-                    const m = -(xa-xb)/(ya-yb)          // slope of perpendicular line
-                    const theta = Math.atan(m)
-                    const dy = Math.sin(theta) * shift  
-                    const dx = Math.cos(theta) * shift
-                    
-                    const [x1,x2] = [xa + dx * I, xb + dx * I]
-                    const [y1,y2] = [ya + dy * I, yb + dy * I]
+                    const mP = -(xa-xb)/(ya-yb)         // slope of perpendicular line
+                    const theta = Math.atan(mP)
+                    const shift = nodeRadius / 2.0
+                    const dy2 = Math.sin(theta) * shift  
+                    const dx2 = Math.cos(theta) * shift
+
+                    const I = i - (connections-1) / 2.0
+                    const [x1,x2] = [xa + dx2 * I, xb + dx2 * I]
+                    const [y1,y2] = [ya + dy2 * I, yb + dy2 * I]
                     
                     ctx.strokeStyle = ConnectionTypeColors[connectionType]
-                    line(x1,y1,x2,y2)
-                    drawDirectionTriangle(x1,y1,x2,y2)
+
+                    directedLine(x1,y1,x2,y2, { fromId: +id1, toId: id, connectionType: connectionType, clientX, clientY })
                 })
             }
         }
     }
 
-    const drawNodes = (nodes : NuniGraphNode[], H : number, W : number, selectedNodes? : NuniGraphNode[]) => {
-        const color = G.isPromptingUserToSelectConnectee ? 'blue' : 'transparent'
+    const drawNodes = (nodes : NuniGraphNode[], H : number, W : number, 
+    options : { selectedNodes?: NuniGraphNode[], clientX?: number, clientY?: number }) => {
+        const color = 'transparent'
+        const { selectedNodes, clientX, clientY } = options
+        const [x,y] = [clientX, clientY]
         for (const node of nodes) {
+            
+            const [X,Y] = [node.x * W, node.y * H]
+            const d = x && y ? distance(x,y,X,Y) : Infinity
+            const aroundEdge = innerEdgeBoundary < d && d < outerEdgeBoundary
+            const hoveringInside = d <= innerEdgeBoundary
+            
+            ctx.strokeStyle = aroundEdge ? 'white' : NodeTypeColors[node.type]
 
-            ctx.fillStyle = node === G.selectedNode ? 'green' : color
+            ctx.fillStyle = node === G.selectedNode ? 'green' 
+                : hoveringInside ? 'rgba(0,255,255,0.15)' : color
 
             if (selectedNodes) {
                 ctx.fillStyle = selectedNodes.indexOf(node) >= 0 ? 'purple' : 'yellow'
             }
             
-            const [X,Y] = [node.x * W, node.y * H]
-
-            ctx.strokeStyle = NodeTypeColors[node.type]
             circle(X, Y, nodeRadius)
 
             ctx.fillStyle = 'white'
@@ -126,7 +184,7 @@ const GraphCanvas = (_ => {
         }
     }
 
-    const render = (selectedNodes? : NuniGraphNode[]) => {
+    const render = (options = {}) => {
         const nodes = G.nodes
         const W = canvas.width = canvas.offsetWidth
         const H = canvas.height = canvas.offsetHeight
@@ -136,8 +194,16 @@ const GraphCanvas = (_ => {
 
         ctx.clearRect(0,0,W,H)
 
-        drawNodeConnections(nodes, H, W)
-        drawNodes(nodes, H, W, selectedNodes)
+        drawNodeConnections(nodes, H, W, options)
+        drawNodes(nodes, H, W, options)
+
+        if (fromNode) {
+            const { clientX, clientY } = options as any
+            const [X,Y] = [fromNode.x*W, fromNode.y*H]
+            
+            ctx.strokeStyle = 'white'
+            directedLine(X,Y,clientX,clientY)
+        }
     }
     
     // node interaction
@@ -146,47 +212,87 @@ const GraphCanvas = (_ => {
         const H = canvas.height
         const nodes = G.nodes
         const [x,y] = [e.clientX, e.clientY]
+
+        // handle connection touch
+        for (const id in connectionsCache) {
+            const { x:X, y:Y, fromId, toId, connectionType } = connectionsCache[id]
+            if (distance(x,y,X,Y) < nodeRadius / triangleRadiusFactor) {
+                fromNode = G.nodes.find(node => node.id === fromId)!
+                const to = G.nodes.find(node => node.id === toId)!
+                delete connectionsCache[id]
+                G.disconnect(fromNode,to,connectionType)
+            }
+        }
+
+        // handle node touch
         for (const node of nodes) {
-            if (((x-node.x*W)**2 + (y-node.y*H)**2)**0.5 < nodeRadius) {
+            const [X,Y] = [node.x*W, node.y*H]
+            const d = x && y ? distance(x,y,X,Y) : -1
+            const aroundEdge = innerEdgeBoundary < d && d < outerEdgeBoundary
 
-                if (G.isPromptingUserToSelectConnectee && G.selectedNode) 
-                {
-                    if (G.selectedNode === node) return;
-
-                    prompUserToSelectConnectionType
-                        (G.selectedNode, node)
-                } 
-                else 
-                {
-                    G.selectNode(node)
-                }
+            if (aroundEdge) { 
+                // in this case, we start make a connection,
+                // instead of selecting the node.
+                G.unselectNode()
+                fromNode = node
+                return;
+            }
+            else if (d < nodeRadius) {
+                G.selectNode(node)
                 render()
                 return;
             }
         }
-        G.isPromptingUserToSelectConnectee = false
+        
         if (G.selectedNode) G.unselectNode()
         render()
     }
 
     const onmousemove = function(e : MouseEvent) {
+        
         // drag nodes
         const leftClickHeld = e.buttons === 1
+        const [x,y] = [e.clientX, e.clientY]
         
-        if (!leftClickHeld || !G.selectedNode) return;
+        if (leftClickHeld && G.selectedNode) {
+            const W = canvas.width
+            const H = canvas.height
+            const node = G.selectedNode
+            const [X,Y] = [node.x*W, node.y*H]
+            node.x = x/W
+            node.y = y/H
+        }
+        
+        render({ clientX:x, clientY:y })
+    }
+
+    const onmouseup = function(e : MouseEvent) {
+        if (!fromNode) return;
+
         const W = canvas.width
         const H = canvas.height
-        const node = G.selectedNode
+        const nodes = G.nodes
         const [x,y] = [e.clientX, e.clientY]
-        const [X,Y] = [node.x*W, node.y*H]
-        node.x = x/W
-        node.y = y/H
-        
+
+        for (const node of nodes) {
+            if (node === fromNode) continue
+            const [X,Y] = [node.x*W, node.y*H]
+            const d = x && y ? distance(x,y,X,Y) : Infinity
+            if (innerEdgeBoundary < d && d < outerEdgeBoundary) {
+                promptUserToSelectConnectionType
+                    (fromNode, node)
+                    
+                fromNode = null
+                return;
+            }
+        }
+        fromNode = null
         render()
     }
 
     canvas.onmousedown = onmousedown
     canvas.onmousemove = onmousemove
+    canvas.onmouseup   = onmouseup
 
     return {
         nodeRadius: nodeRadius,
@@ -196,7 +302,7 @@ const GraphCanvas = (_ => {
     }
 })()
 
-function prompUserToSelectConnectionType(
+function promptUserToSelectConnectionType(
     node1 : NuniGraphNode, node2 : NuniGraphNode) {
     if (node2.id === 0) {
         /* 
@@ -206,7 +312,6 @@ function prompUserToSelectConnectionType(
             of the entire graph through the node's intrinsic gain value, anymore.
         */
        G.connect(node1, node2, 'channel')
-       G.isPromptingUserToSelectConnectee = false
        return;
     }
     const prompt = D('connection-type-prompt')!
@@ -224,7 +329,6 @@ function prompUserToSelectConnectionType(
         {
             G.connect(node1, node2, param)
             prompt.style.display = 'none'
-            G.isPromptingUserToSelectConnectee = false
             GraphCanvas.render()
         }
         prompt.appendChild(btn)
