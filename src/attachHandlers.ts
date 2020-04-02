@@ -16,7 +16,7 @@ D('from-string-button')!.onclick = function() {
         G.fromString(input.value)
         input.value = ''
     } catch (e) {
-        input.value = 'invalid code'
+        input.value = 'Invalid code'
     }
 }
 
@@ -26,65 +26,21 @@ D('about')!.onclick = () =>
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 G.selectNodeFunc = () => {
     /** Injects HTML that allows manipulation of the selected node. **/
 
     const E = (x:string) => document.createElement(x)
     const node = G.selectedNode as NuniGraphNode
-
     const controls = D('injected-node-value-ui')!
-    controls.innerHTML = ''
 
-    D('node-options')!.style.gridTemplateColumns = node ?
-        '1fr 1fr' : '1fr'
+    controls.innerHTML = ''
+    D('node-options')!.style.gridTemplateColumns = node ? '1fr 1fr' : '1fr'
         
     if (!node) return;
 
     const subtypes = AudioNodeSubTypes[node.type]
     
-    if (subtypes.length > 0) {
+    if (subtypes.length > 0) { // show subtypes selector
         const select = E('select') as HTMLSelectElement
         for (const t of subtypes) {
             const op = E('option') as HTMLOptionElement
@@ -104,53 +60,45 @@ G.selectNodeFunc = () => {
         const box = E('div')
         box.classList.add('box')
 
-        const span = E('span')
-        span.innerHTML = param
+        const paramName = E('span')
+        paramName.innerHTML = param
 
-        const input = E('input') as HTMLInputElement
-        input.type = 'number'
-        input.classList.add('number-grab')
-        input.value = node.audioParamValues[param].toString()
-        input.oninput = function() {
-            G.selectedNode!.setValueOfParam(param, +input.value)
+        const paramValue = E('input') as HTMLInputElement
+        paramValue.type = 'number'
+        paramValue.classList.add('number-grab')
+        paramValue.value = node.audioParamValues[param].toString()
+        paramValue.oninput = function() {
+            node.setValueOfParam(param, +paramValue.value)
         }
-        let x = 0
-        input.onmousemove = function(e) {
-            if (e.buttons === 1) {
-                input.classList.add('number-grabbing')
-                const pos = e.clientX 
-                if (!x) x = pos
+        let lastPos = -1
+        paramValue.onmousemove = function(e) {
+            const leftClickHeld = e.buttons === 1
+            if (!leftClickHeld) return;
 
-                const delta = sliderFactor[param]
-                const [min,max] = AudioParamRanges[param]
-                
-                const newV = 
-                    Math.min(max, Math.max(min, 
-                        hasLinearSlider[param] ||
-                        G.selectedNode!.audioNode[param].value === 0 ? 
-                        // exponential won't work with 0 or panning
-                            node.audioParamValues[param] + (pos - x) * delta
-                        :
-                            (x > pos ? 1-delta : 1+delta) * node.audioParamValues[param] ))
+            const pos = e.clientX 
+            if (lastPos < 0) lastPos = pos
+            
+            const delta     = sliderFactor[param]
+            const [min,max] = AudioParamRanges[param]
+            const value     = node.audioParamValues[param]
+            const useLinear = hasLinearSlider[param] || value === 0
+            const factor    = useLinear ? pos - lastPos : lastPos > pos ? -value : value
+            const newValue  = clamp(min, value + factor * delta, max)
 
-                input.value = newV.toString()
-                G.selectedNode!.setValueOfParam(param, newV)
-                x = pos
-            }
-            else
-                input.classList.remove('number-grabbing')
+            paramValue.value = newValue.toString()
+            node.setValueOfParam(param, newValue)
+            lastPos = pos
         }
-        input.onmouseup = () => x = 0
+        paramValue.onmouseup = () => lastPos = -1
 
-        box.appendChild(span)
-        box.appendChild(input)
+        box.appendChild(paramName)
+        box.appendChild(paramValue)
         controls.appendChild(box)
     }
+
     const deleteNode = E('button')
     deleteNode.innerHTML = 'delete this node'
     deleteNode.style.float = 'right'
     deleteNode.onclick = _ => G.deleteSelectedNode()
     controls.append(deleteNode)
 }
-
-

@@ -1,6 +1,5 @@
 
 const GraphCanvas = (_ => {
-
     const canvas = D('nunigraph')! as HTMLCanvasElement
 
     const ctx = canvas.getContext('2d')!
@@ -8,9 +7,14 @@ const GraphCanvas = (_ => {
     const nodeRadius = 20
 
     const innerEdgeBoundary = nodeRadius / 1.5
+    
     const outerEdgeBoundary = nodeRadius * 1.1
 
     const triangleRadiusFactor = nodeRadius / 5.0
+
+    const [ nodeHoverColor ] = ['--hover-node'].map(s =>
+        getComputedStyle(document.documentElement).getPropertyValue(s))
+
 
     let fromNode = null as NuniGraphNode | null
 
@@ -42,11 +46,11 @@ const GraphCanvas = (_ => {
 
     const directedLine = (x1: number,y1: number, x2: number, y2: number, 
     officialOptions? : { fromId: number, toId: number, connectionType: ConnectionType, clientX?: number, clientY?: number } ) => {
+
         const m = (y1-y2)/(x1-x2)
         const angle = Math.atan(m)
         const dy = Math.sin(angle) * nodeRadius  
         const dx = Math.cos(angle) * nodeRadius
-
         const z = x1 >= x2 ? -1 : 1
         const w = !officialOptions ? 0 : 1
 
@@ -55,12 +59,12 @@ const GraphCanvas = (_ => {
             if (officialOptions) {
                 const { fromId, toId, connectionType, clientX, clientY } = officialOptions
                 const connectionId = `${fromId}:${toId}:${connectionType}`
-                if (!connectionId) throw 'what happened here'
+                
                 // set the data in the connections cache
                 const data = connectionsCache[connectionId] = connectionsCache[connectionId] || {
                     fromId: fromId,
                     toId: toId,
-                    connectionType: connectionType
+                    connectionType
                     }
                 data.x = X - dx * z * w / 3.0
                 data.y = Y - dy * z * w / 3.0
@@ -125,12 +129,10 @@ const GraphCanvas = (_ => {
             for (const i in idGroups) {
                 const groups = idGroups[i]!
                 const connections = groups.length
-                groups.forEach((data,i) => {
-                    const { id, connectionType } = data
+                groups.forEach(({ id, connectionType } ,i) => {
 
                     const a = nodes.find(node => node.id === +id1)!
                     const b = nodes.find(node => node.id === id)!
-                    
                     const [xa,ya] = [ a.x*W, a.y*H ]    // node a coords
                     const [xb,yb] = [ b.x*W, b.y*H ]    // node b coords
                     const mP = -(xa-xb)/(ya-yb)         // slope of perpendicular line
@@ -138,39 +140,47 @@ const GraphCanvas = (_ => {
                     const shift = nodeRadius / 2.0
                     const dy2 = Math.sin(theta) * shift  
                     const dx2 = Math.cos(theta) * shift
-
                     const I = i - (connections-1) / 2.0
                     const [x1,x2] = [xa + dx2 * I, xb + dx2 * I]
                     const [y1,y2] = [ya + dy2 * I, yb + dy2 * I]
                     
                     ctx.strokeStyle = ConnectionTypeColors[connectionType]
 
-                    directedLine(x1,y1,x2,y2, { fromId: +id1, toId: id, connectionType: connectionType, clientX, clientY })
+                    directedLine(x1,y1,x2,y2, { fromId: +id1, toId: id, connectionType, clientX, clientY })
                 })
             }
         }
     }
 
     const drawNodes = (nodes : NuniGraphNode[], H : number, W : number, 
-    options : { selectedNodes?: NuniGraphNode[], clientX?: number, clientY?: number }) => {
+    options : { selectedNodes?: NuniGraphNode[], clientX?: number, clientY?: number, buttons?: number }) => {
         const color = 'transparent'
-        const { selectedNodes, clientX, clientY } = options
+        const { selectedNodes, clientX, clientY, buttons } = options
         const [x,y] = [clientX, clientY]
+        canvas.style.cursor = 'default'
         for (const node of nodes) {
             
             const [X,Y] = [node.x * W, node.y * H]
             const d = x && y ? distance(x,y,X,Y) : Infinity
-            const aroundEdge = innerEdgeBoundary < d && d < outerEdgeBoundary
+            const innerBound = fromNode ? 0 : innerEdgeBoundary
+            const aroundEdge = innerBound <= d && d < outerEdgeBoundary
             const hoveringInside = d <= innerEdgeBoundary
+            const shouldHighlight = hoveringInside && !fromNode
             
             ctx.strokeStyle = aroundEdge ? 'white' : NodeTypeColors[node.type]
 
             ctx.fillStyle = node === G.selectedNode ? 'green' 
-                : hoveringInside ? 'rgba(0,255,255,0.15)' : color
+                : shouldHighlight ? nodeHoverColor : color
 
             if (selectedNodes) {
                 ctx.fillStyle = selectedNodes.indexOf(node) >= 0 ? 'purple' : 'yellow'
             }
+
+            if (shouldHighlight)
+                canvas.style.cursor = buttons === 1 ? 'grabbing' : 'grab' 
+                
+            else if (aroundEdge)
+                canvas.style.cursor = 'crosshair'
             
             circle(X, Y, nodeRadius)
 
@@ -220,7 +230,8 @@ const GraphCanvas = (_ => {
                 fromNode = G.nodes.find(node => node.id === fromId)!
                 const to = G.nodes.find(node => node.id === toId)!
                 delete connectionsCache[id]
-                G.disconnect(fromNode,to,connectionType)
+                G.disconnect(fromNode, to, connectionType)
+                return;
             }
         }
 
@@ -259,11 +270,15 @@ const GraphCanvas = (_ => {
             const H = canvas.height
             const node = G.selectedNode
             const [X,Y] = [node.x*W, node.y*H]
+
+            // INSTEAD OF THE FOLLOWING CRAP, WHY NOT JUST CACHE THE CANVAS WIDTH AND HEIGHT?!?!
+            // TODO
+            throw 'ticket on like 276' + underline_me_red()
             node.x = x/W
             node.y = y/H
         }
         
-        render({ clientX:x, clientY:y })
+        render({ clientX: x, clientY: y, buttons: e.buttons })
     }
 
     const onmouseup = function(e : MouseEvent) {
@@ -278,7 +293,7 @@ const GraphCanvas = (_ => {
             if (node === fromNode) continue
             const [X,Y] = [node.x*W, node.y*H]
             const d = x && y ? distance(x,y,X,Y) : Infinity
-            if (innerEdgeBoundary < d && d < outerEdgeBoundary) {
+            if (d < outerEdgeBoundary) {
                 promptUserToSelectConnectionType
                     (fromNode, node)
                     

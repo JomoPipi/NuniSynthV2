@@ -109,8 +109,8 @@ const hasLinearSlider : { [key in AudioParamString] : boolean } =
 const sliderFactor : { [key in AudioParamString] : number } = 
 {
     gain:      .02,
-    frequency: .1,
-    detune:    .1,
+    frequency: .02,
+    detune:    1.0,
     Q:         .05,
     pan:       .005,
     delayTime: .005
