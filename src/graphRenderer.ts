@@ -10,7 +10,7 @@ const GraphCanvas = (_ => {
     
     const outerEdgeBoundary = nodeRadius * 1.1
 
-    const triangleRadiusFactor = nodeRadius / 5.0
+    const triangleRadius = nodeRadius / 4.0
 
     const [ nodeHoverColor ] = ['--hover-node'].map(s =>
         getComputedStyle(document.documentElement).getPropertyValue(s))
@@ -45,48 +45,39 @@ const GraphCanvas = (_ => {
     }
 
     const directedLine = (x1: number,y1: number, x2: number, y2: number, 
-    officialOptions? : { fromId: number, toId: number, connectionType: ConnectionType, clientX?: number, clientY?: number } ) => {
+    cacheOptions? : { fromId: number, toId: number, connectionType: ConnectionType, clientX?: number, clientY?: number } ) => {
+    /// The inputs are the coordinates of the centers of nodes.
+    /// This function trims the length of the line before drawing it, as of right now.
 
         const m = (y1-y2)/(x1-x2)
         const angle = Math.atan(m)
         const dy = Math.sin(angle) * nodeRadius  
         const dx = Math.cos(angle) * nodeRadius
         const z = x1 >= x2 ? -1 : 1
-        const w = !officialOptions ? 0 : 1
+        const W = !cacheOptions ? 0 : 1
+        const [x,y,X,Y] = [x1+dx*z, y1+dy*z, x2-dx*z*W, y2-dy*z*W]
 
-        ;((x,y,X,Y) => {
-            let d = Infinity
-            if (officialOptions) {
-                const { fromId, toId, connectionType, clientX, clientY } = officialOptions
-                const connectionId = `${fromId}:${toId}:${connectionType}`
-                
-                // set the data in the connections cache
-                const data = connectionsCache[connectionId] = connectionsCache[connectionId] || {
-                    fromId: fromId,
-                    toId: toId,
-                    connectionType
-                    }
-                data.x = X - dx * z * w / 3.0
-                data.y = Y - dy * z * w / 3.0
+        ctx.fillStyle = 'cyan'
+        if (cacheOptions) {
+            const { fromId, toId, connectionType, clientX, clientY } = cacheOptions
+            const c_id = `${fromId}:${toId}:${connectionType}`
+            const data = 
+                connectionsCache[c_id] = connectionsCache[c_id] || {fromId,toId,connectionType}
 
-                if (clientX && clientY)
-                    d = distance(clientX,clientY, data.x, data.y)
+            data.x = X - dx * z * W / 3.0
+            data.y = Y - dy * z * W / 3.0
+
+            if (clientX && clientY && distance(clientX,clientY,data.x,data.y) < triangleRadius) {
+                ctx.fillStyle = 'white' // highlight the connection arrow because the user is hovering over it
             }
-            
-            line(x,y,X,Y)
-            
-            const highlight = d < nodeRadius / triangleRadiusFactor
-            ctx.fillStyle = highlight ? 'cyan' : 'white'
-            drawDirectionTriangle(X, Y, angle, x >= X)
-
-        })(x1 + dx * z,   y1 + dy * z,   x2 - dx * z * w,   y2 - dy * z * w)
+        }
+        
+        line(x,y,X,Y)
+        drawDirectionTriangle(X, Y, angle, x >= X)
     }
 
     const drawDirectionTriangle = 
         (x : number, y : number, angle: number, flipH : boolean) => {
-        /**
-         * Draws a directional triangle at the end of a line.
-         */
 
         const h = (flipH ? 1 : -1) * nodeRadius / 2.0
         const dt = 0.5
@@ -111,7 +102,8 @@ const GraphCanvas = (_ => {
         ctx.translate(-x,-y)
     }
 
-    const drawNodeConnections = (nodes : NuniGraphNode[], H : number, W : number, { clientX, clientY } : { clientX?: number, clientY?: number }) => {
+    const drawNodeConnections = (nodes : NuniGraphNode[], H : number, W : number, 
+    { clientX, clientY } : { clientX?: number, clientY?: number }) => {
 
         for (const id1 in G.oneWayConnections) {
 
@@ -136,8 +128,8 @@ const GraphCanvas = (_ => {
                     const [xa,ya] = [ a.x*W, a.y*H ]    // node a coords
                     const [xb,yb] = [ b.x*W, b.y*H ]    // node b coords
                     const mP = -(xa-xb)/(ya-yb)         // slope of perpendicular line
+                    const shift = nodeRadius / 2.0      // gap between parallel connections
                     const theta = Math.atan(mP)
-                    const shift = nodeRadius / 2.0
                     const dy2 = Math.sin(theta) * shift  
                     const dx2 = Math.cos(theta) * shift
                     const I = i - (connections-1) / 2.0
@@ -178,14 +170,12 @@ const GraphCanvas = (_ => {
 
             if (shouldHighlight)
                 canvas.style.cursor = buttons === 1 ? 'grabbing' : 'grab' 
-                
             else if (aroundEdge)
                 canvas.style.cursor = 'crosshair'
             
             circle(X, Y, nodeRadius)
 
             ctx.fillStyle = 'white'
-            
             ctx.fillText(
                 node.id === 0 ? 'master-gain' : node.type,
                 X - nodeRadius * 1.5, 
@@ -223,10 +213,10 @@ const GraphCanvas = (_ => {
         const nodes = G.nodes
         const [x,y] = [e.clientX, e.clientY]
 
-        // handle connection touch
+        // edit existing connection
         for (const id in connectionsCache) {
             const { x:X, y:Y, fromId, toId, connectionType } = connectionsCache[id]
-            if (distance(x,y,X,Y) < nodeRadius / triangleRadiusFactor) {
+            if (distance(x,y,X,Y) < triangleRadius) {
                 fromNode = G.nodes.find(node => node.id === fromId)!
                 const to = G.nodes.find(node => node.id === toId)!
                 delete connectionsCache[id]
@@ -242,8 +232,7 @@ const GraphCanvas = (_ => {
             const aroundEdge = innerEdgeBoundary < d && d < outerEdgeBoundary
 
             if (aroundEdge) { 
-                // in this case, we start make a connection,
-                // instead of selecting the node.
+                // start make a connection
                 G.unselectNode()
                 fromNode = node
                 return;
@@ -269,11 +258,9 @@ const GraphCanvas = (_ => {
             const W = canvas.width
             const H = canvas.height
             const node = G.selectedNode
-            const [X,Y] = [node.x*W, node.y*H]
 
-            // INSTEAD OF THE FOLLOWING CRAP, WHY NOT JUST CACHE THE CANVAS WIDTH AND HEIGHT?!?!
-            // TODO
-            throw 'ticket on like 276' + underline_me_red()
+            // INSTEAD OF THE FOLLOWING CRAP, WHY NOT JUST CACHE THE CANVAS WIDTH AND HEIGHT? 
+            // it's too low priority, for right now
             node.x = x/W
             node.y = y/H
         }
@@ -320,12 +307,8 @@ const GraphCanvas = (_ => {
 function promptUserToSelectConnectionType(
     node1 : NuniGraphNode, node2 : NuniGraphNode) {
     if (node2.id === 0) {
-        /* 
-            No prompt neede, in this case. We'll make it easy for the user
-            and only allow channel connections to the master gain node. If they 
-            oscillate the gain of it, they wont be able to lower the volume 
-            of the entire graph through the node's intrinsic gain value, anymore.
-        */
+        /// No prompt needed in this case. Only allow channel connections to the master gain node.
+        /// Allowing connections to someGain.gain can prevent it from being muted.
        G.connect(node1, node2, 'channel')
        return;
     }

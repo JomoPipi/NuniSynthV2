@@ -5,6 +5,7 @@
     
     <title> Nuni Synth v 0.2 </title>
 
+    <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="styles.css">
     
     <script src="dist/setup.js" defer></script>
@@ -26,29 +27,31 @@
 
         <div id="node-options">
 
+            <!-- LEFT -->
             <div class="stuff-box">
-                create new nodes <br>
-                <button id="create-gain"        class="new-node-btns"> gain         </button>
-                <button id="create-oscillator"  class="new-node-btns"> oscillator   </button>
-                <button id="create-filter"      class="new-node-btns"> filter       </button>
-                <button id="create-panner"      class="new-node-btns"> panner       </button>
-                <button id="create-delay"       class="new-node-btns"> delay        </button>    
+                <div class="left-side-row">
+                    create new nodes <br>
+                    <button id="create-gain"       > gain         </button>
+                    <button id="create-oscillator" > oscillator   </button>
+                    <button id="create-filter"     > filter       </button>
+                    <button id="create-panner"     > panner       </button>
+                    <button id="create-delay"      > delay        </button>    
+                </div>
            
-                <br>
+                <div class="left-side-row">
+                    <button id="copy-graph-button"> 
+                        copy this graph </button>
+                    <input type="text" id="graph-copy-output">
+                </div>
 
-                <button id="copy-graph-button"> 
-                    copy this graph </button>
-                <input type="text" id="graph-copy-output">
-
-                <br> 
-
-                <button id="from-string-button"> 
-                    new graph from code </button>
-                <input type="text" id="graph-copy-input" 
-                value="paste it here">
-
-                <br>
-                <div>
+                <div class="left-side-row">
+                    <button id="from-string-button"> 
+                        new graph from code </button>
+                    <input type="text" id="graph-copy-input" 
+                    value="paste it here">
+                </div>
+                
+                <div class="left-side-row">
                     <button id="choose-sampler-outputs"> 
                         choose sampler-keyboard outputs </button>
 
@@ -58,6 +61,7 @@
                 
             </div>
             
+            <!-- RIGHT -->
             <div class="stuff-box">
                 <span id="injected-node-value-ui"> </span>
             </div>
