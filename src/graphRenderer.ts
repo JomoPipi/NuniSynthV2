@@ -1,4 +1,6 @@
-
+/**
+ * The GraphCanvas draws the canvas, and allows the user to interact with it.
+ */
 const GraphCanvas = (_ => {
     const canvas = D('nunigraph')! as HTMLCanvasElement
 
@@ -197,7 +199,7 @@ const GraphCanvas = (_ => {
         drawNodeConnections(nodes, H, W, options)
         drawNodes(nodes, H, W, options)
 
-        if (fromNode) {
+        if (fromNode) { // draw the connection currently being made
             const { clientX, clientY } = options as any
             const [X,Y] = [fromNode.x*W, fromNode.y*H]
             
@@ -217,6 +219,7 @@ const GraphCanvas = (_ => {
         for (const id in connectionsCache) {
             const { x:X, y:Y, fromId, toId, connectionType } = connectionsCache[id]
             if (distance(x,y,X,Y) < triangleRadius) {
+                G.unselectNode()
                 fromNode = G.nodes.find(node => node.id === fromId)!
                 const to = G.nodes.find(node => node.id === toId)!
                 delete connectionsCache[id]
@@ -265,7 +268,7 @@ const GraphCanvas = (_ => {
             node.y = y/H
         }
         
-        render({ clientX: x, clientY: y, buttons: e.buttons })
+        render(e)
     }
 
     const onmouseup = function(e : MouseEvent) {

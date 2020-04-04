@@ -5,10 +5,11 @@ enum NodeTypes {
     OSC = 'oscillator',
     FILTER = 'filter',
     PANNER = 'panner',
-    DELAY = 'delay'
+    DELAY = 'delay',
+    SAMPLER = 'sampler'
 }
 
-type AudioParamString = 'gain' | 'frequency' | 'detune' | 'pan' | 'Q' | 'delayTime'
+type AudioParamString = 'gain' | 'frequency' | 'detune' | 'pan' | 'Q' | 'delayTime' | 'playbackRate'
 type ConnectionType = AudioParamString | 'channel'
 type ConnecteeDatum = { id : number, connectionType : ConnectionType }
 type ConnecteeData = ConnecteeDatum[]
@@ -19,7 +20,8 @@ const createAudioNode = {
     [NodeTypes.OSC]:    'createOscillator',
     [NodeTypes.FILTER]: 'createBiquadFilter',
     [NodeTypes.PANNER]: 'createStereoPanner',
-    [NodeTypes.DELAY]:  'createDelay'
+    [NodeTypes.DELAY]:  'createDelay',
+    [NodeTypes.SAMPLER]:'createSampler'
 }
 
 const MustBeStarted = {
@@ -27,7 +29,8 @@ const MustBeStarted = {
     [NodeTypes.OSC]:    true,
     [NodeTypes.FILTER]: false,
     [NodeTypes.PANNER]: false,
-    [NodeTypes.DELAY]:  false
+    [NodeTypes.DELAY]:  false,
+    [NodeTypes.SAMPLER]:false // <- complete lie, but..
 }
 
 const SupportsInputChannels = {
@@ -35,7 +38,8 @@ const SupportsInputChannels = {
     [NodeTypes.OSC]:    false,
     [NodeTypes.FILTER]: true,
     [NodeTypes.PANNER]: true,
-    [NodeTypes.DELAY]:  true
+    [NodeTypes.DELAY]:  true,
+    [NodeTypes.SAMPLER]:false
 }
 
 const AudioNodeParams = {
@@ -43,7 +47,8 @@ const AudioNodeParams = {
     [NodeTypes.OSC]:    ['frequency','detune']            as AudioParamString[],
     [NodeTypes.FILTER]: ['frequency','Q','gain','detune'] as AudioParamString[],
     [NodeTypes.PANNER]: ['pan']                           as AudioParamString[],
-    [NodeTypes.DELAY]:  ['delayTime']                     as AudioParamString[]
+    [NodeTypes.DELAY]:  ['delayTime']                     as AudioParamString[],
+    [NodeTypes.SAMPLER]:['playbackRate','detune']         as AudioParamString[]
 }
 
 const AudioNodeSubTypes = {
@@ -53,7 +58,8 @@ const AudioNodeSubTypes = {
         ["lowpass", "highpass", "bandpass", "lowshelf",
          "highshelf", "peaking", "notch", "allpass"],
     [NodeTypes.PANNER]: [],
-    [NodeTypes.DELAY]:  []
+    [NodeTypes.DELAY]:  [],
+    [NodeTypes.SAMPLER]:['loop','no loop']
 }
 
 const NodeTypeColors : { [key in NodeTypes] : string } =
@@ -62,56 +68,62 @@ const NodeTypeColors : { [key in NodeTypes] : string } =
     [NodeTypes.OSC]:    'blue',
     [NodeTypes.FILTER]: 'green',
     [NodeTypes.PANNER]: 'orange',
-    [NodeTypes.DELAY]:  'yellow'
+    [NodeTypes.DELAY]:  'yellow',
+    [NodeTypes.SAMPLER]:'cyan'
 }
 
 const ConnectionTypeColors : { [key in ConnectionType] : string } =
 {
-    channel:   'gray',
-    frequency: 'blue',
-    gain:      'red',
-    detune:    'green',
-    Q:         'violet',
-    pan:       'orange',
-    delayTime: 'yellow'
+    channel:      'gray',
+    frequency:    'blue',
+    gain:         'red',
+    detune:       'green',
+    Q:            'violet',
+    pan:          'orange',
+    delayTime:    'yellow',
+    playbackRate: 'cyan'
 }
 
 const DefaultParamValues : { [key in AudioParamString] : number } = 
 {
-    gain:      0.5,
-    frequency: 440,
-    detune:    0,
-    Q:         1,
-    pan:       0,
-    delayTime: 0.25
+    gain:         0.5,
+    frequency:    440,
+    detune:       0,
+    Q:            1,
+    pan:          0,
+    delayTime:    0.25,
+    playbackRate: 1
 }
 
 const AudioParamRanges : { [key in AudioParamString] : [number,number] } = 
 {
-    gain:      [0, 24000],
-    frequency: [0, 24000],
-    detune:    [-153600, 153600],
-    Q:         [0 ,1000],
-    pan:       [-1.0, 1.0],
-    delayTime: [0, 1]
+    gain:         [0, 24000],
+    frequency:    [0, 24000],
+    detune:       [-153600, 153600],
+    Q:            [0 ,1000],
+    pan:          [-1.0, 1.0],
+    delayTime:    [0, 1],
+    playbackRate: [0, 32],
 }
 
 const hasLinearSlider : { [key in AudioParamString] : boolean } = 
 {
-    gain:      true,
-    frequency: false,
-    detune:    true,
-    Q:         true,
-    pan:       true,
-    delayTime: false
+    gain:         true,
+    frequency:    false,
+    detune:       true,
+    Q:            true,
+    pan:          true,
+    delayTime:    false,
+    playbackRate: false
 }
 
 const sliderFactor : { [key in AudioParamString] : number } = 
 {
-    gain:      .02,
-    frequency: .02,
-    detune:    1.0,
-    Q:         .05,
-    pan:       .005,
-    delayTime: .005
+    gain:         .025,
+    frequency:    .125,
+    detune:       1.0,
+    Q:            .05,
+    pan:          .005,
+    delayTime:    .005,
+    playbackRate: 2**-6
 }
