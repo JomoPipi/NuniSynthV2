@@ -36,6 +36,7 @@ function disconnect(node1 : NuniGraphNode, destination : Destination) {
 
 
 
+
 class SamplerAudioParam {
     value: number
     connectors: AudioNode[]
@@ -51,24 +52,27 @@ class SamplerAudioParam {
 }
 
 
+const samplerBuffers : AudioBuffer[] = []
 
 
-
-const samplerBuffers = [...Array(9)].map(() => {
-    // Create an empty three-second stereo buffer at the sample rate of the AudioContext
-    const buffer = audioCtx.createBuffer(2, audioCtx.sampleRate * 3, audioCtx.sampleRate);
-    
-    for (let channel = 0; channel < buffer.numberOfChannels; channel++) {   
-        const nowBuffering = buffer.getChannelData(channel);
-        for (let i = 0; i < buffer.length; i++) {
-            nowBuffering[i] = 
-                // Math.sin(Math.sqrt(i) ** 1.618 / 8.0) 
-                Math.sin(i / 32.0)
-                // lots of cool things can be done, here.
+function initBuffers(n : number, ctx : AudioContext2) {
+    for (let i = 0; i < n; i++) {
+        const buffer = ctx.createBuffer(2, ctx.sampleRate * 3, ctx.sampleRate)
+        for (let channel = 0; channel < buffer.numberOfChannels; channel++) {  
+            const nowBuffering = buffer.getChannelData(channel);
+            for (let i = 0; i < buffer.length; i++) {
+                nowBuffering[i] = 
+                    // Math.sin(Math.sqrt(i) ** 1.618 / 8.0) 
+                    Math.sin(i / 32.0)
+                    // lots of cool things can be done, here.
+            }
         }
+        samplerBuffers.push(buffer)
     }
-    return buffer
-})
+}
+
+
+
 
 class Sampler {
     /**
@@ -83,18 +87,19 @@ class Sampler {
     detune: SamplerAudioParam
     sources: Indexible
     bufferIndex: number
-    buffer: AudioBuffer
     loop: boolean
-    constructor() {
+    ctx: AudioContext2
+    constructor(ctx : AudioContext2) {
         this.connectees = []
         this.bufferIndex = 0
         this.loop = false
-        this.buffer = samplerBuffers[this.bufferIndex]
         this.playbackRate = new SamplerAudioParam()
         this.detune = new SamplerAudioParam()
         this.type = 'loop'
+        this.ctx = ctx
+
         this.sources = keys.map((key,i) => {
-            const src = audioCtx.createBufferSource()
+            const src = ctx.createBufferSource()
             src.playbackRate.value =  TR2 ** (i - 12)
             return src
             })
@@ -110,7 +115,7 @@ class Sampler {
     clearBuffer(i : number) {
         const sources = this.sources
         sources[i].disconnect()
-        sources[i] = audioCtx.createBufferSource()
+        sources[i] = this.ctx.createBufferSource()
     
         sources[i].playbackRate.value = 
             TR2 ** (i - 12) * this.playbackRate.value
@@ -167,7 +172,6 @@ class Sampler {
     }
 
 }
-
 
 document.onkeydown = function(e) {
     keyStates[String.fromCharCode(e.keyCode)] = true
