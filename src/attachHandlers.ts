@@ -26,7 +26,20 @@ Object.values(NodeTypes).forEach(type => {
 D('about')!.onclick = () =>
     window.open('https://developer.mozilla.org/en-US/docs/Web/API/AudioNode/connect','_blank')
 
+// change buffer index
+;['up','down'].forEach((s,i) => {
+    D('buffer-index-'+s)!.onclick = () => {
+        const v = currentBufferIndex = clamp(0, currentBufferIndex + Math.sign(.5 - i), nBuffers-1)
+        D('buffer-index')!.innerHTML = v.toString()
 
+        G.nodes.filter(node => {
+            if (node.audioNode instanceof SamplerNode) {
+                node.audioNode.bufferIndex = v
+                node.audioNode.refresh()
+            }
+        })
+    }
+})
 
 
 // Inject (or hide) HTML that allows manipulation of the selected node
@@ -39,6 +52,9 @@ G.selectNodeFunc = () => {
     if (!node) return;
 
     controls.appendChild(showSubtypes(node))
+
+    if (node.audioNode instanceof SamplerNode)
+        controls.appendChild(samplerControls(node.audioNode))
     
     controls.appendChild(exposeAudioParams(node))
 
@@ -81,6 +97,31 @@ function insertOptions(select : HTMLSelectElement, options : string[]) {
 
 
 
+function samplerControls(audioNode : SamplerNode) {
+    const box = E('div')
+    // box.classList.add('box')
+    box.innerHTML = '<span> buffer </span>'
+    const value = E('span'); value.innerHTML = audioNode.bufferIndex.toString()
+    box.appendChild(value)
+
+    ;['-','+'].forEach((op,i) => {
+        const btn = E('button'); btn.innerHTML = op
+        btn.onclick = () => {
+            const v = clamp(0, audioNode.bufferIndex + Math.sign(i - .5), nBuffers-1)
+
+            value.innerHTML = v.toString()
+            audioNode.bufferIndex = v
+            audioNode.refresh()
+        }
+        box.appendChild(btn)
+    })
+
+    return box
+}
+
+
+
+
 function exposeAudioParams(node : NuniGraphNode) : Node {
     const allParams = E('div')
     for (const param of AudioNodeParams[node.type as NodeTypes]) {
@@ -102,7 +143,7 @@ function exposeAudioParams(node : NuniGraphNode) : Node {
 
 
 
-function createUpdateParamFunc(node : NuniGraphNode, param : AudioParamString) {
+function createUpdateParamFunc(node : NuniGraphNode, param : AudioParams) {
     return (delta : number) : string => {
 
         const amount    = sliderFactor[param]

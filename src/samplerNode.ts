@@ -1,69 +1,76 @@
 
 
-type Destination = AudioNode | AudioParam | SamplerAudioParam
-
 
 
 const TR2 = 2 ** (1.0 / 12.0)
-const keys = [...`1234567890qwertyuiopasdfghjklzxcvbnm`.toUpperCase()]
-const keyStates = keys.reduce((a : {[v:string]:boolean},v) => (a[v] = false, a), {})
+
+const keys = ([] as number[]).concat(...[
+    '1234567890',
+    'qwertyuiop',
+    'asdfghjkl',
+    'zxcvbnm'
+    ].map((s,i) => 
+        [...s].map(c=>c.toUpperCase().charCodeAt(0))
+            // .concat([
+            //     [189,187],
+            //     [219,221],
+            //     [186,222],
+            //     [188,190,191]
+            // ][i])
+        ))
+
+const keyStates = keys.reduce((a : {[v:number]:boolean},v) => (a[v] = false, a), {})
 
 let lastKeyStates : string
 
-
-
-
-const superConnect = AudioNode.prototype.connect
-AudioNode.prototype.connect = function (destination : Destination) {
-    if (destination instanceof SamplerAudioParam) 
-    {
-        destination.connectors.push(this)
-    } else {
-        superConnect.call(this, destination as AudioParam)
-    }
-    return destination as AudioNode
+const refreshSamplers = () => {
+    G.nodes.filter(node => {
+        if (node.audioNode instanceof SamplerNode) {
+            node.audioNode.refresh()
+        }
+    })
 }
 
-function disconnect(node1 : NuniGraphNode, destination : Destination) {
-    if (destination instanceof SamplerAudioParam) {
-        destination.connectors.splice(
-            destination.connectors.findIndex(n => 
-                n === node1.audioNode as AudioNode), 1)
-    }
-    else 
-        node1.audioNode.disconnect(destination)
-}
+class SamplerNodeAudioParam {
+    /**
+     * AudioParams that are compatible with the sampler
+     */
+    src: ConstantSourceNode
+    name: string
 
-
-
-
-class SamplerAudioParam {
-    value: number
-    connectors: AudioNode[]
-    
-    constructor() {
-        this.value = 1
-        this.connectors = []
+    constructor(name : string, ctx: AudioContext) {
+        this.name = name
+        this.src = ctx.createConstantSource()
+        this.src.start(audioCtx.currentTime)
     }
     
     setValueAtTime(value: number, time:never) {
-        this.value = value
+        this.src.offset.value = value
     }
 }
 
 
 const samplerBuffers : AudioBuffer[] = []
 
-
 function initBuffers(n : number, ctx : AudioContext2) {
-    for (let i = 0; i < n; i++) {
+    for (let x = 0; x < n; x++) {
         const buffer = ctx.createBuffer(2, ctx.sampleRate * 3, ctx.sampleRate)
         for (let channel = 0; channel < buffer.numberOfChannels; channel++) {  
             const nowBuffering = buffer.getChannelData(channel);
             for (let i = 0; i < buffer.length; i++) {
-                nowBuffering[i] = 
-                    // Math.sin(Math.sqrt(i) ** 1.618 / 8.0) 
-                    Math.sin(i / 32.0)
+                nowBuffering[i] = [
+                    Math.sin(i / 32.0),
+                    Math.sin(i / 32.0 + Math.sin(i / (channel+1))),
+                    Math.sin(i / Math.tan(i/3.0)),
+                    Math.sin(i / Math.tan(i/3.0)) - Math.cos(i / 32.0),
+                    
+                    Math.sin(i / Math.sqrt(i/3.0)) - Math.cos(i ** 0.3),
+                    Math.sin(i / Math.sqrt(i/3.0)) * Math.cos(i ** 0.3),
+                    (Math.sin(i / Math.sqrt(i/3.0))+1) ** Math.cos(i ** 0.3),
+                    Math.cos(i / Math.sqrt(i/3.0)) ** (Math.cos(i ** 0.3)/2.0+0.25),
+                    Math.cos(i / Math.sqrt(i/30.0)) ** (Math.cos(i ** 0.03)),
+                    Math.sin(i / 32.0) + Math.sin(i / 512.0),
+                ][x]
                     // lots of cool things can be done, here.
             }
         }
@@ -74,70 +81,64 @@ function initBuffers(n : number, ctx : AudioContext2) {
 
 
 
-class Sampler {
+class SamplerNode {
     /**
      * audioBufferSourceNodes need to get disconnected
-     * and reconnected as notes get played.
-     * The sampler will take care of this business
-     * while staying connected to the graph.
+     * as keys get pressed/unpressed.
+     * The sampler will take care of this business internally
+     * while keeping the node connected to the graph.
      */
 
     connectees: Destination[]
-    playbackRate: SamplerAudioParam
-    detune: SamplerAudioParam
+    playbackRate: SamplerNodeAudioParam
+    detune: SamplerNodeAudioParam
     sources: Indexible
     bufferIndex: number
     loop: boolean
     ctx: AudioContext2
+    type: string
+    
     constructor(ctx : AudioContext2) {
         this.connectees = []
         this.bufferIndex = 0
         this.loop = false
-        this.playbackRate = new SamplerAudioParam()
-        this.detune = new SamplerAudioParam()
+        this.detune = new SamplerNodeAudioParam('detune', ctx)
+        this.playbackRate = new SamplerNodeAudioParam('playbackRate', ctx)
         this.type = 'loop'
         this.ctx = ctx
 
-        this.sources = keys.map((key,i) => {
+        this.sources = keys.map((_,i) => {
             const src = ctx.createBufferSource()
             src.playbackRate.value =  TR2 ** (i - 12)
+            this.detune.src.connect(src.detune)
+            this.playbackRate.src.connect(src.playbackRate)
             return src
             })
-    }
-
-    set type(t: string) {
-        this.loop = t === 'loop'
-    }
-    get type() {
-        return this.loop ? 'loop' : 'no loop'
+        
+        this.refresh()
     }
 
     clearBuffer(i : number) {
         const sources = this.sources
+        if (!sources[i].isOn) return;
         sources[i].disconnect()
+
         sources[i] = this.ctx.createBufferSource()
-    
+
         sources[i].playbackRate.value = 
-            TR2 ** (i - 12) * this.playbackRate.value
+            TR2 ** (i - 12) * this.playbackRate.src.offset.value
             
-        this.playbackRate.connectors
-            .forEach((c : AudioNode) =>
-                c.connect(sources[i].playbackRate))
+        sources[i].detune.value = this.detune.src.offset.value
 
-        sources[i].detune.value = 
-            this.detune.value
-
-        this.detune.connectors
-            .forEach((c : AudioNode) =>
-                c.connect(sources[i].detune))
-
+        this.playbackRate.src.connect(sources[i].playbackRate)
+        this.detune.src.connect(sources[i].detune)
 
         sources[i].buffer = samplerBuffers[this.bufferIndex]
-        sources[i].loop = this.loop
-        sources[i].start()
+        sources[i].loop = this.type === 'loop'
+        sources[i].start(audioCtx.currentTime)
     }
 
-    newBuffer(_:any, i:number) {
+    connectBuffer(_:any, i:number) {
         const src = this.sources[i] 
 
         this.connectees.forEach(destination => 
@@ -157,8 +158,15 @@ class Sampler {
 
     noteOn(n : number) {
         if (this.sources[n].isOn) return;
-        this.newBuffer(0,n)
+        this.connectBuffer(0,n)
         this.sources[n].isOn = true
+    }
+
+    refresh() {
+        keys.forEach((key,i) => {
+            this.sources[i].isOn = true
+            this.clearBuffer(i)
+        })
     }
 
     update() {
@@ -167,32 +175,27 @@ class Sampler {
                 this.noteOn(i)
             } else{
                 this.clearBuffer(i)
-            }
+            } 
         })
     }
 
+    switchBuffer(i : number) {
+        this.bufferIndex = i
+        this.sources.forEach((src : AudioBufferSourceNode) => 
+            src.buffer = samplerBuffers[this.bufferIndex])
+    }
 }
 
-document.onkeydown = function(e) {
-    keyStates[String.fromCharCode(e.keyCode)] = true
-    const states = Object.keys(keyStates).reduce((a,v,i) => a + (keyStates[v] ? v : ''), '')
-    if (states === lastKeyStates) {
-        lastKeyStates = states
-        return;
+document.onkeydown = updateKeys(true)
+document.onkeyup = updateKeys(false)
+
+function updateKeys(on : boolean) {
+    return function(e : KeyboardEvent) {
+        keyStates[e.keyCode] = on
+        G.nodes.forEach(node => {
+            if (node.audioNode instanceof SamplerNode) {
+                node.audioNode.update()
+            }
+        })
     }
-    lastKeyStates = states
-    G.nodes.forEach(node => {
-        if (node.audioNode instanceof Sampler) {
-            node.audioNode.update()
-        }
-    })
-}
-document.onkeyup = function(e) {
-    lastKeyStates = ''
-    keyStates[String.fromCharCode(e.keyCode)] = false
-    G.nodes.forEach(node => {
-        if (node.audioNode instanceof Sampler) {
-            node.audioNode.update()
-        }
-    })
 }

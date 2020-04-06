@@ -1,5 +1,7 @@
 
-D('record')!.onclick = () => recordTo(0)
+let currentBufferIndex = 0
+
+D('record')!.onclick = () => recordTo(currentBufferIndex)
 
 function errStuff(err:string) {
     D('record')!.innerHTML = err
@@ -33,7 +35,18 @@ function recordTo(index : number) {
             const audioBlob = new Blob(audioChunks);
             audioBlob.arrayBuffer().then(arraybuffer => {
                 audioCtx.decodeAudioData(arraybuffer, (audiobuffer : AudioBuffer) => {
+
                     samplerBuffers[index] = audiobuffer
+
+                    // refreshSamplers()
+                    G.nodes.forEach(node => {
+                        const an = node.audioNode
+                        if (an instanceof SamplerNode && an.bufferIndex === index) {
+                            // an.switchBuffer(index)
+                            an.refresh()
+                        }
+                    })
+
                     D('record')!.classList.remove('recording')
                 },
                     errStuff)

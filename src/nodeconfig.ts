@@ -9,8 +9,8 @@ enum NodeTypes {
     SAMPLER = 'sampler'
 }
 
-type AudioParamString = 'gain' | 'frequency' | 'detune' | 'pan' | 'Q' | 'delayTime' | 'playbackRate'
-type ConnectionType = AudioParamString | 'channel'
+type AudioParams = 'gain' | 'frequency' | 'detune' | 'pan' | 'Q' | 'delayTime' | 'playbackRate'
+type ConnectionType = AudioParams | 'channel'
 type ConnecteeDatum = { id : number, connectionType : ConnectionType }
 type ConnecteeData = ConnecteeDatum[]
 
@@ -43,12 +43,12 @@ const SupportsInputChannels = {
 }
 
 const AudioNodeParams = {
-    [NodeTypes.GAIN]:   ['gain']                          as AudioParamString[],
-    [NodeTypes.OSC]:    ['frequency','detune']            as AudioParamString[],
-    [NodeTypes.FILTER]: ['frequency','Q','gain','detune'] as AudioParamString[],
-    [NodeTypes.PANNER]: ['pan']                           as AudioParamString[],
-    [NodeTypes.DELAY]:  ['delayTime']                     as AudioParamString[],
-    [NodeTypes.SAMPLER]:['playbackRate','detune']         as AudioParamString[]
+    [NodeTypes.GAIN]:   ['gain']                          as AudioParams[],
+    [NodeTypes.OSC]:    ['frequency','detune']            as AudioParams[],
+    [NodeTypes.FILTER]: ['frequency','Q','gain','detune'] as AudioParams[],
+    [NodeTypes.PANNER]: ['pan']                           as AudioParams[],
+    [NodeTypes.DELAY]:  ['delayTime']                     as AudioParams[],
+    [NodeTypes.SAMPLER]:['playbackRate','detune']         as AudioParams[]
 }
 
 const AudioNodeSubTypes = {
@@ -84,7 +84,7 @@ const ConnectionTypeColors : { [key in ConnectionType] : string } =
     playbackRate: 'cyan'
 }
 
-const DefaultParamValues : { [key in AudioParamString] : number } = 
+const DefaultParamValues : { [key in AudioParams] : number } = 
 {
     gain:         0.5,
     frequency:    440,
@@ -95,7 +95,7 @@ const DefaultParamValues : { [key in AudioParamString] : number } =
     playbackRate: 1
 }
 
-const AudioParamRanges : { [key in AudioParamString] : [number,number] } = 
+const AudioParamRanges : { [key in AudioParams] : [number,number] } = 
 {
     gain:         [0, 24000],
     frequency:    [0, 24000],
@@ -106,7 +106,7 @@ const AudioParamRanges : { [key in AudioParamString] : [number,number] } =
     playbackRate: [0, 32],
 }
 
-const hasLinearSlider : { [key in AudioParamString] : boolean } = 
+const hasLinearSlider : { [key in AudioParams] : boolean } = 
 {
     gain:         true,
     frequency:    false,
@@ -117,7 +117,7 @@ const hasLinearSlider : { [key in AudioParamString] : boolean } =
     playbackRate: false
 }
 
-const sliderFactor : { [key in AudioParamString] : number } = 
+const sliderFactor : { [key in AudioParams] : number } = 
 {
     gain:         .025,
     frequency:    .125,

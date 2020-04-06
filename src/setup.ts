@@ -2,6 +2,8 @@
  * NuniSynth
  */
 
+type Destination = AudioNode | AudioParam | SamplerNodeAudioParam
+
 type Indexible = { [param : string] : any }
 
 const log = console.log
@@ -16,6 +18,8 @@ const distance = (x:number,y:number,x2:number,y2:number) => ((x-x2)**2 + (y-y2)*
 
 const clamp = (min: number, value: number, max: number) => Math.max(Math.min(max,value),min)
 
+const simple_undos : string[] = []
+const simple_redos : string[] = []
 
 class AudioContext2 extends AudioContext {
 
@@ -24,9 +28,30 @@ class AudioContext2 extends AudioContext {
     }
 
     createSampler() {
-        return new Sampler(this)
+        return new SamplerNode(this)
     }
 }
 
 const audioCtx = new AudioContext2() as Indexible
-initBuffers(9, audioCtx as AudioContext2) 
+const nBuffers = 10
+initBuffers(nBuffers, audioCtx as AudioContext2) 
+
+
+function connect_node_to_destination(node1 : NuniGraphNode, destination : Destination) {
+    if (destination instanceof SamplerNodeAudioParam) 
+    {
+        node1.audioNode.connect(destination.src.offset)
+    } else {
+        node1.audioNode.connect(destination)
+    }
+    return destination
+}
+
+
+function disconnect_node_from_destination(node1 : NuniGraphNode, destination : Destination) {
+    if (destination instanceof SamplerNodeAudioParam) {
+        node1.audioNode.disconnect(destination.src.offset)
+    } else {
+        node1.audioNode.disconnect(destination)
+    }
+}

@@ -119,8 +119,7 @@ class NuniGraph {
         }
 
         const destination = this.setConnection(connectionType)(node2.audioNode)
-        
-        node1.audioNode.connect(destination)
+        connect_node_to_destination(node1, destination)
         
         const destinationData = {
             id: node2.id, 
@@ -141,7 +140,7 @@ class NuniGraph {
 
         const destination = this.setConnection(connectionType)(node2.audioNode)
         // node1.audioNode.disconnect(destination)
-        disconnect(node1, destination)
+        disconnect_node_from_destination(node1, destination)
     }
 
     selectNodeFunc () {}
