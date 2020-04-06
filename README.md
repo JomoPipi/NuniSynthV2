@@ -1,6 +1,6 @@
 # Welcome to NuniSynth!
 
-Let's play with **NuniSynth**, an audio routing graph synthesizer based on the [Web Audio Api](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API).
+Let's play with **NuniSynth**, an audio routing graph synthesizer based on the [Web Audio Api](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API). Working demo: https://demo-jet.now.sh
 
 Linking together basic **audio nodes** gives us the flexibility to create various complex audio functions with dynamic effects.
 
