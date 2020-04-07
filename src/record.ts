@@ -38,11 +38,9 @@ function recordTo(index : number) {
 
                     samplerBuffers[index] = audiobuffer
 
-                    // refreshSamplers()
                     G.nodes.forEach(node => {
                         const an = node.audioNode
                         if (an instanceof SamplerNode && an.bufferIndex === index) {
-                            // an.switchBuffer(index)
                             an.refresh()
                         }
                     })

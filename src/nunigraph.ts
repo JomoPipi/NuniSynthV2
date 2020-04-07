@@ -26,7 +26,7 @@ class NuniGraphNode {
         this.y = y
 
         this.audioNode = audioCtx[createAudioNode[type]]()
-        this.audioNodeType = audioNodeType || this.audioNode.type
+        this.audioNodeType = audioNodeType || this.audioNode.type // is this needed?
         this.audioNode.type = this.audioNodeType
         this.audioParamValues = audioParamValues
 

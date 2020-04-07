@@ -59,7 +59,7 @@ const AudioNodeSubTypes = {
          "highshelf", "peaking", "notch", "allpass"],
     [NodeTypes.PANNER]: [],
     [NodeTypes.DELAY]:  [],
-    [NodeTypes.SAMPLER]:['loop','no loop']
+    [NodeTypes.SAMPLER]:[]
 }
 
 const NodeTypeColors : { [key in NodeTypes] : string } =

@@ -11,41 +11,30 @@ const keys = ([] as number[]).concat(...[
     'zxcvbnm'
     ].map((s,i) => 
         [...s].map(c=>c.toUpperCase().charCodeAt(0))
-            // .concat([
-            //     [189,187],
-            //     [219,221],
-            //     [186,222],
-            //     [188,190,191]
-            // ][i])
+            .concat([
+                [189,187],
+                [219,221],
+                [186,222],
+                [188,190,191]
+            ][i]) // won't work on FireFox. should I care?
         ))
 
-const keyStates = keys.reduce((a : {[v:number]:boolean},v) => (a[v] = false, a), {})
+const keyset = new Set(keys)
 
-let lastKeyStates : string
-
-const refreshSamplers = () => {
-    G.nodes.filter(node => {
-        if (node.audioNode instanceof SamplerNode) {
-            node.audioNode.refresh()
-        }
-    })
-}
 
 class SamplerNodeAudioParam {
     /**
      * AudioParams that are compatible with the sampler
      */
     src: ConstantSourceNode
-    name: string
 
-    constructor(name : string, ctx: AudioContext) {
-        this.name = name
+    constructor(name: string, ctx: AudioContext) {
         this.src = ctx.createConstantSource()
-        this.src.start(audioCtx.currentTime)
+        this.src.start(ctx.currentTime)
     }
     
     setValueAtTime(value: number, time:never) {
-        this.src.offset.value = value
+        this.src.offset.value = value - 1
     }
 }
 
@@ -59,7 +48,7 @@ function initBuffers(n : number, ctx : AudioContext2) {
             const nowBuffering = buffer.getChannelData(channel);
             for (let i = 0; i < buffer.length; i++) {
                 nowBuffering[i] = [
-                    Math.sin(i / 32.0),
+                    Math.sin(i / 32.0) * 0.75 + Math.sin(i / 128.0 * channel) * 0.5 + Math.cos(i / (1000/(i**0.9*9+1))) * 0.3,
                     Math.sin(i / 32.0 + Math.sin(i / (channel+1))),
                     Math.sin(i / Math.tan(i/3.0)),
                     Math.sin(i / Math.tan(i/3.0)) - Math.cos(i / 32.0),
@@ -95,107 +84,106 @@ class SamplerNode {
     sources: Indexible
     bufferIndex: number
     loop: boolean
+    active: boolean
     ctx: AudioContext2
-    type: string
+    ADSRs: { [key:number] : GainNode }
     
     constructor(ctx : AudioContext2) {
         this.connectees = []
         this.bufferIndex = 0
-        this.loop = false
+        this.loop = true
+        this.active = true
         this.detune = new SamplerNodeAudioParam('detune', ctx)
         this.playbackRate = new SamplerNodeAudioParam('playbackRate', ctx)
-        this.type = 'loop'
         this.ctx = ctx
-
-        this.sources = keys.map((_,i) => {
+                
+        this.ADSRs = keys.reduce((a,key) => {
+            a[key] = ctx.createGain()  
+            return a
+        }, {} as Indexible)
+        
+        this.sources = keys.reduce((sources,key,i) => {
             const src = ctx.createBufferSource()
-            src.playbackRate.value =  TR2 ** (i - 12)
+            src.detune.value = (i-12) * 100
             this.detune.src.connect(src.detune)
             this.playbackRate.src.connect(src.playbackRate)
-            return src
-            })
+            sources[key] = src
+            return sources
+        }, {} as any)
         
         this.refresh()
     }
 
-    clearBuffer(i : number) {
+    prepareBuffer(key : number) {
         const sources = this.sources
-        if (!sources[i].isOn) return;
-        sources[i].disconnect()
+        const oldDetune = sources[key].detune.value
+        
+        sources[key].disconnect()
+        sources[key] = this.ctx.createBufferSource()
+        sources[key].detune.value = oldDetune
 
-        sources[i] = this.ctx.createBufferSource()
+        this.playbackRate.src.connect(sources[key].playbackRate)
+        this.detune.src.connect(sources[key].detune)
 
-        sources[i].playbackRate.value = 
-            TR2 ** (i - 12) * this.playbackRate.src.offset.value
-            
-        sources[i].detune.value = this.detune.src.offset.value
+        sources[key].buffer = samplerBuffers[this.bufferIndex]
+        sources[key].loop = this.loop
 
-        this.playbackRate.src.connect(sources[i].playbackRate)
-        this.detune.src.connect(sources[i].detune)
+        sources[key].connect(this.ADSRs[key]) ////
 
-        sources[i].buffer = samplerBuffers[this.bufferIndex]
-        sources[i].loop = this.type === 'loop'
-        sources[i].start(audioCtx.currentTime)
+        // this.connectees.forEach(destination =>  
+        //     sources[key].connect(destination))
     }
 
-    connectBuffer(_:any, i:number) {
-        const src = this.sources[i] 
-
-        this.connectees.forEach(destination => 
-            src.connect(destination))
+    connectBuffer(_:any, key:number) {
+        const src = this.sources[key] 
+        src.start(this.ctx.currentTime)
             
         src.isOn = true
     }
 
     connect(destination : Destination) {
-        this.connectees.push(destination)
+        // this.connectees.push(destination)
+        for (const key in this.ADSRs) {
+            if (destination instanceof SamplerNodeAudioParam) {////
+                this.ADSRs[key].connect(destination.src.offset)////
+            } else {////
+                this.ADSRs[key].connect(destination as any)////
+            }////
+        }////
+        this.refresh()
     }
 
     disconnect(destination : Destination) {
-        this.connectees.splice(
-            this.connectees.indexOf(destination), 1)
+        // this.connectees.splice(
+        //     this.connectees.indexOf(destination), 1)
+        for (const key in this.ADSRs) {////
+            if (destination instanceof SamplerNodeAudioParam) {////
+                this.ADSRs[key].disconnect(destination.src.offset)////
+            } else {////
+                this.ADSRs[key].disconnect(destination as any)////
+            }////
+        }////
+        this.refresh()
     }
 
-    noteOn(n : number) {
-        if (this.sources[n].isOn) return;
-        this.connectBuffer(0,n)
-        this.sources[n].isOn = true
+    noteOn(key : number) {
+        if (this.sources[key].isOn) return;
+        ADSR.trigger(this.ADSRs[key].gain, this.ctx.currentTime)
+        this.connectBuffer(0,key)
+    }
+    noteOff(key : number) {
+        if (this.sources[key].isOn) {
+            ADSR.untrigger(this.ADSRs[key].gain, this.ctx.currentTime) //// ADSR release doesn't seem to do much, here.
+            this.prepareBuffer(key)
+        }
     }
 
     refresh() {
-        keys.forEach((key,i) => {
-            this.sources[i].isOn = true
-            this.clearBuffer(i)
-        })
+        keys.forEach((key) => 
+            this.prepareBuffer(key))
     }
 
-    update() {
-        keys.forEach((key,i) => {
-            if (keyStates[key]) {
-                this.noteOn(i)
-            } else{
-                this.clearBuffer(i)
-            } 
-        })
-    }
-
-    switchBuffer(i : number) {
-        this.bufferIndex = i
-        this.sources.forEach((src : AudioBufferSourceNode) => 
-            src.buffer = samplerBuffers[this.bufferIndex])
-    }
-}
-
-document.onkeydown = updateKeys(true)
-document.onkeyup = updateKeys(false)
-
-function updateKeys(on : boolean) {
-    return function(e : KeyboardEvent) {
-        keyStates[e.keyCode] = on
-        G.nodes.forEach(node => {
-            if (node.audioNode instanceof SamplerNode) {
-                node.audioNode.update()
-            }
-        })
+    update(keydown : boolean, key : number) {
+        keydown ? this.noteOn(key) : this.noteOff(key)
     }
 }
