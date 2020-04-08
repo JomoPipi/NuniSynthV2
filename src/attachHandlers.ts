@@ -115,7 +115,7 @@ function samplerControls(audioNode : SamplerNode) {
         }
         box.appendChild(btn)
     })
-
+ 
     ;['active','loop'].forEach(text => {
         const btn = E('button'); btn.innerHTML = text
         btn.classList.toggle('selected',(audioNode as Indexible)[text])

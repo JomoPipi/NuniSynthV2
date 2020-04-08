@@ -6,6 +6,7 @@ document.onkeyup = updateKeys(false)
 function updateKeys(keydown : boolean) {
     
     return function(e : KeyboardEvent) { 
+        // log(e.keyCode) 
         if (keyset.has(e.keyCode)){ 
             G.nodes.forEach(node => {
                 const an = node.audioNode

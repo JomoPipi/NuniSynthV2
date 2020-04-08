@@ -2,6 +2,7 @@
 const samplerBuffers : AudioBuffer[] = []
 
 function initBuffers(n : number, ctx : AudioContext2) {
+    samplerBuffers.length = 0
     for (let x = 0; x < n; x++) {
         const buffer = ctx.createBuffer(2, ctx.sampleRate * 3, ctx.sampleRate)
         for (let channel = 0; channel < buffer.numberOfChannels; channel++) {  
@@ -143,7 +144,7 @@ class SamplerNode {
 
     connect(destination : Destination) {
         // this.connectees.push(destination)
-        
+
         for (const key in this.ADSRs) {
             if (destination instanceof SamplerNodeAudioParam) {
                 this.ADSRs[key].connect(destination.src.offset)

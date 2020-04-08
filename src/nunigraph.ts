@@ -18,6 +18,7 @@ class NuniGraphNode {
             audioNodeType: string
         } ) {
 
+        // change display: {x,y} to just x,y
         const { display: {x,y}, audioParamValues, audioNodeType } = options
 
         this.id = id

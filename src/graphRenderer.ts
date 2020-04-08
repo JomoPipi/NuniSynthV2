@@ -51,6 +51,7 @@ const GraphCanvas = (_ => {
     /// The inputs are the coordinates of the centers of nodes.
     /// This function trims the length of the line before drawing it, as of right now.
 
+        ctx.lineWidth = 2
         const m = (y1-y2)/(x1-x2)
         const angle = Math.atan(m)
         const dy = Math.sin(angle) * nodeRadius  
@@ -76,6 +77,19 @@ const GraphCanvas = (_ => {
         
         line(x,y,X,Y)
         drawDirectionTriangle(X, Y, angle, x >= X)
+    }
+
+    const possiblyDrawAlignment = 
+    (nodes : NuniGraphNode[], H : number, W : number, clientX : number, clientY : number) => {
+        ctx.lineWidth = 1
+        let vert = false, hor = false
+        ctx.strokeStyle = 'rgba(200,200,200,0.2)'
+        for (const node of nodes.filter(n => n !== G.selectedNode)) {
+            const [x,y] = [ node.x*W, node.y*H ]
+            if (x === clientX) { line(x,0,x,H); vert = true }
+            if (y === clientY) { line(0,y,W,y); hor = true  }
+            if (vert && hor) return
+        }
     }
 
     const drawDirectionTriangle = 
@@ -190,17 +204,18 @@ const GraphCanvas = (_ => {
         const nodes = G.nodes
         const W = canvas.width = canvas.offsetWidth
         const H = canvas.height = canvas.offsetHeight
+        const { clientX, clientY, buttons } = options as any
 
         ctx.font = '15px Arial '
-        ctx.lineWidth = 2
-
         ctx.clearRect(0,0,W,H)
-
+    
+        if (buttons === 1) {
+            possiblyDrawAlignment(nodes, H, W, clientX, clientY)
+        }
         drawNodeConnections(nodes, H, W, options)
         drawNodes(nodes, H, W, options)
 
         if (fromNode) { // draw the connection currently being made
-            const { clientX, clientY } = options as any
             const [X,Y] = [fromNode.x*W, fromNode.y*H]
             
             ctx.strokeStyle = 'white'
@@ -262,8 +277,6 @@ const GraphCanvas = (_ => {
             const H = canvas.height
             const node = G.selectedNode
 
-            // INSTEAD OF THE FOLLOWING CRAP, WHY NOT JUST CACHE THE CANVAS WIDTH AND HEIGHT? 
-            // it's too low priority, for right now
             node.x = x/W
             node.y = y/H
         }

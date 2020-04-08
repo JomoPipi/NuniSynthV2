@@ -2,9 +2,8 @@ const ADSR = {
     attack: 0.010416984558105469, 
     decay: 0.17708349227905273, 
     sustain: 0.2166603088378906, 
-    release: 0.4812504768371582,
+    release: 0.3812504768371582,
     trigger: function(gain: AudioParam, t : number) {
-        
         const { attack, decay, sustain } = this
         const t1 = t + attack
 
@@ -30,6 +29,7 @@ const ADSR = {
                 gain.setValueAtTime(gain.value, t)
                 gain.setTargetAtTime(0, t, release)
 
+                
                 clearInterval(src.lastReleaseId) 
                 src.lastReleaseId = -1
                 samplerNode.prepareBuffer(key)
