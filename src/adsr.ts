@@ -13,23 +13,31 @@ const ADSR = {
         gain.setTargetAtTime(1, t, attack)
         gain.setTargetAtTime(sustain ** 2, t1, decay)
     },
-    untrigger: function(gain: AudioParam, t : number) {
+    
+    untrigger: function(samplerNode : SamplerNode, key: number) {
         const { release } = this
         const lowVol = 0.001
+        const t = samplerNode.ctx.currentTime
+        const gain = samplerNode.ADSRs[key].gain
+        const src = samplerNode.sources[key]
         gain.cancelScheduledValues(t)
         gain.setValueAtTime(gain.value, t)
         gain.setTargetAtTime(0, t, release)
     
-        const stop = setInterval(() => {
+        src.lastReleaseId = setInterval(() => { // to completely turn it off
             if (gain.value < lowVol) {
                 gain.cancelScheduledValues(t)
                 gain.setValueAtTime(gain.value, t)
                 gain.setTargetAtTime(0, t, release)
-                clearInterval(stop)
-            }
-        }, 10);
 
+                clearInterval(src.lastReleaseId) 
+                src.lastReleaseId = -1
+                samplerNode.prepareBuffer(key)
+            }
+        }, 10)
     }
+
+
 }
 // const aux_ADSR = {
 //     attack: 0.010416984558105469, 
