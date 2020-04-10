@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "minimist": ">=1.2.3",
     "@types/dom-mediacapture-record": "^1.0.4",
     "lite-server": "^2.5.4"
   },
