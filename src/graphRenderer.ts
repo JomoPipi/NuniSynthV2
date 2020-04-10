@@ -14,9 +14,11 @@ const GraphCanvas = (_ => {
 
     const triangleRadius = nodeRadius / 4.0
 
-    const [ nodeHoverColor ] = ['--hover-node'].map(s =>
-        getComputedStyle(document.documentElement).getPropertyValue(s))
+    // const [ nodeHoverColor ] = ['--hover-node'].map(s =>
+    //     getComputedStyle(document.documentElement).getPropertyValue(s)) // getting CSS variable
 
+    const snapToGrid = D('snap-to-grid')! as HTMLInputElement
+    snapToGrid.oninput = () => render()
 
     let fromNode = null as NuniGraphNode | null
 
@@ -79,16 +81,26 @@ const GraphCanvas = (_ => {
         drawDirectionTriangle(X, Y, angle, x >= X)
     }
 
-    const possiblyDrawAlignment = 
-    (nodes : NuniGraphNode[], H : number, W : number, clientX : number, clientY : number) => {
-        ctx.lineWidth = 1
-        let vert = false, hor = false
-        ctx.strokeStyle = 'rgba(200,200,200,0.2)'
-        for (const node of nodes.filter(n => n !== G.selectedNode)) {
-            const [x,y] = [ node.x*W, node.y*H ]
-            if (x === clientX) { line(x,0,x,H); vert = true }
-            if (y === clientY) { line(0,y,W,y); hor = true  }
-            if (vert && hor) return
+    const drawGridLines = (H:number, W:number) => {
+        const step = W/20
+        ctx.lineWidth = 0.2
+        ctx.strokeStyle = '#777'
+        for (let i = 0; i < W; i += step) line(i,0,i,H)
+        for (let i = 0; i < W; i += step) line(0,i,W,i)
+
+        const node = G.selectedNode
+        if (node) {
+            const {x,y} = node
+            const [X,Y] = [x*W, y*H]
+            const [newX, newY] = [
+                Math.round(X / step) * step / W, 
+                Math.round(Y / step) * step / H]
+
+            if (!G.nodes.some(node => node.x === newX && node.y === newY)) {
+                // discourage the user from visually stacking nodes
+                node.x = newX
+                node.y = newY
+            }
         }
     }
 
@@ -160,9 +172,27 @@ const GraphCanvas = (_ => {
         }
     }
 
+    const getNodeColor = (node : NuniGraphNode, H: number, W:number) => {
+        
+        const prop = (<Indexible>AudioNodeParams)[node.type][0]
+        const pValue = node.audioParamValues[prop]
+        const [min,max] = (<Indexible>AudioParamRanges)[prop]
+        const factor = Math.log2(pValue-min)/Math.log2(max-min) 
+        const TAU = 2 * Math.PI
+        const twoThirdsPi = TAU / 3.0
+        const cval = factor * 4
+        const c1 = 'rgb(' + [0,1,2].map(n => 100 * (1 + Math.sin(cval + n * twoThirdsPi)) |0).join(',') + ')'
+        const c2 = G.selectedNode === node ? 'purple' : 'black'
+        const {x,y} = node, r = nodeRadius
+        const gradient = ctx.createRadialGradient(x*W, y*H, r/4, x*W, y*H, r)
+            gradient.addColorStop(0, c1)
+            gradient.addColorStop(0.9, c2)
+
+        return gradient
+    }
+
     const drawNodes = (nodes : NuniGraphNode[], H : number, W : number, 
     options : { selectedNodes?: NuniGraphNode[], clientX?: number, clientY?: number, buttons?: number }) => {
-        const color = 'transparent'
         const { selectedNodes, clientX, clientY, buttons } = options
         const [x,y] = [clientX, clientY]
         canvas.style.cursor = 'default'
@@ -177,11 +207,10 @@ const GraphCanvas = (_ => {
             
             ctx.strokeStyle = aroundEdge ? 'white' : NodeTypeColors[node.type]
 
-            ctx.fillStyle = node === G.selectedNode ? 'green' 
-                : shouldHighlight ? nodeHoverColor : color
+            ctx.fillStyle = getNodeColor(node, H, W)
 
             if (selectedNodes) {
-                ctx.fillStyle = selectedNodes.indexOf(node) >= 0 ? 'purple' : 'yellow'
+                ctx.fillStyle = selectedNodes.indexOf(node) >= 0 ? 'red' : 'yellow'
             }
 
             if (shouldHighlight)
@@ -209,8 +238,8 @@ const GraphCanvas = (_ => {
         ctx.font = '15px Arial '
         ctx.clearRect(0,0,W,H)
     
-        if (buttons === 1) {
-            possiblyDrawAlignment(nodes, H, W, clientX, clientY)
+        if (snapToGrid.checked) {
+            drawGridLines(H,W)
         }
         drawNodeConnections(nodes, H, W, options)
         drawNodes(nodes, H, W, options)

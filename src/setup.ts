@@ -6,6 +6,8 @@ type Destination = AudioNode | AudioParam | SamplerNodeAudioParam
 
 type Indexible = { [param : string] : any }
 
+interface Indexibl<T> { [param : string] : T }
+
 const log = console.log
 
 const D = (x:string) => 

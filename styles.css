@@ -16,6 +16,10 @@ body, html {
     width: 100%;
     height: 100%;
     background-color: transparent;
+    color: #eee;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10+ and Edge */
+    user-select: none; /* Standard syntax */
 }
 
 #nunigraph {
@@ -24,16 +28,12 @@ body, html {
     width: 100%;
 }
 
-#node-options {
+#right-panel {
     position: absolute;
-    display: grid;
-    grid-template-columns: 1fr;
-    color: wheat;
-    bottom:0;
-    right:0;
-    width: 100%;
-    min-height: 20%;
-    background-color: #333;
+    right: 0px;
+    top: 25%;
+    width: 0vw;
+    /* transition: width 0.5s; */
 }
 
 #create-new-node-btns {
@@ -90,4 +90,260 @@ body, html {
 
 .left-side-row {
     padding: 10px;
+}
+
+#tabs {
+    background-color: #333;
+    position: absolute;
+    color: wheat;
+    bottom:0;
+    right:0;
+    width: 100%;
+    min-height: 20%;
+}
+
+.tab {
+    display: none;
+    width: 100%;
+}
+
+.show {
+    display: inline-block;
+}
+
+#node-options {
+    width: 100%;
+}
+
+
+
+
+
+
+
+
+
+
+/* #adsr-box {
+    background-color: red;
+} */
+.shadow-knob {
+    display: inline-block;
+
+    margin-left: 6px;
+    width: 40px;
+    height: 40px;
+
+    border-radius: 100%;
+    background-image: url('images/shadow-knob.png');
+    background-size: 100% 100%;
+    pointer-events: none;
+}
+
+.js-dial {
+    position: absolute;
+    display: inline-block;
+    border: 0px groove #eee;
+    box-sizing: border-box;
+    width: 40px;
+    height: 40px;
+
+    border-radius: 100%;
+
+    background-image: url('images/knob.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    opacity: .4;
+    pointer-events: auto;
+}
+#adsr-canvas {
+    display: inline-block;
+    width: 80%;
+}
+#aux-adsr-canvas {
+    display: inline-block;
+    width: 80%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#keyboard-inner-tab {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 2fr;
+}
+
+
+
+
+
+
+.keyboard {
+    text-align: center;
+    font-size: 7px;
+    font-family: sans-serif;
+    margin-bottom: 2%;
+}
+
+.keyboard__row {
+    background-color: rgb(255, 174, 0);
+    display: inline-block;
+    height: 3em;
+    margin: 0.2em;
+}
+
+.keyboard__row--h1 {
+    height: 1.7em;
+    line-height: 1.4em;
+}
+
+.keyboard__row--h3 {
+    height: 3.3em;
+}
+
+.keyboard__row > * {
+    position: relative;
+    background: #333;
+    text-align: center;
+    color: #eee;
+    float: left;
+    border-radius: 0.3em;
+    margin: 0.2em;
+    padding: 0.2em;
+    width: 3.3em;
+    height: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+    -webkit-user-select: none;
+    border: 1px solid #444;
+    box-shadow: 0 0.2em 0 0.05em #222;
+    border-bottom-color: #555;
+}
+
+.keyboard__row--h1 > div {
+    width: 3.5em;
+}
+
+.key-pressed { 
+    background: #00ff262a;
+    color: #aaa;
+    position: relative;
+    top: 0.2em;
+    box-shadow: 0 0 0 0.05em black;
+}
+
+.key--w3 {
+    width: 4.6em;
+}
+
+.key--w4 {
+    width: 6em;
+}
+
+.key--w5 {
+    width: 6.5em;
+}
+
+.key--w6 {
+    width: 8.3em;
+}
+
+.key--space {
+    width: 18em;
+}
+
+.key--double > * {
+    padding-top: 0.1em;
+}
+
+.key--letter {
+    line-height: 2.8em;
+}
+
+.key--bottom-left > * {
+    position: absolute;
+    text-align: left;
+    bottom: 0.4em;
+    left: 0.4em;
+}
+
+.key--bottom-right > * {
+    position: absolute;
+    text-align: right;
+    bottom: 0.4em;
+    right: 0.4em;
+}
+
+.key--fn > * {
+    font-size: 0.6em;
+    line-height: 1em;
+    padding-top: 1.2em;
+    padding-right: 0.2em;
+    text-align: right;
+    float: right;
+}
+
+.key--word > * {
+    font-size: 0.8em;
+}
+
+.key--arrow--tall > *,
+.key--arrow > * {
+    font-size: 0.5em;
+    line-height: 3em;
+}
+
+.key--arrow {
+    height: 1.8em;
+    margin-top: 1.7em;
+    line-height: 0.5em;
+}
+
+.key--arrow--tall > * {
+    padding-top: 0.2em;
+}
+
+.keyboard > .keyboard__row {
+    text-align: center;
 }

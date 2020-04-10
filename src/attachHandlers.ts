@@ -1,3 +1,15 @@
+
+D('tab-swapper')!.oninput = function() {
+    const value = (D('tab-swapper') as HTMLSelectElement).value
+    ;[...document.getElementsByClassName('tab')].forEach((tab:any) => {
+        tab.classList.toggle('show', value === tab.id)
+    })
+    resizeHandler()
+}
+D('node-options')!.classList.toggle('show',true)
+
+
+
 // create [NodeType] buttons
 Object.values(NodeTypes).forEach(type => {
     D('create-' + type)!.onclick = () => {
@@ -48,7 +60,7 @@ G.selectNodeFunc = () => {
     const controls = D('injected-node-value-ui') as HTMLDivElement
 
     controls.innerHTML = ''
-    D('node-options')!.style.gridTemplateColumns = node ? '1fr 1fr' : '1fr'
+    D('right-panel')!.style.width = node ? '20vw' : '0px'
     if (!node) return;
 
     controls.appendChild(showSubtypes(node))
@@ -207,3 +219,58 @@ function createDraggableNumberInput(initialValue: string, updateFunc: (delta:num
     valueInput.oninput = () => manualUpdater(+valueInput.value)
     return valueInput
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MY_JS_DIALS.forEach(dial => {
+    // if (dial.id.startsWith('aux')) 
+    // {
+
+    //     dial.value = aux_ADSR[dial.id.split`-`[2]]
+    //     dial.render()
+    //     dial.attach(x => {
+    //         aux_ADSR[dial.id.split`-`[2]] = x
+    //         aux_ADSR.render()
+    //     })
+    log('here we are')
+    // } 
+    // else if (dial.id.includes('adsr')) 
+    {
+        const s = dial.id.split('-')[1]
+        dial.value = (ADSR as any)[s]
+        dial.render()
+        dial.attach((x:number) => {
+            (ADSR as any)[s] = x * x
+            ADSR.render()
+        })
+
+    }
+    // else if (dial.id === 'BPM') {
+        
+    //     D('BPM-text').innerHTML = BPM,
+    //     dial.attach(x => {
+    //         BPM = D('BPM-text').innerHTML = (500 ** .5) ** (x+1) | 0  
+    //     })
+    // }
+})
