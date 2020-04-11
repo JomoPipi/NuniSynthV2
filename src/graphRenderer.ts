@@ -205,7 +205,8 @@ const GraphCanvas = (_ => {
             const hoveringInside = d <= innerEdgeBoundary
             const shouldHighlight = hoveringInside && !fromNode
             
-            ctx.strokeStyle = aroundEdge ? 'white' : NodeTypeColors[node.type]
+            ctx.strokeStyle = aroundEdge ? 'white' :
+                node.id === 0 ? '#222' : NodeTypeColors[node.type]
 
             ctx.fillStyle = getNodeColor(node, H, W)
 

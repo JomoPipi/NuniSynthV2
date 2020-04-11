@@ -63,11 +63,15 @@ G.selectNodeFunc = () => {
     D('right-panel')!.style.width = node ? '20vw' : '0px'
     if (!node) return;
 
+    if (node.audioNode instanceof SamplerNode || node.audioNode instanceof OscillatorNode) {
+        controls.appendChild(showKeyboardConnection(node))
+    }
+    
     controls.appendChild(showSubtypes(node))
 
-    if (node.audioNode instanceof SamplerNode)
+    if (node.audioNode instanceof SamplerNode) {
         controls.appendChild(samplerControls(node.audioNode))
-    
+    }
     controls.appendChild(exposeAudioParams(node))
 
     const deleteNode = E('button')
@@ -75,6 +79,23 @@ G.selectNodeFunc = () => {
     deleteNode.style.float = 'right'
     deleteNode.onclick = _ => G.deleteSelectedNode()
     controls.append(deleteNode)
+}
+
+
+
+
+function showKeyboardConnection(node : NuniGraphNode) : Node {
+    const types = ['none','mono','poly']
+    const select = E('select') as HTMLSelectElement
+    const box = E('div'); box.innerHTML = 'keyboard:'
+    
+    insertOptions(select, types)
+    select.value = node.audioNode.kbConnection 
+    select.oninput = function() {
+        node.audioNode.kbConnection = select.value
+    }
+    box.appendChild(select)
+    return box
 }
 
 
@@ -128,7 +149,7 @@ function samplerControls(audioNode : SamplerNode) {
         box.appendChild(btn)
     })
  
-    ;['active','loop'].forEach(text => {
+    ;['loop'].forEach(text => {
         const btn = E('button'); btn.innerHTML = text
         btn.classList.toggle('selected',(audioNode as Indexible)[text])
         btn.onclick = () => {
@@ -140,6 +161,10 @@ function samplerControls(audioNode : SamplerNode) {
     })
 
     return box
+}
+
+function keyboardConnection(node : NuniGraphNode) {
+
 }
 
 

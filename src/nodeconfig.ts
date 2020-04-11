@@ -17,7 +17,7 @@ type ConnecteeData = ConnecteeDatum[]
 
 const createAudioNode = {
     [NodeTypes.GAIN]:   'createGain',
-    [NodeTypes.OSC]:    'createOscillator',
+    [NodeTypes.OSC]:    'createOscillator2',
     [NodeTypes.FILTER]: 'createBiquadFilter',
     [NodeTypes.PANNER]: 'createStereoPanner',
     [NodeTypes.DELAY]:  'createDelay',

@@ -36,7 +36,7 @@ function recordTo(index : number) {
             audioBlob.arrayBuffer().then(arraybuffer => {
                 audioCtx.decodeAudioData(arraybuffer, (audiobuffer : AudioBuffer) => {
 
-                    samplerBuffers[index] = audiobuffer
+                    BUFFERS[index] = audiobuffer
 
                     G.nodes.forEach(node => {
                         const an = node.audioNode
