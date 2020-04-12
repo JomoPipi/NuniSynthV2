@@ -1,173 +1,156 @@
 
-
-
-
-const keys = ([] as number[]).concat(...[
-    '1234567890',
-    'qwertyuiop',
-    'asdfghjkl',
-    'zxcvbnm'
-    ].map((s,i) => 
-        [...s].map(c=>c.toUpperCase().charCodeAt(0))
-            .concat([
-                [189,187],
-                [219,221],
-                [186,222],
-                [188,190,191]
-            ][i]) // won't work on FireFox. should I care?
-        ))
-
-const keyset = new Set(keys)
-
-
-
-
-// class SamplerNodeAudioParam {
-//     /**
-//      * AudioParams that are compatible with the sampler
-//      */
-//     src: ConstantSourceNode
-
-//     constructor(name: string, ctx: AudioContext) {
-//         this.src = ctx.createConstantSource()
-//         this.src.start(ctx.currentTime)
-//     }
-    
-//     setValueAtTime(value: number, time:never) {
-//         this.src.offset.value = value - 1
-//     }
-// }
-
-
-
-
-class SamplerNode {//extends NuniSourceNode {
+class SamplerNode extends NuniSourceNode {
     /**
      * audioBufferSourceNodes need to get disconnected
      * as keys get pressed/unpressed.
      * The sampler will take care of this business internally
      * while keeping the node connected to the graph.
+     * We also have the 3 keyboard modes to deal with - none | mono | poly
      */
 
-    // connectees: Destination[]
     playbackRate: AudioParam2
     detune: AudioParam2
-    sources: Indexible
     bufferIndex: number
     loop: boolean
-    active: boolean
-    ctx: AudioContext2
-    ADSRs: { [key:number] : GainNode }
+    lastMonoKeyPressed: number 
     
     constructor(ctx : AudioContext2) {
-        // super(NodeTypes.SAMPLER, ctx)
-        
+        super(ctx)
+
         this.bufferIndex = 0
         this.loop = true
-        this.active = true
         this.detune = new AudioParam2(ctx)
         this.playbackRate = new AudioParam2(ctx)
         this.ctx = ctx
-                
-        this.ADSRs = keys.reduce((a,key) => {
-            a[key] = ctx.createGain()  
-            return a
+        this.lastMonoKeyPressed = -1
+
+        this.setKbMode('poly')
+    }
+
+
+
+
+    switchToNone() {
+        this.ADSRs[this.MONO] = new Adsr(this.ctx)
+        this.ADSRs[this.MONO].gain.setValueAtTime(1,this.ctx.currentTime)
+        this.sources = {}
+        this.refresh()
+    }
+    
+    switchToMono() {
+        this.ADSRs[this.MONO] = new Adsr(this.ctx)
+        this.sources = {}
+        this.refresh()
+    }
+
+    switchToPoly() {
+        this.ADSRs = keys.reduce((adsr,key) => {
+            adsr[key] = new Adsr(this.ctx)
+            return adsr
         }, {} as Indexible)
-        
-        this.sources = keys.reduce((sources,key,i) => {
-            const src = ctx.createBufferSource()
-            src.detune.value = (i-12) * 100
-            this.detune.src.connect(src.detune)
-            this.playbackRate.src.connect(src.playbackRate)
-            sources[key] = src
-            return sources
-        }, {} as any)
         
         this.refresh()
     }
 
+    setKbMode(mode : KbMode) {
+        this.disconnectAllConnectees()
+
+        this.kbMode = mode
+        if (mode === 'none') {
+            this.switchToNone()
+        } else if (mode === 'mono') {
+            this.switchToMono()
+        } else if (mode === 'poly') {
+            this.switchToPoly() 
+        }
+        this.reconnectAllConnectees()
+    }
+
     prepareBuffer(key : number) {
         const sources = this.sources
-        const oldDetune = sources[key].detune.value
-        
-        sources[key].disconnect()
-        sources[key] = this.ctx.createBufferSource()
-        sources[key].detune.value = oldDetune
+        const i = keymap[key] ?? 12 // if key is this.MONO, we want detune to be 0
 
+        sources[key] && sources[key].disconnect()
+        sources[key] = this.ctx.createBufferSource()
+
+        sources[key].detune.value = (i-12) * 100
         this.playbackRate.src.connect(sources[key].playbackRate)
         this.detune.src.connect(sources[key].detune)
 
         sources[key].buffer = BUFFERS[this.bufferIndex]
         sources[key].loop = this.loop
-        sources[key].lastReleaseId = -1
-
+        sources[key].lastReleaseId = -1  
         sources[key].connect(this.ADSRs[key]) ////
-
-        // this.connectees.forEach(destination =>  
-        //     sources[key].connect(destination))
     }
 
-    connectBuffer(_:any, key:number) {
+    connectBuffer(key:number) {
         const src = this.sources[key] 
         src.start(this.ctx.currentTime)
             
         src.isOn = true
     }
-
-    connect(destination : Destination) {
-        // this.connectees.push(destination)
-
-        for (const key in this.ADSRs) {
-            if (destination instanceof AudioParam2) {
-                this.ADSRs[key].connect(destination.src.offset)
-            } else {
-                this.ADSRs[key].connect(destination as any)
-            }
-        }
-        this.refresh()
-    }
-
-    disconnect(destination : Destination) {
-        // this.connectees.splice(
-        //     this.connectees.indexOf(destination), 1)
-
-        for (const key in this.ADSRs) {
-            if (destination instanceof AudioParam2) {
-                this.ADSRs[key].disconnect(destination.src.offset)
-            } else {
-                this.ADSRs[key].disconnect(destination as any)
-            }
-        }
-        this.refresh()
-    }
-
-    noteOn(key : number) {
+    
+    noteOnPoly(key : number) {
         if (this.sources[key].lastReleaseId >= 0) {
             clearInterval(this.sources[key].lastReleaseId)
             this.prepareBuffer(key)
         }
         if (this.sources[key].isOn) return;
         ADSR.trigger(this.ADSRs[key].gain, this.ctx.currentTime)
-        this.connectBuffer(0,key)
+        this.connectBuffer(key)
     }
     
-    noteOff(key : number) {
+    noteOffPoly(key : number) {
         if (this.sources[key].isOn) {
             ADSR.untrigger(this, key)
         }
     }
 
+    noteOnMono(key : number) {
+        const _k = this.MONO
+        if (this.sources[_k].lastReleaseId >= 0 || this.lastMonoKeyPressed !== key) {
+            clearInterval(this.sources[_k].lastReleaseId)
+            this.prepareBuffer(_k)
+        }
+        this.lastMonoKeyPressed = key
+        this.sources[_k].detune.value = (keymap[key]-12) * 100
+        if (this.sources[_k].isOn) return;
+        ADSR.trigger(this.ADSRs[_k].gain, this.ctx.currentTime)
+        this.connectBuffer(_k)
+    }
+    
+    noteOffMono() {
+        if (this.sources[this.MONO].isOn) { 
+            ADSR.untrigger(this, this.MONO)
+        }
+    }
+
+    monoUpdate() {
+        if (!heldKeyArray.length) {
+            this.noteOffMono()
+        } else {
+            this.noteOnMono(heldKeyArray[heldKeyArray.length-1])
+        }
+    }
+
     update(keydown : boolean, key : number) {
-        keydown ? this.noteOn(key) : this.noteOff(key)
+        if (this.kbMode === 'poly') {
+            keydown ? this.noteOnPoly(key) : this.noteOffPoly(key)
+        } else {
+            this.monoUpdate()
+        }
     }
 
     refresh() {
-        keys.forEach((key) => 
-            this.prepareBuffer(key))
+        if (this.kbMode === 'poly') {
+            keys.forEach(key => 
+                this.prepareBuffer(key))
+        } else if (this.kbMode === 'mono') {
+            this.prepareBuffer(this.MONO)
+        } else {
+            this.prepareBuffer(this.MONO) 
+            this.connectBuffer(this.MONO)
+        }
     }
 }
-
-
-
-
 

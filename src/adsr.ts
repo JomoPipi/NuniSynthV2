@@ -3,22 +3,22 @@ const ADSR = {
     decay: 0.17708349227905273, 
     sustain: 0.2166603088378906, 
     release: 0.3812504768371582,
+
     trigger: function(gain: AudioParam, t : number) {
         const { attack, decay, sustain } = this
         const t1 = t + attack
 
-        // adsr.gain.setValueAtTime(0, t)
         gain.cancelScheduledValues(t)
         gain.setTargetAtTime(1, t, attack)
         gain.setTargetAtTime(sustain ** 2, t1, decay)
     },
     
-    untrigger: function(samplerNode : SamplerNode, key: number) {
+    untrigger: function(sourceNode : NuniSourceNode, key: number) {
         const { release } = this
         const lowVol = 0.001
-        const t = samplerNode.ctx.currentTime
-        const gain = samplerNode.ADSRs[key].gain
-        const src = samplerNode.sources[key]
+        const t = sourceNode.ctx.currentTime
+        const gain = sourceNode.ADSRs[key].gain
+        const src = sourceNode.sources[key]
         gain.cancelScheduledValues(t)
         gain.setValueAtTime(gain.value, t)
         gain.setTargetAtTime(0, t, release)
@@ -28,11 +28,12 @@ const ADSR = {
                 gain.cancelScheduledValues(t)
                 gain.setValueAtTime(gain.value, t)
                 gain.setTargetAtTime(0, t, release)
-
                 
                 clearInterval(src.lastReleaseId) 
                 src.lastReleaseId = -1
-                samplerNode.prepareBuffer(key)
+
+                if (sourceNode instanceof SamplerNode)
+                    sourceNode.prepareBuffer(key)
             }
         }, 10)
     },

@@ -37,12 +37,20 @@ document.onkeyup = updateKeys(false)
 function updateKeys(keydown : boolean) {
     
     return function(e : KeyboardEvent) { 
-        // log(e.keyCode) 
-        if (keyset.has(e.keyCode)){ 
+        const key = e.keyCode
+        if (keyset.has(key)){ 
+            
+            if (keydown) {
+                if (heldKeyArray.indexOf(key) >= 0) return;
+                heldKeyArray.push(key)
+            } else {
+                heldKeyArray.splice(heldKeyArray.indexOf(key),1)
+            }
+            
             G.nodes.forEach(node => {
                 const an = node.audioNode
-                if (an instanceof SamplerNode && an.active) {
-                    an.update(keydown, e.keyCode)
+                if (an instanceof SamplerNode && an.kbMode !== 'none') {
+                    an.update(keydown, key)
                 }
             })
         }

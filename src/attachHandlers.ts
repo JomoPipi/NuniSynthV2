@@ -90,9 +90,9 @@ function showKeyboardConnection(node : NuniGraphNode) : Node {
     const box = E('div'); box.innerHTML = 'keyboard:'
     
     insertOptions(select, types)
-    select.value = node.audioNode.kbConnection 
+    select.value = node.audioNode.kbMode
     select.oninput = function() {
-        node.audioNode.kbConnection = select.value
+        node.audioNode.setKbMode(select.value)
     }
     box.appendChild(select)
     return box
@@ -161,10 +161,6 @@ function samplerControls(audioNode : SamplerNode) {
     })
 
     return box
-}
-
-function keyboardConnection(node : NuniGraphNode) {
-
 }
 
 
@@ -278,7 +274,7 @@ MY_JS_DIALS.forEach(dial => {
     //         aux_ADSR[dial.id.split`-`[2]] = x
     //         aux_ADSR.render()
     //     })
-    log('here we are')
+
     // } 
     // else if (dial.id.includes('adsr')) 
     {
