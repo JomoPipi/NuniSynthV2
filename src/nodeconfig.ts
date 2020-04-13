@@ -24,15 +24,6 @@ const createAudioNode = {
     [NodeTypes.SAMPLER]:'createSampler'
 }
 
-const MustBeStarted = {
-    [NodeTypes.GAIN]:   false,
-    [NodeTypes.OSC]:    true,
-    [NodeTypes.FILTER]: false,
-    [NodeTypes.PANNER]: false,
-    [NodeTypes.DELAY]:  false,
-    [NodeTypes.SAMPLER]:false // <- complete lie, but..
-}
-
 const SupportsInputChannels = {
     [NodeTypes.GAIN]:   true,
     [NodeTypes.OSC]:    false,

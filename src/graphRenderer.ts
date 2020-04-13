@@ -53,7 +53,6 @@ const GraphCanvas = (_ => {
     /// The inputs are the coordinates of the centers of nodes.
     /// This function trims the length of the line before drawing it, as of right now.
 
-        ctx.lineWidth = 2
         const m = (y1-y2)/(x1-x2)
         const angle = Math.atan(m)
         const dy = Math.sin(angle) * nodeRadius  
@@ -242,6 +241,7 @@ const GraphCanvas = (_ => {
         if (snapToGrid.checked) {
             drawGridLines(H,W)
         }
+        ctx.lineWidth = 2
         drawNodeConnections(nodes, H, W, options)
         drawNodes(nodes, H, W, options)
 

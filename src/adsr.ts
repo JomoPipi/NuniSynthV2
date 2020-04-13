@@ -6,11 +6,10 @@ const ADSR = {
 
     trigger: function(gain: AudioParam, t : number) {
         const { attack, decay, sustain } = this
-        const t1 = t + attack
 
-        gain.cancelScheduledValues(t)
-        gain.setTargetAtTime(1, t, attack)
-        gain.setTargetAtTime(sustain ** 2, t1, decay)
+        gain.cancelScheduledValues(t)                               // cancel any current adsr triggers
+        gain.setTargetAtTime(1, t, attack)                          // attack phase
+        gain.setTargetAtTime(sustain ** 2, t + attack, decay)       // decay phase
     },
     
     untrigger: function(sourceNode : NuniSourceNode, key: number) {
@@ -24,7 +23,7 @@ const ADSR = {
         gain.setTargetAtTime(0, t, release)
     
         src.lastReleaseId = setInterval(() => { // to completely turn it off
-            if (gain.value < lowVol) {
+            if (gain.value <= lowVol) {
                 gain.cancelScheduledValues(t)
                 gain.setValueAtTime(gain.value, t)
                 gain.setTargetAtTime(0, t, release)
@@ -32,13 +31,14 @@ const ADSR = {
                 clearInterval(src.lastReleaseId) 
                 src.lastReleaseId = -1
 
-                if (sourceNode instanceof SamplerNode)
+                if (sourceNode instanceof SamplerNode) {
                     sourceNode.prepareBuffer(key)
+                }
             }
         }, 10)
     },
 
-    render: ()=>0,
+    render: () => void 0,
     canvas: document.getElementById('adsr-canvas')
 }
 // const aux_ADSR = {
@@ -50,8 +50,7 @@ const ADSR = {
 {
     // create render functions for these ADSR's
 
-    // ;[/*['aux-',aux_ADSR],*/['',ADSR]]
-    ;[['',ADSR]].forEach(([s,adsr] : any) => {
+    ;[/*['aux-',aux_ADSR],*/['',ADSR]].forEach(([s,adsr] : any) => { 
 
         const isAux = s === 'aux-'        
         const ctx = adsr.canvas.getContext('2d')

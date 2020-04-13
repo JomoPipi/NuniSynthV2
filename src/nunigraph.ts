@@ -29,10 +29,7 @@ class NuniGraphNode {
         this.audioNode = audioCtx[createAudioNode[type]]()
         this.audioNodeType = audioNodeType || this.audioNode.type // is this needed?
         this.audioNode.type = this.audioNodeType
-        this.audioParamValues = audioParamValues
-
-        if (MustBeStarted[type])
-            this.audioNode.start(0)
+        this.audioParamValues = audioParamValues 
 
         for (const param of AudioNodeParams[type]) {
 

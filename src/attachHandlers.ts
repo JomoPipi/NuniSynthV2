@@ -63,7 +63,7 @@ G.selectNodeFunc = () => {
     D('right-panel')!.style.width = node ? '20vw' : '0px'
     if (!node) return;
 
-    if (node.audioNode instanceof SamplerNode || node.audioNode instanceof OscillatorNode) {
+    if (node.audioNode instanceof SamplerNode || node.audioNode instanceof OscillatorNode2) {
         controls.appendChild(showKeyboardConnection(node))
     }
     
@@ -74,10 +74,14 @@ G.selectNodeFunc = () => {
     }
     controls.appendChild(exposeAudioParams(node))
 
+    if (node.id === 0) return; // don't let them delete the master gain node.
     const deleteNode = E('button')
     deleteNode.innerHTML = 'delete this node'
     deleteNode.style.float = 'right'
-    deleteNode.onclick = _ => G.deleteSelectedNode()
+    deleteNode.onclick = _ => {
+        G.deleteSelectedNode()
+        G.unselectNode()
+    }
     controls.append(deleteNode)
 }
 
@@ -112,6 +116,9 @@ function showSubtypes(node : NuniGraphNode) : Node {
         select.oninput = function() {
             node.audioNodeType = 
             node.audioNode.type = select.value
+            if (node.audioNode instanceof OscillatorNode2) {
+                node.audioNode.setType(select.value as OscillatorType)
+            }
         }
         box.appendChild(select)
         box.appendChild(E('span')) // to maintain structure

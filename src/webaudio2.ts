@@ -5,7 +5,7 @@ const keys = ([] as number[]).concat(...[
     'zxcvbnm'
     ].map((s,i) => 
         [...s].map(c=>c.toUpperCase().charCodeAt(0))
-            .concat([
+            .concat([ // add the [];',./ (aka {}:"<>?) keys
                 [189,187],
                 [219,221],
                 [186,222],
@@ -50,26 +50,29 @@ class AudioParam2 {
 
     constructor(ctx: AudioContext) {
         this.src = ctx.createConstantSource()
+        // this.src.offset.value = 0
         this.src.start(ctx.currentTime)
     }
     
     setValueAtTime(value: number, time:never) {
         this.src.offset.value = value
     }
+    // implement the rest of the value changing methods if aux-AD is desired
 }
 
 
 
 
 class NuniSourceNode {
-    /** Parent interface for Sampler nodes and Oscillator nodes
+    /** Parent interface for Sampler and Oscillator nodes
      */
     connectees: Destination[] // The list of things that the node connects to
     ADSRs: Indexed<Adsr>      // The gain-ADSRs
     sources: Indexible        // The AudioScheduledSourceNode containers
-    kbMode: KbMode           // The current state of the node - none | mono | poly
+    kbMode: KbMode            // The current state of the node - none | mono | poly
     ctx: AudioContext2        // The context of audio
     readonly MONO: 666420     // The Id of the mono ADSR and source
+    lastMonoKeyPressed: number 
     
     constructor(ctx: AudioContext2){
         this.MONO = 666420
@@ -78,6 +81,7 @@ class NuniSourceNode {
         this.connectees = []
         this.sources = {}
         this.ADSRs = {}
+        this.lastMonoKeyPressed = -1
     }
 
     connect(destination : Destination) {
@@ -105,20 +109,60 @@ class NuniSourceNode {
             }
         }
     }
+    
+    protected setKbMode(mode : KbMode) {
+        this.disconnectAllConnectees()
 
-    protected reconnectAllConnectees() {
+        this.kbMode = mode
+        if (mode === 'none') {
+            this.switchToNone()
+        } else if (mode === 'mono') {
+            this.switchToMono()
+        } else if (mode === 'poly') {
+            this.switchToPoly() 
+        }
+        this.reconnectAllConnectees()
+    }
+
+    private switchToNone() {
+        this.ADSRs[this.MONO] = new Adsr(this.ctx)
+        this.ADSRs[this.MONO].gain.setValueAtTime(1,this.ctx.currentTime)
+        this.sources = {}
+        this.refresh()
+    }
+    
+    private switchToMono() {
+        this.ADSRs[this.MONO] = new Adsr(this.ctx)
+        this.sources = {}
+        this.refresh()
+    }
+
+    private switchToPoly() {
+        this.ADSRs = keys.reduce((adsr,key) => {
+            adsr[key] = new Adsr(this.ctx)
+            return adsr
+        }, {} as Indexible)
+        
+        this.refresh()
+    }
+
+    private reconnectAllConnectees() {
         this.connectees.forEach(c => {
             this.connection(true, c)
             })
     }
 
-    protected disconnectAllConnectees() {
+    private disconnectAllConnectees() {
         for (const key in this.ADSRs) {
             this.sources[key].disconnect()
             this.ADSRs[key].disconnect()
             delete this.sources[key]
             delete this.ADSRs[key]
         }
+    }
+
+    update(keydown:boolean, key:number) {
+        throw 'Must be implemented in the "concrete" classes.'
     }
 
     protected refresh() {
@@ -134,43 +178,6 @@ class NuniSourceNode {
 
 
 
-// class OscillatorNode2 {
-//     kbConnection: KbMode
-//     detune:AudioParam2
-//     frequency:AudioParam2
-//     ctx:AudioContext2
-//     ADSRs: Indexed<GainNode>
-//     sources: Indexed<OscillatorNode>
-
-//     constructor(ctx:AudioContext2) {
-//         this.kbConnection = 'none'
-//         this.detune = new AudioParam2(ctx)
-//         this.frequency = new AudioParam2(ctx)
-//         this.ctx = ctx
-                
-//         this.ADSRs = keys.reduce((a,key) => {
-//             a[key] = ctx.createGain()  
-//             return a
-//         }, {} as Indexible)
-        
-//         this.sources = keys.reduce((sources,key,i) => {
-//             const src = ctx.createOscillator()
-//             src.detune.value = (i-12) * 100
-//             this.detune.src.connect(src.detune)
-//             this.frequency.src.connect(src.frequency)
-//             sources[key] = src
-//             return sources
-//         }, {} as Indexible)
-        
-//         this.refresh()
-//     }
-
-//     refresh() {
-//         // if ()
-//     }
-
-    
-// }
 
 class AudioContext2 extends AudioContext {
     /** con·text    /ˈkäntekst/ 
@@ -188,6 +195,6 @@ class AudioContext2 extends AudioContext {
     }
 
     createOscillator2() {
-        return this.createOscillator() // new OscillatorNode2(this)
+        return new OscillatorNode2(this) 
     }
 }

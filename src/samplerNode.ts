@@ -8,11 +8,10 @@ class SamplerNode extends NuniSourceNode {
      * We also have the 3 keyboard modes to deal with - none | mono | poly
      */
 
-    playbackRate: AudioParam2
-    detune: AudioParam2
     bufferIndex: number
     loop: boolean
-    lastMonoKeyPressed: number 
+    detune: AudioParam2
+    playbackRate: AudioParam2
     
     constructor(ctx : AudioContext2) {
         super(ctx)
@@ -21,49 +20,8 @@ class SamplerNode extends NuniSourceNode {
         this.loop = true
         this.detune = new AudioParam2(ctx)
         this.playbackRate = new AudioParam2(ctx)
-        this.ctx = ctx
-        this.lastMonoKeyPressed = -1
 
-        this.setKbMode('poly')
-    }
-
-
-
-
-    switchToNone() {
-        this.ADSRs[this.MONO] = new Adsr(this.ctx)
-        this.ADSRs[this.MONO].gain.setValueAtTime(1,this.ctx.currentTime)
-        this.sources = {}
-        this.refresh()
-    }
-    
-    switchToMono() {
-        this.ADSRs[this.MONO] = new Adsr(this.ctx)
-        this.sources = {}
-        this.refresh()
-    }
-
-    switchToPoly() {
-        this.ADSRs = keys.reduce((adsr,key) => {
-            adsr[key] = new Adsr(this.ctx)
-            return adsr
-        }, {} as Indexible)
-        
-        this.refresh()
-    }
-
-    setKbMode(mode : KbMode) {
-        this.disconnectAllConnectees()
-
-        this.kbMode = mode
-        if (mode === 'none') {
-            this.switchToNone()
-        } else if (mode === 'mono') {
-            this.switchToMono()
-        } else if (mode === 'poly') {
-            this.switchToPoly() 
-        }
-        this.reconnectAllConnectees()
+        this.setKbMode('none')
     }
 
     prepareBuffer(key : number) {
@@ -83,14 +41,14 @@ class SamplerNode extends NuniSourceNode {
         sources[key].connect(this.ADSRs[key]) ////
     }
 
-    connectBuffer(key:number) {
+    private connectBuffer(key:number) {
         const src = this.sources[key] 
         src.start(this.ctx.currentTime)
             
         src.isOn = true
     }
     
-    noteOnPoly(key : number) {
+    private noteOnPoly(key : number) {
         if (this.sources[key].lastReleaseId >= 0) {
             clearInterval(this.sources[key].lastReleaseId)
             this.prepareBuffer(key)
@@ -100,13 +58,7 @@ class SamplerNode extends NuniSourceNode {
         this.connectBuffer(key)
     }
     
-    noteOffPoly(key : number) {
-        if (this.sources[key].isOn) {
-            ADSR.untrigger(this, key)
-        }
-    }
-
-    noteOnMono(key : number) {
+    private noteOnMono(key : number) {
         const _k = this.MONO
         if (this.sources[_k].lastReleaseId >= 0 || this.lastMonoKeyPressed !== key) {
             clearInterval(this.sources[_k].lastReleaseId)
@@ -118,26 +70,22 @@ class SamplerNode extends NuniSourceNode {
         ADSR.trigger(this.ADSRs[_k].gain, this.ctx.currentTime)
         this.connectBuffer(_k)
     }
-    
-    noteOffMono() {
-        if (this.sources[this.MONO].isOn) { 
-            ADSR.untrigger(this, this.MONO)
-        }
-    }
 
-    monoUpdate() {
-        if (!heldKeyArray.length) {
-            this.noteOffMono()
-        } else {
-            this.noteOnMono(heldKeyArray[heldKeyArray.length-1])
+    private noteOff(key : number) {
+        if (this.sources[key].isOn) {
+            ADSR.untrigger(this, key)
         }
-    }
+    } 
 
     update(keydown : boolean, key : number) {
         if (this.kbMode === 'poly') {
-            keydown ? this.noteOnPoly(key) : this.noteOffPoly(key)
+            keydown ? 
+                this.noteOnPoly(key) : 
+                this.noteOff(key)
         } else {
-            this.monoUpdate()
+            heldKeyArray.length > 0 ? 
+                this.noteOnMono(heldKeyArray[heldKeyArray.length-1]) :
+                this.noteOff(this.MONO)
         }
     }
 
@@ -145,9 +93,11 @@ class SamplerNode extends NuniSourceNode {
         if (this.kbMode === 'poly') {
             keys.forEach(key => 
                 this.prepareBuffer(key))
+
         } else if (this.kbMode === 'mono') {
             this.prepareBuffer(this.MONO)
-        } else {
+
+        } else { // this.kbMode === 'none'
             this.prepareBuffer(this.MONO) 
             this.connectBuffer(this.MONO)
         }

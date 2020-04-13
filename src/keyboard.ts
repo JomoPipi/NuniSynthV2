@@ -49,7 +49,7 @@ function updateKeys(keydown : boolean) {
             
             G.nodes.forEach(node => {
                 const an = node.audioNode
-                if (an instanceof SamplerNode && an.kbMode !== 'none') {
+                if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
                     an.update(keydown, key)
                 }
             })

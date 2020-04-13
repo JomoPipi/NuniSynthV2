@@ -47,7 +47,7 @@ function recordTo(index : number) {
 
                     D('record')!.classList.remove('recording')
                 },
-                    errStuff)
+                    errStuff) 
             }).catch(errStuff)
             
         });

@@ -36,11 +36,11 @@ function connect_node_to_destination(node1 : NuniGraphNode, destination : Destin
     } else {
         node1.audioNode.connect(destination)
     }
-    return destination
 }
 
 function disconnect_node_from_destination(node1 : NuniGraphNode, destination : Destination) {
-    if (destination instanceof AudioParam2) {
+    if (destination instanceof AudioParam2) 
+    {
         node1.audioNode.disconnect(destination.src.offset)
     } else {
         node1.audioNode.disconnect(destination)

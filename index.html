@@ -11,7 +11,8 @@
     <script src="dist/jsdials.js" defer></script> 
     <script src="dist/initBuffers.js" defer></script>
     <script src="dist/adsr.js" defer></script>
-    <script src="dist/webaudio2.js" defer></script> 
+    <script src="dist/webaudio2.js" defer></script>  
+    <script src="dist/oscillator2.js" defer></script>
     <script src="dist/samplerNode.js" defer></script>
     <script src="dist/setup.js" defer></script>
     <script src="dist/record.js" defer></script>
@@ -93,7 +94,7 @@
                         <!-- <span class="text0"> GAIN ADSR </span> 
     
                         <br> -->
-    
+                      
                         <span class="shadow-knob">
                             <div id="adsr-attack" class="js-dial">
                             </div>
@@ -116,9 +117,12 @@
                             </div>
                         </span>
                         
+                        <br>
+
+                        <canvas id="adsr-canvas"></canvas>
+                        
                     </span>
                     
-                    <canvas id="adsr-canvas"></canvas>
 
                     <!-- BEGIN KEYBOARD  -->
                     <div class="keyboard">
