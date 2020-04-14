@@ -2,9 +2,10 @@
 const BUFFERS : AudioBuffer[] = []
 
 function initBuffers(n : number, ctx : AudioContext2) {
+    const seconds = 3
     BUFFERS.length = 0
     for (let x = 0; x < n; x++) {
-        const buffer = ctx.createBuffer(2, ctx.sampleRate * 3, ctx.sampleRate)
+        const buffer = ctx.createBuffer(2, ctx.sampleRate * seconds, ctx.sampleRate)
         for (let channel = 0; channel < buffer.numberOfChannels; channel++) {  
             const nowBuffering = buffer.getChannelData(channel);
             for (let i = 0; i < buffer.length; i++) {

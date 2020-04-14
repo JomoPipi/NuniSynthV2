@@ -44,9 +44,8 @@ D('about')!.onclick = () =>
         const v = currentBufferIndex = clamp(0, currentBufferIndex + Math.sign(.5 - i), nBuffers-1)
         D('buffer-index')!.innerHTML = v.toString()
 
-        G.nodes.filter(node => {
-            if (node.audioNode instanceof SamplerNode) {
-                node.audioNode.bufferIndex = v
+        G.nodes.forEach(node => {
+            if (node.audioNode instanceof SamplerNode && node.audioNode.bufferIndex === v) {
                 node.audioNode.refresh()
             }
         })
@@ -91,7 +90,7 @@ G.selectNodeFunc = () => {
 function showKeyboardConnection(node : NuniGraphNode) : Node {
     const types = ['none','mono','poly']
     const select = E('select') as HTMLSelectElement
-    const box = E('div'); box.innerHTML = 'keyboard:'
+    const box = E('div'); box.innerHTML = 'keyboard: '
     
     insertOptions(select, types)
     select.value = node.audioNode.kbMode
@@ -116,10 +115,7 @@ function showSubtypes(node : NuniGraphNode) : Node {
         select.oninput = function() {
             node.audioNodeType = 
             node.audioNode.type = select.value
-            if (node.audioNode instanceof OscillatorNode2) {
-                node.audioNode.setType(select.value as OscillatorType)
-            }
-        }
+        } 
         box.appendChild(select)
         box.appendChild(E('span')) // to maintain structure
     }
@@ -285,7 +281,7 @@ MY_JS_DIALS.forEach(dial => {
     // } 
     // else if (dial.id.includes('adsr')) 
     {
-        const s = dial.id.split('-')[1]
+        const s = (<any>dial).id.split('-')[1]
         dial.value = (ADSR as any)[s]
         dial.render()
         dial.attach((x:number) => {

@@ -1,298 +1,315 @@
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title> Nuni Synth v 0.2 </title>
 
-    <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link href='https://fonts.googleapis.com/css?family=Orbitron' 
+          rel='stylesheet' 
+          type='text/css'>
+
+    <link rel="stylesheet" 
+          type="text/css" 
+          href="styles.css">
+
+    <link rel="icon" 
+          type="image/png"
+          href="favicon-32x32.png">
     
-    <script src="dist/jsdials.js" defer></script> 
-    <script src="dist/initBuffers.js" defer></script>
-    <script src="dist/adsr.js" defer></script>
-    <script src="dist/webaudio2.js" defer></script>  
-    <script src="dist/oscillator2.js" defer></script>
-    <script src="dist/samplerNode.js" defer></script>
-    <script src="dist/setup.js" defer></script>
-    <script src="dist/record.js" defer></script>
-    <script src="dist/nodeconfig.js" defer></script>
-    <script src="dist/nunigraph.js" defer></script>
-    <script src="dist/graphRenderer.js" defer></script>
-    <script src="dist/customWaveform.js" defer></script>
-    <script src="dist/keyboard.js" defer></script>
-    <script src="dist/resize.js" defer></script>
-    <script src="dist/attachHandlers.js" defer></script>
-    <script src="dist/app.js" defer></script>
-    
+    <script src="dist/helpers.js"         defer></script>
+    <script src="dist/jsdials.js"         defer></script>
+    <script src="dist/init_buffers.js"    defer></script>
+    <script src="dist/adsr.js"            defer></script>
+    <script src="dist/webaudio2.js"       defer></script>
+    <script src="dist/oscillator2.js"     defer></script>
+    <script src="dist/sampler_node.js"    defer></script>
+    <script src="dist/setup.js"           defer></script>
+    <script src="dist/record.js"          defer></script>
+    <script src="dist/nodeconfig.js"      defer></script>
+    <script src="dist/nunigraph.js"       defer></script>
+    <script src="dist/graph_renderer.js"  defer></script>
+    <script src="dist/custom_waveform.js" defer></script>
+    <script src="dist/keyboard.js"        defer></script>
+    <script src="dist/resize.js"          defer></script>
+    <script src="dist/attach_handlers.js" defer></script>
+    <script src="dist/app.js"             defer></script>
+
 </head>
 <body>
-    
-    <div id="main" >
 
-        <canvas id="nunigraph"></canvas>
 
-        <!-- RIGHT -->
-        <div id="right-panel">
-            <span id="injected-node-value-ui"> </span>
-        </div>
 
-        <div id="tabs">
-            <select id="tab-swapper">
-                <option value="node-options">Graph</option>
-                <option value="keyboard-tab">Keyboard</option>
-                <option value="buffer-edit-tab">Edit Buffers</option>
-                <option value="waveform-edit-tab">Edit Waveforms</option>
-                <option value="sequencer-tab">Step Sequencer</option>
-            </select> <br>
 
-            <div id="node-options" class="tab">
+<div id="main" >
 
-                <div class="stuff-box">
-                    <div class="left-side-row">
-                        create new nodes <br>
-                        <button id="create-gain"       > gain         </button>
-                        <button id="create-oscillator" > oscillator   </button>
-                        <button id="create-filter"     > filter       </button>
-                        <button id="create-panner"     > panner       </button>
-                        <button id="create-delay"      > delay        </button>    
-                        <button id="create-sampler"    > sampler      </button>    
-                    </div>
-               
-                    <div class="left-side-row">
-                        <button id="copy-graph-button"> 
-                            copy this graph </button>
-                        <input type="text" id="graph-copy-output">
-                    </div>
-    
-                    <div class="left-side-row">
-                        <button id="from-string-button"> 
-                            new graph from code </button>
-                        <input type="text" id="graph-copy-input" 
-                        value="paste it here">
-                    </div>
-                    
-                    <div class="left-side-row">
-                        <span> snap to grid <input type="checkbox" id="snap-to-grid" checked=1> </span>
-                        <button id="about">about </button>
-                    </div>
-                    
+    <canvas id="nunigraph-canvas"></canvas>
+
+    <div id="right-panel">
+        <span id="injected-node-value-ui"> </span>
+    </div>
+
+    <div id="tabs">
+        <select id="tab-swapper">
+            <option value="node-options">      Graph          </option>
+            <option value="keyboard-tab">      Keyboard       </option>
+            <option value="buffer-edit-tab">   Buffers        </option>
+            <option value="waveform-edit-tab"> Waveforms      </option>
+            <option value="sequencer-tab">     Step Sequencer </option>
+        </select>
+
+
+        
+        <div id="node-options" class="tab">
+
+            <div class="stuff-box">
+                <div class="left-side-row">
+                    Create New Nodes <br>
+                    <button id="create-gain">        gain         </button>
+                    <button id="create-oscillator">  oscillator   </button>
+                    <button id="create-filter">      filter       </button>
+                    <button id="create-panner">      panner       </button>
+                    <button id="create-delay">       delay        </button>    
+                    <button id="create-sampler">     sampler      </button>    
                 </div>
-    
-            </div>
+            
+                <div class="left-side-row">
+                    <button id="copy-graph-button"> 
+                        copy this graph </button>
+                    <input type="text" id="graph-copy-output">
+                </div>
 
-
-
-
-            <div id="keyboard-tab" class="tab">
-
-                <div id="keyboard-inner-tab">
-    
-                    <!-- ADSR -->
-                    <span id="adsr-box">
-    
-                        <!-- <span class="text0"> GAIN ADSR </span> 
-    
-                        <br> -->
-                      
-                        <span class="shadow-knob">
-                            <div id="adsr-attack" class="js-dial">
-                            </div>
-                        </span>
-    
-                        <span class="shadow-knob">
-                            <div id="adsr-decay" class="js-dial">
-                            </div>
-                        </span>
-    
-                        <br>
-    
-                        <span class="shadow-knob">
-                            <div id="adsr-sustain" class="js-dial">
-                            </div>
-                        </span>
-    
-                        <span class="shadow-knob">
-                            <div id="adsr-release" class="js-dial">
-                            </div>
-                        </span>
-                        
-                        <br>
-
-                        <canvas id="adsr-canvas"></canvas>
-                        
+                <div class="left-side-row">
+                    <button id="from-string-button"> 
+                      new graph from code </button>
+                    <input type="text" id="graph-copy-input" value="paste it here">
+                </div>
+                
+                <div class="left-side-row">
+                    <span> snap to grid 
+                      <input type="checkbox" id="snap-to-grid"> 
                     </span>
-                    
-
-                    <!-- BEGIN KEYBOARD  -->
-                    <div class="keyboard">
-                        <div class="keyboard__row">
-                          <div class="key--double" data-key="192">
-                          </div>
-                          <div class="key--double" data-key="49">
-                            <div>!</div>
-                            <div>1</div>
-                          </div>
-                          <div class="key--double" data-key="50">
-                            <div>@</div>
-                            <div>2</div>
-                          </div>
-                          <div class="key--double" data-key="51">
-                            <div>#</div>
-                            <div>3</div>
-                          </div>
-                          <div class="key--double" data-key="52">
-                            <div>$</div>
-                            <div>4</div>
-                          </div>
-                          <div class="key--double" data-key="53">
-                            <div>%</div>
-                            <div>5</div>
-                          </div>
-                          <div class="key--double" data-key="54">
-                            <div>^</div>
-                            <div>6</div>
-                          </div>
-                          <div class="key--double" data-key="55">
-                            <div>&</div>
-                            <div>7</div>
-                          </div>
-                          <div class="key--double" data-key="56">
-                            <div>*</div>
-                            <div>8</div>
-                          </div>
-                          <div class="key--double" data-key="57">
-                            <div>(</div>
-                            <div>9</div>
-                          </div>
-                          <div class="key--double" data-key="48">
-                            <div>)</div>
-                            <div>0</div>
-                          </div>
-                          <div class="key--double" data-key="189">
-                            <div>_</div>
-                            <div>-</div>
-                          </div>
-                          <div class="key--double" data-key="187">
-                            <div>+</div>
-                            <div>=</div>
-                          </div>
-                          <div class="key--bottom-right key--word key--w4" data-key="8">
-                          </div>
-                        </div> <br>
-    
-                        <div class="keyboard__row">
-                          <div class="key--bottom-left key--word key--w4" data-key="9">
-                          </div>
-                          <div class="key--letter" data-char="Q">Q</div>
-                          <div class="key--letter" data-char="W">W</div>
-                          <div class="key--letter" data-char="E">E</div>
-                          <div class="key--letter" data-char="R">R</div>
-                          <div class="key--letter" data-char="T">T</div>
-                          <div class="key--letter" data-char="Y">Y</div>
-                          <div class="key--letter" data-char="U">U</div>
-                          <div class="key--letter" data-char="I">I</div>
-                          <div class="key--letter" data-char="O">O</div>
-                          <div class="key--letter" data-char="P">P</div>
-                          <div class="key--double" data-key="219" data-char="{[">
-                            <div>{</div>
-                            <div>[</div>
-                          </div>
-                          <div class="key--double" data-key="221" data-char="}]">
-                            <div>}</div>
-                            <div>]</div>
-                          </div>
-                          <div class="key--double" data-key="220" data-char="|\">
-                          </div>
-                        </div> <br>
-    
-                        <div class="keyboard__row">
-                          <div class="key--bottom-left key--word key--w5" data-key="20">
-                          </div>
-                          <div class="key--letter" data-char="A">A</div>
-                          <div class="key--letter" data-char="S">S</div>
-                          <div class="key--letter" data-char="D">D</div>
-                          <div class="key--letter" data-char="F">F</div>
-                          <div class="key--letter" data-char="G">G</div>
-                          <div class="key--letter" data-char="H">H</div>
-                          <div class="key--letter" data-char="J">J</div>
-                          <div class="key--letter" data-char="K">K</div>
-                          <div class="key--letter" data-char="L">L</div>
-                          <div class="key--double" data-key="186">
-                            <div>:</div>
-                            <div>;</div>
-                          </div>
-                          <div class="key--double" data-key="222">
-                            <div>"</div>
-                            <div>'</div>
-                          </div>
-                          <div class="key--bottom-right key--word key--w5" data-key="13">
-                          </div>
-                        </div> <br>
-    
-                        <div class="keyboard__row">
-                          <div class="key--bottom-left key--word key--w6" data-key="16">
-                          </div>
-                          <div class="key--letter" data-char="Z">Z</div>
-                          <div class="key--letter" data-char="X">X</div>
-                          <div class="key--letter" data-char="C">C</div>
-                          <div class="key--letter" data-char="V">V</div>
-                          <div class="key--letter" data-char="B">B</div>
-                          <div class="key--letter" data-char="N">N</div>
-                          <div class="key--letter" data-char="M">M</div>
-                          <div class="key--double" data-key="188">
-                            <div>&lt;</div>
-                            <div>,</div>
-                          </div>
-                          <div class="key--double" data-key="190">
-                            <div>&gt;</div>
-                            <div>.</div>
-                          </div>
-                          <div class="key--double" data-key="191">
-                            <div>?</div>
-                            <div>/</div>
-                          </div>
-                          <div class="key--bottom-right key--word key--w6" data-key="16-R">
-                          </div>
-                        </div>
-                    </div>
-                    <!-- END KEYBOARD  -->
-
+                    <button id="about"> about </button>
                 </div>
-
                 
             </div>
 
-
-
-
-            <div id="buffer-edit-tab" class="tab">
-                <button id="record" class="record" > rec </button>
-                <span> buffer index: </span>
-                <button id="buffer-index-down"> - </button>
-                <span id="buffer-index"> 0 </span>
-                <button id="buffer-index-up"> + </button>
-            </div>
-
-
-
-
-            <div id="waveform-edit-tab" class="tab">
-
-            </div>
-
-
-
-            
-            <div id="sequencer-tab" class="tab">
-
-            </div>
         </div>
 
 
-        <div id="connection-type-prompt"></div>
+
+
+        <div id="keyboard-tab" class="tab">
+
+            <div id="keyboard-inner-tab">
+
+                <!-- ADSR -->
+                <span id="adsr-box">
+
+                    <!-- <span class="text0"> GAIN ADSR </span> 
+
+                    <br> -->
+                  
+                    <span> ADSR </span>
+                    <canvas id="adsr-canvas"></canvas>
+                    <br>
+                  
+                    <span class="shadow-knob">
+                        <div id="adsr-attack" class="js-dial">
+                        </div>
+                    </span>
+
+                    <span class="shadow-knob">
+                        <div id="adsr-decay" class="js-dial">
+                        </div>
+                    </span>
+
+                    <span class="shadow-knob">
+                        <div id="adsr-sustain" class="js-dial">
+                        </div>
+                    </span>
+
+                    <span class="shadow-knob">
+                        <div id="adsr-release" class="js-dial">
+                        </div>
+                    </span>
+                    
+                </span>
+                
+
+                <!-- BEGIN KEYBOARD  -->
+                <div class="keyboard">
+                    <div class="keyboard__row">
+                      <div class="key--double" data-key="192">
+                      </div>
+                      <div class="key--double" data-key="49">
+                        <div>!</div>
+                        <div>1</div>
+                      </div>
+                      <div class="key--double" data-key="50">
+                        <div>@</div>
+                        <div>2</div>
+                      </div>
+                      <div class="key--double" data-key="51">
+                        <div>#</div>
+                        <div>3</div>
+                      </div>
+                      <div class="key--double" data-key="52">
+                        <div>$</div>
+                        <div>4</div>
+                      </div>
+                      <div class="key--double" data-key="53">
+                        <div>%</div>
+                        <div>5</div>
+                      </div>
+                      <div class="key--double" data-key="54">
+                        <div>^</div>
+                        <div>6</div>
+                      </div>
+                      <div class="key--double" data-key="55">
+                        <div>&</div>
+                        <div>7</div>
+                      </div>
+                      <div class="key--double" data-key="56">
+                        <div>*</div>
+                        <div>8</div>
+                      </div>
+                      <div class="key--double" data-key="57">
+                        <div>(</div>
+                        <div>9</div>
+                      </div>
+                      <div class="key--double" data-key="48">
+                        <div>)</div>
+                        <div>0</div>
+                      </div>
+                      <div class="key--double" data-key="189">
+                        <div>_</div>
+                        <div>-</div>
+                      </div>
+                      <div class="key--double" data-key="187">
+                        <div>+</div>
+                        <div>=</div>
+                      </div>
+                      <div class="key--bottom-right key--word key--w4" data-key="8">
+                      </div>
+                    </div> <br>
+
+                    <div class="keyboard__row">
+                      <div class="key--bottom-left key--word key--w4" data-key="9">
+                      </div>
+                      <div class="key--letter" data-char="Q">Q</div>
+                      <div class="key--letter" data-char="W">W</div>
+                      <div class="key--letter" data-char="E">E</div>
+                      <div class="key--letter" data-char="R">R</div>
+                      <div class="key--letter" data-char="T">T</div>
+                      <div class="key--letter" data-char="Y">Y</div>
+                      <div class="key--letter" data-char="U">U</div>
+                      <div class="key--letter" data-char="I">I</div>
+                      <div class="key--letter" data-char="O">O</div>
+                      <div class="key--letter" data-char="P">P</div>
+                      <div class="key--double" data-key="219" data-char="{[">
+                        <div>{</div>
+                        <div>[</div>
+                      </div>
+                      <div class="key--double" data-key="221" data-char="}]">
+                        <div>}</div>
+                        <div>]</div>
+                      </div>
+                      <div class="key--double" data-key="220" data-char="|\">
+                      </div>
+                    </div> <br>
+
+                    <div class="keyboard__row">
+                      <div class="key--bottom-left key--word key--w5" data-key="20">
+                      </div>
+                      <div class="key--letter" data-char="A">A</div>
+                      <div class="key--letter" data-char="S">S</div>
+                      <div class="key--letter" data-char="D">D</div>
+                      <div class="key--letter" data-char="F">F</div>
+                      <div class="key--letter" data-char="G">G</div>
+                      <div class="key--letter" data-char="H">H</div>
+                      <div class="key--letter" data-char="J">J</div>
+                      <div class="key--letter" data-char="K">K</div>
+                      <div class="key--letter" data-char="L">L</div>
+                      <div class="key--double" data-key="186">
+                        <div>:</div>
+                        <div>;</div>
+                      </div>
+                      <div class="key--double" data-key="222">
+                        <div>"</div>
+                        <div>'</div>
+                      </div>
+                      <div class="key--bottom-right key--word key--w5" data-key="13">
+                      </div>
+                    </div> <br>
+
+                    <div class="keyboard__row">
+                      <div class="key--bottom-left key--word key--w6" data-key="16">
+                      </div>
+                      <div class="key--letter" data-char="Z">Z</div>
+                      <div class="key--letter" data-char="X">X</div>
+                      <div class="key--letter" data-char="C">C</div>
+                      <div class="key--letter" data-char="V">V</div>
+                      <div class="key--letter" data-char="B">B</div>
+                      <div class="key--letter" data-char="N">N</div>
+                      <div class="key--letter" data-char="M">M</div>
+                      <div class="key--double" data-key="188">
+                        <div>&lt;</div>
+                        <div>,</div>
+                      </div>
+                      <div class="key--double" data-key="190">
+                        <div>&gt;</div>
+                        <div>.</div>
+                      </div>
+                      <div class="key--double" data-key="191">
+                        <div>?</div>
+                        <div>/</div>
+                      </div>
+                      <div class="key--bottom-right key--word key--w6" data-key="16-R">
+                      </div>
+                    </div>
+                </div>
+                <!-- END KEYBOARD  -->
+
+            </div>
+
+            
+        </div>
+
+
+
+
+        <div id="buffer-edit-tab" class="tab">
+            <button id="record" class="record" > rec </button>
+            <span> buffer index: </span>
+            <button id="buffer-index-down"> - </button>
+            <span id="buffer-index"> 0 </span>
+            <button id="buffer-index-up"> + </button>
+        </div>
+
+
+
+
+        <div id="waveform-edit-tab" class="tab">
+
+        </div>
+
+
+
         
+        <div id="sequencer-tab" class="tab">
+
+        </div>
     </div>
+
+
+    <div id="connection-type-prompt"></div>
+    
+</div>
+
+
+
 
 </body>
 </html>

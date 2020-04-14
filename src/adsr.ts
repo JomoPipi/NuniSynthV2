@@ -3,13 +3,14 @@ const ADSR = {
     decay: 0.17708349227905273, 
     sustain: 0.2166603088378906, 
     release: 0.3812504768371582,
+    canvas: document.getElementById('adsr-canvas'),
 
     trigger: function(gain: AudioParam, t : number) {
         const { attack, decay, sustain } = this
 
-        gain.cancelScheduledValues(t)                               // cancel any current adsr triggers
-        gain.setTargetAtTime(1, t, attack)                          // attack phase
-        gain.setTargetAtTime(sustain ** 2, t + attack, decay)       // decay phase
+        gain.cancelScheduledValues(t)                          // cancel existing triggers
+        gain.setTargetAtTime(1, t, attack)                     // attack phase
+        gain.setTargetAtTime(sustain ** 2, t + attack, decay)  // decay phase
     },
     
     untrigger: function(sourceNode : NuniSourceNode, key: number) {
@@ -22,8 +23,8 @@ const ADSR = {
         gain.setValueAtTime(gain.value, t)
         gain.setTargetAtTime(0, t, release)
     
-        src.lastReleaseId = setInterval(() => { // to completely turn it off
-            if (gain.value <= lowVol) {
+        src.lastReleaseId = setInterval(() => {
+            if (gain.value <= lowVol) { // to completely turn it off
                 gain.cancelScheduledValues(t)
                 gain.setValueAtTime(gain.value, t)
                 gain.setTargetAtTime(0, t, release)
@@ -38,8 +39,7 @@ const ADSR = {
         }, 10)
     },
 
-    render: () => void 0,
-    canvas: document.getElementById('adsr-canvas')
+    render: () => void 0
 }
 // const aux_ADSR = {
 //     attack: 0.010416984558105469, 

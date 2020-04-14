@@ -231,8 +231,14 @@ class NuniGraph {
 
     fromString(s : string) {
         s = decompressGraphString(s)
-        this.clear()
-        const [connections, nodes] = s.split(':::').map(s => JSON.parse(s))
+        // const oldUserGraph = this.toString()
+        let connections, nodes
+        try {
+            ;[connections, nodes] = s.split(':::').map(s => JSON.parse(s))
+        } catch(e) {
+            throw 'error in fromString'
+        }
+        this.clear() 
         
         if (nodes[0].id !== 0) throw 'Oh, I did not expect this.'
         this.nodes[0].x = nodes[0].x

@@ -10,7 +10,7 @@ const keys = ([] as number[]).concat(...[
                 [219,221],
                 [186,222],
                 [188,190,191]
-            ][i]) // won't work on FireFox. should I care?
+            ][i])
         ))
 
 const keyset = new Set(keys)
@@ -141,7 +141,7 @@ class NuniSourceNode {
         this.ADSRs = keys.reduce((adsr,key) => {
             adsr[key] = new Adsr(this.ctx)
             return adsr
-        }, {} as Indexible)
+        }, {} as Indexed<Adsr>)
         
         this.refresh()
     }

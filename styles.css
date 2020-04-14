@@ -6,8 +6,8 @@
 :root {
     /* --mouse-x: 0px;
     --mouse-y: 0px; */
-    --hover-node: rgba(25, 255, 205, 0.8);
-    --canvas-bg: rgb(0, 25, 25);
+    --node-text: rgba(25, 255, 205, 0.8);
+    --canvas-bg: rgb(0, 10, 15);
 }
 
 body, html {
@@ -20,10 +20,11 @@ body, html {
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10+ and Edge */
     user-select: none; /* Standard syntax */
+    font-family: sans-serif;
 }
 
-#nunigraph {
-    background-color: var(--canvas-bg);
+#nunigraph-canvas {
+    background-color: var(--canvas-bg);/* #fefefe; */
     height: 80%;
     width: 100%;
 }
@@ -125,7 +126,6 @@ body, html {
 
 
 /* #adsr-box {
-    background-color: red;
 } */
 .shadow-knob {
     display: inline-block;
@@ -212,6 +212,7 @@ body, html {
 #keyboard-inner-tab {
     display: grid;
     grid-template-columns: 1fr 2fr;
+    margin: 0% 10%;
 }
 
 

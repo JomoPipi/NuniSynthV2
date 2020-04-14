@@ -2,7 +2,7 @@
  * The GraphCanvas draws the canvas, and allows the user to interact with it.
  */
 const GraphCanvas = (_ => {
-    const canvas = D('nunigraph')! as HTMLCanvasElement
+    const canvas = D('nunigraph-canvas')! as HTMLCanvasElement
 
     const ctx = canvas.getContext('2d')!
 
@@ -14,7 +14,19 @@ const GraphCanvas = (_ => {
 
     const triangleRadius = nodeRadius / 4.0
 
-    // const [ nodeHoverColor ] = ['--hover-node'].map(s =>
+    const textGradient = (() => { 
+        const gradient = ctx.createLinearGradient(0,0,0,1000)
+        for (let i = 0; i < 1; i += .002) {
+            gradient.addColorStop(
+                i, 
+                "#" + [0,0,0].map(_=>
+                    'fedcba9876543'[Math.random()*8|0]).join('')
+                );
+        }
+        return gradient
+    })()
+
+    // const [ nodeTextColor ] = ['--node-text'].map(s =>
     //     getComputedStyle(document.documentElement).getPropertyValue(s)) // getting CSS variable
 
     const snapToGrid = D('snap-to-grid')! as HTMLInputElement
@@ -80,7 +92,7 @@ const GraphCanvas = (_ => {
         drawDirectionTriangle(X, Y, angle, x >= X)
     }
 
-    const drawGridLines = (H:number, W:number) => {
+    const drawGridLines = (H:number, W:number, buttons?:number) => {
         const step = W/20
         ctx.lineWidth = 0.2
         ctx.strokeStyle = '#777'
@@ -88,7 +100,7 @@ const GraphCanvas = (_ => {
         for (let i = 0; i < W; i += step) line(0,i,W,i)
 
         const node = G.selectedNode
-        if (node) {
+        if (node && buttons === 0) {
             const {x,y} = node
             const [X,Y] = [x*W, y*H]
             const [newX, newY] = [
@@ -176,17 +188,16 @@ const GraphCanvas = (_ => {
         const prop = (<Indexible>AudioNodeParams)[node.type][0]
         const pValue = node.audioParamValues[prop]
         const [min,max] = (<Indexible>AudioParamRanges)[prop]
-        const factor = Math.log2(pValue-min)/Math.log2(max-min) 
-        const TAU = 2 * Math.PI
+        const factor = Math.log2(pValue-min) / (Math.log2(max-min) || 0.5)
         const twoThirdsPi = TAU / 3.0
         const cval = factor * 4
         const c1 = 'rgb(' + [0,1,2].map(n => 100 * (1 + Math.sin(cval + n * twoThirdsPi)) |0).join(',') + ')'
         const c2 = G.selectedNode === node ? 'purple' : 'black'
         const {x,y} = node, r = nodeRadius
-        const gradient = ctx.createRadialGradient(x*W, y*H, r/4, x*W, y*H, r)
+        const gradient = ctx.createRadialGradient(x*W, y*H, r/4.0, x*W, y*H, r)
             gradient.addColorStop(0, c1)
-            gradient.addColorStop(0.9, c2)
-
+            gradient.addColorStop(0.90, c2) 
+            
         return gradient
     }
 
@@ -195,6 +206,9 @@ const GraphCanvas = (_ => {
         const { selectedNodes, clientX, clientY, buttons } = options
         const [x,y] = [clientX, clientY]
         canvas.style.cursor = 'default'
+        // ctx.shadowOffsetY = nodeRadius/4.0
+        ctx.shadowBlur = nodeRadius*2.0;
+        ctx.shadowColor = 'rgba(255, 255, 255, .2)';
         for (const node of nodes) {
             
             const [X,Y] = [node.x * W, node.y * H]
@@ -220,7 +234,7 @@ const GraphCanvas = (_ => {
             
             circle(X, Y, nodeRadius)
 
-            ctx.fillStyle = 'white'
+            ctx.fillStyle = textGradient//nodeTextColor
             ctx.fillText(
                 node.id === 0 ? 'master-gain' : node.type,
                 X - nodeRadius * 1.5, 
@@ -239,7 +253,7 @@ const GraphCanvas = (_ => {
         ctx.clearRect(0,0,W,H)
     
         if (snapToGrid.checked) {
-            drawGridLines(H,W)
+            drawGridLines(H,W,buttons)
         }
         ctx.lineWidth = 2
         drawNodeConnections(nodes, H, W, options)

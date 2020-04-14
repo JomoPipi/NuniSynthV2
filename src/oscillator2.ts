@@ -1,28 +1,29 @@
 class OscillatorNode2 extends NuniSourceNode {
     detune:AudioParam2
     frequency:AudioParam2
-    type: OscillatorType
+    _type: OscillatorType
 
     constructor(ctx:AudioContext2) {
         super(ctx)
 
-        this.type = 'sine'
+        this._type = 'sine'
         this.detune = new AudioParam2(ctx)
         this.frequency = new AudioParam2(ctx)
         
         this.setKbMode('none')
     }
 
-    setType(t : OscillatorType) {
+    set type(t : OscillatorType) {
         for (const key in this.sources) {
             this.sources[key].type = t
         } 
-        this.type = t 
+        this._type = t 
     }
+    get type() { return this._type }
 
     private prepareOscillator(key : number) {
         const src = this.ctx.createOscillator()
-        const i = keymap[key] ?? 12
+        const i = key === this.MONO ? 12 : keymap[key]
 
         src.type = this.type
         src.frequency.value = 0
@@ -31,7 +32,7 @@ class OscillatorNode2 extends NuniSourceNode {
         src.connect(this.ADSRs[key])
         this.detune.src.connect(src.detune)
         this.frequency.src.connect(src.frequency)
-
+        this.ADSRs[key].gain.value = 0
         this.sources[key] = src
     }
 
@@ -45,15 +46,15 @@ class OscillatorNode2 extends NuniSourceNode {
     }
     
     private noteOnMono(key : number) {
-        const _k = this.MONO
-        if (this.sources[_k].lastReleaseId >= 0 || this.lastMonoKeyPressed !== key) {
-            clearInterval(this.sources[_k].lastReleaseId)
+        const src = this.sources[this.MONO]
+        if (src.lastReleaseId >= 0 || this.lastMonoKeyPressed !== key) {
+            clearInterval(src.lastReleaseId)
         }
         this.lastMonoKeyPressed = key
-        this.sources[_k].detune.value = (keymap[key]-12) * 100
-        if (this.sources[_k].isOn) return;
-        this.sources[_k].isOn = true 
-        ADSR.trigger(this.ADSRs[_k].gain, this.ctx.currentTime)
+        src.detune.value = (keymap[key]-12) * 100
+        if (src.isOn) return;
+        src.isOn = true 
+        ADSR.trigger(this.ADSRs[this.MONO].gain, this.ctx.currentTime)
     } 
 
     private noteOff(key : number) {
