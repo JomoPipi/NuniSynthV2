@@ -8,6 +8,7 @@
 type KbMode = 'none' | 'mono' | 'poly'
 
 const Keyboard = (() => {
+    
     const keys = ([] as number[]).concat(...[
         '1234567890',
         'qwertyuiop',
@@ -24,10 +25,12 @@ const Keyboard = (() => {
             ))
     
     const keyset = new Set(keys)
+
     const keymap = keys.reduce((map,key,i) => {
         map[key] = i
         return map
     }, {} as Indexed<number>)
+
     const held = [] as number[]
     
     function updateKeyDiv(code: number, keydown: boolean) {

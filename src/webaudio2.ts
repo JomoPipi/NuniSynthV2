@@ -5,24 +5,6 @@
 
 
 
-class Adsr extends GainNode {
-    /**
-     * The only purpose of this class right now is 
-     * to add the property lastReleastId to GainNodes.
-     * 
-     * releaseId is -1 when the adsr is not in the release stage,
-     * and something else, otherwise.
-     */
-    releaseId: number
-    constructor(ctx: AudioContext2) {
-        super(ctx)
-        this.releaseId = -1
-    }
-}
-
-
-
-
 class AudioParam2 {
     /** AudioParams that are compatible with NuniSourceNodes
      */
@@ -30,7 +12,6 @@ class AudioParam2 {
 
     constructor(ctx: AudioContext) {
         this.src = ctx.createConstantSource()
-        // this.src.offset.value = 0
         this.src.start(ctx.currentTime)
     }
     
@@ -39,6 +20,10 @@ class AudioParam2 {
     }
     // implement the rest of the value changing methods if aux-AD is desired
 }
+
+
+
+
 
 
 
@@ -79,18 +64,20 @@ class NuniSourceNode {
         this.connection(false, destination)
         this.refresh()
     }
-
-    private connection(on : boolean, d : Destination) {
-        for (const key in this.ADSRs) {
-            const dest = d instanceof AudioParam2 ? d.src.offset : d as any
-            if (on) {
-                this.ADSRs[key].connect(dest) 
-            } else {
-                this.ADSRs[key].disconnect(dest)
-            }
+    
+    update(keydown : boolean, key : number) {
+        if (this.kbMode === 'poly') {
+            keydown ? 
+                this.noteOnPoly(key) : 
+                this.noteOff(key)
+        } else {
+            const held = Keyboard.held
+            held.length > 0 ? 
+                this.noteOnMono(held[held.length-1]) :
+                this.noteOff(this.MONO)
         }
     }
-    
+
     protected setKbMode(mode : KbMode) {
         this.disconnectAllConnectees()
 
@@ -105,9 +92,39 @@ class NuniSourceNode {
         this.reconnectAllConnectees()
     }
 
+    protected noteOff(key : number) {
+        if (this.sources[key].isOn) {
+            this.sources[key].isOn = false
+            ADSR.untrigger(this, key)
+        }
+    }
+
+    protected refresh() {
+        throw 'Must be implemented in the "concrete" classes.'
+    }
+
+    protected noteOnMono(key:number) {
+        throw 'Must be implemented in the "concrete" classes.'
+    }
+    
+    protected noteOnPoly(key:number) {
+        throw 'Must be implemented in the "concrete" classes.'
+    }
+
+    private connection(on : boolean, d : Destination) {
+        for (const key in this.ADSRs) {
+            const dest = d instanceof AudioParam2 ? d.src.offset : d as any
+            if (on) {
+                this.ADSRs[key].connect(dest) 
+            } else {
+                this.ADSRs[key].disconnect(dest)
+            }
+        }
+    }
+
     private switchToNone() {
         this.ADSRs[this.MONO] = new Adsr(this.ctx)
-        this.ADSRs[this.MONO].gain.setValueAtTime(1,this.ctx.currentTime)
+        this.ADSRs[this.MONO].gain.setValueAtTime(1, this.ctx.currentTime)
         this.sources = {}
         this.refresh()
     }
@@ -141,42 +158,7 @@ class NuniSourceNode {
             delete this.ADSRs[key]
         }
     }
-
-    protected prepareNextVoice(key : number) {
-
-    }
-
-    update(keydown : boolean, key : number) {
-        if (this.kbMode === 'poly') {
-            keydown ? 
-                this.noteOnPoly(key) : 
-                this.noteOff(key)
-        } else {
-            const held = Keyboard.held
-            held.length > 0 ? 
-                this.noteOnMono(held[held.length-1]) :
-                this.noteOff(this.MONO)
-        }
-    }
-
-    protected noteOff(key : number) {
-        if (this.sources[key].isOn) {
-            this.sources[key].isOn = false
-            ADSR.untrigger(this, key)
-        }
-    }
-    protected refresh() {
-        throw 'Must be implemented in the "concrete" classes.'
-    }
-    protected noteOnMono(key:number) {
-        throw 'Must be implemented in the "concrete" classes.'
-    }
-    protected noteOnPoly(key:number) {
-        throw 'Must be implemented in the "concrete" classes.'
-    }
 }
-
-
 
 
 

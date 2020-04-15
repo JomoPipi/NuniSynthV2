@@ -5,6 +5,21 @@
 
 
 
+class Adsr extends GainNode {
+    /**
+     * The only purpose of this class right now is 
+     * to add the property lastReleastId to GainNodes.
+     * 
+     * releaseId is -1 when the adsr is not in the release stage,
+     * and something else, otherwise.
+     */
+    releaseId: number
+    constructor(ctx: AudioContext2) {
+        super(ctx)
+        this.releaseId = -1
+    }
+}
+
 const ADSR = {
     attack: 0.010416984558105469, 
     decay: 0.17708349227905273, 

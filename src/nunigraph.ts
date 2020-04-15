@@ -5,12 +5,24 @@
 
 
 
+type NodeOptions = 
+    { display: { x:number, y:number }, 
+    audioParamValues: Indexible,
+    audioNodeType: string
+    }
+
+
+
+
+
+
+
+
 class NuniGraphNode {
     /**
      * Each NuniGraphNode holds and updates an AudioNode.
-     * It knows nothing about other NuniGraphNodes, but the AudioNode
-     * that it holds gets connected to other NuniGraphNodes' AudioNodes.
-     * It's a data container.
+     * The node is just a data container, but the AudioNode
+     * can be connected in several ways.
      */
     id: number
     type: NodeTypes
@@ -20,13 +32,10 @@ class NuniGraphNode {
     audioNodeType: string
     audioParamValues: Indexible
     
-    constructor( id : number, type : NodeTypes, options : {
-            display: {x:number, y:number},
-            audioParamValues: Indexible
-            audioNodeType: string
-        } ) {
+    constructor(id : number, type : NodeTypes, options : NodeOptions) {
 
-        // change display: {x,y} to just x,y
+        // change display: {x,y} to just x,y later to save space on the string conversions
+        // (will require changing/throwing away all currently saved graphs :/)
         const { display: {x,y}, audioParamValues, audioNodeType } = options
 
         this.id = id
@@ -35,12 +44,11 @@ class NuniGraphNode {
         this.y = y
 
         this.audioNode = audioCtx[createAudioNode[type]]()
-        this.audioNodeType = audioNodeType || this.audioNode.type // is this needed?
+        this.audioNodeType = audioNodeType || this.audioNode.type
         this.audioNode.type = this.audioNodeType
         this.audioParamValues = audioParamValues 
 
         for (const param of AudioNodeParams[type]) {
-
             const value = audioParamValues[param] || DefaultParamValues[param]
             this.setValueOfParam(param, value)
         }
@@ -59,56 +67,46 @@ class NuniGraphNode {
 
 
 
-
-
-
-
-
-
-
-
 class NuniGraph {
     /**
      * The job of the NuniGraph is to keep track of nodes and their connections.
      * It has a list of nodes and a connection map.*
      */
     
-    nodes: NuniGraphNode[]
-    oneWayConnections: { [id1 : number] : ConnecteeData }
     nextId : number
+    nodes : NuniGraphNode[]
+    oneWayConnections : Indexed<ConnecteeData>
     selectedNode : NuniGraphNode | null
 
     constructor() {
+        this.nextId = 0
         this.nodes = []
         this.oneWayConnections = {}
-
-        this.nextId = 0
         this.selectedNode = null
 
-        this.initialize()
+        this.initializeMasterGain()
     }
 
-    initialize() {
-        const options = { 
+    private initializeMasterGain() {
+        const masterGainOptions = { 
             audioParamValues: { [NodeTypes.GAIN]: 0.5 },
-            display: {x:0.5,y:0.125},
+            display: { x: 0.5, y: 0.125 },
             audioNodeType: ''
             }
 
-        this.newNode(NodeTypes.GAIN, options).audioNode.connect(audioCtx.destination)
+        this.newNode(NodeTypes.GAIN, masterGainOptions)
+            .audioNode
+            .connect(audioCtx.destination)
     }
 
-    newNode(type : NodeTypes, options : null | { display: { x:number, y:number }, 
-                                                audioParamValues: Indexible,
-                                                audioNodeType: string
-                                                }
-    ) {
+    newNode(type : NodeTypes, options?: NodeOptions ) {
+
         if (!options) {
             options = {
                 display: {x:0.5, y:0.5},
                 audioParamValues: {},
                 audioNodeType: ''
-            }
+                }
         }
 
         const node = new NuniGraphNode( this.nextId++, type, options )
@@ -119,37 +117,48 @@ class NuniGraph {
     
     connect(node1 : NuniGraphNode, node2 : NuniGraphNode, connectionType : ConnectionType) {
 
-        if (G.oneWayConnections[node1.id]?.find(data => data.id === node2.id && data.connectionType === connectionType)) {
-            // if this connection already exists, ignore it.
-            return;
-        }
+        const connections = this.oneWayConnections[node1.id]
 
-        const destination = this.setConnection(connectionType)(node2.audioNode)
-        connect_node_to_destination(node1, destination)
-        
+        const isDuplicate = 
+            connections?.find(data => 
+            data.id === node2.id && 
+            data.connectionType === connectionType)
+
+        if (isDuplicate) return;
+
         const destinationData = {
             id: node2.id, 
             connectionType
             }
 
-        if (!this.oneWayConnections[node1.id] || this.oneWayConnections[node1.id].length === 0)
+        if (!connections || connections.length === 0)
             this.oneWayConnections[node1.id] = [destinationData]
         else
-            this.oneWayConnections[node1.id].push(destinationData)
+            connections.push(destinationData)
+
+    
+        const destination = this.setConnection(connectionType)(node2.audioNode)
+        connect_node_to_destination(node1, destination)
     }
 
     disconnect(node1 : NuniGraphNode, node2 : NuniGraphNode, connectionType : ConnectionType) {
-        if (!G.oneWayConnections[node1.id]) throw 'check what happened here'
-        const connectionIndex = G.oneWayConnections[node1.id].findIndex(data => data.id === node2.id && data.connectionType === connectionType)
-        G.oneWayConnections[node1.id].splice(connectionIndex,1)
-        // delete G.oneWayConnections[node1.id] as empty array if it ever becomes undesired
+
+        const connections = this.oneWayConnections[node1.id]
+
+        if (!connections) throw 'check what happened here'
+
+        const connectionIndex = 
+            connections.findIndex(data => 
+            data.id === node2.id &&
+            data.connectionType === connectionType)
+
+        connections.splice(connectionIndex, 1)
 
         const destination = this.setConnection(connectionType)(node2.audioNode)
-        // node1.audioNode.disconnect(destination)
         disconnect_node_from_destination(node1, destination)
     }
 
-    selectNodeFunc () {}
+    selectNodeFunc () { throw 'Should be implemented in attach_handlers.ts' }
 
     setConnection (connectionType : ConnectionType) {
         return (x : Indexible) => 
@@ -167,18 +176,19 @@ class NuniGraph {
     }
 
     deleteSelectedNode() {
+
         const node = this.selectedNode
         if (!node) return;
+        
         if (D('connection-type-prompt')!.style.display === 'block') {
+            // Find a clean way to cancel the current connection being made, instead of doing this.
             alert("Please finish what you're doing, first.")
             return;
         }
 
-        if (node.id === 0) {
-            alert('cannot delete this!')
-            return;
-        }
-        // disconnect from others
+        if (node.id === 0) throw 'How did someone try to delete the node with ID of 0?'
+        
+        // disconnect from other audioNodes
         node.audioNode.disconnect()
 
         // remove from this.nodes
@@ -186,7 +196,7 @@ class NuniGraph {
             _node === node)
         this.nodes.splice(idx,1)
 
-        // remove from oneWayConnections
+        // remove from this.oneWayConnections
         delete this.oneWayConnections[node.id]
         for (const id in this.oneWayConnections) {
             this.oneWayConnections[id] = 
@@ -207,24 +217,27 @@ class NuniGraph {
     }
 
     toString() {
-        
-        return compressGraphString(
+
+        return LZW_compress(
         JSON.stringify(this.oneWayConnections) + ':::' +
         JSON.stringify(this.nodes).replace(/,"audioNode":{}/g, ""))
     }
 
     fromString(s : string) {
-        s = decompressGraphString(s)
-        // const oldUserGraph = this.toString()
-        let connections, nodes
+
+        s = LZW_decompress(s)
+        
         try {
-            ;[connections, nodes] = s.split(':::').map(s => JSON.parse(s))
+            var [connections, nodes] = s.split(':::').map(s => JSON.parse(s))
         } catch(e) {
             throw 'error in fromString'
         }
+
         this.clear() 
         
         if (nodes[0].id !== 0) throw 'Oh, I did not expect this.'
+
+        // manually copy the master-gain
         this.nodes[0].x = nodes[0].x
         this.nodes[0].y = nodes[0].y
         this.nodes[0].setValueOfParam('gain', nodes[0].audioParamValues.gain)
@@ -232,25 +245,26 @@ class NuniGraph {
         this.nodes[0].audioNode.connect(audioCtx.destination)
 
         // recreate the nodes
-        for (const node of nodes.filter(
-        (node : NuniGraphNode) => node.id !== 0)) {
+        for (const { id, type, x, y, audioParamValues, audioNodeType } of nodes) {
+
+            if (id === 0) continue
             
             const options = {
-                display: {x: node.x, y: node.y},
-                audioParamValues: node.audioParamValues,
-                audioNodeType: node.audioNodeType
-            }
+                display: { x, y },
+                audioParamValues,
+                audioNodeType,
+                }
 
-            this.nodes.push(new NuniGraphNode(node.id, node.type, options))
+            this.nodes.push(new NuniGraphNode(id, type, options))
         }
 
         // reconnect the nodes
         for (const id in connections) {
             for (const { id: id2, connectionType } of connections[id]) {
-                const node1 = this.nodes.find(node => node.id === +id)!
-                const node2 = this.nodes.find(node => node.id === id2)!
+                const nodeA = this.nodes.find(node => node.id === +id)!
+                const nodeB = this.nodes.find(node => node.id === id2)!
                 
-                this.connect(node1, node2, connectionType)
+                this.connect(nodeA, nodeB, connectionType)
             }
         }
         this.nextId = 
@@ -277,10 +291,9 @@ Keyboard.attachToGraph(G)
 
 
 
+// The following functions were taken from the internet, somewhere:
 
-
-function compressGraphString
-(uncompressed : string) : string {
+function LZW_compress(uncompressed : string) : string {
     // Build the dictionary.
     const dictionary : { [n:string]:number } = {};
     for (let i = 0; i < 256; i++)
@@ -329,7 +342,7 @@ function compressGraphString
 
 
 
-function decompressGraphString(compressedStr : string) : string
+function LZW_decompress(compressedStr : string) : string
 {
     const compressed = 
         compressedStr.split('').map((c:string)=>c.charCodeAt(0))

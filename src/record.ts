@@ -5,61 +5,62 @@
 
 
 
+const recordButton = D('record')!
+
 let currentBufferIndex = 0
+let stopLastRecorder : () => void
+let lastRecorderRequestId : number
 
-D('record')!.onclick = () => recordTo(currentBufferIndex)
+recordButton.onclick = () => recordTo(currentBufferIndex)
 
-function errStuff(err:string) {
-    D('record')!.innerHTML = err
-    D('record')!.style.backgroundColor = 'orange'
+
+function errStuff(err: string) {
+    recordButton.innerHTML = err
+    recordButton.style.backgroundColor = 'orange'
 }
 
-let lastRequestId : number
-let stopLastRecorder : Function
-
 function recordTo(index : number) {
-    const isRecording = D('record')!.classList.toggle('recording')
+    const isRecording = recordButton.classList.toggle('recording')
     if (!isRecording) {
-        clearTimeout(lastRequestId)
+        clearTimeout(lastRecorderRequestId)
         stopLastRecorder()
         return;
     }
-
     log('recording...')
 
-    navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(stream => {
-        const mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.start();
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
 
-        const audioChunks : Blob[] = [];
-        mediaRecorder.addEventListener("dataavailable", (event : any) => {
-            audioChunks.push(event.data);
-        });
+        const mediaRecorder = new MediaRecorder(stream)
+        mediaRecorder.start()
 
-        mediaRecorder.addEventListener("stop", () => {
-            const audioBlob = new Blob(audioChunks);
+        const audioChunks : Blob[] = []
+        mediaRecorder.addEventListener('dataavailable', (event : any) => {
+            audioChunks.push(event.data)
+        })
+
+        mediaRecorder.addEventListener('stop', () => {
+            const audioBlob = new Blob(audioChunks)
+
             audioBlob.arrayBuffer().then(arraybuffer => {
                 audioCtx.decodeAudioData(arraybuffer, (audiobuffer : AudioBuffer) => {
 
                     BUFFERS[index] = audiobuffer
 
-                    G.nodes.forEach(node => {
-                        const an = node.audioNode
+                    
+                    G.nodes.forEach(({ audioNode:an }) => {
                         if (an instanceof SamplerNode && an.bufferIndex === index) {
                             an.refresh()
                         }
                     })
 
-                    D('record')!.classList.remove('recording')
+                    recordButton.classList.remove('recording')
                 },
-                    errStuff) 
+                errStuff)
             }).catch(errStuff)
             
-        });
-        lastRequestId = setTimeout(stopLastRecorder = () => {
-            mediaRecorder.stop(); 
-        }, 9001);
+        })
+        stopLastRecorder = () => mediaRecorder.stop()
+        lastRecorderRequestId = setTimeout(stopLastRecorder, 10000)
 
     }).catch(errStuff)
 }

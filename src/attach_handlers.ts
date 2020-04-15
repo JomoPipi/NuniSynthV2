@@ -19,7 +19,7 @@ D('node-options')!.classList.toggle('show',true)
 // create [NodeType] buttons
 Object.values(NodeTypes).forEach(type => {
     D('create-' + type)!.onclick = () => {
-        G.newNode(type, null)
+        G.newNode(type)
         GraphCanvas.render()
     }
 })
