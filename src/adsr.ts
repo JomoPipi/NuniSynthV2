@@ -1,3 +1,10 @@
+
+
+
+
+
+
+
 const ADSR = {
     attack: 0.010416984558105469, 
     decay: 0.17708349227905273, 
@@ -7,8 +14,8 @@ const ADSR = {
 
     trigger: function(gain: AudioParam, t : number) {
         const { attack, decay, sustain } = this
-
         gain.cancelScheduledValues(t)                          // cancel existing triggers
+        gain.setValueAtTime(0,t)                               // this needs to be disabled to allow mono-glide
         gain.setTargetAtTime(1, t, attack)                     // attack phase
         gain.setTargetAtTime(sustain ** 2, t + attack, decay)  // decay phase
     },
@@ -18,19 +25,19 @@ const ADSR = {
         const lowVol = 0.001
         const t = sourceNode.ctx.currentTime
         const gain = sourceNode.ADSRs[key].gain
-        const src = sourceNode.sources[key]
+        const adsr = sourceNode.ADSRs[key]
         gain.cancelScheduledValues(t)
         gain.setValueAtTime(gain.value, t)
         gain.setTargetAtTime(0, t, release)
     
-        src.lastReleaseId = setInterval(() => {
+        adsr.releaseId = setInterval(() => {
             if (gain.value <= lowVol) { // to completely turn it off
                 gain.cancelScheduledValues(t)
                 gain.setValueAtTime(gain.value, t)
                 gain.setTargetAtTime(0, t, release)
                 
-                clearInterval(src.lastReleaseId) 
-                src.lastReleaseId = -1
+                clearInterval(adsr.releaseId) 
+                adsr.releaseId = -1
 
                 if (sourceNode instanceof SamplerNode) {
                     sourceNode.prepareBuffer(key)

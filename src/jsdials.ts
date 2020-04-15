@@ -1,4 +1,10 @@
 
+
+
+
+
+
+
 class JsDial {
     [x:string]: unknown
     isActive: boolean

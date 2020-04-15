@@ -1,3 +1,10 @@
+
+
+
+
+
+
+
 <html lang="en">
 <head>
 
@@ -21,6 +28,7 @@
     <script src="dist/helpers.js"         defer></script>
     <script src="dist/jsdials.js"         defer></script>
     <script src="dist/init_buffers.js"    defer></script>
+    <script src="dist/keyboard.js"        defer></script>
     <script src="dist/adsr.js"            defer></script>
     <script src="dist/webaudio2.js"       defer></script>
     <script src="dist/oscillator2.js"     defer></script>
@@ -31,7 +39,6 @@
     <script src="dist/nunigraph.js"       defer></script>
     <script src="dist/graph_renderer.js"  defer></script>
     <script src="dist/custom_waveform.js" defer></script>
-    <script src="dist/keyboard.js"        defer></script>
     <script src="dist/resize.js"          defer></script>
     <script src="dist/attach_handlers.js" defer></script>
     <script src="dist/app.js"             defer></script>
@@ -110,11 +117,11 @@
                     <!-- <span class="text0"> GAIN ADSR </span> 
 
                     <br> -->
-                  
+  
                     <span> ADSR </span>
                     <canvas id="adsr-canvas"></canvas>
                     <br>
-                  
+  
                     <span class="shadow-knob">
                         <div id="adsr-attack" class="js-dial">
                         </div>
@@ -139,7 +146,7 @@
                 
 
                 <!-- BEGIN KEYBOARD  -->
-                <div class="keyboard">
+                <div class="keyboard" id="keyboard-image">
                     <div class="keyboard__row">
                       <div class="key--double" data-key="192">
                       </div>

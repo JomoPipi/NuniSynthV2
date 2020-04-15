@@ -1,4 +1,10 @@
 
+
+
+
+
+
+
 D('tab-swapper')!.oninput = function() {
     const value = (D('tab-swapper') as HTMLSelectElement).value
     ;[...document.getElementsByClassName('tab')].forEach((tab:any) => {

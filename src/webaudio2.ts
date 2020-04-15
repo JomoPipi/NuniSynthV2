@@ -1,29 +1,6 @@
-const keys = ([] as number[]).concat(...[
-    '1234567890',
-    'qwertyuiop',
-    'asdfghjkl',
-    'zxcvbnm'
-    ].map((s,i) => 
-        [...s].map(c=>c.toUpperCase().charCodeAt(0))
-            .concat([ // add the [];',./ (aka {}:"<>?) keys
-                [189,187],
-                [219,221],
-                [186,222],
-                [188,190,191]
-            ][i])
-        ))
-
-const keyset = new Set(keys)
-const keymap = keys.reduce((map,key,i) => {
-    map[key] = i
-    return map
-}, {} as Indexed<number>)
-const heldKeyArray = [] as number[]
 
 
 
-
-type KbMode = 'none' | 'mono' | 'poly'
 
 
 
@@ -32,11 +9,14 @@ class Adsr extends GainNode {
     /**
      * The only purpose of this class right now is 
      * to add the property lastReleastId to GainNodes.
+     * 
+     * releaseId is -1 when the adsr is not in the release stage,
+     * and something else, otherwise.
      */
-    lastReleaseId: number
+    releaseId: number
     constructor(ctx: AudioContext2) {
         super(ctx)
-        this.lastReleaseId = -1
+        this.releaseId = -1
     }
 }
 
@@ -44,7 +24,7 @@ class Adsr extends GainNode {
 
 
 class AudioParam2 {
-    /** AudioParams that are compatible with the keyboard
+    /** AudioParams that are compatible with NuniSourceNodes
      */
     src: ConstantSourceNode
 
@@ -65,6 +45,7 @@ class AudioParam2 {
 
 class NuniSourceNode {
     /** Parent interface for Sampler and Oscillator nodes
+     *  Allows for 3 keyboard modes - none | mono | poly
      */
     connectees: Destination[] // The list of things that the node connects to
     ADSRs: Indexed<Adsr>      // The gain-ADSRs
@@ -138,7 +119,7 @@ class NuniSourceNode {
     }
 
     private switchToPoly() {
-        this.ADSRs = keys.reduce((adsr,key) => {
+        this.ADSRs = Keyboard.keys.reduce((adsr,key) => {
             adsr[key] = new Adsr(this.ctx)
             return adsr
         }, {} as Indexed<Adsr>)
@@ -161,11 +142,36 @@ class NuniSourceNode {
         }
     }
 
-    update(keydown:boolean, key:number) {
-        throw 'Must be implemented in the "concrete" classes.'
+    protected prepareNextVoice(key : number) {
+
     }
 
+    update(keydown : boolean, key : number) {
+        if (this.kbMode === 'poly') {
+            keydown ? 
+                this.noteOnPoly(key) : 
+                this.noteOff(key)
+        } else {
+            const held = Keyboard.held
+            held.length > 0 ? 
+                this.noteOnMono(held[held.length-1]) :
+                this.noteOff(this.MONO)
+        }
+    }
+
+    protected noteOff(key : number) {
+        if (this.sources[key].isOn) {
+            this.sources[key].isOn = false
+            ADSR.untrigger(this, key)
+        }
+    }
     protected refresh() {
+        throw 'Must be implemented in the "concrete" classes.'
+    }
+    protected noteOnMono(key:number) {
+        throw 'Must be implemented in the "concrete" classes.'
+    }
+    protected noteOnPoly(key:number) {
         throw 'Must be implemented in the "concrete" classes.'
     }
 }

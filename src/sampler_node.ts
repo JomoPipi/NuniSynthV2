@@ -1,44 +1,49 @@
 
+
+
+
+
+
+
 class SamplerNode extends NuniSourceNode {
     /**
      * audioBufferSourceNodes need to get disconnected
      * as keys get pressed/unpressed.
      * The sampler will take care of this business internally
      * while keeping the node connected to the graph.
-     * We also have the 3 keyboard modes to deal with - none | mono | poly
      */
 
-    bufferIndex: number
     loop: boolean
+    bufferIndex: number
     detune: AudioParam2
     playbackRate: AudioParam2
     
     constructor(ctx : AudioContext2) {
         super(ctx)
 
-        this.bufferIndex = 0
         this.loop = true
+        this.bufferIndex = 0
         this.detune = new AudioParam2(ctx)
         this.playbackRate = new AudioParam2(ctx)
 
         this.setKbMode('none')
     }
 
-    prepareBuffer(key : number) {
+    prepareBuffer(key : number) { // happens at noteOff
         const sources = this.sources
-        const i = keymap[key] ?? 12 // if key is this.MONO, we want detune to be 0
+        const i = key === this.MONO ? 12 : Keyboard.keymap[key]
 
         sources[key] && sources[key].disconnect()
-        sources[key] = this.ctx.createBufferSource()
+        const src = sources[key] = this.ctx.createBufferSource()
 
-        sources[key].detune.value = (i-12) * 100
-        this.playbackRate.src.connect(sources[key].playbackRate)
-        this.detune.src.connect(sources[key].detune)
+        this.detune.src.connect(src.detune)
+        this.playbackRate.src.connect(src.playbackRate)
 
-        sources[key].buffer = BUFFERS[this.bufferIndex]
-        sources[key].loop = this.loop
-        sources[key].lastReleaseId = -1  
-        sources[key].connect(this.ADSRs[key]) ////
+        src.detune.value = (i-12) * 100
+        src.buffer = BUFFERS[this.bufferIndex]
+        src.loop = this.loop
+        this.ADSRs[key].releaseId = -1  
+        src.connect(this.ADSRs[key])
     }
 
     private connectBuffer(key:number) {
@@ -48,50 +53,34 @@ class SamplerNode extends NuniSourceNode {
         src.isOn = true
     }
     
-    private noteOnPoly(key : number) {
-        if (this.sources[key].lastReleaseId >= 0) {
-            clearInterval(this.sources[key].lastReleaseId)
+    protected noteOnPoly(key : number) {
+        const adsr = this.ADSRs[key]
+        if (adsr.releaseId >= 0) {
+            clearInterval(adsr.releaseId)
             this.prepareBuffer(key)
         }
         if (this.sources[key].isOn) return;
-        ADSR.trigger(this.ADSRs[key].gain, this.ctx.currentTime)
+        ADSR.trigger(adsr.gain, this.ctx.currentTime)
         this.connectBuffer(key)
     }
     
-    private noteOnMono(key : number) {
+    protected noteOnMono(key : number) {
         const _k = this.MONO
-        if (this.sources[_k].lastReleaseId >= 0 || this.lastMonoKeyPressed !== key) {
-            clearInterval(this.sources[_k].lastReleaseId)
+        const adsr = this.ADSRs[_k]
+        if (adsr.releaseId >= 0 || this.lastMonoKeyPressed !== key) {
+            clearInterval(adsr.releaseId)
             this.prepareBuffer(_k)
         }
         this.lastMonoKeyPressed = key
-        this.sources[_k].detune.value = (keymap[key]-12) * 100
+        this.sources[_k].detune.value = (Keyboard.keymap[key]-12) * 100
         if (this.sources[_k].isOn) return;
-        ADSR.trigger(this.ADSRs[_k].gain, this.ctx.currentTime)
+        ADSR.trigger(adsr.gain, this.ctx.currentTime)
         this.connectBuffer(_k)
-    }
-
-    private noteOff(key : number) {
-        if (this.sources[key].isOn) {
-            ADSR.untrigger(this, key)
-        }
-    } 
-
-    update(keydown : boolean, key : number) {
-        if (this.kbMode === 'poly') {
-            keydown ? 
-                this.noteOnPoly(key) : 
-                this.noteOff(key)
-        } else {
-            heldKeyArray.length > 0 ? 
-                this.noteOnMono(heldKeyArray[heldKeyArray.length-1]) :
-                this.noteOff(this.MONO)
-        }
     }
 
     refresh() {
         if (this.kbMode === 'poly') {
-            keys.forEach(key => 
+            Keyboard.keys.forEach(key => 
                 this.prepareBuffer(key))
 
         } else if (this.kbMode === 'mono') {

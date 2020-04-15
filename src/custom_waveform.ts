@@ -1,3 +1,10 @@
+
+
+
+
+
+
+
 function newRandomWaveForm(N : number) : PeriodicWave {
 
     const real = new Float32Array(N);
