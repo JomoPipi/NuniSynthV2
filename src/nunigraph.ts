@@ -5,15 +5,11 @@
 
 
 
-type NodeOptions = 
-    { display: { x:number, y:number }, 
-    audioParamValues: Indexible,
-    audioNodeType: string
-    }
-
-
-
-
+type NodeOptions = { 
+    display : { x : number, y : number }, 
+    audioParamValues : Indexible,
+    audioNodeType : string
+}
 
 
 
@@ -24,13 +20,13 @@ class NuniGraphNode {
      * The node is just a data container, but the AudioNode
      * can be connected in several ways.
      */
-    id: number
-    type: NodeTypes
-    audioNode:  Indexible
-    x:number
-    y:number
-    audioNodeType: string
-    audioParamValues: Indexible
+    id : number
+    type : NodeTypes
+    audioNode : Indexible
+    x : number
+    y : number
+    audioNodeType : string
+    audioParamValues : Indexible
     
     constructor(id : number, type : NodeTypes, options : NodeOptions) {
 
@@ -49,10 +45,11 @@ class NuniGraphNode {
         this.audioParamValues = audioParamValues 
 
         for (const param of AudioNodeParams[type]) {
-            const value = audioParamValues[param] || DefaultParamValues[param]
+            const value = audioParamValues[param] ?? DefaultParamValues[param]
             this.setValueOfParam(param, value)
         }
     }
+
     setValueOfParam(param : string, value: number) {
         
         this.audioParamValues[param] = value
@@ -99,7 +96,7 @@ class NuniGraph {
             .connect(audioCtx.destination)
     }
 
-    newNode(type : NodeTypes, options?: NodeOptions ) {
+    newNode(type : NodeTypes, options? : NodeOptions) {
 
         if (!options) {
             options = {
@@ -109,7 +106,7 @@ class NuniGraph {
                 }
         }
 
-        const node = new NuniGraphNode( this.nextId++, type, options )
+        const node = new NuniGraphNode(this.nextId++, type, options)
         this.nodes.push(node)
 
         return node
@@ -137,7 +134,7 @@ class NuniGraph {
             connections.push(destinationData)
 
     
-        const destination = this.setConnection(connectionType)(node2.audioNode)
+        const destination = this.prepareDestination(connectionType)(node2.audioNode)
         connect_node_to_destination(node1, destination)
     }
 
@@ -154,16 +151,16 @@ class NuniGraph {
 
         connections.splice(connectionIndex, 1)
 
-        const destination = this.setConnection(connectionType)(node2.audioNode)
+        const destination = this.prepareDestination(connectionType)(node2.audioNode)
         disconnect_node_from_destination(node1, destination)
     }
 
-    selectNodeFunc () { throw 'Should be implemented in attach_handlers.ts' }
-
-    setConnection (connectionType : ConnectionType) {
+    private prepareDestination (connectionType : ConnectionType) {
         return (x : Indexible) => 
             connectionType === 'channel' ? x : x[connectionType] 
     }
+
+    selectNodeFunc() { throw 'Should be implemented in attach_handlers.ts' }
 
     selectNode (node : NuniGraphNode) {
         this.selectedNode = node
@@ -179,14 +176,13 @@ class NuniGraph {
 
         const node = this.selectedNode
         if (!node) return;
-        
+
         if (D('connection-type-prompt')!.style.display === 'block') {
             // Find a clean way to cancel the current connection being made, instead of doing this.
             alert("Please finish what you're doing, first.")
             return;
         }
-
-        if (node.id === 0) throw 'How did someone try to delete the node with ID of 0?'
+        if (node.id === 0) throw 'How can someone try to delete the node with ID of 0?'
         
         // disconnect from other audioNodes
         node.audioNode.disconnect()
@@ -206,7 +202,7 @@ class NuniGraph {
         GraphCanvas.render()
     }
 
-    clear() {
+    private clear() {
         for (const node of [...this.nodes]) {
             if (node.id === 0) continue
             this.selectedNode = node
@@ -230,7 +226,7 @@ class NuniGraph {
         try {
             var [connections, nodes] = s.split(':::').map(s => JSON.parse(s))
         } catch(e) {
-            throw 'error in fromString'
+            throw 'Error parsing new graph'
         }
 
         this.clear() 
@@ -276,115 +272,3 @@ class NuniGraph {
 }
 const G = new NuniGraph()
 Keyboard.attachToGraph(G)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// The following functions were taken from the internet, somewhere:
-
-function LZW_compress(uncompressed : string) : string {
-    // Build the dictionary.
-    const dictionary : { [n:string]:number } = {};
-    for (let i = 0; i < 256; i++)
-    {
-        dictionary[String.fromCharCode(i)] = i;
-    }
-
-    let word = '';
-    let dictSize = 256;
-    const result = [];
-
-    for (let i = 0, len = uncompressed.length; i < len; i++)
-    {
-        let curChar = uncompressed[i];
-        let joinedWord = word + curChar;
-
-        // Do not use dictionary[joinedWord] because javascript objects 
-        // will return values for myObject['toString']
-        if (dictionary.hasOwnProperty(joinedWord)) 
-        {
-            word = joinedWord;
-        }
-        else
-        {
-            result.push(dictionary[word]);
-            // Add wc to the dictionary.
-            dictionary[joinedWord] = dictSize++;
-            word = curChar;
-        }
-    }
-
-    if (word !== '')
-    {
-        result.push(dictionary[word]);
-    }
-
-    return result
-        .map(c=>String.fromCharCode(c))
-        .join('')
-}
-
-
-
-
-
-
-
-
-function LZW_decompress(compressedStr : string) : string
-{
-    const compressed = 
-        compressedStr.split('').map((c:string)=>c.charCodeAt(0))
-    // Initialize Dictionary (inverse of compress)
-    const dictionary : { [key:number]:string } = {};
-    for (let i = 0; i < 256; i++)
-    {
-        dictionary[i] = String.fromCharCode(i);
-    }
-
-    let word = String.fromCharCode(compressed[0]);
-    let result = word;
-    let entry = '';
-    let dictSize = 256;
-
-    for (let i = 1, len = compressed.length; i < len; i++)
-    {
-        let curNumber = compressed[i];
-
-        if (dictionary[curNumber] !== undefined)
-        {
-            entry = dictionary[curNumber];
-        }
-        else
-        {
-            if (curNumber === dictSize)
-            {
-                entry = word + word[0];
-            }
-            else
-            {
-                throw 'Error in processing'
-            }
-        }
-
-        result += entry;
-
-        // Add word + entry[0] to dictionary
-        dictionary[dictSize++] = word + entry[0];
-
-        word = entry;
-    }
-
-    return result;
-}

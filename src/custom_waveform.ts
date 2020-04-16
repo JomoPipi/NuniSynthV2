@@ -15,7 +15,7 @@ function newRandomWaveForm(N : number) : PeriodicWave {
         imag[i] = 1-i/N // Math.random()
     }
     
-    return audioCtx.createPeriodicWave(real, imag, {disableNormalization: true})
+    return audioCtx.createPeriodicWave(real, imag, { disableNormalization: true })
 }
 
 // {"1":[Āidă0,"connectiĎTypeăČhaďel"}]ċ2ăą"ćă3ċčĞĒĔnĖĘĚcĜĞĠĢċ3ĦĆĈ:1ĬĎĐįĕėę:"frequencyġ]}:Ŗħĩ:Ċ"tņĚgain"ċxĉ.50144369586ū052ċŒŚ.1274298ŵų5ƅ076ċaudĔParamValŎsăĀŠŢŧ319ƠơƢƢ5}},ĽăŀŜŞňoscillatorŤ"Ŧźű517Ƃƅ82ƀ06Ɖ"Ź0.46Ǆ030237ű0Ơ35ƊƌĔNodeĲŇ"sŢęǛƍoƏƑƓƕƗƙŉŋōŏőăŬśǠtuĐĉƦƨĨľŷƬĳƮưƲƴƶƸťŧũŭƞ08Ǖ8ſ15ǈǊ.ǀ185žƾ4ǐ8ȑ7ǨǝǟǡƭǤǦƹƋǩǫƒƔƖeƘ:ĀŊŌŎŐŹ8Żż7Ǔ6ȑƇ9ǒǈǹǻŇ0ǾƩ:īȃǣƛţȋźų7Ʉț2Ų8ū2ŬŸŧ7ƟǄɝǎ2ǐǒ38ȥǪƐȰǮȳǰɑăƠƦ]

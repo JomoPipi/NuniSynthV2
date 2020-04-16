@@ -13,8 +13,8 @@ class Adsr extends GainNode {
      * releaseId is -1 when the adsr is not in the release stage,
      * and something else, otherwise.
      */
-    releaseId: number
-    constructor(ctx: AudioContext2) {
+    releaseId : number
+    constructor(ctx : AudioContext2) {
         super(ctx)
         this.releaseId = -1
     }
@@ -27,7 +27,7 @@ const ADSR = {
     release: 0.3812504768371582,
     canvas: document.getElementById('adsr-canvas'),
 
-    trigger: function(gain: AudioParam, t : number) {
+    trigger: function(gain : AudioParam, t : number) {
         const { attack, decay, sustain } = this
         gain.cancelScheduledValues(t)                          // cancel existing triggers
         gain.setValueAtTime(0,t)                               // this needs to be disabled to allow mono-glide
@@ -35,7 +35,7 @@ const ADSR = {
         gain.setTargetAtTime(sustain ** 2, t + attack, decay)  // decay phase
     },
     
-    untrigger: function(sourceNode : NuniSourceNode, key: number) {
+    untrigger: function(sourceNode : NuniSourceNode, key : number) {
         const { release } = this
         const lowVol = 0.001
         const t = sourceNode.ctx.currentTime

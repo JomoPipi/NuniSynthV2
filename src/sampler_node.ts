@@ -13,10 +13,10 @@ class SamplerNode extends NuniSourceNode {
      * while keeping the node connected to the graph.
      */
 
-    loop: boolean
-    bufferIndex: number
-    detune: AudioParam2
-    playbackRate: AudioParam2
+    loop : boolean
+    bufferIndex : number
+    detune : AudioParam2
+    playbackRate : AudioParam2
     
     constructor(ctx : AudioContext2) {
         super(ctx)
@@ -46,7 +46,7 @@ class SamplerNode extends NuniSourceNode {
         src.connect(this.ADSRs[key])
     }
 
-    private connectBuffer(key:number) {
+    private connectBuffer(key : number) {
         const src = this.sources[key] 
         src.start(this.ctx.currentTime)
             

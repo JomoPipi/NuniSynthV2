@@ -14,7 +14,7 @@ let lastRecorderRequestId : number
 recordButton.onclick = () => recordTo(currentBufferIndex)
 
 
-function errStuff(err: string) {
+function errStuff(err : string) {
     recordButton.innerHTML = err
     recordButton.style.backgroundColor = 'orange'
 }
@@ -44,14 +44,16 @@ function recordTo(index : number) {
             audioBlob.arrayBuffer().then(arraybuffer => {
                 audioCtx.decodeAudioData(arraybuffer, (audiobuffer : AudioBuffer) => {
 
+                    // replace the selected buffer
+                    audiobuffer.getChannelData(0).reverse()
                     BUFFERS[index] = audiobuffer
 
-                    
-                    G.nodes.forEach(({ audioNode:an }) => {
+                    // refresh nodes that are using this buffer
+                    for (const { audioNode:an } of G.nodes) {
                         if (an instanceof SamplerNode && an.bufferIndex === index) {
                             an.refresh()
                         }
-                    })
+                    }
 
                     recordButton.classList.remove('recording')
                 },

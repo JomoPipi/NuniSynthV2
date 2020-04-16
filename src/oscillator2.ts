@@ -11,9 +11,9 @@ class OscillatorNode2 extends NuniSourceNode {
      *  it to be compatible with the keyboard
      */
 
-    _type: OscillatorType
-    detune: AudioParam2
-    frequency: AudioParam2
+    _type : OscillatorType
+    detune : AudioParam2
+    frequency : AudioParam2
 
     constructor(ctx : AudioContext2) {
         super(ctx)
@@ -89,5 +89,4 @@ class OscillatorNode2 extends NuniSourceNode {
             this.ADSRs[this.MONO].gain.value = 1
         }
     }
-
 }

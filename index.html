@@ -10,8 +10,11 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title> Nuni Synth v 0.2 </title>
+
+    <title> Nuni Synth v0.2 </title>
+
+    <link rel="stylesheet" 
+          href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;lang=en" />
 
     <link href='https://fonts.googleapis.com/css?family=Orbitron' 
           rel='stylesheet' 
@@ -24,7 +27,8 @@
     <link rel="icon" 
           type="image/png"
           href="favicon-32x32.png">
-    
+
+    <script src="dist/lzw_compression.js" defer></script>
     <script src="dist/helpers.js"         defer></script>
     <script src="dist/jsdials.js"         defer></script>
     <script src="dist/init_buffers.js"    defer></script>
@@ -50,6 +54,21 @@
 
 
 <div id="main" >
+    <div id="graph-contextmenu">
+      <span style="color:rgba(0,0,0,0.65)"> Create.. </span>
+      <button id="create-gain2" class="contextmenu-button">       
+          new gain         </button>
+      <button id="create-oscillator2" class="contextmenu-button"> 
+          new oscillator   </button>
+      <button id="create-filter2" class="contextmenu-button">     
+          new filter       </button>
+      <button id="create-panner2" class="contextmenu-button">     
+          new panner       </button>
+      <button id="create-delay2" class="contextmenu-button">      
+          new delay        </button>    
+      <button id="create-sampler2" class="contextmenu-button">    
+          new sampler      </button>    
+    </div>
 
     <canvas id="nunigraph-canvas"></canvas>
 
@@ -288,11 +307,13 @@
 
 
         <div id="buffer-edit-tab" class="tab">
-            <button id="record" class="record" > rec </button>
+            <button id="record" class="record"> rec </button>
             <span> buffer index: </span>
             <button id="buffer-index-down"> - </button>
             <span id="buffer-index"> 0 </span>
             <button id="buffer-index-up"> + </button>
+            <button id="reverse-buffer"> reverse </button>
+            <canvas id="buffer-canvas"></canvas>
         </div>
 
 

@@ -10,15 +10,15 @@ class AudioParam2 {
      */
     src: ConstantSourceNode
 
-    constructor(ctx: AudioContext) {
+    constructor(ctx : AudioContext) {
         this.src = ctx.createConstantSource()
         this.src.start(ctx.currentTime)
     }
     
-    setValueAtTime(value: number, time:never) {
+    setValueAtTime(value : number, time : never) {
         this.src.offset.value = value
     }
-    // implement the rest of the value changing methods if aux-AD is desired
+    // implement the rest of the value changing methods if aux-AD or glide is desired
 }
 
 
@@ -103,11 +103,11 @@ class NuniSourceNode {
         throw 'Must be implemented in the "concrete" classes.'
     }
 
-    protected noteOnMono(key:number) {
+    protected noteOnMono(key : number) {
         throw 'Must be implemented in the "concrete" classes.'
     }
     
-    protected noteOnPoly(key:number) {
+    protected noteOnPoly(key : number) {
         throw 'Must be implemented in the "concrete" classes.'
     }
 

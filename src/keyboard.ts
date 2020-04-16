@@ -33,7 +33,7 @@ const Keyboard = (() => {
 
     const held = [] as number[]
     
-    function updateKeyDiv(code: number, keydown: boolean) {
+    function updateKeyDiv(code : number, keydown : boolean) {
         const selector = [
             '[data-key="' + code + '"]',
             '[data-char*="' + encodeURIComponent(String.fromCharCode(code)) + '"]'

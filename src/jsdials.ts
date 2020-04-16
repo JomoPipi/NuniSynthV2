@@ -6,15 +6,15 @@
 
 
 class JsDial {
-    [x:string]: unknown
-    isActive: boolean
-    sensitivity: number
-    lastY: number
-    lastX: number
-    value: number
-    max: number
-    min: number
-    dial: HTMLDivElement
+    [x : string] : unknown
+    isActive : boolean
+    sensitivity : number
+    lastY : number
+    lastX : number
+    value : number
+    max : number
+    min : number
+    dial : HTMLDivElement
 
     constructor(dial : HTMLDivElement) {
         this.isActive = false
@@ -28,7 +28,7 @@ class JsDial {
         }
     }
     
-    attach(func : Function, startFunc?:Function, endFunc?:Function) {
+    attach(func : Function, startFunc? : Function, endFunc? : Function) {
 
         const start = (x:number, y:number) => { 
             this.lastX = x
@@ -41,8 +41,8 @@ class JsDial {
             this.isActive = false
             endFunc && endFunc()
         }
-        const mouseStart = (e: MouseEvent) => start(e.clientX,e.clientY)
-        const mouseMove  = (e: MouseEvent) => move (e.clientX,e.clientY)
+        const mouseStart = (e : MouseEvent) => start(e.clientX,e.clientY)
+        const mouseMove  = (e : MouseEvent) => move (e.clientX,e.clientY)
         
         const move = (x:number, y:number) => {
             if (!this.isActive) return;

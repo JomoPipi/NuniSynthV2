@@ -4,16 +4,14 @@
 
 
 
-
-/* @font-face{
-    font-family:'digital-clock-font';
-    src: url('put_the_location_to_your_font.ttf or .otf');
-} */
-
+@font-face{ 
+	font-family: BalooChettan2;
+	src: url('BalooChettan2-Regular.ttf') format('truetype');
+}
 :root {
     /* --mouse-x: 0px;
     --mouse-y: 0px; */
-    --node-text: rgba(25, 255, 205, 0.8);
+    --text: rgba(105, 255, 235, 0.8);
     --canvas-bg: rgb(0, 10, 15);
 }
 
@@ -27,7 +25,41 @@ body, html {
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10+ and Edge */
     user-select: none; /* Standard syntax */
-    font-family: sans-serif;
+    font-family: BalooChettan2;
+}
+
+option {
+    background: #333;
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;       /* Remove default arrow */
+    background: transparent;
+    border: 0.5px groove var(--text);
+    color: var(--text);
+    font-family: BalooChettan2;
+    /* background-image: url(...);   Add custom arrow */
+}
+button {
+    font-family: BalooChettan2;
+}
+
+#graph-contextmenu {
+    display: none;
+    position: absolute;
+    background-color: #eee;
+    color: black;
+    z-index: 99;
+}
+.contextmenu-button {
+    text-align: left;
+    margin: 0;
+    padding: 0;
+}
+.contextmenu-button:hover {
+    background-color: rgba(255, 0, 0, 0.204);
 }
 
 #nunigraph-canvas {
@@ -103,11 +135,11 @@ body, html {
 #tabs {
     background-color: #333;
     position: absolute;
-    color: wheat;
+    color: var(--text);
     bottom:0;
     right:0;
     width: 100%;
-    min-height: 20%;
+    min-height: 39%;
 }
 
 .tab {
@@ -137,7 +169,6 @@ body, html {
 .shadow-knob {
     display: inline-block;
 
-    margin-left: 6px;
     width: 40px;
     height: 40px;
 
@@ -150,7 +181,6 @@ body, html {
 .js-dial {
     position: absolute;
     display: inline-block;
-    border: 0px groove #eee;
     box-sizing: border-box;
     width: 40px;
     height: 40px;

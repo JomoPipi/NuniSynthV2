@@ -5,6 +5,7 @@
 
 
 
+// Switch tabs
 D('tab-swapper')!.oninput = function() {
     const value = (D('tab-swapper') as HTMLSelectElement).value
     ;[...document.getElementsByClassName('tab')].forEach((tab:any) => {
@@ -16,20 +17,23 @@ D('node-options')!.classList.toggle('show',true)
 
 
 
-// create [NodeType] buttons
+// Create Nodes
 Object.values(NodeTypes).forEach(type => {
-    D('create-' + type)!.onclick = () => {
+    const create = () => {
         G.newNode(type)
         GraphCanvas.render()
+        hideGraphContextmenu()
     }
+    D(`create-${type}`)!.onclick = create 
+    D(`create-${type}2`)!.onclick = create
 })
 
-// copy the graph
+// Copy the graph
 ;(D('copy-graph-button') as HTMLButtonElement).onclick = function() {
     (D('graph-copy-output') as HTMLInputElement).value = G.toString()
 }
 
-// create graph from string
+// Create graph from string
 ;(D('from-string-button') as HTMLButtonElement).onclick = function() {
     const input = D('graph-copy-input') as HTMLInputElement
     try { 
@@ -40,24 +44,85 @@ Object.values(NodeTypes).forEach(type => {
     }
 }
 
-// help the user
+// Help the user
 D('about')!.onclick = () =>
     window.open('https://developer.mozilla.org/en-US/docs/Web/API/AudioNode/connect','_blank')
 
-// change buffer index
+
+
+
+
+
+
+
+// Change buffer index
 ;['up','down'].forEach((s,i) => {
     D('buffer-index-'+s)!.onclick = () => {
-        const v = currentBufferIndex = clamp(0, currentBufferIndex + Math.sign(.5 - i), nBuffers-1)
-        D('buffer-index')!.innerHTML = v.toString()
-
-        G.nodes.forEach(node => {
-            if (node.audioNode instanceof SamplerNode && node.audioNode.bufferIndex === v) {
-                node.audioNode.refresh()
-            }
-        })
+        const idx = currentBufferIndex = clamp(0, currentBufferIndex + Math.sign(.5 - i), nBuffers-1)
+        D('buffer-index')!.innerHTML = idx.toString()
+        refreshAffectedBuffers()
     }
 })
 
+// Reverse buffer at current index
+D('reverse-buffer')!.onclick = () => {
+    BUFFERS[currentBufferIndex].getChannelData(0).reverse()
+    refreshAffectedBuffers()
+}
+
+function refreshAffectedBuffers() {
+    const canvas = D('buffer-canvas') as HTMLCanvasElement
+
+    displayBuffer(BUFFERS[currentBufferIndex], canvas)
+
+    G.nodes.forEach(node => {
+        if (node.audioNode instanceof SamplerNode && node.audioNode.bufferIndex === currentBufferIndex) {
+            node.audioNode.refresh()
+        }
+    })
+}
+refreshAffectedBuffers()
+
+function displayBuffer(buff : AudioBuffer, canvas : HTMLCanvasElement) {
+    const ctx = canvas.getContext('2d')!
+    const H = canvas.height, W = canvas.width
+    const channel = buff.getChannelData(0)
+    ctx.save()
+    ctx.fillStyle = '#222'
+    ctx.fillRect(0, 0, W, H)
+    ctx.strokeStyle = '#121'
+    ctx.globalCompositeOperation = 'lighter'
+    ctx.translate(0, H / 2)
+    ctx.globalAlpha = 0.06
+    for (let i = 0; i < channel.length; i++) {
+        const x = W * i / channel.length |0
+        const y = channel[i] * H / 2
+        ctx.beginPath()
+        ctx.moveTo(x, 0)
+        ctx.lineTo(x + 1, y)
+        ctx.stroke()
+    }
+    ctx.restore()
+    console.log('Done rendering buffer')
+}
+
+
+
+
+
+
+
+
+D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
+    e.preventDefault()
+    showGraphContextMenu(e.clientX, e.clientY)
+}
+function showGraphContextMenu(x : number, y : number) {
+    const menu = D('graph-contextmenu') as HTMLDivElement
+    menu.style.display = 'grid'
+    menu.style.top  = y+'px'
+    menu.style.left = x+'px'
+}
 
 // Inject (or hide) HTML that allows manipulation of the selected node
 G.selectNodeFunc = () => {
@@ -77,9 +142,10 @@ G.selectNodeFunc = () => {
     if (node.audioNode instanceof SamplerNode) {
         controls.appendChild(samplerControls(node.audioNode))
     }
+
     controls.appendChild(exposeAudioParams(node))
 
-    if (node.id === 0) return; // don't let them delete the master gain node.
+    if (node.id === 0) return; // Don't delete the master gain node
     const deleteNode = E('button')
     deleteNode.innerHTML = 'delete this node'
     deleteNode.style.float = 'right'
@@ -113,7 +179,7 @@ function showKeyboardConnection(node : NuniGraphNode) : Node {
 function showSubtypes(node : NuniGraphNode) : Node {
     const subtypes = AudioNodeSubTypes[node.type] as string[]
     const box = E('div')
-    if (subtypes.length > 0) { // show subtypes selector
+    if (subtypes.length > 0) { // Show subtypes selector
         const select = E('select') as HTMLSelectElement
         
         insertOptions(select, subtypes)
@@ -146,7 +212,7 @@ function samplerControls(audioNode : SamplerNode) {
     const value = E('span'); value.innerHTML = audioNode.bufferIndex.toString()
     box.appendChild(value)
 
-    ;['-','+'].forEach((op,i) => {
+    ;['-','+'].forEach((op,i) => { // change the buffer index
         const btn = E('button'); btn.innerHTML = op
         btn.onclick = () => {
             const v = clamp(0, audioNode.bufferIndex + Math.sign(i - .5), nBuffers-1)
@@ -158,7 +224,7 @@ function samplerControls(audioNode : SamplerNode) {
         box.appendChild(btn)
     })
  
-    ;['loop'].forEach(text => {
+    ;['loop'].forEach(text => { // toggleable buttons
         const btn = E('button'); btn.innerHTML = text
         btn.classList.toggle('selected',(audioNode as Indexible)[text])
         btn.onclick = () => {
@@ -214,7 +280,7 @@ function createUpdateParamFunc(node : NuniGraphNode, param : AudioParams) {
 
 
 
-function createDraggableNumberInput(initialValue: string, updateFunc: (delta:number) => string, manualUpdater: (value:number) => void ) {
+function createDraggableNumberInput(initialValue : string, updateFunc: (delta : number) => string, manualUpdater : (value : number) => void ) {
     const valueInput = E('input') as HTMLInputElement
     valueInput.type = 'number'
     valueInput.classList.add('number-grab')
@@ -290,7 +356,7 @@ MY_JS_DIALS.forEach(dial => {
         const s = (<any>dial).id.split('-')[1]
         dial.value = (ADSR as any)[s]
         dial.render()
-        dial.attach((x:number) => {
+        dial.attach((x : number) => {
             (ADSR as any)[s] = x * x
             ADSR.render()
         })
