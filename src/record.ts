@@ -44,17 +44,8 @@ function recordTo(index : number) {
             audioBlob.arrayBuffer().then(arraybuffer => {
                 audioCtx.decodeAudioData(arraybuffer, (audiobuffer : AudioBuffer) => {
 
-                    // replace the selected buffer
-                    audiobuffer.getChannelData(0).reverse()
                     BUFFERS[index] = audiobuffer
-
-                    // refresh nodes that are using this buffer
-                    for (const { audioNode:an } of G.nodes) {
-                        if (an instanceof SamplerNode && an.bufferIndex === index) {
-                            an.refresh()
-                        }
-                    }
-
+                    refreshAffectedBuffers()
                     recordButton.classList.remove('recording')
                 },
                 errStuff)

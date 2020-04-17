@@ -85,13 +85,10 @@ button {
 #connection-type-prompt {
     display: none;
     position: absolute;
-    top: 50%;
-    width: 100%;
-    text-align: center;
 }
 
 .connection-button {
-    font-size: 2em;
+    font-size: 1.5em;
     border: 4px solid burlywood;
 }
 

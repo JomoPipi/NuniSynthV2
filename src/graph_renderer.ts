@@ -23,9 +23,11 @@ const GraphCanvas = (_ => {
 
     const ctx = canvas.getContext('2d')!
 
-    const nodeRadius = 20
+    const nodeRadius = 17
+    const nodeLineWidth = 8 
+    const connectionLineWidth = PHI
     const innerEdgeBoundary = nodeRadius / 1.5
-    const outerEdgeBoundary = nodeRadius * 1.1
+    const outerEdgeBoundary = nodeRadius + nodeLineWidth
     const triangleRadius = nodeRadius / 4.0
 
     const textGradient = (() => { 
@@ -98,12 +100,13 @@ const GraphCanvas = (_ => {
          */ 
 
         ctx.fillStyle = 'cyan'
-
+        
         // Get the line coordinates:
+        const delta = nodeRadius + nodeLineWidth
         const m = (y1-y2)/(x1-x2)                // the slope of the line
         const angle = Math.atan(m)               // angle
-        const dy = Math.sin(angle) * nodeRadius  // line shift y  
-        const dx = Math.cos(angle) * nodeRadius  // line shift x
+        const dy = Math.sin(angle) * delta       // line shift y  
+        const dx = Math.cos(angle) * delta       // line shift x
         const z = x1 >= x2 ? -1 : 1              // invert deltas
         const W = cacheOptions ? 1 : 0           // trim line end
         const [x,y,X,Y] =                        // line coordinates
@@ -187,9 +190,9 @@ const GraphCanvas = (_ => {
 
     const drawNodeConnections = (nodes : NuniGraphNode[], H : number, W : number, 
     { clientX, clientY } : { clientX? : number, clientY? : number }) => {
-
+        ctx.lineWidth = connectionLineWidth
         for (const id1 in G.oneWayConnections) {
-            const fromId = +id1
+            const fromId = +id1 
             // gather the groups of parallel connections
             const idGroups = G.oneWayConnections[fromId].reduce((groups, v) => {
                 const group = groups[v.id]
@@ -237,9 +240,9 @@ const GraphCanvas = (_ => {
         const c1 = `rgb(${ [0,1,2].map(n => 100 * (1 + Math.sin(cval + n * twoThirdsPi)) |0).join(',') })`
         const c2 = G.selectedNode === node ? 'purple' : 'black'
         const {x,y} = node, r = nodeRadius
-        const gradient = ctx.createRadialGradient(x*W, y*H, r/4.0, x*W, y*H, r)
+        const gradient = ctx.createRadialGradient(x*W, y*H, r/27.0, x*W, y*H, r)
             gradient.addColorStop(0, c1)
-            gradient.addColorStop(0.90, c2) 
+            gradient.addColorStop(0.9, c2) 
             
         return gradient
     }
@@ -266,6 +269,7 @@ const GraphCanvas = (_ => {
             ctx.strokeStyle = aroundEdge ? 'white' :
                 node.id === 0 ? '#222' : NodeTypeColors[node.type]
 
+            ctx.lineWidth = nodeLineWidth
             ctx.fillStyle = getNodeColor(node, H, W)
 
             if (selectedNodes) { // Not being used, currently
@@ -299,15 +303,14 @@ const GraphCanvas = (_ => {
     
         if (snapToGrid.checked) {
             drawGridLines(H,W,buttons)
-        }
+        } 
 
-        ctx.lineWidth = 2
-        drawNodeConnections(nodes, H, W, options)
         drawNodes(nodes, H, W, options)
+        drawNodeConnections(nodes, H, W, options)
 
         if (fromNode) { // draw the connection currently being made
             const [X,Y] = [fromNode.x*W, fromNode.y*H]
-            
+            ctx.lineWidth = connectionLineWidth
             ctx.strokeStyle = 'white'
             directedLine(X,Y,clientX,clientY)
         }
@@ -398,7 +401,7 @@ const GraphCanvas = (_ => {
             const d = x && y ? distance(x,y,X,Y) : Infinity
             if (d < outerEdgeBoundary) {
                 promptUserToSelectConnectionType
-                    (fromNode, node)
+                    (fromNode, node, x, y)
                     
                 fromNode = null
                 return;
@@ -421,7 +424,7 @@ const GraphCanvas = (_ => {
 })()
 
 function promptUserToSelectConnectionType(
-    node1 : NuniGraphNode, node2 : NuniGraphNode) {
+    node1 : NuniGraphNode, node2 : NuniGraphNode, x : number, y : number) {
     if (node2.id === 0) {
         // No prompt needed in this case. 
         // Only allow channel connections to the master gain node.
@@ -434,6 +437,8 @@ function promptUserToSelectConnectionType(
         (SupportsInputChannels[node2.type] ? ['channel'] : [])
         .concat(AudioNodeParams[node2.type])
 
+    prompt.style.top = y+'px'
+    prompt.style.left = x+'px'
     prompt.style.display = 'block'
     prompt.innerHTML= ''
     for (const param of types as ConnectionType[]) {

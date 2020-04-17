@@ -123,7 +123,7 @@ const hasLinearSlider : { [key in AudioParams] : boolean } =
 const sliderFactor : { [key in AudioParams] : number } = 
 {
     gain:         .025,
-    frequency:    .125,
+    frequency:    2**-7,
     detune:       1.0,
     Q:            .05,
     pan:          .005,
