@@ -31,3 +31,16 @@ Object.values(NodeTypes).forEach(type => {
         input.value = 'Invalid code'
     }
 }
+
+// right-click options
+D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
+    e.preventDefault()
+    showGraphContextMenu(e.clientX, e.clientY)
+}
+
+function showGraphContextMenu(x : number, y : number) {
+    const menu = D('graph-contextmenu') as HTMLDivElement
+    menu.style.display = 'grid'
+    menu.style.top  = y+'px'
+    menu.style.left = x+'px'
+}

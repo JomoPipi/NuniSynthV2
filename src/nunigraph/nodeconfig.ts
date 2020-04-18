@@ -14,6 +14,8 @@ enum NodeTypes {
     SAMPLER = 'sampler'
 }
 
+type AudioNode2 = Indexed
+
 type AudioParams = 
     'gain' | 'frequency' | 'detune' | 'pan' | 'Q' | 'delayTime' | 'playbackRate'
 
@@ -94,8 +96,8 @@ const DefaultParamValues : { [key in AudioParams] : number } =
     detune:       0,
     Q:            1,
     pan:          0,
-    delayTime:    0.25,
-    playbackRate: 1
+    delayTime:    0.5,
+    playbackRate: 0
 }
 
 const AudioParamRanges : { [key in AudioParams] : [number,number] } = 

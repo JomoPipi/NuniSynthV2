@@ -5,65 +5,6 @@
 
 
 
-type NodeOptions = { 
-    display : { x : number, y : number }, 
-    audioParamValues : Indexible,
-    audioNodeType : string
-}
-
-
-
-
-class NuniGraphNode {
-    /**
-     * Each NuniGraphNode holds and updates an AudioNode.
-     * The node is just a data container, but the AudioNode
-     * can be connected in several ways.
-     */
-    id : number
-    type : NodeTypes
-    audioNode : Indexible
-    x : number
-    y : number
-    audioNodeType : string
-    audioParamValues : Indexible
-    
-    constructor(id : number, type : NodeTypes, options : NodeOptions) {
-
-        // change display: {x,y} to just x,y later to save space on the string conversions
-        // (will require changing/throwing away all currently saved graphs :/)
-        const { display: {x,y}, audioParamValues, audioNodeType } = options
-
-        this.id = id
-        this.type = type
-        this.x = x
-        this.y = y
-
-        this.audioNode = audioCtx[createAudioNode[type]]()
-        this.audioNodeType = audioNodeType || this.audioNode.type
-        this.audioNode.type = this.audioNodeType
-        this.audioParamValues = audioParamValues 
-
-        for (const param of AudioNodeParams[type]) {
-            const value = audioParamValues[param] ?? DefaultParamValues[param]
-            this.setValueOfParam(param, value)
-        }
-    }
-
-    setValueOfParam(param : string, value: number) {
-        
-        this.audioParamValues[param] = value
-        this.audioNode[param].setValueAtTime(value, 0)
-    }
-}
-
-
-
-
-
-
-
-
 class NuniGraph {
     /**
      * The job of the NuniGraph is to keep track of nodes and their connections.
@@ -72,7 +13,7 @@ class NuniGraph {
     
     nextId : number
     nodes : NuniGraphNode[]
-    oneWayConnections : Indexed<ConnecteeData>
+    oneWayConnections : Indexible<ConnecteeData>
     selectedNode : NuniGraphNode | null
 
     constructor() {
@@ -156,7 +97,7 @@ class NuniGraph {
     }
 
     private prepareDestination (connectionType : ConnectionType) {
-        return (x : Indexible) => 
+        return (x : Indexed) => 
             connectionType === 'channel' ? x : x[connectionType] 
     }
 
@@ -272,3 +213,4 @@ class NuniGraph {
 }
 const G = new NuniGraph()
 Keyboard.attachToGraph(G)
+Buffers.attachToGraph(G)

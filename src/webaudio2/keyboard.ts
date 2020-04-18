@@ -29,7 +29,7 @@ const Keyboard = (() => {
     const keymap = keys.reduce((map,key,i) => {
         map[key] = i
         return map
-    }, {} as Indexed<number>)
+    }, {} as Indexible<number>)
 
     const held = [] as number[]
     

@@ -5,7 +5,7 @@
 
 
 
-class SamplerNode extends NuniSourceNode {
+class BufferNode2 extends NuniSourceNode {
     /**
      * audioBufferSourceNodes need to get disconnected
      * as keys get pressed/unpressed.
@@ -40,7 +40,7 @@ class SamplerNode extends NuniSourceNode {
         this.playbackRate.src.connect(src.playbackRate)
 
         src.detune.value = (i-12) * 100
-        src.buffer = BUFFERS[this.bufferIndex]
+        src.buffer = Buffers.buffers[this.bufferIndex]
         src.loop = this.loop
         this.ADSRs[key].releaseId = -1  
         src.connect(this.ADSRs[key])

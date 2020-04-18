@@ -28,26 +28,33 @@
           type="image/png"
           href="favicon-32x32.png">
 
-    <script src="dist/lzw_compression.js" defer></script>
-    <script src="dist/helpers.js"         defer></script>
-    <script src="dist/jsdials.js"         defer></script>
-    <script src="dist/init_buffers.js"    defer></script>
-    <script src="dist/keyboard.js"        defer></script>
-    <script src="dist/adsr.js"            defer></script>
-    <script src="dist/webaudio2.js"       defer></script>
-    <script src="dist/oscillator2.js"     defer></script>
-    <script src="dist/sampler_node.js"    defer></script>
-    <script src="dist/setup.js"           defer></script>
-    <script src="dist/record.js"          defer></script>
-    <script src="dist/nodeconfig.js"      defer></script>
-    <script src="dist/nunigraph.js"       defer></script>
-    <script src="dist/graph_renderer.js"  defer></script>
-    <script src="dist/custom_waveform.js" defer></script>
-    <script src="dist/resize.js"          defer></script>
-    <script src="dist/display_nodedata.js"defer></script>
-    <script src="dist/attach_handlers.js" defer></script>
-    <script src="dist/handlers/graph_handlers.js" defer></script>
-    <!-- <script src="dist/app.js"             defer></script> -->
+    <script src="dist/helpers/lzw_compression.js" defer></script>
+    <script src="dist/helpers/helpers.js"         defer></script>
+    <script src="dist/helpers/jsdials.js"         defer></script>
+
+    <script src="dist/buffer_utils/init_buffers.js" defer></script>
+    <script src="dist/buffer_utils/draw_buffer.js"  defer></script>
+    <script src="dist/buffer_utils/record.js"       defer></script>
+
+    <script src="dist/webaudio2/keyboard.js"        defer></script>
+    <script src="dist/webaudio2/adsr.js"            defer></script>
+    <script src="dist/webaudio2/nuni_source_node.js"defer></script>
+    <script src="dist/webaudio2/oscillator2.js"     defer></script>
+    <script src="dist/webaudio2/buffer2.js"         defer></script>
+    <script src="dist/webaudio2/webaudio2.js"       defer></script>
+
+    <script src="dist/nunigraph/nodeconfig.js"      defer></script>
+    <script src="dist/nunigraph/nunigraph_node.js"   defer></script>
+    <script src="dist/nunigraph/nunigraph.js"       defer></script>
+    <script src="dist/nunigraph/graph_renderer.js"  defer></script>
+    <script src="dist/nunigraph/display_nodedata.js"defer></script>
+    <script src="dist/nunigraph/graph_handlers.js"  defer></script>
+
+    <script src="dist/waveform_utils/custom_waveform.js" defer></script>
+
+    <script src="dist/main/resize.js"          defer></script>
+    <script src="dist/main/attach_handlers.js" defer></script>
+    <script src="dist/main/app.js"             defer></script>
 
 </head>
 <body>

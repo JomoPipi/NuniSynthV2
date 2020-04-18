@@ -6,12 +6,8 @@
 
 
 const recordButton = D('record')!
-
-let currentBufferIndex = 0
-let stopLastRecorder : () => void
-let lastRecorderRequestId : number
-
-recordButton.onclick = () => recordTo(currentBufferIndex)
+recordButton.onclick = () => 
+    recordTo(Buffers.currentIndex)
 
 
 function errStuff(err : string) {
@@ -22,8 +18,8 @@ function errStuff(err : string) {
 function recordTo(index : number) {
     const isRecording = recordButton.classList.toggle('recording')
     if (!isRecording) {
-        clearTimeout(lastRecorderRequestId)
-        stopLastRecorder()
+        clearTimeout(Buffers.lastRecorderRequestId)
+        Buffers.stopLastRecorder()
         return;
     }
     log('recording...')
@@ -44,16 +40,16 @@ function recordTo(index : number) {
             audioBlob.arrayBuffer().then(arraybuffer => {
                 audioCtx.decodeAudioData(arraybuffer, (audiobuffer : AudioBuffer) => {
 
-                    BUFFERS[index] = audiobuffer
-                    refreshAffectedBuffers()
+                    Buffers.buffers[index] = audiobuffer
+                    Buffers.refreshAffectedBuffers()
                     recordButton.classList.remove('recording')
                 },
                 errStuff)
             }).catch(errStuff)
             
         })
-        stopLastRecorder = () => mediaRecorder.stop()
-        lastRecorderRequestId = setTimeout(stopLastRecorder, 10000)
+        Buffers.stopLastRecorder = () => mediaRecorder.stop()
+        Buffers.lastRecorderRequestId = setTimeout(Buffers.stopLastRecorder, 10000)
 
     }).catch(errStuff)
 }

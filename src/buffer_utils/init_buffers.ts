@@ -5,11 +5,31 @@
 
 
 
-const BUFFERS : AudioBuffer[] = []
+const Buffers = {
+    buffers: <AudioBuffer[]>[],
+    refreshAffectedBuffers: log,
+    currentIndex: 0,
+    lastRecorderRequestId: 0,
+    stopLastRecorder : log,
+    attachToGraph: function (g : NuniGraph) {
+        this.refreshAffectedBuffers = () => {
+            const canvas = D('buffer-canvas') as HTMLCanvasElement
+        
+            drawBuffer(Buffers.buffers[this.currentIndex], canvas)
+        
+            g.nodes.forEach(({ audioNode: an }) => {
+                if (an instanceof BufferNode2 && an.bufferIndex === this.currentIndex) {
+                    an.refresh()
+                }
+            })
+        }
+        this.refreshAffectedBuffers()
+    }
+}
 
 function initBuffers(n : number, ctx : AudioContext2) {
     const seconds = 3
-    BUFFERS.length = 0
+    Buffers.buffers.length = 0
     for (let x = 0; x < n; x++) {
         const buffer = ctx.createBuffer(2, ctx.sampleRate * seconds, ctx.sampleRate)
         for (let channel = 0; channel < buffer.numberOfChannels; channel++) {  
@@ -31,6 +51,22 @@ function initBuffers(n : number, ctx : AudioContext2) {
                     // lots of cool things can be done, here.
             }
         }
-        BUFFERS.push(buffer)
+        Buffers.buffers.push(buffer)
     }
+}
+
+
+// Change buffer index
+;['up','down'].forEach((s,i) => {
+    D('buffer-index-'+s)!.onclick = () => {
+        const idx = Buffers.currentIndex = clamp(0, Buffers.currentIndex + Math.sign(.5 - i), nBuffers-1)
+        D('buffer-index')!.innerHTML = idx.toString()
+        Buffers.refreshAffectedBuffers()
+    }
+})
+
+// Reverse buffer at current index
+D('reverse-buffer')!.onclick = () => {
+    Buffers.buffers[Buffers.currentIndex].getChannelData(0).reverse()
+    Buffers.refreshAffectedBuffers()
 }

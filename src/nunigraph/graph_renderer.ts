@@ -24,11 +24,12 @@ const GraphCanvas = (_ => {
     const ctx = canvas.getContext('2d')!
 
     const nodeRadius = 17
-    const nodeLineWidth = 8 
+    const nodeLineWidth = 8
     const connectionLineWidth = PHI
     const innerEdgeBoundary = nodeRadius / 1.5
     const outerEdgeBoundary = nodeRadius + nodeLineWidth
-    const triangleRadius = nodeRadius / 4.0
+    const triangleRadius = nodeRadius / 3.0
+    const triangleSize = innerEdgeBoundary
 
     const textGradient = (() => { 
         const gradient = ctx.createLinearGradient(0,0,0,1000)
@@ -165,7 +166,7 @@ const GraphCanvas = (_ => {
     const drawDirectionTriangle = 
         (x : number, y : number, angle : number, flipH : boolean) => {
 
-        const h = (flipH ? 1 : -1) * nodeRadius / 2.0
+        const h = (flipH ? 1 : -1) * triangleSize
         const dt = 0.5
         const dt1 = angle + dt
         const dt2 = angle - dt
@@ -232,9 +233,9 @@ const GraphCanvas = (_ => {
 
     const getNodeColor = (node : NuniGraphNode, H : number, W : number) => {
         
-        const prop = (<Indexible>AudioNodeParams)[node.type][0]
+        const prop = (<Indexed>AudioNodeParams)[node.type][0]
         const pValue = node.audioParamValues[prop]
-        const [min,max] = (<Indexible>AudioParamRanges)[prop]
+        const [min,max] = (<Indexed>AudioParamRanges)[prop]
         const factor = Math.log2(pValue-min) / (Math.log2(max-min) || 0.5)
         const cval = factor * 4
         const c1 = `rgb(${ [0,1,2].map(n => 100 * (1 + Math.sin(cval + n * twoThirdsPi)) |0).join(',') })`
@@ -285,7 +286,7 @@ const GraphCanvas = (_ => {
 
             ctx.fillStyle = textGradient//nodeTextColor
             ctx.fillText(
-                node.id === 0 ? 'master-gain' : node.type,
+                node.id === 0 ? 'master-gain' : node.title,
                 X - nodeRadius * 1.5, 
                 Y - nodeRadius * 1.5
             )
@@ -305,8 +306,8 @@ const GraphCanvas = (_ => {
             drawGridLines(H,W,buttons)
         } 
 
-        drawNodes(nodes, H, W, options)
         drawNodeConnections(nodes, H, W, options)
+        drawNodes(nodes, H, W, options)
 
         if (fromNode) { // draw the connection currently being made
             const [X,Y] = [fromNode.x*W, fromNode.y*H]
@@ -437,8 +438,6 @@ function promptUserToSelectConnectionType(
         (SupportsInputChannels[node2.type] ? ['channel'] : [])
         .concat(AudioNodeParams[node2.type])
 
-    prompt.style.top = y+'px'
-    prompt.style.left = x+'px'
     prompt.style.display = 'block'
     prompt.innerHTML= ''
     for (const param of types as ConnectionType[]) {
@@ -458,6 +457,12 @@ function promptUserToSelectConnectionType(
     cancel.classList.add('connection-button')
     cancel.onclick = () => prompt.style.display = 'none'
     prompt.appendChild(cancel)
+
+    // Place the prompt in an accessible location
+    const W = GraphCanvas.canvas.offsetWidth
+    const w = prompt.offsetWidth
+    prompt.style.top = (y + 40)+'px'
+    prompt.style.left = clamp(0, (x - w/2), W-w) + 'px'
 }
 
 function hideGraphContextmenu() {

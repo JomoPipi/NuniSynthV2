@@ -12,6 +12,7 @@ class AudioParam2 {
 
     constructor(ctx : AudioContext) {
         this.src = ctx.createConstantSource()
+        this.src.offset.value = 0
         this.src.start(ctx.currentTime)
     }
     
@@ -33,8 +34,8 @@ class NuniSourceNode {
      *  Allows for 3 keyboard modes - none | mono | poly
      */
     connectees: Destination[] // The list of things that the node connects to
-    ADSRs: Indexed<Adsr>      // The gain-ADSRs
-    sources: Indexible        // The AudioScheduledSourceNode containers
+    ADSRs: Indexible<Adsr>    // The gain-ADSRs
+    sources: Indexed          // The AudioScheduledSourceNode containers
     kbMode: KbMode            // The current state of the node - none | mono | poly
     ctx: AudioContext2        // The context of audio
     readonly MONO: 666420     // The Id of the mono ADSR and source
@@ -57,12 +58,29 @@ class NuniSourceNode {
         this.refresh()
     }
 
-    disconnect(destination : Destination) {
+    disconnect(destination? : Destination) {
+        if (!destination) {
+            this.connectees.length = 0
+            for (const key in this.ADSRs) this.ADSRs[key].disconnect()
+            return;
+        }
+
         this.connectees.splice(
             this.connectees.indexOf(destination), 1)
 
         this.connection(false, destination)
         this.refresh()
+    }
+
+    private connection(on : boolean, d : Destination) {
+        for (const key in this.ADSRs) {
+            const dest = d instanceof AudioParam2 ? d.src.offset : d as any
+            if (on) {
+                this.ADSRs[key].connect(dest) 
+            } else {
+                this.ADSRs[key].disconnect(dest)
+            }
+        }
     }
     
     update(keydown : boolean, key : number) {
@@ -78,7 +96,7 @@ class NuniSourceNode {
         }
     }
 
-    protected setKbMode(mode : KbMode) {
+    setKbMode(mode : KbMode) {
         this.disconnectAllConnectees()
 
         this.kbMode = mode
@@ -111,17 +129,6 @@ class NuniSourceNode {
         throw 'Must be implemented in the "concrete" classes.'
     }
 
-    private connection(on : boolean, d : Destination) {
-        for (const key in this.ADSRs) {
-            const dest = d instanceof AudioParam2 ? d.src.offset : d as any
-            if (on) {
-                this.ADSRs[key].connect(dest) 
-            } else {
-                this.ADSRs[key].disconnect(dest)
-            }
-        }
-    }
-
     private switchToNone() {
         this.ADSRs[this.MONO] = new Adsr(this.ctx)
         this.ADSRs[this.MONO].gain.setValueAtTime(1, this.ctx.currentTime)
@@ -139,7 +146,7 @@ class NuniSourceNode {
         this.ADSRs = Keyboard.keys.reduce((adsr,key) => {
             adsr[key] = new Adsr(this.ctx)
             return adsr
-        }, {} as Indexed<Adsr>)
+        }, {} as Indexible<Adsr>)
         
         this.refresh()
     }
@@ -157,32 +164,5 @@ class NuniSourceNode {
             delete this.sources[key]
             delete this.ADSRs[key]
         }
-    }
-}
-
-
-
-
-
-
-
-
-class AudioContext2 extends AudioContext {
-    /** con·text    /ˈkäntekst/ 
-     *  noun
-     *      "the circumstances that form the setting for an event, 
-     *      statement, or idea, and in terms of which it can be 
-     *      fully understood and assessed."
-     */
-    constructor() {
-        super()
-    }
-
-    createSampler() {
-        return new SamplerNode(this)
-    }
-
-    createOscillator2() {
-        return new OscillatorNode2(this) 
     }
 }

@@ -5,12 +5,16 @@
 
 
 
-type Indexible = { [param : string] : any }
+type Indexed = { [param : string] : any }
 
-interface Indexed<T> { [param : string] : T }
+interface Indexible<T> { [param : string] : T }
 
- 
+
+
+
 const log = console.log
+
+const id = (x : any) => x
 
 const D = (x:string) => 
     document.getElementById(x)

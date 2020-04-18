@@ -14,13 +14,13 @@ G.selectNodeFunc = () => {
     D('right-panel')!.style.width = node ? '20vw' : '0px'
     if (!node) return;
 
-    if (node.audioNode instanceof SamplerNode || node.audioNode instanceof OscillatorNode2) {
-        controls.appendChild(showKeyboardConnection(node))
+    if (node.audioNode instanceof NuniSourceNode) {
+        controls.appendChild(showKeyboardConnection(node.audioNode))
     }
     
     controls.appendChild(showSubtypes(node))
 
-    if (node.audioNode instanceof SamplerNode) {
+    if (node.audioNode instanceof BufferNode2) {
         controls.appendChild(samplerControls(node.audioNode))
     }
 
@@ -40,15 +40,15 @@ G.selectNodeFunc = () => {
 
 
 
-function showKeyboardConnection(node : NuniGraphNode) : Node {
+function showKeyboardConnection(audioNode : NuniSourceNode) : Node {
     const types = ['none','mono','poly']
     const select = E('select') as HTMLSelectElement
     const box = E('div'); box.innerHTML = 'keyboard: '
     
     insertOptions(select, types)
-    select.value = node.audioNode.kbMode
+    select.value = audioNode.kbMode
     select.oninput = function() {
-        node.audioNode.setKbMode(select.value)
+        audioNode.setKbMode(select.value as KbMode)
     }
     box.appendChild(select)
     return box
@@ -86,7 +86,7 @@ function insertOptions(select : HTMLSelectElement, options : string[]) {
 
 
 
-function samplerControls(audioNode : SamplerNode) {
+function samplerControls(audioNode : BufferNode2) {
     const box = E('div')
     // box.classList.add('box')
     box.innerHTML = '<span> buffer </span>'
@@ -107,9 +107,9 @@ function samplerControls(audioNode : SamplerNode) {
  
     ;['loop'].forEach(text => { // toggleable buttons
         const btn = E('button'); btn.innerHTML = text
-        btn.classList.toggle('selected',(audioNode as Indexible)[text])
+        btn.classList.toggle('selected',(audioNode as Indexed)[text])
         btn.onclick = () => {
-            const on = (audioNode as Indexible)[text] ^= 1
+            const on = (audioNode as Indexed)[text] ^= 1
             btn.classList.toggle('selected', <any>on)
             audioNode.refresh()
         }

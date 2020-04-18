@@ -5,13 +5,29 @@
 
 
 
-/**
- * NuniSynth
- */
+class AudioContext2 extends AudioContext {
+    /** con·text    /ˈkäntekst/ 
+     *  noun
+     *      "the circumstances that form the setting for an event, 
+     *      statement, or idea, and in terms of which it can be 
+     *      fully understood and assessed."
+     */
+    constructor() {
+        super()
+    }
+
+    createSampler() {
+        return new BufferNode2(this)
+    }
+
+    createOscillator2() {
+        return new OscillatorNode2(this) 
+    }
+}
 
 type Destination = AudioNode | AudioParam | AudioParam2
 
-const audioCtx = new AudioContext2() as Indexible
+const audioCtx = new AudioContext2() as Indexed
 const nBuffers = 10
 
 initBuffers(nBuffers, audioCtx as AudioContext2) 
