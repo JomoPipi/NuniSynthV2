@@ -73,7 +73,7 @@ const GraphCanvas = (_ => {
 
 
 
-    // FUNCTION //_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________
+    // FUNCTIONS //_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________
     const circle = (x : number, y : number, r : number) => {
         ctx.beginPath()
         ctx.arc(x,y,r,0,7)
@@ -94,7 +94,7 @@ const GraphCanvas = (_ => {
         cacheOptions? : { 
             fromId : number, 
             toId : number, 
-            connectionType : ConnectionType, clientX? : number, clientY? : number }) => {
+            connectionType : ConnectionType, offsetX? : number, offsetY? : number }) => {
 
         /** The inputs (x1,y1,x2,y2) are the coordinates of the centers of nodes.
          *  If cacheOptions is falsy, the connection line hasn't been set and is being dragged by the user.
@@ -117,7 +117,7 @@ const GraphCanvas = (_ => {
         if (cacheOptions) { 
         // If the connection has already been set:
 
-            const { fromId, toId, connectionType, clientX, clientY } = cacheOptions
+            const { fromId, toId, connectionType, offsetX, offsetY } = cacheOptions
             const c_id = `${fromId}:${toId}:${connectionType}`
             const data = 
                 connectionsCache[c_id] = 
@@ -127,7 +127,7 @@ const GraphCanvas = (_ => {
             data.x = X - dx * z * W / 3.0
             data.y = Y - dy * z * W / 3.0
 
-            if (clientX && clientY && distance(clientX,clientY,data.x,data.y) < triangleRadius) {
+            if (offsetX && offsetY && distance(offsetX,offsetY,data.x,data.y) < triangleRadius) {
             // Highlight the connection arrow because the user is hovering over it
                 ctx.fillStyle = 'orange' 
             }
@@ -139,7 +139,7 @@ const GraphCanvas = (_ => {
 
     const drawGridLines = (H : number, W : number, buttons? : number) => {
         ctx.lineWidth = 0.2
-        ctx.strokeStyle = '#777'
+        ctx.strokeStyle = 'rgba(255,255,255,0.25)'
         const gridGrap = W/25
 
         for (let i = 0; i < W; i += gridGrap) {
@@ -190,7 +190,7 @@ const GraphCanvas = (_ => {
     }
 
     const drawNodeConnections = (nodes : NuniGraphNode[], H : number, W : number, 
-    { clientX, clientY } : { clientX? : number, clientY? : number }) => {
+    { offsetX, offsetY } : { offsetX? : number, offsetY? : number }) => {
         ctx.lineWidth = connectionLineWidth
         for (const id1 in G.oneWayConnections) {
             const fromId = +id1 
@@ -225,7 +225,7 @@ const GraphCanvas = (_ => {
                     
                     ctx.strokeStyle = ConnectionTypeColors[connectionType]
 
-                    directedLine(x1,y1,x2,y2, { fromId, toId, connectionType, clientX, clientY })
+                    directedLine(x1,y1,x2,y2, { fromId, toId, connectionType, offsetX, offsetY })
                 })
             }
         }
@@ -251,10 +251,10 @@ const GraphCanvas = (_ => {
     const drawNodes = (nodes : NuniGraphNode[], H : number, W : number, 
         options : { 
             selectedNodes? : NuniGraphNode[], 
-            clientX? : number, clientY? : number, buttons? : number }) => {
+            offsetX? : number, offsetY? : number, buttons? : number }) => {
 
-        const { selectedNodes, clientX, clientY, buttons } = options
-        const [x,y] = [clientX, clientY]
+        const { selectedNodes, offsetX, offsetY, buttons } = options
+        const [x,y] = [offsetX, offsetY]
         canvas.style.cursor = 'default'
         ctx.shadowBlur = nodeRadius * 2.0
         ctx.shadowColor = 'rgba(255, 255, 255, .2)'
@@ -267,7 +267,7 @@ const GraphCanvas = (_ => {
             const hoveringInside = d <= innerEdgeBoundary
             const shouldHighlight = hoveringInside && !fromNode
             
-            ctx.strokeStyle = aroundEdge ? 'white' :
+            ctx.strokeStyle = aroundEdge ? 'rgba(255,255,255,0.75)' :
                 node.id === 0 ? '#222' : NodeTypeColors[node.type]
 
             ctx.lineWidth = nodeLineWidth
@@ -297,7 +297,7 @@ const GraphCanvas = (_ => {
         const nodes = G.nodes
         const W = canvas.width = canvas.offsetWidth
         const H = canvas.height = canvas.offsetHeight
-        const { clientX, clientY, buttons } = options as MouseEvent
+        const { offsetX, offsetY, buttons } = options as MouseEvent
 
         ctx.font = '15px Arial '
         ctx.clearRect(0,0,W,H)
@@ -313,7 +313,7 @@ const GraphCanvas = (_ => {
             const [X,Y] = [fromNode.x*W, fromNode.y*H]
             ctx.lineWidth = connectionLineWidth
             ctx.strokeStyle = 'white'
-            directedLine(X,Y,clientX,clientY)
+            directedLine(X,Y,offsetX,offsetY)
         }
     }
 
@@ -329,22 +329,9 @@ const GraphCanvas = (_ => {
         const W = canvas.width
         const H = canvas.height
         const nodes = G.nodes
-        const [x,y] = [e.clientX, e.clientY]
+        const [x,y] = [e.offsetX, e.offsetY]
         
         hideGraphContextmenu()
-
-        // Check if any connections were clicked:
-        for (const id in connectionsCache) {
-            const { x:X, y:Y, fromId, toId, connectionType } = connectionsCache[id]
-            if (distance(x,y,X,Y) < triangleRadius) {
-                G.unselectNode()
-                fromNode = G.nodes.find(node => node.id === fromId)!
-                const to = G.nodes.find(node => node.id === toId)!
-                delete connectionsCache[id]
-                G.disconnect(fromNode, to, connectionType)
-                return;
-            }
-        }
 
         // Check if any nodes were clicked:
         for (const node of nodes) {
@@ -365,6 +352,19 @@ const GraphCanvas = (_ => {
                 return;
             }
         }
+
+        // Check if any connections were clicked:
+        for (const id in connectionsCache) {
+            const { x:X, y:Y, fromId, toId, connectionType } = connectionsCache[id]
+            if (distance(x,y,X,Y) < triangleRadius) {
+                G.unselectNode()
+                fromNode = G.nodes.find(node => node.id === fromId)!
+                const to = G.nodes.find(node => node.id === toId)!
+                delete connectionsCache[id]
+                G.disconnect(fromNode, to, connectionType)
+                return;
+            }
+        }
         
         // Nothing was clicked
         if (G.selectedNode) G.unselectNode()
@@ -381,8 +381,8 @@ const GraphCanvas = (_ => {
             const H = canvas.height
             const node = G.selectedNode
 
-            node.x = e.clientX/W
-            node.y = e.clientY/H
+            node.x = e.offsetX/W
+            node.y = e.offsetY/H
         }
         render(e)
     }
@@ -394,7 +394,7 @@ const GraphCanvas = (_ => {
         const W = canvas.width
         const H = canvas.height
         const nodes = G.nodes
-        const [x,y] = [e.clientX, e.clientY]
+        const [x,y] = [e.offsetX, e.offsetY]
 
         for (const node of nodes) {
             if (node === fromNode) continue
@@ -459,10 +459,14 @@ function promptUserToSelectConnectionType(
     prompt.appendChild(cancel)
 
     // Place the prompt in an accessible location
-    const W = GraphCanvas.canvas.offsetWidth
+    const dx = GraphCanvas.canvas.offsetLeft
+    const dy = GraphCanvas.canvas.offsetTop
+    const W = GraphCanvas.canvas.offsetWidth + dx
     const w = prompt.offsetWidth
-    prompt.style.top = (y + 40)+'px'
-    prompt.style.left = clamp(0, (x - w/2), W-w) + 'px'
+    const Y = y + dy
+    const X = x + dx
+    prompt.style.top = (Y + 40)+'px'
+    prompt.style.left = clamp(0, (X - w/2), W-w) + 'px'
 }
 
 function hideGraphContextmenu() {

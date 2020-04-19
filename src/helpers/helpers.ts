@@ -10,11 +10,11 @@ type Indexed = { [param : string] : any }
 interface Indexible<T> { [param : string] : T }
 
 
-
-
 const log = console.log
 
 const id = (x : any) => x
+
+const trace = (x : any) => (log(x), x)
 
 const D = (x:string) => 
     document.getElementById(x)

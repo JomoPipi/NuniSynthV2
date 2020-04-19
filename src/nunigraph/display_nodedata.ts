@@ -8,11 +8,14 @@
 // Inject (or hide) HTML that allows manipulation of the selected node
 G.selectNodeFunc = () => {
     const node = G.selectedNode as NuniGraphNode
-    const controls = D('injected-node-value-ui') as HTMLDivElement
+    const container = D('node-value-container')!
 
-    controls.innerHTML = ''
-    D('right-panel')!.style.width = node ? '20vw' : '0px'
+    container.style.display = node ? 'grid' : 'none'
     if (!node) return;
+
+    container.innerHTML = ''
+    const controls = E('div')
+    container.appendChild(controls)
 
     if (node.audioNode instanceof NuniSourceNode) {
         controls.appendChild(showKeyboardConnection(node.audioNode))
@@ -26,6 +29,7 @@ G.selectNodeFunc = () => {
 
     controls.appendChild(exposeAudioParams(node))
 
+    // Add delete button
     if (node.id === 0) return; // Don't delete the master gain node
     const deleteNode = E('button')
     deleteNode.innerHTML = 'delete this node'
@@ -162,8 +166,8 @@ function createUpdateParamFunc(node : NuniGraphNode, param : AudioParams) {
 
 
 function createDraggableNumberInput(initialValue : number, 
-    mousedownFunc: () => number,
-    updateFunc: (delta : number, startValue : number) => string, 
+    mousedownFunc : () => number,
+    updateFunc : (delta : number, startValue : number) => string, 
     manualUpdater : (value : number) => void ) {
 
     const valueInput = E('input') as HTMLInputElement
@@ -193,7 +197,7 @@ function createDraggableNumberInput(initialValue : number,
             updateFunc(startY-e.clientY + (e.clientX-startX)/128.0, startValue)
     }
 
-    const mouseup = () => {
+    const mouseup = (e : MouseEvent) => {
         GraphCanvas.canvas.onmousemove = canvasHandler
         window.removeEventListener('mousemove',mousemove)
         window.removeEventListener('mouseup',mouseup)

@@ -11,7 +11,7 @@ enum NodeTypes {
     FILTER  = 'filter',
     PANNER  = 'panner',
     DELAY   = 'delay',
-    SAMPLER = 'sampler'
+    BUFFER  = 'buffer'
 }
 
 type AudioNode2 = Indexed
@@ -35,7 +35,7 @@ const createAudioNode = {
     [NodeTypes.FILTER]:  'createBiquadFilter',
     [NodeTypes.PANNER]:  'createStereoPanner',
     [NodeTypes.DELAY]:   'createDelay',
-    [NodeTypes.SAMPLER]: 'createSampler'
+    [NodeTypes.BUFFER]: 'createSampler'
 }
 
 const SupportsInputChannels = {
@@ -44,7 +44,7 @@ const SupportsInputChannels = {
     [NodeTypes.FILTER]:  true,
     [NodeTypes.PANNER]:  true,
     [NodeTypes.DELAY]:   true,
-    [NodeTypes.SAMPLER]: false
+    [NodeTypes.BUFFER]: false
 }
 
 const AudioNodeParams = {
@@ -53,7 +53,7 @@ const AudioNodeParams = {
     [NodeTypes.FILTER]:  ['frequency','Q','gain','detune'] as AudioParams[],
     [NodeTypes.PANNER]:  ['pan']                           as AudioParams[],
     [NodeTypes.DELAY]:   ['delayTime']                     as AudioParams[],
-    [NodeTypes.SAMPLER]: ['playbackRate','detune']         as AudioParams[]
+    [NodeTypes.BUFFER]: ['playbackRate','detune']         as AudioParams[]
 }
 
 const AudioNodeSubTypes = {
@@ -64,17 +64,17 @@ const AudioNodeSubTypes = {
          "highshelf", "peaking", "notch", "allpass"],
     [NodeTypes.PANNER]:  [],
     [NodeTypes.DELAY]:   [],
-    [NodeTypes.SAMPLER]: []
+    [NodeTypes.BUFFER]: []
 }
 
 const NodeTypeColors : { [key in NodeTypes] : string } =
 {
-    [NodeTypes.GAIN]:    'rgba(255,0,0,0.25)',
-    [NodeTypes.OSC]:     'rgba(0,0,255,0.25)',
-    [NodeTypes.FILTER]:  'rgba(0,255,0,0.25)',
-    [NodeTypes.PANNER]:  'rgba(255,128,0,0.25)',
-    [NodeTypes.DELAY]:   'rgba(255,255,0,0.25)',
-    [NodeTypes.SAMPLER]: 'rgba(0,255,255,0.25)'
+    [NodeTypes.GAIN]:    'rgba(255,0,0,0.15)',
+    [NodeTypes.OSC]:     'rgba(0,0,255,0.15)',
+    [NodeTypes.FILTER]:  'rgba(0,255,0,0.15)',
+    [NodeTypes.PANNER]:  'rgba(255,128,0,0.15)',
+    [NodeTypes.DELAY]:   'rgba(255,255,0,0.15)',
+    [NodeTypes.BUFFER]: 'rgba(0,255,255,0.15)'
 }
 
 const ConnectionTypeColors : { [key in ConnectionType] : string } =
