@@ -6,39 +6,49 @@
 
 
 // Inject (or hide) HTML that allows manipulation of the selected node
-G.selectNodeFunc = () => {
-    const node = G.selectedNode as NuniGraphNode
-    const container = D('node-value-container')!
+function set_selectNodeFunc(g : NuniGraph, container : HTMLDivElement, prompt : HTMLDivElement) {
+    g.selectNodeFunc = () => {
+        const node = g.selectedNode as NuniGraphNode
 
-    container.style.display = node ? 'grid' : 'none'
-    if (!node) return;
+        container.style.display = node ? 'grid' : 'none'
+        if (!node) return;
 
-    container.innerHTML = ''
-    const controls = E('div')
-    container.appendChild(controls)
+        container.innerHTML = ''
+        const controls = E('div')
+        container.appendChild(controls)
 
-    if (node.audioNode instanceof NuniSourceNode) {
-        controls.appendChild(showKeyboardConnection(node.audioNode))
+        if (node.audioNode instanceof NuniSourceNode) {
+            controls.appendChild(showKeyboardConnection(node.audioNode))
+        }
+        
+        controls.appendChild(showSubtypes(node))
+
+        if (node.audioNode instanceof BufferNode2) {
+            controls.appendChild(samplerControls(node.audioNode))
+        }
+
+        controls.appendChild(exposeAudioParams(node))
+
+        // Add delete button
+        if (node.id === 0) return; // Don't delete the master gain node
+        const deleteNode = E('button')
+        deleteNode.innerHTML = 'delete this node'
+        deleteNode.style.float = 'right'
+        deleteNode.onclick = _ => {  
+
+            /** If this prompt stays open then connections 
+             *  to deleted nodes become possible, and the 
+             *  program blows up if you try to do that. 
+             * */ 
+            prompt.style.display = 'none'
+
+            UndoRedoModule.save()
+            g.deleteNode(node)
+            g.unselectNode()
+            GraphCanvas.render() // Has to be generalized, as well.
+        }
+        controls.append(deleteNode)
     }
-    
-    controls.appendChild(showSubtypes(node))
-
-    if (node.audioNode instanceof BufferNode2) {
-        controls.appendChild(samplerControls(node.audioNode))
-    }
-
-    controls.appendChild(exposeAudioParams(node))
-
-    // Add delete button
-    if (node.id === 0) return; // Don't delete the master gain node
-    const deleteNode = E('button')
-    deleteNode.innerHTML = 'delete this node'
-    deleteNode.style.float = 'right'
-    deleteNode.onclick = _ => {
-        G.deleteSelectedNode()
-        G.unselectNode()
-    }
-    controls.append(deleteNode)
 }
 
 
@@ -70,6 +80,7 @@ function showSubtypes(node : NuniGraphNode) : Node {
         insertOptions(select, subtypes)
         select.value = node.audioNode.type
         select.oninput = function() {
+            UndoRedoModule.save()
             node.audioNodeType = 
             node.audioNode.type = select.value
         } 
@@ -185,6 +196,7 @@ function createDraggableNumberInput(initialValue : number,
         startValue : number
 
     const mousedown = function(e : MouseEvent) {
+        UndoRedoModule.save()
         startX = e.clientX
         startY = e.clientY
         startValue = mousedownFunc()
@@ -194,6 +206,7 @@ function createDraggableNumberInput(initialValue : number,
     }
 
     const mousemove = function(e : MouseEvent) {
+        e.stopPropagation()
         if (e.buttons !== 1) return;
         valueInput.value = 
             updateFunc(startY-e.clientY + (e.clientX-startX)/128.0, startValue)

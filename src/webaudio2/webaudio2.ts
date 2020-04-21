@@ -16,7 +16,7 @@ class AudioContext2 extends AudioContext {
         super()
     }
 
-    createSampler() {
+    createBuffer2() {
         return new BufferNode2(this)
     }
 

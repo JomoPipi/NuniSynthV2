@@ -52,9 +52,25 @@ class NuniGraph {
 
         return node
     }
+
+    deleteNode(node : NuniGraphNode) {
+        // disconnect from other audioNodes
+        node.audioNode.disconnect()
+
+        // remove from this.nodes
+        const idx = this.nodes.findIndex(_node => 
+            _node === node)
+        this.nodes.splice(idx,1)
+
+        // remove from this.oneWayConnections
+        delete this.oneWayConnections[node.id]
+        for (const id in this.oneWayConnections) {
+            this.oneWayConnections[id] = 
+            this.oneWayConnections[id].filter(({ id }) => id !== node.id)
+        }
+    }
     
     connect(node1 : NuniGraphNode, node2 : NuniGraphNode, connectionType : ConnectionType) {
-
         const connections = this.oneWayConnections[node1.id]
 
         const isDuplicate = 
@@ -80,7 +96,6 @@ class NuniGraph {
     }
 
     disconnect(node1 : NuniGraphNode, node2 : NuniGraphNode, connectionType : ConnectionType) {
-
         const connections = this.oneWayConnections[node1.id]
 
         if (!connections) throw 'check what happened here'
@@ -101,7 +116,7 @@ class NuniGraph {
             connectionType === 'channel' ? x : x[connectionType] 
     }
 
-    selectNodeFunc() { throw 'Should be implemented in attach_handlers.ts' }
+    selectNodeFunc() { throw 'Should be implemented somewhere' }
 
     selectNode (node : NuniGraphNode) {
         this.selectedNode = node
@@ -113,44 +128,12 @@ class NuniGraph {
         this.selectNodeFunc()
     }
 
-    deleteSelectedNode() {
-
-        const node = this.selectedNode
-        if (!node) return;
-
-        if (D('connection-type-prompt')!.style.display === 'block') {
-            // Find a clean way to cancel the current connection being made, instead of doing this.
-            alert("Please finish what you're doing, first.")
-            return;
-        }
-        if (node.id === 0) throw 'How can someone try to delete the node with ID of 0?'
-        
-        // disconnect from other audioNodes
-        node.audioNode.disconnect()
-
-        // remove from this.nodes
-        const idx = this.nodes.findIndex(_node => 
-            _node === node)
-        this.nodes.splice(idx,1)
-
-        // remove from this.oneWayConnections
-        delete this.oneWayConnections[node.id]
-        for (const id in this.oneWayConnections) {
-            this.oneWayConnections[id] = 
-            this.oneWayConnections[id].filter(({ id }) => id !== node.id)
-        }
-
-        GraphCanvas.render()
-    }
-
     private clear() {
         for (const node of [...this.nodes]) {
             if (node.id === 0) continue
-            this.selectedNode = node
-            this.deleteSelectedNode()
+            this.deleteNode(node)
         }
         this.selectedNode = null
-        GraphCanvas.render()
     }
 
     toRawString() {
@@ -204,10 +187,8 @@ class NuniGraph {
         }
         this.nextId = 
             Math.max(...this.nodes.map(node=>node.id)) + 1
-
-        GraphCanvas.render()
     }
-    
+
     toString() {
         return LZW_compress(this.toRawString())
     }
@@ -217,6 +198,15 @@ class NuniGraph {
     }
     
 }
+
+
+
+
 const G = new NuniGraph()
+
 Keyboard.attachToGraph(G)
 Buffers.attachToGraph(G)
+const GraphCanvas = createGraphCanvas(G, D('nunigraph-canvas') as HTMLCanvasElement)
+set_selectNodeFunc(
+    G, D('node-value-container') as HTMLDivElement, 
+    D('connection-type-prompt') as HTMLDivElement)

@@ -30,20 +30,20 @@ type ConnecteeData =
 
 
 const createAudioNode = {
-    [NodeTypes.GAIN]:    'createGain',
-    [NodeTypes.OSC]:     'createOscillator2',
-    [NodeTypes.FILTER]:  'createBiquadFilter',
-    [NodeTypes.PANNER]:  'createStereoPanner',
-    [NodeTypes.DELAY]:   'createDelay',
-    [NodeTypes.BUFFER]: 'createSampler'
+    [NodeTypes.GAIN]:   'createGain',
+    [NodeTypes.OSC]:    'createOscillator2',
+    [NodeTypes.FILTER]: 'createBiquadFilter',
+    [NodeTypes.PANNER]: 'createStereoPanner',
+    [NodeTypes.DELAY]:  'createDelay',
+    [NodeTypes.BUFFER]: 'createBuffer2'
 }
 
 const SupportsInputChannels = {
-    [NodeTypes.GAIN]:    true,
-    [NodeTypes.OSC]:     false,
-    [NodeTypes.FILTER]:  true,
-    [NodeTypes.PANNER]:  true,
-    [NodeTypes.DELAY]:   true,
+    [NodeTypes.GAIN]:   true,
+    [NodeTypes.OSC]:    false,
+    [NodeTypes.FILTER]: true,
+    [NodeTypes.PANNER]: true,
+    [NodeTypes.DELAY]:  true,
     [NodeTypes.BUFFER]: false
 }
 

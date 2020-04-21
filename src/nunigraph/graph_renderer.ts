@@ -5,11 +5,10 @@
 
 
 
+function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
 /**
- * The GraphCanvas draws the canvas, 
- * and allows the user to interact with it.
+ * The GraphCanvas draws the graph on the canvas, and allows the user to interact with it.
  */
-const GraphCanvas = (_ => {
 
 
 
@@ -19,10 +18,9 @@ const GraphCanvas = (_ => {
 
 
     // CONSTANTS //_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________
-    const canvas = D('nunigraph-canvas')! as HTMLCanvasElement
 
+    let fromNode = null as NuniGraphNode | null
     const ctx = canvas.getContext('2d')!
-
     const nodeRadius = 17
     const nodeLineWidth = 8
     const connectionLineWidth = PHI
@@ -46,16 +44,14 @@ const GraphCanvas = (_ => {
     const snapToGrid = D('snap-to-grid')! as HTMLInputElement
         snapToGrid.oninput = () => render()
 
-    // getting CSS variable
+    // How to get CSS variable:
     // const [ nodeTextColor ] = ['--node-text'].map(s =>
     //     getComputedStyle(document.documentElement).getPropertyValue(s))
-
-    let fromNode = null as NuniGraphNode | null
 
     const connectionsCache : {
         /** We need this to store the locations of triangles in connection lines,
          *  so that the user can undo connections by clicking on the triangles.
-         *  This is very similar to G.oneWayConnections, maybe it can be merged.
+         *  This is very similar to g.oneWayConnections, maybe it can be merged.
          */ 
         [connectionId : string] : { 
             x : number, 
@@ -65,7 +61,7 @@ const GraphCanvas = (_ => {
             connectionType : ConnectionType 
         }
         } = {}
-
+        
 
 
 
@@ -82,6 +78,7 @@ const GraphCanvas = (_ => {
         ctx.closePath()
     }
 
+
     const line = (x1 : number, y1 : number, x2 : number, y2 : number) => {
         ctx.beginPath()
         ctx.moveTo(x1,y1)
@@ -89,6 +86,7 @@ const GraphCanvas = (_ => {
         ctx.stroke()
         ctx.closePath()
     }
+
 
     const directedLine = (x1 : number, y1 : number, x2 : number, y2 : number, 
         cacheOptions? : { 
@@ -137,6 +135,7 @@ const GraphCanvas = (_ => {
         drawDirectionTriangle(X, Y, angle, x >= X)
     }
 
+
     const drawGridLines = (H : number, W : number, buttons? : number) => {
         ctx.lineWidth = 0.2
         ctx.strokeStyle = 'rgba(255,255,255,0.25)'
@@ -147,7 +146,7 @@ const GraphCanvas = (_ => {
             line(i,0,i,H)
         }
 
-        const node = G.selectedNode
+        const node = g.selectedNode
         if (node && buttons === 0) { // snap this node to the grid
             const {x,y} = node
             const [X,Y] = [x*W, y*H]
@@ -155,13 +154,14 @@ const GraphCanvas = (_ => {
                 Math.round(X / gridGrap) * gridGrap / W, 
                 Math.round(Y / gridGrap) * gridGrap / H]
 
-            if (!G.nodes.some(node => node.x === newX && node.y === newY)) {
+            if (!g.nodes.some(node => node.x === newX && node.y === newY)) {
             // the condition prevents the user from stacking nodes
                 node.x = newX
                 node.y = newY
             }
         }
     }
+
 
     const drawDirectionTriangle = 
         (x : number, y : number, angle : number, flipH : boolean) => {
@@ -189,13 +189,14 @@ const GraphCanvas = (_ => {
         ctx.translate(-x,-y)
     }
 
+
     const drawNodeConnections = (nodes : NuniGraphNode[], H : number, W : number, 
     { offsetX, offsetY } : { offsetX? : number, offsetY? : number }) => {
         ctx.lineWidth = connectionLineWidth
-        for (const id1 in G.oneWayConnections) {
+        for (const id1 in g.oneWayConnections) {
             const fromId = +id1 
             // gather the groups of parallel connections
-            const idGroups = G.oneWayConnections[fromId].reduce((groups, v) => {
+            const idGroups = g.oneWayConnections[fromId].reduce((groups, v) => {
                 const group = groups[v.id]
                 if (group) {
                     group.push(v)
@@ -231,6 +232,7 @@ const GraphCanvas = (_ => {
         }
     }
 
+
     const getNodeColor = (node : NuniGraphNode, H : number, W : number) => {
         
         const prop = (<Indexed>AudioNodeParams)[node.type][0]
@@ -239,7 +241,7 @@ const GraphCanvas = (_ => {
         const factor = Math.log2(pValue-min) / (Math.log2(max-min) || 0.5)
         const cval = factor * 4
         const c1 = `rgb(${ [0,1,2].map(n => 100 * (1 + Math.sin(cval + n * twoThirdsPi)) |0).join(',') })`
-        const c2 = G.selectedNode === node ? 'purple' : 'black'
+        const c2 = g.selectedNode === node ? 'purple' : 'black'
         const {x,y} = node, r = nodeRadius
         const gradient = ctx.createRadialGradient(x*W, y*H, r/27.0, x*W, y*H, r)
             gradient.addColorStop(0, c1)
@@ -247,6 +249,7 @@ const GraphCanvas = (_ => {
             
         return gradient
     }
+
 
     const drawNodes = (nodes : NuniGraphNode[], H : number, W : number, 
         options : { 
@@ -293,8 +296,9 @@ const GraphCanvas = (_ => {
         }
     }
 
+
     const render = (options = {}) => {
-        const nodes = G.nodes
+        const nodes = g.nodes
         const W = canvas.width = canvas.offsetWidth
         const H = canvas.height = canvas.offsetHeight
         const { offsetX, offsetY, buttons } = options as MouseEvent
@@ -316,7 +320,7 @@ const GraphCanvas = (_ => {
             directedLine(X,Y,offsetX,offsetY)
         }
     }
-
+    
 
 
 
@@ -328,7 +332,7 @@ const GraphCanvas = (_ => {
     const onmousedown = function(e : MouseEvent) {
         const W = canvas.width
         const H = canvas.height
-        const nodes = G.nodes
+        const nodes = g.nodes
         const [x,y] = [e.offsetX, e.offsetY]
         
         hideGraphContextmenu()
@@ -341,13 +345,13 @@ const GraphCanvas = (_ => {
 
             if (aroundEdge) { 
                 // Start making a connection
-                G.unselectNode()
+                g.unselectNode()
                 fromNode = node
                 return;
             }
             else if (d < nodeRadius) {
                 // Start dragging the node
-                G.selectNode(node)
+                g.selectNode(node)
                 render()
                 return;
             }
@@ -357,29 +361,31 @@ const GraphCanvas = (_ => {
         for (const id in connectionsCache) {
             const { x:X, y:Y, fromId, toId, connectionType } = connectionsCache[id]
             if (distance(x,y,X,Y) < triangleRadius) {
-                G.unselectNode()
-                fromNode = G.nodes.find(node => node.id === fromId)!
-                const to = G.nodes.find(node => node.id === toId)!
+                UndoRedoModule.save()
+                g.unselectNode()
+                fromNode = g.nodes.find(node => node.id === fromId)!
+                const to = g.nodes.find(node => node.id === toId)!
                 delete connectionsCache[id]
-                G.disconnect(fromNode, to, connectionType)
+                g.disconnect(fromNode, to, connectionType)
                 return;
             }
         }
         
         // Nothing was clicked
-        if (G.selectedNode) G.unselectNode()
+        if (g.selectedNode) g.unselectNode()
         render()
     }
+
 
     const onmousemove = function(e : MouseEvent) {
 
         const leftClickHeld = e.buttons === 1
         
-        if (leftClickHeld && G.selectedNode) {
+        if (leftClickHeld && g.selectedNode) {
             // Drag the selected node
             const W = canvas.width
             const H = canvas.height
-            const node = G.selectedNode
+            const node = g.selectedNode
 
             node.x = e.offsetX/W
             node.y = e.offsetY/H
@@ -387,13 +393,14 @@ const GraphCanvas = (_ => {
         render(e)
     }
 
+
     const onmouseup = function(e : MouseEvent) {
         if (!fromNode) return;
         // Connect fromNode to the destination
 
         const W = canvas.width
         const H = canvas.height
-        const nodes = G.nodes
+        const nodes = g.nodes
         const [x,y] = [e.offsetX, e.offsetY]
 
         for (const node of nodes) {
@@ -412,63 +419,63 @@ const GraphCanvas = (_ => {
         render()
     }
 
+
     canvas.onmousedown = onmousedown
     canvas.onmousemove = onmousemove
     canvas.onmouseup   = onmouseup
 
+
+    // Ask the user where to connect the node
+    function promptUserToSelectConnectionType(
+        node1 : NuniGraphNode, node2 : NuniGraphNode, x : number, y : number) {
+            
+        if (node2.id === 0) {
+            // No prompt needed in this case. 
+            // Only allow channel connections to the master gain node.
+            // Allowing connections to someGain.gain can prevent it from being muted.
+            UndoRedoModule.save()
+            g.connect(node1, node2, 'channel')
+            return;
+        }
+        const prompt = D('connection-type-prompt')!
+        const types = 
+            (SupportsInputChannels[node2.type] ? ['channel'] : [])
+            .concat(AudioNodeParams[node2.type])
+
+        prompt.style.display = 'block'
+        prompt.innerHTML= ''
+        for (const param of types as ConnectionType[]) {
+            const btn = E('button')
+            btn.innerHTML = param
+            btn.classList.add('connection-button')
+            btn.onclick = () =>
+            {
+                UndoRedoModule.save()
+                g.connect(node1, node2, param)
+                prompt.style.display = 'none'
+                render()
+            }
+            prompt.appendChild(btn)
+        }
+        const cancel = E('button')
+        cancel.innerHTML = 'cancel'
+        cancel.classList.add('connection-button')
+        cancel.onclick = () => prompt.style.display = 'none'
+        prompt.appendChild(cancel)
+
+        // Place the prompt in an accessible location
+        const dx = canvas.offsetLeft
+        const dy = canvas.offsetTop
+        const W = canvas.offsetWidth + dx
+        const w = prompt.offsetWidth
+        const Y = y + dy
+        const X = x + dx
+        prompt.style.top = (Y + 40)+'px'
+        prompt.style.left = clamp(0, (X - w/2), W-w) + 'px'
+    }
+
     return {
-        nodeRadius: nodeRadius,
         canvas: canvas,
-        ctx: ctx,
         render: render, 
     }
-})()
-
-function promptUserToSelectConnectionType(
-    node1 : NuniGraphNode, node2 : NuniGraphNode, x : number, y : number) {
-    if (node2.id === 0) {
-        // No prompt needed in this case. 
-        // Only allow channel connections to the master gain node.
-        // Allowing connections to someGain.gain can prevent it from being muted.
-       G.connect(node1, node2, 'channel')
-       return;
-    }
-    const prompt = D('connection-type-prompt')!
-    const types = 
-        (SupportsInputChannels[node2.type] ? ['channel'] : [])
-        .concat(AudioNodeParams[node2.type])
-
-    prompt.style.display = 'block'
-    prompt.innerHTML= ''
-    for (const param of types as ConnectionType[]) {
-        const btn = E('button')
-        btn.innerHTML = param
-        btn.classList.add('connection-button')
-        btn.onclick = () =>
-        {
-            G.connect(node1, node2, param)
-            prompt.style.display = 'none'
-            GraphCanvas.render()
-        }
-        prompt.appendChild(btn)
-    }
-    const cancel = E('button')
-    cancel.innerHTML = 'cancel'
-    cancel.classList.add('connection-button')
-    cancel.onclick = () => prompt.style.display = 'none'
-    prompt.appendChild(cancel)
-
-    // Place the prompt in an accessible location
-    const dx = GraphCanvas.canvas.offsetLeft
-    const dy = GraphCanvas.canvas.offsetTop
-    const W = GraphCanvas.canvas.offsetWidth + dx
-    const w = prompt.offsetWidth
-    const Y = y + dy
-    const X = x + dx
-    prompt.style.top = (Y + 40)+'px'
-    prompt.style.left = clamp(0, (X - w/2), W-w) + 'px'
-}
-
-function hideGraphContextmenu() {
-    D('graph-contextmenu')!.style.display = 'none'
 }
