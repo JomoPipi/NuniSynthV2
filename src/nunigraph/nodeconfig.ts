@@ -97,7 +97,7 @@ const DefaultParamValues : { [key in AudioParams] : number } =
     Q:            1,
     pan:          0,
     delayTime:    0.5,
-    playbackRate: 0
+    playbackRate: 1
 }
 
 const AudioParamRanges : { [key in AudioParams] : [number,number] } = 

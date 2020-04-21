@@ -153,17 +153,15 @@ class NuniGraph {
         GraphCanvas.render()
     }
 
-    toString() {
-
-        return LZW_compress(
-        JSON.stringify(this.oneWayConnections) + ':::' +
-        JSON.stringify(this.nodes).replace(/,"audioNode":{}/g, ""))
+    toRawString() {
+        return (
+            JSON.stringify(this.oneWayConnections) + ':::' +
+            JSON.stringify(this.nodes).replace(/,"audioNode":{}/g, "")
+            )
     }
 
-    fromString(s : string) {
+    fromRawString(s : string) {
 
-        s = LZW_decompress(s)
-        
         try {
             var [connections, nodes] = s.split(':::').map(s => JSON.parse(s))
         } catch(e) {
@@ -208,6 +206,14 @@ class NuniGraph {
             Math.max(...this.nodes.map(node=>node.id)) + 1
 
         GraphCanvas.render()
+    }
+    
+    toString() {
+        return LZW_compress(this.toRawString())
+    }
+
+    fromString(s : string) {
+        return this.fromRawString(LZW_decompress(s))
     }
     
 }

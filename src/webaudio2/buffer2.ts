@@ -35,6 +35,7 @@ class BufferNode2 extends NuniSourceNode {
 
         sources[key] && sources[key].disconnect()
         const src = sources[key] = this.ctx.createBufferSource()
+        src.playbackRate.setValueAtTime(0,this.ctx.currentTime)
 
         this.detune.src.connect(src.detune)
         this.playbackRate.src.connect(src.playbackRate)
@@ -42,6 +43,7 @@ class BufferNode2 extends NuniSourceNode {
         src.detune.value = (i-12) * 100
         src.buffer = Buffers.buffers[this.bufferIndex]
         src.loop = this.loop
+        // src.loopEnd = 0.2
         this.ADSRs[key].releaseId = -1  
         src.connect(this.ADSRs[key])
     }

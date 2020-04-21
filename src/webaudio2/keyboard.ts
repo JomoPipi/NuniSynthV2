@@ -77,3 +77,9 @@ const Keyboard = (() => {
         }
     }
 })()
+
+function resizeKeyboard () {
+    const keyboard = D('keyboard-image') as any
+    const size = keyboard.parentNode.clientWidth / 70
+    keyboard.style.fontSize = size + 'px'
+}
