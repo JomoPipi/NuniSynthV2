@@ -34,22 +34,28 @@ const ADSR = {
         gain.setTargetAtTime(1, t, attack)                     // attack phase
         gain.setTargetAtTime(sustain ** 2, t + attack, decay)  // decay phase
     },
-    
+
     untrigger: function(sourceNode : NuniSourceNode, key : number) {
         const { release } = this
         const lowVol = 0.001
         const t = sourceNode.ctx.currentTime
-        const gain = sourceNode.ADSRs[key].gain
         const adsr = sourceNode.ADSRs[key]
+        const gain = adsr.gain
         gain.cancelScheduledValues(t)
-        gain.setValueAtTime(gain.value, t)
         gain.setTargetAtTime(0, t, release)
-    
+        
+        let lastGain = -Infinity
         adsr.releaseId = setInterval(() => {
-            if (gain.value <= lowVol) { // to completely turn it off
+            
+            /** Repeat may happen because an audio buffer may end before
+             *  the release phase begins. And that seemed to cause a 
+             *  problem.
+             * */ 
+            const repeat = lastGain === gain.value
+            lastGain = gain.value
+
+            if (gain.value <= lowVol || repeat) { // to completely turn it off
                 gain.cancelScheduledValues(t)
-                gain.setValueAtTime(gain.value, t)
-                gain.setTargetAtTime(0, t, release)
                 
                 clearInterval(adsr.releaseId) 
                 adsr.releaseId = -1
@@ -58,7 +64,7 @@ const ADSR = {
                     sourceNode.prepareBuffer(key)
                 }
             }
-        }, 10)
+        }, 40)
     },
 
     render: () => void 0

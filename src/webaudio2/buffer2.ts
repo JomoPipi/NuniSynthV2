@@ -44,7 +44,7 @@ class BufferNode2 extends NuniSourceNode {
         src.buffer = Buffers.buffers[this.bufferIndex]
         src.loop = this.loop
         // src.loopEnd = 0.2
-        this.ADSRs[key].releaseId = -1  
+        
         src.connect(this.ADSRs[key])
     }
 
@@ -59,6 +59,7 @@ class BufferNode2 extends NuniSourceNode {
         const adsr = this.ADSRs[key]
         if (adsr.releaseId >= 0) {
             clearInterval(adsr.releaseId)
+            adsr.releaseId = -1
             this.prepareBuffer(key)
         }
         if (this.sources[key].isOn) return;

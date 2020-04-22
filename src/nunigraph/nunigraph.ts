@@ -128,7 +128,7 @@ class NuniGraph {
         this.selectNodeFunc()
     }
 
-    private clear() {
+    clear() {
         for (const node of [...this.nodes]) {
             if (node.id === 0) continue
             this.deleteNode(node)

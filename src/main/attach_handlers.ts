@@ -15,10 +15,6 @@ D('tab-swapper')!.oninput = function() {
 }
 D('node-options')!.classList.toggle('show',true)
 
-// Help the user
-D('about')!.onclick = () =>
-    window.open('https://developer.mozilla.org/en-US/docs/Web/API/AudioNode/connect','_blank')
-
 // Attach JS dials to ADSR
 MY_JS_DIALS.forEach(dial => {
     // if (dial.id.startsWith('aux')) 

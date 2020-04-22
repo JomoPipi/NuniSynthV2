@@ -9,9 +9,18 @@
 Object.values(NodeTypes).forEach(type => {
     const create = () => {
         UndoRedoModule.save()
-        G.newNode(type)
+        const node = G.newNode(type)
+        const menu = D('graph-contextmenu')!
+
+        if (menu.style.display !== 'none') {
+            // Place the newly created node in an appriopriate location near the mouse
+            const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = GraphCanvas.canvas
+            node.x = (menu.offsetLeft - offsetLeft) / offsetWidth
+            node.y = (menu.offsetTop - offsetTop) / offsetHeight
+            hideGraphContextmenu()
+        }
+
         GraphCanvas.render()
-        hideGraphContextmenu()
     }
     D(`create-${type}`)!.onclick = create 
     D(`create-${type}2`)!.onclick = create
@@ -34,6 +43,13 @@ Object.values(NodeTypes).forEach(type => {
         UndoRedoModule.undos.pop()
         input.value = 'Invalid code'
     }
+}
+
+// Clear the graph
+;(D('clear-graph-button') as HTMLButtonElement).onclick = function() {
+    UndoRedoModule.save()
+    G.clear()
+    GraphCanvas.render()
 }
 
 // Right-click options

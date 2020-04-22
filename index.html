@@ -28,11 +28,12 @@
           type="image/png"
           href="favicon-32x32.png">
 
-    <script src="dist/ui-components/draggable-top-bar.js"></script>
-
     <script src="dist/helpers/lzw_compression.js" defer></script>
     <script src="dist/helpers/helpers.js"         defer></script>
     <script src="dist/helpers/jsdials.js"         defer></script>
+      
+    <script src="dist/ui-components/draggable-top-bar.js" defer></script>
+    <script src="dist/ui-components/info_menu.js"         defer></script>
 
     <script src="dist/buffer_utils/init_buffers.js" defer></script>
     <script src="dist/buffer_utils/draw_buffer.js"  defer></script>
@@ -80,22 +81,32 @@
       new buffer       </button>    
 </div>
 
+
+
+
 <div id="connection-type-prompt"></div>
 
+
+
+
 <div id="main" class="panel">
-    <!-- it's not draggable, though..  -->
-    <div id="top-bar"> NuniSynth <button id="about"> ? </button></div>
+    <div id="top-bar"> 
+      <span> NuniSynth </span> 
+    </div>
 
     <div id="main-a">
     
       <div id="left-tab">
-        BUFFERS <br>
-        WAVEFORMS <br>
-        SCALES <br>
-        PATTERNS <br>
-        MODULES <br>
-        PRESETS <br>
-        FILES
+        <div class="inner-tab">
+          <button id="info-button"> i </button> <br>
+          BUFFERS <br>
+          WAVEFORMS <br>
+          SCALES <br>
+          PATTERNS <br>
+          MODULES <br>
+          PRESETS <br>
+          FILES
+        </div>
       </div>
       
       <div id="tabs-panel" class="panel">
@@ -141,9 +152,13 @@
                   </div>
                   
                   <div>
+                  </div>
+                  
+                  <div>
                       <span> snap to grid 
                         <input type="checkbox" id="snap-to-grid"> 
                       </span>
+                      <button id="clear-graph-button" style="float:right"> clear graph </button>
                   </div>
                   
               </div>
@@ -367,6 +382,80 @@
       </div>
 
     </div>
+</div>
+
+
+
+
+<div id="info-menu-container">
+  <div id="info-menu" class="info-menu"> 
+
+    <div class="panel">
+
+      <span> Help Menu </span> 
+
+      <div id="info-menu-grid">
+        <div id="info-menu-buttons">
+          <button class="info-menu-button active-info-button"> 
+            basics </button>
+
+          <button class="info-menu-button"> 
+            nodes  </button>
+
+          <button class="info-menu-button"> 
+            about  </button>
+        </div>
+  
+        <div id="info-content-container">
+          <div id="basics-info" class="info-content show">
+            <ul>
+              <li> Right-click in the graph to create new nodes. </li>
+              <li> Click the edges of nodes to start making connections. </li>
+              <li> Click on triangles/arrows to undo connections </li>
+              <li> <code> ctrl + z </code>         to undo. </li>
+              <li> <code> ctrl + shift + z </code> to redo. </li>
+            </ul>
+          </div>
+          <div id="nodes-info" class="info-content">
+            <ul>
+              <li> <code>gain</code> 
+                nodes represent a change in volume or intensity. </li>
+              
+              <li> <code>oscillator</code> 
+                nodes output a specified frequency of a given periodic wave. </li>
+              
+              <li> <code>panner</code> 
+                nodes can be used to pan audio streams left or right. </li>
+              
+              <li> <code>filter</code> 
+                nodes can represent different low-order filters.</li>
+              
+              <li> <code>delay</code> 
+                nodes cause a delay between the arrival of input data and its propagation to the output.</li>
+              
+              <li> <code>buffer</code> 
+                nodes allow you to play audio samples. </li>
+            </ul>
+          </div>
+          <div id="about-info" class="info-content">
+            <div class="info-text-container inner-tab">
+              <span id="about-info-text">
+              
+                NuniSynth is a graphical modular software designed for
+                building instruments, effects, and complex audio functions.
+                <br> <br>
+                Please leave feedback, suggestions, questions, or thoughts at
+                <code> ronaldmcorona@gmail.com</code>.
+
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
 </div>
 
 

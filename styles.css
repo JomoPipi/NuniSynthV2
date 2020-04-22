@@ -94,13 +94,96 @@ button {
     background: var(--ui-bg);
 }
 
-#about {
-    float: right;
-    background: transparent;
+
+
+
+#info-button {
+    cursor: help;
+    background: rgb(83, 83, 161);
     color: white;
-    border: 1px solid rgba(128,128,128,0.2);
+    border-radius: 100px;
+    font-style: italic;
+    border: 1px solid rgba(255, 255, 255, 0.151);
+    box-sizing: border-box;
+
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+    
+    /* float: right; */
+    margin: auto;
+    margin-right: 20px;
+    width: 20px;
+    height: 20px;
+
+    vertical-align: middle;
+    text-align: center;
+}
+
+#info-menu-container {
+    color: black;
+    position: absolute;
+    pointer-events: none;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    text-align: center;
+}
+
+.info-menu {
+    display: none;
+    border: 3px solid blue;
+    background-color: white;
+    width: 400px;
+    height: 400px;
+    margin-top: 5%;
+    z-index: 100;
+}
+
+#info-menu-grid {
+    pointer-events: all;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 30% 70%;
+}
+
+#info-menu-buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.info-menu-button {
+    pointer-events: all;
+    border: 1px solid #333;
+    background-color: #ddd;
+}
+
+.active-info-button {
+    background-color: white;
+    border-right: none;
+    outline: none;
+}
+
+.info-content {
+    text-align: left;
+    display: none;
+}
+
+.info-text-container {
+    display:table;
     height: 100%;
 }
+
+#about-info-text {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    height: 100%;
+}
+
+
+
 
 #main-a {
     display: grid;
@@ -333,7 +416,7 @@ button {
 .inner-tab {
     /* display: grid;
     grid-template-rows: 1fr 1fr; */
-    margin: 0% 7%;
+    margin: 0% 3%;
 }
 
 
