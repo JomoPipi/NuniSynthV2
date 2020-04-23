@@ -15,6 +15,7 @@ function set_selectNodeFunc(g : NuniGraph, container : HTMLDivElement, prompt : 
 
         container.innerHTML = ''
         const controls = E('div')
+        container.appendChild(createDraggableTopBar())
         container.appendChild(controls)
 
         if (node.audioNode instanceof NuniSourceNode) {

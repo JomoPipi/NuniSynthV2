@@ -58,6 +58,25 @@ D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
     showGraphContextMenu(e.clientX, e.clientY)
 }
 
+// Create Graph-legend
+{
+    const legend = D('nunigraph-legend')!
+    const append = (text : string, color : string) => {
+        const colorbox = E('span')
+        const textbox = E('span')
+        colorbox.style.background = color
+        textbox.innerHTML = text
+        legend.appendChild(colorbox)
+        legend.appendChild(textbox)
+    }
+    append('master-gain','#222')
+    for (const key in NodeTypes) {
+        const type = (<any>NodeTypes)[key] as NodeTypes
+        append(type, NodeTypeColors[type])
+    }
+}
+
+
 function showGraphContextMenu(x : number, y : number) {
     const menu = D('graph-contextmenu') as HTMLDivElement
     menu.style.display = 'grid'

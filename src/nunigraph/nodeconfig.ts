@@ -69,12 +69,12 @@ const AudioNodeSubTypes = {
 
 const NodeTypeColors : { [key in NodeTypes] : string } =
 {
-    [NodeTypes.GAIN]:    'rgba(255,0,0,0.15)',
-    [NodeTypes.OSC]:     'rgba(0,0,255,0.15)',
-    [NodeTypes.FILTER]:  'rgba(0,255,0,0.15)',
-    [NodeTypes.PANNER]:  'rgba(255,128,0,0.15)',
-    [NodeTypes.DELAY]:   'rgba(255,255,0,0.15)',
-    [NodeTypes.BUFFER]: 'rgba(0,255,255,0.15)'
+    [NodeTypes.GAIN]:   'rgba(255,0,0,0.5)',
+    [NodeTypes.OSC]:    'rgba(0,0,255,0.5)',
+    [NodeTypes.FILTER]: 'rgba(0,255,0,0.5)',
+    [NodeTypes.PANNER]: 'rgba(255,128,0,0.5)',
+    [NodeTypes.DELAY]:  'rgba(255,255,0,0.5)',
+    [NodeTypes.BUFFER]: 'rgba(0,255,255,0.5)'
 }
 
 const ConnectionTypeColors : { [key in ConnectionType] : string } =

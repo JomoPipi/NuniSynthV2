@@ -241,7 +241,7 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         const factor = Math.log2(pValue-min) / (Math.log2(max-min) || 0.5)
         const cval = factor * 4
         const c1 = `rgb(${ [0,1,2].map(n => 100 * (1 + Math.sin(cval + n * twoThirdsPi)) |0).join(',') })`
-        const c2 = g.selectedNode === node ? 'purple' : 'black'
+        const c2 = g.selectedNode === node ? 'pink' : 'black'
         const {x,y} = node, r = nodeRadius
         const gradient = ctx.createRadialGradient(x*W, y*H, r/27.0, x*W, y*H, r)
             gradient.addColorStop(0, c1)
@@ -287,12 +287,13 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
             
             circle(X, Y, nodeRadius)
 
-            ctx.fillStyle = textGradient//nodeTextColor
-            ctx.fillText(
-                node.id === 0 ? 'master-gain' : node.title,
-                X - nodeRadius * 1.5, 
-                Y - nodeRadius * 1.5
-            )
+            // There is a legend, now. I will see if people like it.
+            // ctx.fillStyle = NodeTypeColors[node.type] //textGradient//nodeTextColor
+            // ctx.fillText(
+            //     node.id === 0 ? 'master-gain' : node.title,
+            //     X - nodeRadius * 1.5, 
+            //     Y - nodeRadius * 1.5
+            // )
         }
     }
 
@@ -303,7 +304,7 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         const H = canvas.height = canvas.offsetHeight
         const { offsetX, offsetY, buttons } = options as MouseEvent
 
-        ctx.font = '15px Arial '
+        ctx.font = '15px Arial'
         ctx.clearRect(0,0,W,H)
     
         if (snapToGrid.checked) {
