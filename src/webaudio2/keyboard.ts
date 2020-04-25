@@ -29,7 +29,7 @@ const Keyboard = (() => {
     const keymap = keys.reduce((map,key,i) => {
         map[key] = i
         return map
-    }, {} as Indexible<number>)
+    }, {} as Indexable<number>)
 
     const held = [] as number[]
     
@@ -46,6 +46,9 @@ const Keyboard = (() => {
 
     return { keys, keyset, keymap, held,
         attachToGraph: (g : NuniGraph) => {
+
+            document.onkeydown = updateKeys(true)
+            document.onkeyup = updateKeys(false)
 
             function updateKeys(keydown : boolean) {
                 return (e : KeyboardEvent) => { 
@@ -71,9 +74,6 @@ const Keyboard = (() => {
                     }
                 }
             }
-
-            document.onkeydown = updateKeys(true)
-            document.onkeyup = updateKeys(false)
         }
     }
 })()

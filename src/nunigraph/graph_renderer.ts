@@ -448,7 +448,6 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         for (const param of types as ConnectionType[]) {
             const btn = E('button')
             btn.innerHTML = param
-            btn.classList.add('connection-button')
             btn.onclick = () =>
             {
                 UndoRedoModule.save()

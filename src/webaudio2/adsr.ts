@@ -56,6 +56,7 @@ const ADSR = {
 
             if (gain.value <= lowVol || repeat) { // to completely turn it off
                 gain.cancelScheduledValues(t)
+                gain.setValueAtTime(0, sourceNode.ctx.currentTime)
                 
                 clearInterval(adsr.releaseId) 
                 adsr.releaseId = -1

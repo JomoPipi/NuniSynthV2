@@ -27,10 +27,10 @@ class AudioContext2 extends AudioContext {
 
 type Destination = AudioNode | AudioParam | AudioParam2
 
-const audioCtx = new AudioContext2() as Indexed
+const audioCtx = new AudioContext2() as AudioContext2 & Indexed
 const nBuffers = 10
 
-initBuffers(nBuffers, audioCtx as AudioContext2) 
+initBuffers(nBuffers, audioCtx)
 
 function connect_node_to_destination(node1 : NuniGraphNode, destination : Destination) {
     if (destination instanceof AudioParam2) 

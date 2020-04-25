@@ -14,8 +14,6 @@ enum NodeTypes {
     BUFFER  = 'buffer'
 }
 
-type AudioNode2 = Indexed
-
 type AudioParams = 
     'gain' | 'frequency' | 'detune' | 'pan' | 'Q' | 'delayTime' | 'playbackRate'
 
@@ -48,11 +46,11 @@ const SupportsInputChannels = {
 }
 
 const AudioNodeParams = {
-    [NodeTypes.GAIN]:    ['gain']                          as AudioParams[],
-    [NodeTypes.OSC]:     ['frequency','detune']            as AudioParams[],
-    [NodeTypes.FILTER]:  ['frequency','Q','gain','detune'] as AudioParams[],
-    [NodeTypes.PANNER]:  ['pan']                           as AudioParams[],
-    [NodeTypes.DELAY]:   ['delayTime']                     as AudioParams[],
+    [NodeTypes.GAIN]:   ['gain']                          as AudioParams[],
+    [NodeTypes.OSC]:    ['frequency','detune']            as AudioParams[],
+    [NodeTypes.FILTER]: ['frequency','Q','gain','detune'] as AudioParams[],
+    [NodeTypes.PANNER]: ['pan']                           as AudioParams[],
+    [NodeTypes.DELAY]:  ['delayTime']                     as AudioParams[],
     [NodeTypes.BUFFER]: ['playbackRate','detune']         as AudioParams[]
 }
 

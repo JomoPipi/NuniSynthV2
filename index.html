@@ -22,7 +22,7 @@
 
     <link rel="stylesheet" 
           type="text/css" 
-          href="styles.css">
+          href="styles/styles.css">
 
     <link rel="icon" 
           type="image/png"
@@ -30,14 +30,17 @@
 
     <script src="dist/helpers/lzw_compression.js" defer></script>
     <script src="dist/helpers/helpers.js"         defer></script>
-    <script src="dist/helpers/jsdials.js"         defer></script>
-      
-    <script src="dist/ui-components/draggable-top-bar.js" defer></script>
-    <script src="dist/ui-components/info_menu.js"         defer></script>
+
+    <script src="dist/UI/functions/ui_clamp.js"    defer></script>
+    <script src="dist/UI/functions/apply_style.js" defer></script>
+    <script src="dist/UI/jsdials.js"           defer></script>
+    <script src="dist/UI/draggable-top-bar.js" defer></script>
+    <script src="dist/UI/info_menu.js"         defer></script>
 
     <script src="dist/buffer_utils/init_buffers.js" defer></script>
     <script src="dist/buffer_utils/draw_buffer.js"  defer></script>
     <script src="dist/buffer_utils/record.js"       defer></script>
+    <script src="dist/buffer_utils/buffer_utils.js" defer></script>
 
     <script src="dist/webaudio2/keyboard.js"        defer></script>
     <script src="dist/webaudio2/adsr.js"            defer></script>
@@ -50,7 +53,7 @@
     <script src="dist/nunigraph/graph_renderer.js"  defer></script>
     <script src="dist/nunigraph/display_nodedata.js"defer></script>
     <script src="dist/nunigraph/nodeconfig.js"      defer></script>
-    <script src="dist/nunigraph/nunigraph_node.js"   defer></script>
+    <script src="dist/nunigraph/nunigraph_node.js"  defer></script>
     <script src="dist/nunigraph/nunigraph.js"       defer></script>
     <script src="dist/nunigraph/graph_handlers.js"  defer></script>
 
@@ -64,6 +67,7 @@
 <body>
 
 
+  
 
 <div id="graph-contextmenu">
   <span style="color:rgba(0,0,0,0.65)"> Create.. </span>
@@ -80,9 +84,6 @@
   <button id="create-buffer2" class="contextmenu-button">    
       new buffer       </button>    
 </div>
-
-
-
 
 <div id="connection-type-prompt"></div>
 
@@ -347,11 +348,19 @@
               <button id="buffer-index-down"> - </button>
               <span id="buffer-index"> 0 </span>
               <button id="buffer-index-up"> + </button>
-              <button id="reverse-buffer"> reverse </button>
-              <button id="invert-buffer">  invert </button>
               <canvas id="buffer-canvas"></canvas>
               <div class="length-indicator"></div>
               <span id="buffer-length-text"></span>
+
+              <br>
+              <br>
+
+              <div id="buffer-functions">
+                <button id="reverse-buffer"> reverse </button>
+                <button id="invert-buffer">  invert </button>
+                <button id="invert-buffer">  slice </button>
+              </div>
+
             </div>
           </div>
 

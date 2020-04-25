@@ -13,7 +13,7 @@ class NuniGraph {
     
     nextId : number
     nodes : NuniGraphNode[]
-    oneWayConnections : Indexible<ConnecteeData>
+    oneWayConnections : Indexable<ConnecteeData>
     selectedNode : NuniGraphNode | null
 
     constructor() {

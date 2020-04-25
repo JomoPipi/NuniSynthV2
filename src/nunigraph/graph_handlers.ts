@@ -71,7 +71,7 @@ D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
     }
     append('master-gain','#222')
     for (const key in NodeTypes) {
-        const type = (<any>NodeTypes)[key] as NodeTypes
+        const type = (<Indexed>NodeTypes)[key] as NodeTypes
         append(type, NodeTypeColors[type])
     }
 }
@@ -79,10 +79,11 @@ D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
 
 function showGraphContextMenu(x : number, y : number) {
     const menu = D('graph-contextmenu') as HTMLDivElement
+
     menu.style.display = 'grid'
-    menu.style.top  = y+'px'
-    menu.style.left = x+'px'
+    UI_clamp(x, y, menu, document.body)
 }
+
 function hideGraphContextmenu() {
     D('graph-contextmenu')!.style.display = 'none'
 }

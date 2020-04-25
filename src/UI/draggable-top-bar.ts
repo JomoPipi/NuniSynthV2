@@ -10,7 +10,30 @@
  */
 function createDraggableTopBar() {
     const bar = E('div')
-    bar.classList.add('draggable-top-bar') // or define the css here?
+    const exitBtn = E('button')
+
+    applyStyle(bar, {
+        height: '30px',
+        width: '100%',
+        background: '#555',
+        cursor: 'move',
+        })
+
+    applyStyle(exitBtn, {
+        cursor: 'pointer',
+        border: '0.2px solid #444',
+        boxSizing: 'border-box',
+        backgroundColor: 'inherit',
+        height: '30px',
+        width: '30px',
+        float: 'right',
+        color: '#a99',
+        textAlign: 'center',
+        lineHeight: '30px'
+        })
+
+    bar.appendChild(exitBtn)
+    exitBtn.innerHTML = 'x'
 
     let active = false
 
@@ -35,20 +58,22 @@ function createDraggableTopBar() {
         if (!box) throw 'A box to drag is required.'
 
         if (active) {
-            const [x, y, W, H, w, h] = [
+            UI_clamp(
                 e.clientX, 
-                e.clientY, 
-                document.body.offsetWidth, 
-                document.body.offsetHeight, 
-                box.offsetWidth, 
-                box.offsetHeight
-                ]
-
-            box.style.left = clamp(0, x - w/2, W-w) + 'px'
-            box.style.top = clamp(0, y - bar.offsetHeight/2, H-h) + 'px'
+                e.clientY + box.offsetHeight/2 - bar.offsetHeight/2,
+                box, 
+                document.body)
         }
     }
 
+    const closeBox = () => {
+        const box = bar.parentElement
+        if (!box) throw 'A box to close is required.'
+
+        box.style.display = 'none'
+    }
+    
+    exitBtn.onclick = closeBox
     bar.onmousedown = mousedown
     bar.onmousemove = mousemove
 

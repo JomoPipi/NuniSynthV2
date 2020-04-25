@@ -5,16 +5,18 @@
 
 
 
+type Endofunction<T> = (arg : T) => T;
+
 type Indexed = { [param : string] : any }
 
-interface Indexible<T> { [param : string] : T }
+interface Indexable<T> { [param : string] : T }
 
 
 const log = console.log
 
-const id = (x : any) => x
+const id = <T>(x : T) => x
 
-const trace = (x : any) => (log(x), x)
+const trace = <T>(x : T) => (log(x), x)
 
 const D = (x:string) => 
     document.getElementById(x)

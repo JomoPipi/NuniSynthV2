@@ -10,12 +10,12 @@ recordButton.onclick = () =>
     recordTo(Buffers.currentIndex)
 
 
-function errStuff(err : string) {
-    recordButton.innerHTML = err
-    recordButton.style.backgroundColor = 'orange'
-}
-
 function recordTo(index : number) {
+    const errStuff = (err : string) => {
+        recordButton.innerHTML = err
+        recordButton.style.backgroundColor = 'orange'
+    }
+
     const isRecording = recordButton.classList.toggle('recording')
     if (!isRecording) {
         clearTimeout(Buffers.lastRecorderRequestId)
@@ -38,15 +38,16 @@ function recordTo(index : number) {
             const audioBlob = new Blob(audioChunks)
 
             audioBlob.arrayBuffer().then(arraybuffer => {
-                audioCtx.decodeAudioData(arraybuffer, (audiobuffer : AudioBuffer) => {
-
+                audioCtx.decodeAudioData(arraybuffer)
+                .then((audiobuffer : AudioBuffer) => 
+                {
                     Buffers.buffers[index] = audiobuffer
                     Buffers.refreshAffectedBuffers()
                     recordButton.classList.remove('recording')
-                },
-                errStuff)
-            }).catch(errStuff)
-            
+                })
+                .catch(errStuff)
+            })
+            .catch(errStuff)
         })
         Buffers.stopLastRecorder = () => mediaRecorder.stop()
         Buffers.lastRecorderRequestId = setTimeout(Buffers.stopLastRecorder, 10000)

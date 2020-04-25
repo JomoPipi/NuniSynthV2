@@ -34,7 +34,7 @@ class NuniSourceNode {
      *  Allows for 3 keyboard modes - none | mono | poly
      */
     connectees: Destination[] // The list of things that the node connects to
-    ADSRs: Indexible<Adsr>    // The gain-ADSRs
+    ADSRs: Indexable<Adsr>    // The gain-ADSRs
     sources: Indexed          // The AudioScheduledSourceNode containers
     kbMode: KbMode            // The current state of the node - none | mono | poly
     ctx: AudioContext2        // The context of audio
@@ -146,7 +146,7 @@ class NuniSourceNode {
         this.ADSRs = Keyboard.keys.reduce((adsr,key) => {
             adsr[key] = new Adsr(this.ctx)
             return adsr
-        }, {} as Indexible<Adsr>)
+        }, {} as Indexable<Adsr>)
         
         this.refresh()
     }

@@ -19,7 +19,7 @@ class NuniGraphNode {
      */
     id : number
     type : NodeTypes
-    audioNode : AudioNode2
+    audioNode : Indexed
     x : number
     y : number
     title : string
