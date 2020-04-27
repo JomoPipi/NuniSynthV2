@@ -13,7 +13,7 @@ D('tab-swapper')!.oninput = function() {
     }
     resizeHandler()
 }
-D('node-options')!.classList.toggle('show',true)
+
 
 // Attach JS dials to ADSR
 MY_JS_DIALS.forEach(dial => {

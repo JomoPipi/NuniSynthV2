@@ -277,7 +277,7 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
             ctx.fillStyle = getNodeColor(node, H, W)
 
             if (selectedNodes) { // Not being used, currently
-                ctx.fillStyle = selectedNodes.indexOf(node) >= 0 ? 'red' : 'yellow'
+                ctx.fillStyle = selectedNodes.indexOf(node) >= 0 ? 'red' : 'gray'
             }
 
             if (shouldHighlight)
@@ -338,27 +338,33 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         
         hideGraphContextmenu()
 
-        // Check if any nodes were clicked:
-        for (const node of nodes) {
-            const [X,Y] = [node.x*W, node.y*H]
-            const d = x && y ? distance(x,y,X,Y) : -1
-            const aroundEdge = innerEdgeBoundary < d && d < outerEdgeBoundary
-
-            if (aroundEdge) { 
-                // Start making a connection
-                g.unselectNode()
-                fromNode = node
-                return;
-            }
-            else if (d < nodeRadius) {
-                // Start dragging the node
-                g.selectNode(node)
-                render()
-                return;
+        /** Check if nodes were clicked.
+         *  Why the outer loop? To prioritize being able
+         *  to drag nodes over making connection arrows.
+         *  */ 
+        for (const i of [true,false]) {
+            for (const node of nodes) {
+                const [X,Y] = [node.x*W, node.y*H]
+                const d = x && y ? distance(x,y,X,Y) : -1
+                const aroundEdge = innerEdgeBoundary < d && d < outerEdgeBoundary
+    
+                if (i) {
+                    if (d < nodeRadius) {
+                        g.selectNode(node)
+                        render()
+                        return;
+                    }
+                } else {
+                    if (aroundEdge) { 
+                        g.unselectNode()
+                        fromNode = node // Start making a connection
+                        return;
+                    }
+                }
             }
         }
-
-        // Check if any connections were clicked:
+        
+        // Check if any connection-triangles were clicked:
         for (const id in connectionsCache) {
             const { x:X, y:Y, fromId, toId, connectionType } = connectionsCache[id]
             if (distance(x,y,X,Y) < triangleRadius) {

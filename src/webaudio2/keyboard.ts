@@ -5,7 +5,8 @@
 
 
 
-type KbMode = 'none' | 'mono' | 'poly'
+type NodeKbMode = 'none' | 'mono' | 'poly'
+type KbMode = 'mono' | 'poly'
 
 const Keyboard = (() => {
     
@@ -44,38 +45,79 @@ const Keyboard = (() => {
                 .toggle('key-pressed', keydown)
     }
 
-    return { keys, keyset, keymap, held,
-        attachToGraph: (g : NuniGraph) => {
+    function getMode() {
+        return (D('keyboard-mono-radio') as HTMLInputElement).checked ?
+            'mono' :
+            'poly'
+    }
+    
+    const monoBtn = D('keyboard-mono-radio')
+    const polyBtn = D('keyboard-poly-radio')
 
-            document.onkeydown = updateKeys(true)
-            document.onkeyup = updateKeys(false)
+    function attachToGraph(g : NuniGraph) {
+    
+        const selectNodesBtn = D('select-keyboard-nodes-button')!
+        selectNodesBtn.onclick = function() {
+            const on = selectNodesBtn.classList.toggle('selected') 
+        } 
 
-            function updateKeys(keydown : boolean) {
-                return (e : KeyboardEvent) => { 
-                    const key = e.keyCode
-            
-                    if (keyset.has(key)){ 
-                        updateKeyDiv(key, keydown)
-                        
-                        const idx = held.indexOf(key)
-                        if (keydown) {
-                            if (idx >= 0) return;
-                            held.push(key)
-                        } else {
-                            held.splice(idx,1)
+        D('mono-poly-select')!.onclick = function (e : MouseEvent) {
+            const t = e.target
+            if (t === monoBtn || t === polyBtn) {
+                switchActiveNodes()
+            }
+        }
+
+        function switchActiveNodes() {
+            for (const { audioNode: an } of g.nodes) {
+                if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
+                    an.setKbMode(getMode())
+                }
+            }
+        }
+
+        document.onkeydown = updateKeys(true)
+        document.onkeyup = updateKeys(false)
+
+        function updateKeys(keydown : boolean) {
+            return (e : KeyboardEvent) => { 
+                const key = e.keyCode
+        
+                if (keyset.has(key)){ 
+
+                    // UPDATE THE CUTE KEYBOARD IMAGE
+                    updateKeyDiv(key, keydown)
+                    
+                    // TODO: only update this when mode === mono
+                    // UPDATE HELD-KEY ARRAY (for last-note priority)
+                    const idx = held.indexOf(key)
+                    if (keydown) {
+                        if (idx >= 0) return;
+                        held.push(key)
+                    } else {
+                        held.splice(idx,1)
+                    }
+                    
+                    // MAKE THE SOUND HAPPEN
+                    for (const { audioNode: an } of g.nodes) {
+                        if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
+                            an.update(keydown, key)
                         }
-                        
-                        g.nodes.forEach(node => {
-                            const an = node.audioNode
-                            if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
-                                an.update(keydown, key)
-                            }
-                        })
                     }
                 }
             }
         }
     }
+
+    return { 
+        keys, 
+        keyset,
+        keymap, 
+        held, 
+        getMode,
+        attachToGraph
+        }
+
 })()
 
 function resizeKeyboard () {
@@ -83,3 +125,5 @@ function resizeKeyboard () {
     const size = keyboard.parentNode.clientWidth / 70
     keyboard.style.fontSize = size + 'px'
 }
+
+// ALLOW KEYBOARD NODES TO BE SELECTED

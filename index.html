@@ -90,35 +90,44 @@
 
 
 
-<div id="main" class="panel">
-    <div id="top-bar"> 
+<div class="panel">
+    <div class="top-bar">
       <span> NuniSynth </span> 
     </div>
 
-    <div id="main-a">
+    <div class="the-three-panels">
     
-      <div id="left-tab">
-        <div class="inner-tab">
-          <button id="info-button"> i </button> <br>
-          BUFFERS <br>
+      <div class="left-panel">
+        <div class="side-margin">
+          BUFFERS   <br>
           WAVEFORMS <br>
-          SCALES <br>
-          PATTERNS <br>
-          MODULES <br>
-          PRESETS <br>
-          FILES
+          SCALES    <br>
+          PATTERNS  <br>
+          MODULES   <br>
+          PRESETS   <br>
+          FILES     <br>
+
+          
+          <button 
+            id="info-button" 
+            class="info-button"> 
+            i 
+          </button> 
         </div>
+        
       </div>
       
       <div id="tabs-panel" class="panel">
-        <div id="tabs-panel-top-bar">
+
+        <div class="top-bar-2">
           <span>
             <select id="tab-swapper">
-              <option value="node-options">      Graph          </option>
+              <!-- THE VALUES HERE ARE THE IDs OF TABS -->
+              <option value="graph-tab">         Graph          </option>
               <option value="keyboard-tab">      Keyboard       </option>
               <option value="buffer-edit-tab">   Buffers        </option>
               <option value="waveform-edit-tab"> Waveforms      </option>
-              <option value="sequencer-tab">     Step Sequencer </option>
+              <option value="sequencer-tab">     Sequencer      </option>
             </select>
           </span>
         </div>
@@ -127,17 +136,16 @@
 
 
           
-          <div id="node-options" class="tab">
-
-              <div class="inner-tab">
-                  <div class="new-node-buttons">
-                      <span></span> <span> Create Nodes </span> <span></span>
-                      <button id="create-gain" class="neumorph">        gain         </button>
-                      <button id="create-oscillator" class="neumorph">  oscillator   </button>
-                      <button id="create-filter" class="neumorph">      filter       </button>
-                      <button id="create-panner" class="neumorph">      panner       </button>
-                      <button id="create-delay" class="neumorph">       delay        </button>    
-                      <button id="create-buffer" class="neumorph">      buffer       </button>    
+          <div id="graph-tab" class="tab show">
+              <div class="side-margin">
+                  <div class="three-columns">
+                    <span></span> <span> Create Nodes </span> <span></span>
+                    <button id="create-gain" class="neumorph">        gain         </button>
+                    <button id="create-oscillator" class="neumorph">  oscillator   </button>
+                    <button id="create-filter" class="neumorph">      filter       </button>
+                    <button id="create-panner" class="neumorph">      panner       </button>
+                    <button id="create-delay" class="neumorph">       delay        </button>    
+                    <button id="create-buffer" class="neumorph">      buffer       </button>    
                   </div>
               
                   <div class="graph-copy-buttons">
@@ -161,14 +169,35 @@
                   </div>
                   
               </div>
-
           </div>
 
 
 
 
           <div id="keyboard-tab" class="tab">
-            <div class="inner-tab">
+            <div class="side-margin">
+
+              <button id="select-keyboard-nodes-button">
+                Select Keyboard Nodes
+              </button>
+
+              <div id="mono-poly-select">
+                <input id="keyboard-mono-radio" 
+                  type="radio"
+                  checked="true"
+                  name="radio">
+                <label for="keyboard-mono-radio" class="radio"> 
+                  MONO
+                </label>
+
+                <input id="keyboard-poly-radio"
+                  type="radio"
+                  name="radio">
+                <label for="keyboard-poly-radio" class="radio"> 
+                  POLY
+                </label>
+              </div>
+
 
               <!-- ADSR -->
               <div id="adsr-box">
@@ -341,8 +370,9 @@
 
 
 
+
           <div id="buffer-edit-tab" class="tab">
-            <div class="inner-tab">
+            <div class="side-margin">
               <button id="record" class="record"> rec </button>
               <span> buffer index: </span>
               <button id="buffer-index-down"> - </button>
@@ -377,16 +407,25 @@
           <div id="sequencer-tab" class="tab">
 
           </div>
+
+
+
+
         </div>
+
       </div>
 
-      <div id="graph-canvas-panel" class="panel">
-        <div id="graph-canvas-top-bar"></div>
+      <!-- THE GRAPH PANEL  -->
+      <div class="panel">
+        
+        <div class="top-bar-2"></div>
+
         <div>
           <div id="node-value-container"></div>
           <div id="nunigraph-legend"></div>
           <canvas id="nunigraph-canvas"></canvas>
         </div>
+
       </div>
 
     </div>
@@ -395,14 +434,14 @@
 
 
 
-<div id="info-menu-container">
+<div class="info-menu-container">
   <div id="info-menu" class="info-menu"> 
 
     <div class="panel">
 
       <span> Help Menu </span> 
 
-      <div id="info-menu-grid">
+      <div class="info-menu-grid">
         <div id="info-menu-buttons">
           <button class="info-menu-button active-info-button"> 
             basics </button>
@@ -414,8 +453,9 @@
             about  </button>
         </div>
   
-        <div id="info-content-container">
-          <div id="basics-info" class="info-content show">
+        <div>
+
+          <div id="basics-info" class="info-content side-margin show">
             <ul>
               <li> Right-click in the graph to create new nodes. </li>
               <li> Click the edges of nodes to start making connections. </li>
@@ -424,7 +464,7 @@
               <li> <code> ctrl + shift + z </code> to redo. </li>
             </ul>
           </div>
-          <div id="nodes-info" class="info-content">
+          <div id="nodes-info" class="info-content side-margin">
             <ul>
               <li> <code>gain</code> 
                 nodes represent a change in volume or intensity. </li>
@@ -446,8 +486,8 @@
             </ul>
           </div>
           <div id="about-info" class="info-content">
-            <div class="info-text-container inner-tab">
-              <span id="about-info-text">
+            <div class="info-text-container side-margin">
+              <span class="about-info-text">
               
                 NuniSynth is a graphical modular software designed for
                 building instruments, effects, and complex audio functions.
@@ -458,6 +498,7 @@
               </span>
             </div>
           </div>
+
         </div>
       </div>
 

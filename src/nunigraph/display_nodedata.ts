@@ -15,17 +15,20 @@ function set_selectNodeFunc(g : NuniGraph, container : HTMLDivElement, prompt : 
 
         container.innerHTML = ''
         const controls = E('div')
-        container.appendChild(createDraggableTopBar())
+        container.appendChild(
+            createDraggableTopBar(
+            `&nbsp; ${node.type.toUpperCase()}, &nbsp; id: ${node.id}`))
         container.appendChild(controls)
 
-        if (node.audioNode instanceof NuniSourceNode) {
-            controls.appendChild(showKeyboardConnection(node.audioNode))
-        }
-        
         controls.appendChild(showSubtypes(node))
 
         if (node.audioNode instanceof BufferNode2) {
             controls.appendChild(samplerControls(node.audioNode))
+        }
+
+        if (node.audioNode instanceof NuniSourceNode) {
+            // controls.appendChild(showKeyboardConnection(node.audioNode))
+            controls.appendChild(activateKeyboardButton(node.audioNode))
         }
 
         controls.appendChild(exposeAudioParams(node))
@@ -52,29 +55,22 @@ function set_selectNodeFunc(g : NuniGraph, container : HTMLDivElement, prompt : 
     }
 }
 
-
-
-
-function showKeyboardConnection(audioNode : NuniSourceNode) : Node {
-    const types = ['none','mono','poly']
-    const select = E('select') as HTMLSelectElement
-    const box = E('div'); box.innerHTML = 'keyboard: '
-    
-    insertOptions(select, types)
-    select.value = audioNode.kbMode
-    select.oninput = function() {
-        audioNode.setKbMode(select.value as KbMode)
+function activateKeyboardButton(an : NuniSourceNode) {
+    // (dis?)connects the node from the keyboard.
+    const btn = E('button')
+    btn.innerHTML = 'LINK KEYBOARD'
+    btn.classList.toggle('selected', an.kbMode !== 'none')
+    btn.onclick = () => {
+        const enable = an.kbMode === 'none'
+        an.setKbMode(enable ? Keyboard.getMode() : 'none')
+        btn.classList.toggle('selected', enable)
     }
-    box.appendChild(select)
-    return box
+    return btn
 }
-
-
-
 
 function showSubtypes(node : NuniGraphNode) : Node {
     const subtypes = AudioNodeSubTypes[node.type] as string[]
-    const box = E('div')
+    const box = E('span')
     if (subtypes.length > 0) { // Show subtypes selector
         const select = E('select') as HTMLSelectElement
         
@@ -86,7 +82,6 @@ function showSubtypes(node : NuniGraphNode) : Node {
             node.audioNode.type = select.value
         } 
         box.appendChild(select)
-        box.appendChild(E('span')) // to maintain structure
     }
     return box
 }
@@ -103,8 +98,8 @@ function insertOptions(select : HTMLSelectElement, options : string[]) {
 
 
 function samplerControls(audioNode : BufferNode2) {
-    const box = E('div')
-    // box.classList.add('box')
+    const box = E('span')
+    box.classList.add('buffer-row')
     box.innerHTML = '<span> buffer </span>'
     const value = E('span'); value.innerHTML = audioNode.bufferIndex.toString()
     box.appendChild(value)
@@ -131,8 +126,6 @@ function samplerControls(audioNode : BufferNode2) {
         }
         box.appendChild(btn)
     })
-
-    // const length = E('span')
 
     return box
 }

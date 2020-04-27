@@ -8,9 +8,11 @@
 /** For the draggable top bar to function as expected
  *  place it as the first element in an HTML element with position: absolute.
  */
-function createDraggableTopBar() {
+function createDraggableTopBar(text? : string) {
     const bar = E('div')
     const exitBtn = E('button')
+
+    bar.innerHTML = text || ''
 
     applyStyle(bar, {
         height: '30px',
