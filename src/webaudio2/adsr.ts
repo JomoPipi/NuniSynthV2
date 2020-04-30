@@ -101,7 +101,7 @@ const ADSR = {
             const t2 = t1 + dw
             const t3 = t2 + sw
             const t4 = 1
-            const margin = 20
+            const margin = 5
 
             const arr = [
                 [t1, 0],

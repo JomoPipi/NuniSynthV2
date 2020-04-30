@@ -7,7 +7,7 @@
 
 D('info-button')!.onclick = () => {
     // window.open('https://developer.mozilla.org/en-US/docs/Web/API/AudioNode/connect','_blank')\
-    D('info-menu')!.classList.toggle('show')
+    D('info-menu-container')!.classList.toggle('show')
     log('was clicked')
 }
 

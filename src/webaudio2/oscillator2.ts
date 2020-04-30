@@ -35,7 +35,7 @@ class OscillatorNode2 extends NuniSourceNode {
 
     private prepareOscillator(key : number) { // happens in refresh
         const src = this.ctx.createOscillator()
-        const i = key === this.MONO ? 12 : Keyboard.keymap[key]
+        const keyValue = key === this.MONO ? 0 : Keyboard.scale[Keyboard.keymap[key]]
         this.ADSRs[key].gain.value = 0
 
         src.start(this.ctx.currentTime)
@@ -44,7 +44,7 @@ class OscillatorNode2 extends NuniSourceNode {
         this.detune.src.connect(src.detune)
         this.frequency.src.connect(src.frequency)
 
-        src.detune.value = (i-12) * 100 
+        src.detune.value = keyValue
         src.type = this._type
         src.frequency.value = 0
         this.sources[key] = src
@@ -67,7 +67,8 @@ class OscillatorNode2 extends NuniSourceNode {
             clearInterval(adsr.releaseId)
         }
         this.lastMonoKeyPressed = key
-        src.detune.value = (Keyboard.keymap[key]-12) * 100
+        const keyValue = Keyboard.scale[Keyboard.keymap[key]]
+        src.detune.value = keyValue
         if (src.isOn) return;
         src.isOn = true 
         ADSR.trigger(adsr.gain, this.ctx.currentTime)

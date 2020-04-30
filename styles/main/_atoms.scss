@@ -12,9 +12,9 @@
 .some-padding {
     padding: 2%;
 }
-.buffer-row {
-    display: inline-grid;
-    width: 60%;
-    margin-right: 5%;
-    grid-template-columns: 0.5fr 0.25fr 0.25fr 0.25fr 0.5fr;
+
+.text-input {
+    background-color:  $c1;
+    border-width: 0.25px;
+    color: #999;
 }

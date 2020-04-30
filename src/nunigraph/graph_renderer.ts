@@ -327,10 +327,11 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
 
 
 
-
+    let mouse_is_down = false
 
     // NODE INTERACTION HANDLERS //_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________
     const onmousedown = function(e : MouseEvent) {
+        mouse_is_down = true
         const W = canvas.width
         const H = canvas.height
         const nodes = g.nodes
@@ -342,14 +343,14 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
          *  Why the outer loop? To prioritize being able
          *  to drag nodes over making connection arrows.
          *  */ 
-        for (const i of [true,false]) {
+        for (const checkNodeClicked of [true,false]) {
             for (const node of nodes) {
                 const [X,Y] = [node.x*W, node.y*H]
                 const d = x && y ? distance(x,y,X,Y) : -1
                 const aroundEdge = innerEdgeBoundary < d && d < outerEdgeBoundary
     
-                if (i) {
-                    if (d < nodeRadius) {
+                if (checkNodeClicked) {
+                    if (d < innerEdgeBoundary) {
                         g.selectNode(node)
                         render()
                         return;
@@ -386,9 +387,9 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
 
     const onmousemove = function(e : MouseEvent) {
 
-        const leftClickHeld = e.buttons === 1
+        const pressing = e.buttons === 1 && mouse_is_down
         
-        if (leftClickHeld && g.selectedNode) {
+        if (pressing && g.selectedNode) {
             // Drag the selected node
             const W = canvas.width
             const H = canvas.height
@@ -402,6 +403,7 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
 
 
     const onmouseup = function(e : MouseEvent) {
+        mouse_is_down = false
         if (!fromNode) return;
         // Connect fromNode to the destination
 
@@ -470,14 +472,7 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         prompt.appendChild(cancel)
 
         // Place the prompt in an accessible location
-        const dx = canvas.offsetLeft
-        const dy = canvas.offsetTop
-        const W = canvas.offsetWidth + dx
-        const w = prompt.offsetWidth
-        const Y = y + dy
-        const X = x + dx
-        prompt.style.top = (Y + 40)+'px'
-        prompt.style.left = clamp(0, (X - w/2), W-w) + 'px'
+        UI_clamp(x, y + 40, prompt, canvas)
     }
 
     return {

@@ -15,16 +15,18 @@ function UI_clamp(
      * staying inside the container.
      */
 
-    const [w, h, W, H] = [
+    const [w, h, W, H, dx, dy] = [
         element.offsetWidth+1, 
         element.offsetHeight+1,
         container.offsetWidth, 
-        container.offsetHeight
+        container.offsetHeight,
+        container.offsetLeft,
+        container.offsetTop
         ]
 
     element.style.left = 
-        clamp(0, x - w/2, W-w) + 'px'
+        clamp(dx, x-w/2+dx, W-w+dx) + 'px'
 
     element.style.top = 
-        clamp(0, y - h/2, H-h) + 'px'
+        clamp(dy, y-h/2+dy, H-h+dy) + 'px'
 }

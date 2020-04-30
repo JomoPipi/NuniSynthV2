@@ -36,7 +36,7 @@ class NuniSourceNode {
     connectees: Destination[] // The list of things that the node connects to
     ADSRs: Indexable<Adsr>    // The gain-ADSRs
     sources: Indexed          // The AudioScheduledSourceNode containers
-    kbMode: NodeKbMode            // The current state of the node - none | mono | poly
+    kbMode: NodeKbMode        // The current state of the node - none | mono | poly
     ctx: AudioContext2        // The context of audio
     readonly MONO: 666420     // The Id of the mono ADSR and source
     lastMonoKeyPressed: number 
@@ -117,7 +117,7 @@ class NuniSourceNode {
         }
     }
 
-    protected refresh() {
+    refresh() {
         throw 'Must be implemented in the "concrete" classes.'
     }
 

@@ -48,18 +48,21 @@ select {
     height: 100%;
 }
 
-.tab {
-    display: none;
-    width: 100%;
-}
 
 .top-bar {
     background: $ui-bg;
 }
 
-.the-three-panels {
+// .the-three-panels {
+//     display: grid;
+//     grid-template-columns: 20% 30% 50%;
+//     grid-template-rows: 1fr;
+//     width: 100%;
+//     height: 100%;
+// }
+.the-two-panels {
     display: grid;
-    grid-template-columns: 20% 30% 50%;
+    grid-template-columns: 39% 61%;
     grid-template-rows: 1fr;
     width: 100%;
     height: 100%;
@@ -69,6 +72,9 @@ select {
     background: $c1;
 }
 
+// .side-margin {
+//     padding: 0% 4%;
+// }
 .side-margin {
     margin: 0% 4%;
 }
@@ -103,7 +109,7 @@ select {
     position: absolute;
     background-color: #eee;
     color: black;
-    z-index: 99;
+    z-index: 15;
     
     .contextmenu-button {
         text-align: left;
@@ -128,24 +134,26 @@ select {
 }
 
 .info-menu-container {
+    display: none;
     color: black;
     position: absolute;
+    background-color: rgba(0,0,0,0.5);
     pointer-events: none;
     top: 0px;
     bottom: 0px;
     left: 0px;
     right: 0px;
     text-align: center;
+    z-index: 20;
 }
 
 .info-menu {
-    display: none;
     border: 3px solid blue;
     background-color: white;
     width: 400px;
     height: 400px;
     margin-top: 5%;
-    z-index: 100;
+    margin-left: calc(50% - 200px);
 }
 
 .info-menu-grid {
@@ -239,9 +247,19 @@ select {
     /* right: 0; */
     background-color: rgb(0, 7, 1);
     border: 1px solid white;
-    z-index: 9;
+    z-index: 2;
 }
-
+.buffer-row {
+    @extend .some-margin;
+    display: inline-grid;
+    width: 60%;
+    grid-template-columns: 0.5fr 0.25fr 0.25fr 0.25fr 0.5fr;
+}
+.box {
+    @extend .some-margin;
+    display: grid;
+    grid-template-columns: 39% 61%;
+}
 
 
 
@@ -264,12 +282,6 @@ select {
     float: right;
 }
 
-.box {
-    @extend .some-margin; 
-    display: grid;
-    grid-template-columns: 39% 61%;
-}
-
 
 
 
@@ -282,7 +294,12 @@ select {
 
 #adsr-canvas {
     display: inline-block;
-    width: 92px;
+    width: 172px;
+    border: 1px solid #444;
+    box-sizing: border-box;
+    border-top: none;
+    border-right: none;
+    margin-bottom: 5px;
 }
 #aux-adsr-canvas {
     display: inline-block;
@@ -292,23 +309,3 @@ select {
 
 
 
-
-
-
-.neumorph { 
-    border: none;
-    color: #aaa;
-    margin: 4%;
-    border-radius: 4px;
-    background: linear-gradient(145deg, #232323, #2a2a2a);
-    box-shadow:  5px 5px 5px #202020, 
-                 -5px -5px 5px #2e2e2e;
-}
-
-.selected {
-    background-color: green;
-}
-
-.show { // Has to be at the end so that it "wins".
-    display: inline-block;
-}

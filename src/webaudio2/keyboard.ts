@@ -25,14 +25,14 @@ const Keyboard = (() => {
                 ][i]) // some of these keys might not work in browsers such as FireFox
             ))
     
-    const keyset = new Set(keys)
-
     const keymap = keys.reduce((map,key,i) => {
         map[key] = i
         return map
     }, {} as Indexable<number>)
 
     const held = [] as number[]
+
+    const scale = keys.map((_,i) => i * 100)
     
     function updateKeyDiv(code : number, keydown : boolean) {
         const selector = [
@@ -55,11 +55,6 @@ const Keyboard = (() => {
     const polyBtn = D('keyboard-poly-radio')
 
     function attachToGraph(g : NuniGraph) {
-    
-        const selectNodesBtn = D('select-keyboard-nodes-button')!
-        selectNodesBtn.onclick = function() {
-            const on = selectNodesBtn.classList.toggle('selected') 
-        } 
 
         D('mono-poly-select')!.onclick = function (e : MouseEvent) {
             const t = e.target
@@ -83,8 +78,9 @@ const Keyboard = (() => {
             return (e : KeyboardEvent) => { 
                 const key = e.keyCode
         
-                if (keyset.has(key)){ 
+                if (key in keymap){ 
 
+                    // TODO: only do this when KB is visible
                     // UPDATE THE CUTE KEYBOARD IMAGE
                     updateKeyDiv(key, keydown)
                     
@@ -111,9 +107,9 @@ const Keyboard = (() => {
 
     return { 
         keys, 
-        keyset,
         keymap, 
         held, 
+        scale,
         getMode,
         attachToGraph
         }
@@ -122,7 +118,7 @@ const Keyboard = (() => {
 
 function resizeKeyboard () {
     const keyboard = D('keyboard-image') as any
-    const size = keyboard.parentNode.clientWidth / 70
+    const size = keyboard.parentNode.clientWidth / 120
     keyboard.style.fontSize = size + 'px'
 }
 

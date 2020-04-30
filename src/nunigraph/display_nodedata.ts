@@ -58,7 +58,8 @@ function set_selectNodeFunc(g : NuniGraph, container : HTMLDivElement, prompt : 
 function activateKeyboardButton(an : NuniSourceNode) {
     // (dis?)connects the node from the keyboard.
     const btn = E('button')
-    btn.innerHTML = 'LINK KEYBOARD'
+    btn.innerHTML = '🎹'
+    btn.classList.add('kb-button')
     btn.classList.toggle('selected', an.kbMode !== 'none')
     btn.onclick = () => {
         const enable = an.kbMode === 'none'
@@ -99,8 +100,8 @@ function insertOptions(select : HTMLSelectElement, options : string[]) {
 
 function samplerControls(audioNode : BufferNode2) {
     const box = E('span')
-    box.classList.add('buffer-row')
     box.innerHTML = '<span> buffer </span>'
+    box.classList.add('buffer-row')
     const value = E('span'); value.innerHTML = audioNode.bufferIndex.toString()
     box.appendChild(value)
 
@@ -142,10 +143,25 @@ function exposeAudioParams(node : NuniGraphNode) : Node {
         box.innerHTML = `<span>${param}</span>`
 
         const initialValue = node.audioParamValues[param]
-        const updater = createUpdateParamFunc(node,param)
-        const mousedownFunc = () => node.audioParamValues[param]
-        const manualUpdater = (x:number) => node.setValueOfParam(param, x)
-        box.appendChild(createDraggableNumberInput(initialValue, mousedownFunc, updater, manualUpdater))
+
+        const updateFunc = 
+            createUpdateParamFunc(node,param)
+
+        const mousedownFunc = () => {
+            UndoRedoModule.save()
+            return node.audioParamValues[param]
+        }
+        const manualUpdater = (x:number) => {
+            UndoRedoModule.save()
+            node.setValueOfParam(param, x)
+        }
+        
+        box.appendChild(
+            createDraggableNumberInput(
+                initialValue, 
+                mousedownFunc, 
+                updateFunc, 
+                manualUpdater))
 
         allParams.appendChild(box)
     }
@@ -172,7 +188,8 @@ function createUpdateParamFunc(node : NuniGraphNode, param : AudioParams) {
 
 
 
-function createDraggableNumberInput(initialValue : number, 
+function createDraggableNumberInput(
+    initialValue : number, 
     mousedownFunc : () => number,
     updateFunc : (delta : number, startValue : number) => string, 
     manualUpdater : (value : number) => void ) {
@@ -182,19 +199,14 @@ function createDraggableNumberInput(initialValue : number,
     valueInput.classList.add('number-grab')
     valueInput.value = initialValue.toString()
 
-    // needs to be temporarily disabled so the user doesn't interact with the canvas
-    const canvasHandler = GraphCanvas.canvas.onmousemove 
-
     let startX : number,
         startY : number, 
         startValue : number
 
     const mousedown = function(e : MouseEvent) {
-        UndoRedoModule.save()
         startX = e.clientX
         startY = e.clientY
         startValue = mousedownFunc()
-        GraphCanvas.canvas.onmousemove = null
         window.addEventListener('mousemove',mousemove)
         window.addEventListener('mouseup',mouseup)
     }
@@ -207,7 +219,6 @@ function createDraggableNumberInput(initialValue : number,
     }
 
     const mouseup = (e : MouseEvent) => {
-        GraphCanvas.canvas.onmousemove = canvasHandler
         window.removeEventListener('mousemove',mousemove)
         window.removeEventListener('mouseup',mouseup)
     }

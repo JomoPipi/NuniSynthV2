@@ -42,22 +42,25 @@
     <script src="dist/buffer_utils/record.js"       defer></script>
     <script src="dist/buffer_utils/buffer_utils.js" defer></script>
 
-    <script src="dist/webaudio2/keyboard.js"        defer></script>
-    <script src="dist/webaudio2/adsr.js"            defer></script>
-    <script src="dist/webaudio2/nuni_source_node.js"defer></script>
-    <script src="dist/webaudio2/oscillator2.js"     defer></script>
-    <script src="dist/webaudio2/buffer2.js"         defer></script>
-    <script src="dist/webaudio2/webaudio2.js"       defer></script>
+    <script src="dist/webaudio2/keyboard.js"         defer></script>
+    <script src="dist/webaudio2/adsr.js"             defer></script>
+    <script src="dist/webaudio2/nuni_source_node.js" defer></script>
+    <script src="dist/webaudio2/oscillator2.js"      defer></script>
+    <script src="dist/webaudio2/buffer2.js"          defer></script>
+    <script src="dist/webaudio2/webaudio2.js"        defer></script>
 
-    <script src="dist/nunigraph/graph_undo_redo.js" defer></script>
-    <script src="dist/nunigraph/graph_renderer.js"  defer></script>
-    <script src="dist/nunigraph/display_nodedata.js"defer></script>
-    <script src="dist/nunigraph/nodeconfig.js"      defer></script>
-    <script src="dist/nunigraph/nunigraph_node.js"  defer></script>
-    <script src="dist/nunigraph/nunigraph.js"       defer></script>
-    <script src="dist/nunigraph/graph_handlers.js"  defer></script>
+    <script src="dist/nunigraph/graph_undo_redo.js"  defer></script>
+    <script src="dist/nunigraph/graph_renderer.js"   defer></script>
+    <script src="dist/nunigraph/display_nodedata.js" defer></script>
+    <script src="dist/nunigraph/nodeconfig.js"       defer></script>
+    <script src="dist/nunigraph/nunigraph_node.js"   defer></script>
+    <script src="dist/nunigraph/nunigraph.js"        defer></script>
+    <script src="dist/nunigraph/graph_handlers.js"   defer></script>
 
     <script src="dist/waveform_utils/custom_waveform.js" defer></script>
+
+    <script src="dist/scales/equal.js"  defer></script>
+    <script src="dist/scales/scales.js" defer></script>
 
     <script src="dist/main/resize.js"          defer></script>
     <script src="dist/main/attach_handlers.js" defer></script>
@@ -95,9 +98,9 @@
       <span> NuniSynth </span> 
     </div>
 
-    <div class="the-three-panels">
+    <div class="the-two-panels">
     
-      <div class="left-panel">
+      <!-- <div class="left-panel">
         <div class="side-margin">
           BUFFERS   <br>
           WAVEFORMS <br>
@@ -108,14 +111,9 @@
           FILES     <br>
 
           
-          <button 
-            id="info-button" 
-            class="info-button"> 
-            i 
-          </button> 
         </div>
         
-      </div>
+      </div> -->
       
       <div id="tabs-panel" class="panel">
 
@@ -130,13 +128,18 @@
               <option value="sequencer-tab">     Sequencer      </option>
             </select>
           </span>
+          <button 
+            id="info-button" 
+            class="info-button"> 
+            i 
+          </button> 
         </div>
         
         <div id="tabs">
 
 
           
-          <div id="graph-tab" class="tab show">
+          <div id="graph-tab" class="_tab_ show">
               <div class="side-margin">
                   <div class="three-columns">
                     <span></span> <span> Create Nodes </span> <span></span>
@@ -151,11 +154,12 @@
                   <div class="graph-copy-buttons">
                       <button id="copy-graph-button" class="neumorph"> 
                           copy this graph </button>
-                      <input type="text" id="graph-copy-output">
+                      <input type="text" id="graph-copy-output" class="text-input">
                       
                       <button id="from-string-button" class="neumorph"> 
                         new graph from code </button>
-                      <input type="text" id="graph-copy-input" value="paste it here">
+                      <input type="text" id="graph-copy-input" class="text-input" 
+                        value="paste it here">
                   </div>
                   
                   <div>
@@ -168,18 +172,22 @@
                       <button id="clear-graph-button" class="neumorph" style="float:right"> clear graph </button>
                   </div>
                   
+                  <div>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    [GRAPH PRESET LIBRARY]
+                  </div>
               </div>
           </div>
 
 
 
 
-          <div id="keyboard-tab" class="tab">
+          <div id="keyboard-tab" class="_tab_">
             <div class="side-margin">
-
-              <button id="select-keyboard-nodes-button">
-                Select Keyboard Nodes
-              </button>
 
               <div id="mono-poly-select">
                 <input id="keyboard-mono-radio" 
@@ -199,41 +207,45 @@
               </div>
 
 
-              <!-- ADSR -->
-              <div id="adsr-box">
+              <div class="adsr-and-kb">
+
+                <!-- ADSR -->
+                <span class="adsr-box">
 
                   <!-- <span class="text0"> GAIN ADSR </span> 
 
                   <br> -->
 
-                  <span> ADSR </span>
+                  <div> ADSR </div>
                   <canvas id="adsr-canvas"></canvas>
-                  <br>
+                  
+                  <div class="adsr-knobs"> 
 
-                  <span class="shadow-knob">
+                    <span class="shadow-knob">
                       <div id="adsr-attack" class="js-dial">
                       </div>
-                  </span>
+                    </span>
 
-                  <span class="shadow-knob">
-                      <div id="adsr-decay" class="js-dial">
-                      </div>
-                  </span>
+                    <span class="shadow-knob">
+                        <div id="adsr-decay" class="js-dial">
+                        </div>
+                    </span>
 
-                  <span class="shadow-knob">
-                      <div id="adsr-sustain" class="js-dial">
-                      </div>
-                  </span>
+                    <span class="shadow-knob">
+                        <div id="adsr-sustain" class="js-dial">
+                        </div>
+                    </span>
 
-                  <span class="shadow-knob">
-                      <div id="adsr-release" class="js-dial">
-                      </div>
-                  </span>
-                  
-                </div>
+                    <span class="shadow-knob">
+                        <div id="adsr-release" class="js-dial">
+                        </div>
+                    </span>
+                  </div>
+                </span>
 
-              <!-- BEGIN KEYBOARD  -->
-              <div class="keyboard" id="keyboard-image">
+
+                <!-- BEGIN KEYBOARD  -->
+                <span class="keyboard" id="keyboard-image">
                   <div class="keyboard__row">
                     <div class="key--double" data-key="192">
                     </div>
@@ -363,21 +375,66 @@
                     <div class="key--bottom-right key--word key--w6" data-key="16-R">
                     </div>
                   </div>
+                </span>
+                <!-- END KEYBOARD  -->
+
               </div>
-              <!-- END KEYBOARD  -->
+
+              <div id="scale-builder-container" class="scale-builder">
+                SCALES
+                <select id="scale-kinds">
+                  <option value="preset-library"> Preset Library </option>
+                  <option value="equal-interval"> Equal Intervals </option>
+                  <option value="formulas">       Function Templates </option>
+                  <option value="manual-input">   Manual Input </option>
+                </select> <br>
+                
+                <div id="preset-library" class="_scale-tab_ show">
+                  preset library
+                </div>
+                <div id="equal-interval" class="_scale-tab_">
+
+                  <br>
+
+                  <span> Intervals Per Octave </span> <br>
+                  <input type="number" id="intervals-per-octave" class="text-input">
+
+                  <br>
+                  <br>
+
+                  <span> Cents Per Interval </span> <br>
+                  <input type="number" id="cents-per-step" class="text-input">
+
+                </div>
+                <div id="formulas" class="_scale-tab_">
+                  formulas
+                </div>
+                <div id="manual-input" class="_scale-tab_">
+                  manual input
+                </div>
+
+              </div>
+
             </div>
           </div>
 
 
 
 
-          <div id="buffer-edit-tab" class="tab">
+          <div id="buffer-edit-tab" class="_tab_">
             <div class="side-margin">
+
+              <br>
+
               <button id="record" class="record"> rec </button>
               <span> buffer index: </span>
               <button id="buffer-index-down"> - </button>
               <span id="buffer-index"> 0 </span>
               <button id="buffer-index-up"> + </button>
+
+              <br>
+              <br>
+
               <canvas id="buffer-canvas"></canvas>
               <div class="length-indicator"></div>
               <span id="buffer-length-text"></span>
@@ -397,14 +454,14 @@
 
 
 
-          <div id="waveform-edit-tab" class="tab">
+          <div id="waveform-edit-tab" class="_tab_">
 
           </div>
 
 
 
           
-          <div id="sequencer-tab" class="tab">
+          <div id="sequencer-tab" class="_tab_">
 
           </div>
 
@@ -434,7 +491,7 @@
 
 
 
-<div class="info-menu-container">
+<div id="info-menu-container" class="info-menu-container">
   <div id="info-menu" class="info-menu"> 
 
     <div class="panel">

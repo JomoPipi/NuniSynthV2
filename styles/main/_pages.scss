@@ -1,0 +1,36 @@
+
+
+
+
+
+
+
+.scale-builder-container {
+    background-color: $c0;
+    border: 1px solid red;
+    width: 100%;
+}
+
+.scale-builder {
+    background-color: $c1;
+    border: 1px solid red;
+    width: 100%;
+}
+
+.neumorph { 
+    border: none;
+    color: #aaa;
+    margin: 4%;
+    border-radius: 4px;
+    background: linear-gradient(145deg, #232323, #2a2a2a);
+    box-shadow:  5px 5px 5px #202020, 
+                 -5px -5px 5px #2e2e2e;
+}
+
+.selected {
+    background-color: rgb(3, 255, 0);
+}
+
+.show { // Has to be at the end so that it "wins".
+    display: inline-block;
+}

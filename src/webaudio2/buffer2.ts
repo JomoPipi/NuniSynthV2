@@ -31,7 +31,7 @@ class BufferNode2 extends NuniSourceNode {
 
     prepareBuffer(key : number) { // happens at noteOff
         const sources = this.sources
-        const i = key === this.MONO ? 12 : Keyboard.keymap[key]
+        const keyValue = key === this.MONO ? 0 : Keyboard.scale[Keyboard.keymap[key]]
 
         sources[key] && sources[key].disconnect()
         const src = sources[key] = this.ctx.createBufferSource()
@@ -40,7 +40,7 @@ class BufferNode2 extends NuniSourceNode {
         this.detune.src.connect(src.detune)
         this.playbackRate.src.connect(src.playbackRate)
 
-        src.detune.value = (i-12) * 100
+        src.detune.value = keyValue
         src.buffer = Buffers.buffers[this.bufferIndex]
         src.loop = this.loop
         // src.loopEnd = 0.2
@@ -75,7 +75,8 @@ class BufferNode2 extends NuniSourceNode {
             this.prepareBuffer(_k)
         }
         this.lastMonoKeyPressed = key
-        this.sources[_k].detune.value = (Keyboard.keymap[key]-12) * 100
+        const keyValue = Keyboard.scale[Keyboard.keymap[key]]
+        this.sources[_k].detune.value = keyValue
         if (this.sources[_k].isOn) return;
         ADSR.trigger(adsr.gain, this.ctx.currentTime)
         this.connectBuffer(_k)
