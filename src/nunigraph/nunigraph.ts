@@ -26,28 +26,30 @@ class NuniGraph {
     }
 
     private initializeMasterGain() {
-        const masterGainOptions = { 
+        const masterGainSettings = { 
             audioParamValues: { [NodeTypes.GAIN]: 0.5 },
             display: { x: 0.5, y: 0.125 },
-            audioNodeType: ''
+            audioNodeType: '',
+            audioNodeSettings: {}
             }
 
-        this.newNode(NodeTypes.GAIN, masterGainOptions)
+        this.newNode(NodeTypes.GAIN, masterGainSettings)
             .audioNode
             .connect(audioCtx.destination)
     }
 
-    newNode(type : NodeTypes, options? : NodeOptions) {
+    newNode(type : NodeTypes, settings? : NodeSettings) {
 
-        if (!options) {
-            options = {
+        if (!settings) {
+            settings = {
                 display: {x:0.5, y:0.5},
                 audioParamValues: {},
-                audioNodeType: ''
+                audioNodeType: '',
+                audioNodeSettings: {},
                 }
         }
 
-        const node = new NuniGraphNode(this.nextId++, type, options)
+        const node = new NuniGraphNode(this.nextId++, type, settings)
         this.nodes.push(node)
 
         return node
@@ -163,17 +165,28 @@ class NuniGraph {
         this.nodes[0].audioNode.connect(audioCtx.destination)
 
         // recreate the nodes
-        for (const { id, type, x, y, audioParamValues, audioNodeType } of nodes) {
+        for (const { 
+                id, 
+                type, 
+                x, 
+                y, 
+                audioParamValues, 
+                audioNodeType,  
+                audioNode,
+                } of nodes) {
 
             if (id === 0) continue
             
-            const options = {
+            const settings = {
                 display: { x, y },
                 audioParamValues,
                 audioNodeType,
+                audioNodeSettings: {
+                    kbMode: audioNode.kbMode
+                    }
                 }
 
-            this.nodes.push(new NuniGraphNode(id, type, options))
+            this.nodes.push(new NuniGraphNode(id, type, settings))
         }
 
         // reconnect the nodes

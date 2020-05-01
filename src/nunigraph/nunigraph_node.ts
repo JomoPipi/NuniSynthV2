@@ -5,10 +5,13 @@
 
 
 
-type NodeOptions = { 
+type NodeSettings = { 
     display : { x : number, y : number }, 
     audioParamValues : Indexed,
-    audioNodeType : string
+    audioNodeType : string,
+    audioNodeSettings : {
+        kbMode? : NodeKbMode
+        },
 }
 
 class NuniGraphNode {
@@ -26,11 +29,17 @@ class NuniGraphNode {
     audioNodeType : string
     audioParamValues : Indexed
     
-    constructor(id : number, type : NodeTypes, options : NodeOptions) {
+    constructor(id : number, type : NodeTypes, settings : NodeSettings) {
 
         // change display: {x,y} to just x,y later to save space on the string conversions
         // (will require changing/throwing away all currently saved graphs :/)
-        const { display: {x,y}, audioParamValues, audioNodeType } = options
+        const { 
+            display: {x,y}, 
+            audioParamValues, 
+            audioNodeType,
+            audioNodeSettings
+        
+            } = settings
 
         this.id = id
         this.title = this.type = type
@@ -41,6 +50,11 @@ class NuniGraphNode {
         this.audioNodeType = audioNodeType || this.audioNode.type
         this.audioNode.type = this.audioNodeType
         this.audioParamValues = audioParamValues 
+
+        if (this.audioNode instanceof NuniSourceNode &&
+            audioNodeSettings.kbMode !== 'none') {
+            this.audioNode.setKbMode(Keyboard.getMode())
+        }
 
         for (const param of AudioNodeParams[type]) {
             const value = audioParamValues[param] ?? DefaultParamValues[param]

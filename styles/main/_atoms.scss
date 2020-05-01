@@ -5,6 +5,10 @@
 
 
 
+code {
+    font-family: monospace;
+}
+
 .some-margin {
     margin: 5%;
 }
@@ -13,8 +17,16 @@
     padding: 2%;
 }
 
+.shrink {
+    width: 40px;
+}
+
 .text-input {
     background-color:  $c1;
     border-width: 0.25px;
     color: #999;
+}
+
+.center {
+    text-align: center;
 }

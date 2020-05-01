@@ -9,14 +9,6 @@
     const [intervals, cents] = [
         D('intervals-per-octave'), D('cents-per-step')
         ] as HTMLSelectElement[]
-    
-    const refreshKeys = () => {
-        for (const { audioNode: an } of G.nodes) {
-            if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
-                an.refresh()
-            }
-        }
-    }
 
     const assignToKeyboard = (centDelta : number) => {
         Keyboard.scale = Keyboard.keys.map((_,i) => 

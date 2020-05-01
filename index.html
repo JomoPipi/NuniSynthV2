@@ -60,6 +60,7 @@
     <script src="dist/waveform_utils/custom_waveform.js" defer></script>
 
     <script src="dist/scales/equal.js"  defer></script>
+    <script src="dist/scales/deltas.js" defer></script>
     <script src="dist/scales/scales.js" defer></script>
 
     <script src="dist/main/resize.js"          defer></script>
@@ -152,14 +153,22 @@
                   </div>
               
                   <div class="graph-copy-buttons">
-                      <button id="copy-graph-button" class="neumorph"> 
-                          copy this graph </button>
-                      <input type="text" id="graph-copy-output" class="text-input">
-                      
-                      <button id="from-string-button" class="neumorph"> 
-                        new graph from code </button>
-                      <input type="text" id="graph-copy-input" class="text-input" 
-                        value="paste it here">
+
+                    <button id="copy-graph-button" class="neumorph"> 
+                      copy this graph </button>
+                    <input 
+                      type="text" 
+                      id="graph-copy-output" 
+                      class="text-input">
+                    
+                    <button id="from-string-button" class="neumorph"> 
+                      new graph from code </button>
+                    <input 
+                      type="text" 
+                      id="graph-copy-input" 
+                      class="text-input" 
+                      placeholder="Paste an encoded graph, here.">
+
                   </div>
                   
                   <div>
@@ -384,7 +393,7 @@
                 SCALES
                 <select id="scale-kinds">
                   <option value="preset-library"> Preset Library </option>
-                  <option value="equal-interval"> Equal Intervals </option>
+                  <option value="equal-interval"> Equal Temperament </option>
                   <option value="formulas">       Function Templates </option>
                   <option value="manual-input">   Manual Input </option>
                 </select> <br>
@@ -407,7 +416,19 @@
 
                 </div>
                 <div id="formulas" class="_scale-tab_">
-                  formulas
+                  Cent Delta Formula <br>
+                  Use <code> operators and functions </code>
+                  <br>
+                  <code>
+                    [ <input 
+                        type="text" 
+                        id="delta-expression"
+                        class="text-input center"
+                        width=50
+                        value="100 + (i % 5) * 100"> | i &lt;- [0,1..]
+                    ]
+                  </code>
+
                 </div>
                 <div id="manual-input" class="_scale-tab_">
                   manual input
