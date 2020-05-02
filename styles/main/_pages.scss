@@ -11,10 +11,20 @@
     width: 100%;
 }
 
-.scale-builder {
+.scale-builder-container {
     background-color: $c1;
-    border: 1px solid red;
     width: 100%;
+}
+
+.scale-builder-inner { 
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.scale-builder-section {
+    padding: 2%;
+    border: 1px solid white;
+    box-sizing: border-box;
 }
 
 .neumorph { 

@@ -30,3 +30,8 @@ code {
 .center {
     text-align: center;
 }
+
+#preset-list {
+    display: grid;
+    grid-template-columns: 50% 50%;
+}

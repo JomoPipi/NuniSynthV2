@@ -35,6 +35,7 @@
     <script src="dist/UI/functions/apply_style.js" defer></script>
     <script src="dist/UI/jsdials.js"           defer></script>
     <script src="dist/UI/draggable-top-bar.js" defer></script>
+    <script src="dist/UI/number-input.js"      defer></script>
     <script src="dist/UI/info_menu.js"         defer></script>
 
     <script src="dist/buffer_utils/init_buffers.js" defer></script>
@@ -59,9 +60,11 @@
 
     <script src="dist/waveform_utils/custom_waveform.js" defer></script>
 
-    <script src="dist/scales/equal.js"  defer></script>
-    <script src="dist/scales/deltas.js" defer></script>
-    <script src="dist/scales/scales.js" defer></script>
+    <script src="dist/scales/equal.js"     defer></script>
+    <script src="dist/scales/deltas.js"    defer></script>
+    <script src="dist/scales/scale-csv.js" defer></script>
+    <script src="dist/scales/presets.js"   defer></script>
+    <script src="dist/scales/scales.js"    defer></script>
 
     <script src="dist/main/resize.js"          defer></script>
     <script src="dist/main/attach_handlers.js" defer></script>
@@ -201,7 +204,6 @@
               <div id="mono-poly-select">
                 <input id="keyboard-mono-radio" 
                   type="radio"
-                  checked="true"
                   name="radio">
                 <label for="keyboard-mono-radio" class="radio"> 
                   MONO
@@ -209,6 +211,7 @@
 
                 <input id="keyboard-poly-radio"
                   type="radio"
+                  checked="true"
                   name="radio">
                 <label for="keyboard-poly-radio" class="radio"> 
                   POLY
@@ -389,52 +392,88 @@
 
               </div>
 
-              <div id="scale-builder-container" class="scale-builder">
+              <!-- START SCALE BUILDER CONTAINER  -->
+              <div id="scale-builder-container" class="scale-builder-container">
                 SCALES
                 <select id="scale-kinds">
-                  <option value="preset-library"> Preset Library </option>
-                  <option value="equal-interval"> Equal Temperament </option>
-                  <option value="formulas">       Function Templates </option>
-                  <option value="manual-input">   Manual Input </option>
+                  <option value="preset-library"> PRESETS </option>
+                  <option value="scale-builder"> BUILD </option>
                 </select> <br>
                 
                 <div id="preset-library" class="_scale-tab_ show">
-                  preset library
-                </div>
-                <div id="equal-interval" class="_scale-tab_">
-
                   <br>
-
-                  <span> Intervals Per Octave </span> <br>
-                  <input type="number" id="intervals-per-octave" class="text-input">
-
-                  <br>
-                  <br>
-
-                  <span> Cents Per Interval </span> <br>
-                  <input type="number" id="cents-per-step" class="text-input">
-
-                </div>
-                <div id="formulas" class="_scale-tab_">
-                  Cent Delta Formula <br>
-                  Use <code> operators and functions </code>
-                  <br>
-                  <code>
-                    [ <input 
-                        type="text" 
-                        id="delta-expression"
-                        class="text-input center"
-                        width=50
-                        value="100 + (i % 5) * 100"> | i &lt;- [0,1..]
-                    ]
-                  </code>
-
-                </div>
-                <div id="manual-input" class="_scale-tab_">
-                  manual input
+                  <div id="preset-list"></div>
                 </div>
 
+                <div id="scale-builder" class="_scale-tab_">
+                  
+                  <br>
+
+                  <div class="scale-builder-section">
+
+                    <code> Equal Temperament </code> <br>
+
+                    <input type="number" id="intervals-per-octave" class="text-input center" value=12> 
+                    <span> Intervals per Octave </span> <br>
+
+                    <input type="number" id="cents-per-step" class="text-input center" value=100>
+                    <span> Cents per Step </span>
+
+                    <button class="apply-btn" id="apply-equal-temperament"> apply </button>
+
+                  </div>
+
+
+                  <div class="scale-builder-section">
+                      
+                    Cent-Delta Formula <br>
+                    Use 
+                      <a 
+                        target="_blank" 
+                        href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators"> 
+                        operators </a> 
+                    and
+                      <a 
+                        target="_blank"
+                        href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math"> 
+                        functions </a>
+                    <br>
+
+                    <code>
+                      [ <input 
+                          type="text" 
+                          id="delta-expression"
+                          class="text-input center"
+                          value="100 + (n % 5) * 100"> | n &lt;- [0,1..]
+                      ]
+                    </code>
+
+                    <button class="apply-btn" id="apply-cent-delta"> apply </button>
+
+                  </div>
+
+
+                  <div class="scale-builder-section">
+
+                    Enter a list of comma separated values. 1/1 is included by default. Octaves repeat. <br>
+                    
+                    <input 
+                      type="text" 
+                      id="scale-csv-input"
+                      class="text-input center"
+                      value="9/8,  5/4,  3/2,  1100">
+                    <br>
+
+                    sorted:
+                    <span id="sorted-scale-csv"> 9/8,5/4,3/2,1100 </span>
+
+                    <button class="apply-btn" id="apply-scale-csv"> apply </button>
+
+                  </div>
+
+                </div>
               </div>
+              <!-- END SCALE BUILDER CONTAINER  -->
 
             </div>
           </div>
@@ -466,9 +505,12 @@
               <div id="buffer-functions">
                 <button id="reverse-buffer"> reverse </button>
                 <button id="invert-buffer">  invert </button>
-                <button id="invert-buffer">  slice </button>
               </div>
 
+              <br>
+              <br>
+              <br>
+              [BUFFER EDITING]
             </div>
           </div>
 
@@ -476,14 +518,14 @@
 
 
           <div id="waveform-edit-tab" class="_tab_">
-
+            [WAVEFORM BUILDER PAGE]
           </div>
 
 
 
           
           <div id="sequencer-tab" class="_tab_">
-
+            [SEQUENCE BUILDER PAGE]
           </div>
 
 

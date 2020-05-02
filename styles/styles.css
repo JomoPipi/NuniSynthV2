@@ -301,6 +301,32 @@ code {
   text-align: center;
 }
 
+#preset-list {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 50% 50%;
+      grid-template-columns: 50% 50%;
+}
+
+.apply-btn {
+  padding: 0px 5px;
+  border-radius: 5px;
+  color: gray;
+  background-color: #232f30;
+  float: right;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.list-btn {
+  padding: 0px 5px;
+  border-radius: 5px;
+  color: gray;
+  background-color: #232f30;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
 .info-button {
   cursor: help;
   background: #5353a1;
@@ -395,10 +421,23 @@ code {
   width: 100%;
 }
 
-.scale-builder {
+.scale-builder-container {
   background-color: #171717;
-  border: 1px solid red;
   width: 100%;
+}
+
+.scale-builder-inner {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
+}
+
+.scale-builder-section {
+  padding: 2%;
+  border: 1px solid white;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 .neumorph {

@@ -79,7 +79,7 @@ class OscillatorNode2 extends NuniSourceNode {
             this.sources[key].disconnect()
         }
         if (this.kbMode === 'poly') {
-            Keyboard.keys.forEach(key => 
+            Keyboard.keys.forEach(key =>
                 this.prepareOscillator(key))
 
         } else if (this.kbMode === 'mono') {
