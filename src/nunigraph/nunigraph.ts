@@ -139,16 +139,17 @@ class NuniGraph {
     }
 
     toRawString() {
-        return (
-            JSON.stringify(this.oneWayConnections) + ':::' +
-            JSON.stringify(this.nodes).replace(/,"audioNode":{}/g, "")
-            )
+        return JSON.stringify({
+            connections: this.oneWayConnections,
+            nodes: this.nodes
+            })
+            
     }
 
     fromRawString(s : string) {
 
         try {
-            var [connections, nodes] = s.split(':::').map(s => JSON.parse(s))
+            var { connections, nodes } = JSON.parse(s)
         } catch(e) {
             throw 'Error parsing new graph'
         }

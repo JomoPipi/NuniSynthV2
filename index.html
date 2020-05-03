@@ -57,6 +57,7 @@
     <script src="dist/nunigraph/nunigraph_node.js"   defer></script>
     <script src="dist/nunigraph/nunigraph.js"        defer></script>
     <script src="dist/nunigraph/graph_handlers.js"   defer></script>
+    <script src="dist/nunigraph/presets.js"          defer></script>
 
     <script src="dist/waveform_utils/custom_waveform.js" defer></script>
 
@@ -184,13 +185,13 @@
                       <button id="clear-graph-button" class="neumorph" style="float:right"> clear graph </button>
                   </div>
                   
-                  <div>
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-                    [GRAPH PRESET LIBRARY]
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  
+                  PRESETS
+                  <div id="graph-preset-list" class="preset-list">
                   </div>
               </div>
           </div>
@@ -402,7 +403,7 @@
                 
                 <div id="preset-library" class="_scale-tab_ show">
                   <br>
-                  <div id="preset-list"></div>
+                  <div id="scale-preset-list" class="preset-list"></div>
                 </div>
 
                 <div id="scale-builder" class="_scale-tab_">
@@ -462,11 +463,7 @@
                       id="scale-csv-input"
                       class="text-input center"
                       value="9/8,  5/4,  3/2,  1100">
-                    <br>
-
-                    sorted:
-                    <span id="sorted-scale-csv"> 9/8,5/4,3/2,1100 </span>
-
+                      
                     <button class="apply-btn" id="apply-scale-csv"> apply </button>
 
                   </div>

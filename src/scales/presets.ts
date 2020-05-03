@@ -32,7 +32,7 @@
         'Altered': '100,300,400,600,800,1000'
         }
     
-    const div = D('preset-list') as HTMLDivElement
+    const div = D('scale-preset-list') as HTMLDivElement
 
     for (const name in presets) {
         const item = E('button')

@@ -13,6 +13,10 @@ function refreshKeys() {
     }
 }
 
+function previewScale() {
+    
+}
+
 {
     const [deltaBtnId, equalBtnId, csvBtnId] = 
         'apply-cent-delta,apply-equal-temperament,apply-scale-csv'

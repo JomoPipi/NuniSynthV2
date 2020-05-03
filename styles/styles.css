@@ -27,6 +27,7 @@ select {
   border: none;
   padding: 0px 10px;
   color: rgba(105, 255, 235, 0.8);
+  cursor: pointer;
   /* background-image: url(...);   Add custom arrow */
 }
 
@@ -301,7 +302,7 @@ code {
   text-align: center;
 }
 
-#preset-list {
+.preset-list {
   display: -ms-grid;
   display: grid;
   -ms-grid-columns: 50% 50%;
@@ -412,12 +413,6 @@ code {
 
 ._tab_, ._scale-tab_ {
   display: none;
-  width: 100%;
-}
-
-.scale-builder-container {
-  background-color: #232f30;
-  border: 1px solid red;
   width: 100%;
 }
 

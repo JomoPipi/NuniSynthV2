@@ -7,7 +7,6 @@
 
 const setScaleFromCSV = (_ => {
     const valueInput = D('scale-csv-input') as HTMLInputElement
-    const showSorted = D('sorted-scale-csv') as HTMLSpanElement
 
     function assignToKeyboard(arr : number[]) {
         const N = arr.length
@@ -33,8 +32,9 @@ const setScaleFromCSV = (_ => {
             .map(s => s.trim())
             .sort((a,b) => toCents(a) - toCents(b))
 
-        if (!input)
-            valueInput.value = values.toString()
+        if (!input) {
+            valueInput.value = values.join(',  ')
+        }
 
         setTimeout(() => // *
             assignToKeyboard([0].concat(values.map(toCents)))
