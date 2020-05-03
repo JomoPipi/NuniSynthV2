@@ -89,10 +89,15 @@ class NuniSourceNode {
                 this.noteOnPoly(key) : 
                 this.noteOff(key)
         } else {
-            const held = Keyboard.held
-            held.length > 0 ? 
-                this.noteOnMono(held[held.length-1]) :
-                this.noteOff(this.MONO)
+            if (keydown) {
+                this.noteOnMono(key)
+            } else {
+                // Last note priority
+                const held = Keyboard.held
+                held.length > 0 ? 
+                    this.noteOnMono(held[held.length-1]) :
+                    this.noteOff(this.MONO)
+            }
         }
     }
 

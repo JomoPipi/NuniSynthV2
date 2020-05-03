@@ -31,6 +31,10 @@ select {
   /* background-image: url(...);   Add custom arrow */
 }
 
+button {
+  cursor: pointer;
+}
+
 .panel {
   display: -ms-grid;
   display: grid;
@@ -115,7 +119,7 @@ select {
 
 .info-menu-container {
   display: none;
-  color: black;
+  color: #eee;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.5);
   pointer-events: none;
@@ -129,7 +133,7 @@ select {
 
 .info-menu {
   border: 3px solid blue;
-  background-color: white;
+  background-color: #232f30;
   width: 400px;
   height: 400px;
   margin-top: 5%;
@@ -154,13 +158,14 @@ select {
 }
 
 #info-menu-buttons .info-menu-button {
+  color: #eee;
   pointer-events: all;
   border: 1px solid #333;
-  background-color: #ddd;
+  background-color: #212121;
 }
 
 #info-menu-buttons .active-info-button {
-  background-color: white;
+  background-color: #232f30;
   border-right: none;
   outline: none;
 }
@@ -168,7 +173,6 @@ select {
 .about-info-text {
   display: table-cell;
   vertical-align: middle;
-  text-align: center;
   height: 100%;
 }
 
@@ -292,10 +296,14 @@ code {
   width: 40px;
 }
 
-.text-input {
+.text-input, .text-input-wide {
   background-color: #171717;
   border-width: 0.25px;
   color: #999;
+}
+
+.text-input-wide {
+  width: 200px;
 }
 
 .center {
@@ -309,6 +317,13 @@ code {
       grid-template-columns: 50% 50%;
 }
 
+.rect-0 {
+  width: 40px;
+  height: 25px;
+  background-color: #444;
+  color: white;
+}
+
 .apply-btn {
   padding: 0px 5px;
   border-radius: 5px;
@@ -320,6 +335,7 @@ code {
 }
 
 .list-btn {
+  border-width: 0.5px;
   padding: 0px 5px;
   border-radius: 5px;
   color: gray;
@@ -370,6 +386,7 @@ code {
 }
 
 .js-dial {
+  cursor: pointer;
   position: absolute;
   display: inline-block;
   -webkit-box-sizing: border-box;
@@ -385,7 +402,7 @@ code {
 }
 
 .number-grab {
-  font-family: 'Orbitron';
+  font-family: Arial, Helvetica, sans-serif;
   background: transparent;
   color: white;
   border: 1px solid #333d3f;
@@ -439,10 +456,10 @@ code {
   border: none;
   color: #aaa;
   margin: 4%;
-  border-radius: 4px;
-  background: linear-gradient(145deg, #232323, #2a2a2a);
-  -webkit-box-shadow: 5px 5px 5px #202020,  -5px -5px 5px #2e2e2e;
-          box-shadow: 5px 5px 5px #202020,  -5px -5px 5px #2e2e2e;
+  border-radius: 9px;
+  background: #292929;
+  -webkit-box-shadow: 5px 5px 10px #212121,  -5px -5px 10px #2d2d2d;
+          box-shadow: 5px 5px 10px #212121,  -5px -5px 10px #2d2d2d;
 }
 
 .selected {

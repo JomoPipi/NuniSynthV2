@@ -31,9 +31,11 @@ const setEqualTemperamentScale = (_ => {
     } 
 
     return function() {
-        setTimeout(() => // *
+        setTimeout(() => {// *
             assignToKeyboard(+cents.value)
-            , 100)
+            
+            previewScale()
+        }, 100)
     }
 
     // * - these setTimeouts are needed to stop the Keyboard from playing by itself.

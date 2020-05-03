@@ -33,6 +33,10 @@ select {
     /* background-image: url(...);   Add custom arrow */
 }
 
+button {
+    cursor: pointer;
+}
+
 
 
 
@@ -136,7 +140,7 @@ select {
 
 .info-menu-container {
     display: none;
-    color: black;
+    color: #eee;
     position: absolute;
     background-color: rgba(0,0,0,0.5);
     pointer-events: none;
@@ -150,7 +154,7 @@ select {
 
 .info-menu {
     border: 3px solid blue;
-    background-color: white;
+    background-color: $c0;
     width: 400px;
     height: 400px;
     margin-top: 5%;
@@ -170,13 +174,14 @@ select {
     grid-template-columns: 1fr;
     
     .info-menu-button {
+        color: #eee;
         pointer-events: all;
         border: 1px solid #333;
-        background-color: #ddd;
+        background-color: $c2;
     }
 
     .active-info-button {
-        background-color: white;
+        background-color: $c0;
         border-right: none;
         outline: none;
     }
@@ -185,7 +190,6 @@ select {
 .about-info-text {
     display: table-cell;
     vertical-align: middle;
-    text-align: center;
     height: 100%;
 }
 

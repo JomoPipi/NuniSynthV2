@@ -58,6 +58,7 @@
     pointer-events: none;
 }
 .js-dial {
+    cursor: pointer;
     position: absolute;
     display: inline-block;
     box-sizing: border-box;
@@ -77,7 +78,7 @@
 
 
 .number-grab {
-    font-family:'Orbitron';
+    font-family: Arial, Helvetica, sans-serif;
     background: transparent;
     color: white;
     border: 1px solid $canvas-bg;

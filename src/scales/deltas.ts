@@ -12,8 +12,10 @@ const setDeltaExpressionScale = (_ => {
         Keyboard.keys.reduce((a,_,n) => 
             a.concat(a[a.length-1] + ${deltaExp.value}), [0])`)
 
-        setTimeout(() => // *
+        setTimeout(() => {// *
             refreshKeys()
-            , 100)
+
+            previewScale()
+        }, 100)
     }
 })()

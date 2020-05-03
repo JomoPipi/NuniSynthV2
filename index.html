@@ -14,13 +14,6 @@
     <title> Nuni Synth v0.2 </title>
 
     <link rel="stylesheet" 
-          href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;lang=en" />
-
-    <link href='https://fonts.googleapis.com/css?family=Orbitron' 
-          rel='stylesheet' 
-          type='text/css'>
-
-    <link rel="stylesheet" 
           type="text/css" 
           href="styles/styles.css">
 
@@ -189,7 +182,7 @@
                   <br>
                   <br>
                   <br>
-                  
+
                   PRESETS
                   <div id="graph-preset-list" class="preset-list">
                   </div>
@@ -202,24 +195,6 @@
           <div id="keyboard-tab" class="_tab_">
             <div class="side-margin">
 
-              <div id="mono-poly-select">
-                <input id="keyboard-mono-radio" 
-                  type="radio"
-                  name="radio">
-                <label for="keyboard-mono-radio" class="radio"> 
-                  MONO
-                </label>
-
-                <input id="keyboard-poly-radio"
-                  type="radio"
-                  checked="true"
-                  name="radio">
-                <label for="keyboard-poly-radio" class="radio"> 
-                  POLY
-                </label>
-              </div>
-
-
               <div class="adsr-and-kb">
 
                 <!-- ADSR -->
@@ -229,7 +204,7 @@
 
                   <br> -->
 
-                  <div> ADSR </div>
+                  <div class="some-margin"> ADSR </div>
                   <canvas id="adsr-canvas"></canvas>
                   
                   <div class="adsr-knobs"> 
@@ -256,150 +231,173 @@
                   </div>
                 </span>
 
+                <span>
+                  <br>
 
-                <!-- BEGIN KEYBOARD  -->
-                <span class="keyboard" id="keyboard-image">
-                  <div class="keyboard__row">
-                    <div class="key--double" data-key="192">
-                    </div>
-                    <div class="key--double" data-key="49">
-                      <div>!</div>
-                      <div>1</div>
-                    </div>
-                    <div class="key--double" data-key="50">
-                      <div>@</div>
-                      <div>2</div>
-                    </div>
-                    <div class="key--double" data-key="51">
-                      <div>#</div>
-                      <div>3</div>
-                    </div>
-                    <div class="key--double" data-key="52">
-                      <div>$</div>
-                      <div>4</div>
-                    </div>
-                    <div class="key--double" data-key="53">
-                      <div>%</div>
-                      <div>5</div>
-                    </div>
-                    <div class="key--double" data-key="54">
-                      <div>^</div>
-                      <div>6</div>
-                    </div>
-                    <div class="key--double" data-key="55">
-                      <div>&</div>
-                      <div>7</div>
-                    </div>
-                    <div class="key--double" data-key="56">
-                      <div>*</div>
-                      <div>8</div>
-                    </div>
-                    <div class="key--double" data-key="57">
-                      <div>(</div>
-                      <div>9</div>
-                    </div>
-                    <div class="key--double" data-key="48">
-                      <div>)</div>
-                      <div>0</div>
-                    </div>
-                    <div class="key--double" data-key="189">
-                      <div>_</div>
-                      <div>-</div>
-                    </div>
-                    <div class="key--double" data-key="187">
-                      <div>+</div>
-                      <div>=</div>
-                    </div>
-                    <div class="key--bottom-right key--word key--w4" data-key="8">
-                    </div>
-                  </div> <br>
+                  <!-- BEGIN KEYBOARD  -->
+                  <span class="keyboard" id="keyboard-image">
+                    <div class="keyboard__row">
+                      <div class="key--double" data-key="192">
+                      </div>
+                      <div class="key--double" data-key="49">
+                        <div>!</div>
+                        <div>1</div>
+                      </div>
+                      <div class="key--double" data-key="50">
+                        <div>@</div>
+                        <div>2</div>
+                      </div>
+                      <div class="key--double" data-key="51">
+                        <div>#</div>
+                        <div>3</div>
+                      </div>
+                      <div class="key--double" data-key="52">
+                        <div>$</div>
+                        <div>4</div>
+                      </div>
+                      <div class="key--double" data-key="53">
+                        <div>%</div>
+                        <div>5</div>
+                      </div>
+                      <div class="key--double" data-key="54">
+                        <div>^</div>
+                        <div>6</div>
+                      </div>
+                      <div class="key--double" data-key="55">
+                        <div>&</div>
+                        <div>7</div>
+                      </div>
+                      <div class="key--double" data-key="56">
+                        <div>*</div>
+                        <div>8</div>
+                      </div>
+                      <div class="key--double" data-key="57">
+                        <div>(</div>
+                        <div>9</div>
+                      </div>
+                      <div class="key--double" data-key="48">
+                        <div>)</div>
+                        <div>0</div>
+                      </div>
+                      <div class="key--double" data-key="189">
+                        <div>_</div>
+                        <div>-</div>
+                      </div>
+                      <div class="key--double" data-key="187">
+                        <div>+</div>
+                        <div>=</div>
+                      </div>
+                      <div class="key--bottom-right key--word key--w4" data-key="8">
+                      </div>
+                    </div> <br>
 
-                  <div class="keyboard__row">
-                    <div class="key--bottom-left key--word key--w4" data-key="9">
-                    </div>
-                    <div class="key--letter" data-char="Q">Q</div>
-                    <div class="key--letter" data-char="W">W</div>
-                    <div class="key--letter" data-char="E">E</div>
-                    <div class="key--letter" data-char="R">R</div>
-                    <div class="key--letter" data-char="T">T</div>
-                    <div class="key--letter" data-char="Y">Y</div>
-                    <div class="key--letter" data-char="U">U</div>
-                    <div class="key--letter" data-char="I">I</div>
-                    <div class="key--letter" data-char="O">O</div>
-                    <div class="key--letter" data-char="P">P</div>
-                    <div class="key--double" data-key="219" data-char="{[">
-                      <div>{</div>
-                      <div>[</div>
-                    </div>
-                    <div class="key--double" data-key="221" data-char="}]">
-                      <div>}</div>
-                      <div>]</div>
-                    </div>
-                    <div class="key--double" data-key="220" data-char="|\">
-                    </div>
-                  </div> <br>
+                    <div class="keyboard__row">
+                      <div class="key--bottom-left key--word key--w4" data-key="9">
+                      </div>
+                      <div class="key--letter" data-char="Q">Q</div>
+                      <div class="key--letter" data-char="W">W</div>
+                      <div class="key--letter" data-char="E">E</div>
+                      <div class="key--letter" data-char="R">R</div>
+                      <div class="key--letter" data-char="T">T</div>
+                      <div class="key--letter" data-char="Y">Y</div>
+                      <div class="key--letter" data-char="U">U</div>
+                      <div class="key--letter" data-char="I">I</div>
+                      <div class="key--letter" data-char="O">O</div>
+                      <div class="key--letter" data-char="P">P</div>
+                      <div class="key--double" data-key="219" data-char="{[">
+                        <div>{</div>
+                        <div>[</div>
+                      </div>
+                      <div class="key--double" data-key="221" data-char="}]">
+                        <div>}</div>
+                        <div>]</div>
+                      </div>
+                      <div class="key--double" data-key="220" data-char="|\">
+                      </div>
+                    </div> <br>
 
-                  <div class="keyboard__row">
-                    <div class="key--bottom-left key--word key--w5" data-key="20">
-                    </div>
-                    <div class="key--letter" data-char="A">A</div>
-                    <div class="key--letter" data-char="S">S</div>
-                    <div class="key--letter" data-char="D">D</div>
-                    <div class="key--letter" data-char="F">F</div>
-                    <div class="key--letter" data-char="G">G</div>
-                    <div class="key--letter" data-char="H">H</div>
-                    <div class="key--letter" data-char="J">J</div>
-                    <div class="key--letter" data-char="K">K</div>
-                    <div class="key--letter" data-char="L">L</div>
-                    <div class="key--double" data-key="186">
-                      <div>:</div>
-                      <div>;</div>
-                    </div>
-                    <div class="key--double" data-key="222">
-                      <div>"</div>
-                      <div>'</div>
-                    </div>
-                    <div class="key--bottom-right key--word key--w5" data-key="13">
-                    </div>
-                  </div> <br>
+                    <div class="keyboard__row">
+                      <div class="key--bottom-left key--word key--w5" data-key="20">
+                      </div>
+                      <div class="key--letter" data-char="A">A</div>
+                      <div class="key--letter" data-char="S">S</div>
+                      <div class="key--letter" data-char="D">D</div>
+                      <div class="key--letter" data-char="F">F</div>
+                      <div class="key--letter" data-char="G">G</div>
+                      <div class="key--letter" data-char="H">H</div>
+                      <div class="key--letter" data-char="J">J</div>
+                      <div class="key--letter" data-char="K">K</div>
+                      <div class="key--letter" data-char="L">L</div>
+                      <div class="key--double" data-key="186">
+                        <div>:</div>
+                        <div>;</div>
+                      </div>
+                      <div class="key--double" data-key="222">
+                        <div>"</div>
+                        <div>'</div>
+                      </div>
+                      <div class="key--bottom-right key--word key--w5" data-key="13">
+                      </div>
+                    </div> <br>
 
-                  <div class="keyboard__row">
-                    <div class="key--bottom-left key--word key--w6" data-key="16">
+                    <div class="keyboard__row">
+                      <div class="key--bottom-left key--word key--w6" data-key="16">
+                      </div>
+                      <div class="key--letter" data-char="Z">Z</div>
+                      <div class="key--letter" data-char="X">X</div>
+                      <div class="key--letter" data-char="C">C</div>
+                      <div class="key--letter" data-char="V">V</div>
+                      <div class="key--letter" data-char="B">B</div>
+                      <div class="key--letter" data-char="N">N</div>
+                      <div class="key--letter" data-char="M">M</div>
+                      <div class="key--double" data-key="188">
+                        <div>&lt;</div>
+                        <div>,</div>
+                      </div>
+                      <div class="key--double" data-key="190">
+                        <div>&gt;</div>
+                        <div>.</div>
+                      </div>
+                      <div class="key--double" data-key="191">
+                        <div>?</div>
+                        <div>/</div>
+                      </div>
+                      <div class="key--bottom-right key--word key--w6" data-key="16-R">
+                      </div>
                     </div>
-                    <div class="key--letter" data-char="Z">Z</div>
-                    <div class="key--letter" data-char="X">X</div>
-                    <div class="key--letter" data-char="C">C</div>
-                    <div class="key--letter" data-char="V">V</div>
-                    <div class="key--letter" data-char="B">B</div>
-                    <div class="key--letter" data-char="N">N</div>
-                    <div class="key--letter" data-char="M">M</div>
-                    <div class="key--double" data-key="188">
-                      <div>&lt;</div>
-                      <div>,</div>
-                    </div>
-                    <div class="key--double" data-key="190">
-                      <div>&gt;</div>
-                      <div>.</div>
-                    </div>
-                    <div class="key--double" data-key="191">
-                      <div>?</div>
-                      <div>/</div>
-                    </div>
-                    <div class="key--bottom-right key--word key--w6" data-key="16-R">
-                    </div>
-                  </div>
+                  </span>
+                  <!-- END KEYBOARD  -->
+                  <br>
+
+                  <span id="mono-poly-select" class="center">
+                    <input id="keyboard-mono-radio" 
+                      type="radio"
+                      name="radio">
+                    <label for="keyboard-mono-radio" class="radio"> 
+                      MONO
+                    </label>
+
+                    <input id="keyboard-poly-radio"
+                      type="radio"
+                      checked="true"
+                      name="radio">
+                    <label for="keyboard-poly-radio" class="radio"> 
+                      POLY
+                    </label>
+                  </span>
                 </span>
-                <!-- END KEYBOARD  -->
 
               </div>
 
               <!-- START SCALE BUILDER CONTAINER  -->
               <div id="scale-builder-container" class="scale-builder-container">
-                SCALES
-                <select id="scale-kinds">
-                  <option value="preset-library"> PRESETS </option>
-                  <option value="scale-builder"> BUILD </option>
-                </select> <br>
+
+                <div class="center">
+                  <select id="scale-kinds">
+                    <option value="preset-library"> SCALE PRESETS </option>
+                    <option value="scale-builder"> SCALE BUILDER </option>
+                  </select> 
+                </div>
                 
                 <div id="preset-library" class="_scale-tab_ show">
                   <br>
@@ -427,7 +425,7 @@
 
                   <div class="scale-builder-section">
                       
-                    Cent-Delta Formula <br>
+                    Cent-Delta List Comprehension <br>
                     Use 
                       <a 
                         target="_blank" 
@@ -444,7 +442,7 @@
                       [ <input 
                           type="text" 
                           id="delta-expression"
-                          class="text-input center"
+                          class="text-input-wide center"
                           value="100 + (n % 5) * 100"> | n &lt;- [0,1..]
                       ]
                     </code>
@@ -456,13 +454,18 @@
 
                   <div class="scale-builder-section">
 
-                    Enter a list of comma separated values. 1/1 is included by default. Octaves repeat. <br>
+                    Enter a list of comma separated values -- may be cents or ratios.
+                    1/1 is included by default. Octaves repeat. <br>
                     
-                    <input 
-                      type="text" 
-                      id="scale-csv-input"
-                      class="text-input center"
-                      value="9/8,  5/4,  3/2,  1100">
+                    <code>
+                      [
+                      <input 
+                        type="text" 
+                        id="scale-csv-input"
+                        class="text-input-wide center"
+                        value="9/8,  5/4,  3/2,  1100">
+                      ]
+                    </code>
                       
                     <button class="apply-btn" id="apply-scale-csv"> apply </button>
 
@@ -485,9 +488,9 @@
 
               <button id="record" class="record"> rec </button>
               <span> buffer index: </span>
-              <button id="buffer-index-down"> - </button>
+              <button id="buffer-index-down" class="rect-0"> - </button>
               <span id="buffer-index"> 0 </span>
-              <button id="buffer-index-up"> + </button>
+              <button id="buffer-index-up" class="rect-0"> + </button>
 
               <br>
               <br>
@@ -554,71 +557,73 @@
 <div id="info-menu-container" class="info-menu-container">
   <div id="info-menu" class="info-menu"> 
 
-    <div class="panel">
+    <div class="info-menu-grid">
+      <div id="info-menu-buttons">
+        <button class="info-menu-button active-info-button"> 
+          basics </button>
 
-      <span> Help Menu </span> 
+        <button class="info-menu-button"> 
+          nodes  </button>
 
-      <div class="info-menu-grid">
-        <div id="info-menu-buttons">
-          <button class="info-menu-button active-info-button"> 
-            basics </button>
-
-          <button class="info-menu-button"> 
-            nodes  </button>
-
-          <button class="info-menu-button"> 
-            about  </button>
-        </div>
-  
-        <div>
-
-          <div id="basics-info" class="info-content side-margin show">
-            <ul>
-              <li> Right-click in the graph to create new nodes. </li>
-              <li> Click the edges of nodes to start making connections. </li>
-              <li> Click on triangles/arrows to undo connections </li>
-              <li> <code> ctrl + z </code>         to undo. </li>
-              <li> <code> ctrl + shift + z </code> to redo. </li>
-            </ul>
-          </div>
-          <div id="nodes-info" class="info-content side-margin">
-            <ul>
-              <li> <code>gain</code> 
-                nodes represent a change in volume or intensity. </li>
-              
-              <li> <code>oscillator</code> 
-                nodes output a specified frequency of a given periodic wave. </li>
-              
-              <li> <code>panner</code> 
-                nodes can be used to pan audio streams left or right. </li>
-              
-              <li> <code>filter</code> 
-                nodes can represent different low-order filters.</li>
-              
-              <li> <code>delay</code> 
-                nodes cause a delay between the arrival of input data and its propagation to the output.</li>
-              
-              <li> <code>buffer</code> 
-                nodes allow you to play audio samples. </li>
-            </ul>
-          </div>
-          <div id="about-info" class="info-content">
-            <div class="info-text-container side-margin">
-              <span class="about-info-text">
-              
-                NuniSynth is a graphical modular software designed for
-                building instruments, effects, and complex audio functions.
-                <br> <br>
-                Please leave feedback, suggestions, questions, or thoughts at
-                <code> ronaldmcorona@gmail.com</code>.
-
-              </span>
-            </div>
-          </div>
-
-        </div>
+        <button class="info-menu-button"> 
+          about  </button>
       </div>
 
+      <div>
+
+        <div id="basics-info" class="info-content side-margin show">
+          <div class="info-text-container side-margin">
+            <span class="about-info-text">
+              <ul>
+                <li> Right-click inside the graph to create new nodes. </li>
+                <li> Click the edges of nodes to start making connections. </li>
+                <li> Click on triangles/arrows to undo connections </li>
+                <li> <code> ctrl + z </code>         to undo. </li>
+                <li> <code> ctrl + shift + z </code> to redo. </li>
+              </ul>
+            </span>
+          </div>
+        </div>
+        <div id="nodes-info" class="info-content side-margin">
+          <div class="info-text-container side-margin">
+            <span class="about-info-text">
+              <ul>
+                <li> <code>gain</code> 
+                  nodes represent a change in volume or intensity. </li>
+                
+                <li> <code>oscillator</code> 
+                  nodes output a specified frequency of a given periodic wave. </li>
+                
+                <li> <code>panner</code> 
+                  nodes can be used to pan audio streams left or right. </li>
+                
+                <li> <code>filter</code> 
+                  nodes can represent different low-order filters.</li>
+                
+                <li> <code>delay</code> 
+                  nodes cause a delay between the arrival of input data and its propagation to the output.</li>
+                
+                <li> <code>buffer</code> 
+                  nodes allow you to play audio samples. </li>
+              </ul>
+            </span>
+          </div>
+        </div>
+        <div id="about-info" class="info-content">
+          <div class="info-text-container side-margin">
+            <span class="about-info-text center">
+            
+              NuniSynth is a graphical modular software designed for
+              building instruments, effects, and complex audio functions.
+              <br> <br>
+              Please leave feedback, suggestions, questions, or thoughts at
+              <code> ronaldmcorona@gmail.com</code>.
+
+            </span>
+          </div>
+        </div>
+
+      </div>
     </div>
 
   </div>

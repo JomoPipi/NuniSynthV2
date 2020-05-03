@@ -14,7 +14,31 @@ function refreshKeys() {
 }
 
 function previewScale() {
-    
+    let count = 0
+    for (const key of Keyboard.keys) {
+        const cents = Keyboard.scale[Keyboard.keymap[key]]
+        if (cents > 2400) break;
+
+        // ( ͡° ͜ʖ ͡°)
+        const speed = 69
+        setTimeout(() => {
+
+            for (const { audioNode:an } of G.nodes) {
+                if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
+                    an.update(true, key)
+                }
+            }
+            
+            setTimeout(() => {
+                for (const { audioNode:an } of G.nodes) {
+                    if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
+                        an.update(false, key)
+                    }
+                }
+            }, speed / PHI)
+
+        }, count++ * speed)
+    }
 }
 
 {
@@ -24,7 +48,6 @@ function previewScale() {
 
     D('scale-builder')!.onclick = function(e : MouseEvent) {
         const btnId = (e.target as HTMLElement).id
-        log('btnId =',btnId)
         
         if (btnId === deltaBtnId) {
             setDeltaExpressionScale()

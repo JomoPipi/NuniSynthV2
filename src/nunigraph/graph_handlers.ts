@@ -11,12 +11,12 @@ Object.values(NodeTypes).forEach(type => {
         UndoRedoModule.save()
         const node = G.newNode(type)
         const menu = D('graph-contextmenu')!
-
+        log('display =',menu.style.display)
         if (menu.style.display !== 'none') {
-            // Place the newly created node in an appriopriate location near the mouse
+            // Place the newly created node where the contextmenu was.
             const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = GraphCanvas.canvas
-            node.x = (menu.offsetLeft - offsetLeft) / offsetWidth
-            node.y = (menu.offsetTop - offsetTop) / offsetHeight
+            node.x = clamp(0, (menu.offsetLeft - offsetLeft + menu.offsetWidth / 2.0) / offsetWidth, 1)
+            node.y = clamp(0, (menu.offsetTop - offsetTop + menu.offsetHeight / 2.0) / offsetHeight, 1)
             hideGraphContextmenu()
         }
 

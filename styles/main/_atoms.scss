@@ -26,6 +26,10 @@ code {
     border-width: 0.25px;
     color: #999;
 }
+.text-input-wide {
+    @extend .text-input;
+    width: 200px;
+}
 
 .center {
     text-align: center;
@@ -34,4 +38,11 @@ code {
 .preset-list {
     display: grid;
     grid-template-columns: 50% 50%;
+}
+
+.rect-0 {
+    width: 40px;
+    height: 25px;
+    background-color: #444;
+    color: white;
 }

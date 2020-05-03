@@ -53,7 +53,7 @@ class NuniGraphNode {
 
         if (this.audioNode instanceof NuniSourceNode &&
             audioNodeSettings.kbMode !== 'none') {
-            this.audioNode.setKbMode(Keyboard.getMode())
+            this.audioNode.setKbMode(Keyboard.mode)
         }
 
         for (const param of AudioNodeParams[type]) {

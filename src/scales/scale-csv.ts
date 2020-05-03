@@ -25,7 +25,7 @@ const setScaleFromCSV = (_ => {
 
         return 1200 * Math.log2(+a/+b) || 0
     }
-    
+
     return function(input? : string) {
         const values = (input ?? valueInput.value)
             .split(',')
@@ -36,8 +36,10 @@ const setScaleFromCSV = (_ => {
             valueInput.value = values.join(',  ')
         }
 
-        setTimeout(() => // *
+        setTimeout(() => {// *
             assignToKeyboard([0].concat(values.map(toCents)))
-            , 100)
+
+            previewScale()
+            }, 100)
     }
 })()

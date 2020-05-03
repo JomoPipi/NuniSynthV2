@@ -44,13 +44,10 @@ const Keyboard = (() => {
                 .classList
                 .toggle('key-pressed', keydown)
     }
-
-    function getMode() {
-        return (D('keyboard-mono-radio') as HTMLInputElement).checked ?
-            'mono' :
-            'poly'
-    }
     
+    const kb = { keys, keymap, held, scale, attachToGraph, mode: 'poly' as NodeKbMode, glide: 0 }
+
+
     const monoBtn = D('keyboard-mono-radio')
     const polyBtn = D('keyboard-poly-radio')
 
@@ -58,7 +55,9 @@ const Keyboard = (() => {
 
         D('mono-poly-select')!.onclick = function (e : MouseEvent) {
             const t = e.target
-            if (t === monoBtn || t === polyBtn) {
+            const isMono = t === monoBtn
+            if (isMono || t === polyBtn) {
+                kb.mode = isMono ? 'mono' : 'poly'
                 switchActiveNodes()
             }
         }
@@ -66,7 +65,7 @@ const Keyboard = (() => {
         function switchActiveNodes() {
             for (const { audioNode: an } of g.nodes) {
                 if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
-                    an.setKbMode(getMode())
+                    an.setKbMode(kb.mode)
                 }
             }
         }
@@ -105,21 +104,11 @@ const Keyboard = (() => {
         }
     }
 
-    return { 
-        keys, 
-        keymap, 
-        held, 
-        scale,
-        getMode,
-        attachToGraph
-        }
-
+    return kb
 })()
 
 function resizeKeyboard () {
     const keyboard = D('keyboard-image') as any
-    const size = keyboard.parentNode.clientWidth / 120
+    const size = keyboard.parentNode.clientWidth / 60
     keyboard.style.fontSize = size + 'px'
 }
-
-// ALLOW KEYBOARD NODES TO BE SELECTED
