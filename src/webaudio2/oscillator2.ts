@@ -35,7 +35,7 @@ class OscillatorNode2 extends NuniSourceNode {
 
     private prepareOscillator(key : number) { // happens in refresh
         const src = this.ctx.createOscillator()
-        const keyValue = key === this.MONO ? 0 : Keyboard.scale[Keyboard.keymap[key]]
+        const keyValue = key === this.MONO ? 0 : KB.scale[KB.keymap[key]]
         this.ADSRs[key].gain.value = 0
 
         src.start(this.ctx.currentTime)
@@ -67,7 +67,7 @@ class OscillatorNode2 extends NuniSourceNode {
             clearInterval(adsr.releaseId)
         }
         this.lastMonoKeyPressed = key
-        const keyValue = Keyboard.scale[Keyboard.keymap[key]]
+        const keyValue = KB.scale[KB.keymap[key]]
         src.detune.value = keyValue
         if (src.isOn) return;
         src.isOn = true 
@@ -79,15 +79,16 @@ class OscillatorNode2 extends NuniSourceNode {
             this.sources[key].disconnect()
         }
         if (this.kbMode === 'poly') {
-            Keyboard.keys.forEach(key =>
+            KB.keys.forEach(key =>
                 this.prepareOscillator(key))
 
         } else if (this.kbMode === 'mono') {
             this.prepareOscillator(this.MONO)
 
-        } else { // this.kbMode === 'none'
+        } else if (this.kbMode === 'none') {
             this.prepareOscillator(this.MONO) 
             this.ADSRs[this.MONO].gain.value = 1
         }
+        else throw 'How could such a thing be?'
     }
 }

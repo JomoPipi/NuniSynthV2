@@ -51,14 +51,15 @@ class NuniGraphNode {
         this.audioNode.type = this.audioNodeType
         this.audioParamValues = audioParamValues 
 
-        if (this.audioNode instanceof NuniSourceNode &&
-            audioNodeSettings.kbMode !== 'none') {
-            this.audioNode.setKbMode(Keyboard.mode)
-        }
-
         for (const param of AudioNodeParams[type]) {
             const value = audioParamValues[param] ?? DefaultParamValues[param]
             this.setValueOfParam(param, value)
+        }
+
+        
+        if (this.audioNode instanceof NuniSourceNode &&
+            audioNodeSettings.kbMode !== 'none') {
+            this.audioNode.setKbMode(KB.mode)
         }
     }
 

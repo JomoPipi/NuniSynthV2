@@ -15,8 +15,8 @@ function refreshKeys() {
 
 function previewScale() {
     let count = 0
-    for (const key of Keyboard.keys) {
-        const cents = Keyboard.scale[Keyboard.keymap[key]]
+    for (const key of KB.keys) {
+        const cents = KB.scale[KB.keymap[key]]
         if (cents > 2400) break;
 
         // ( ͡° ͜ʖ ͡°)

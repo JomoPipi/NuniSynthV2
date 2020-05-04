@@ -65,7 +65,7 @@ const AudioNodeSubTypes = {
     [NodeTypes.BUFFER]: []
 }
 
-const NodeTypeColors : { [key in NodeTypes] : string } =
+const NodeTypeColors : { readonly [key in NodeTypes] : string } =
 {
     [NodeTypes.GAIN]:   'rgba(255,0,0,0.5)',
     [NodeTypes.OSC]:    'rgba(0,0,255,0.5)',
@@ -75,7 +75,7 @@ const NodeTypeColors : { [key in NodeTypes] : string } =
     [NodeTypes.BUFFER]: 'rgba(0,255,255,0.5)'
 }
 
-const ConnectionTypeColors : { [key in ConnectionType] : string } =
+const ConnectionTypeColors : { readonly [key in ConnectionType] : string } =
 {
     channel:      'gray',
     frequency:    'blue',
@@ -87,7 +87,7 @@ const ConnectionTypeColors : { [key in ConnectionType] : string } =
     playbackRate: 'cyan'
 }
 
-const DefaultParamValues : { [key in AudioParams] : number } = 
+const DefaultParamValues : { readonly [key in AudioParams] : number } = 
 {
     gain:         0.5,
     frequency:    440,
@@ -98,7 +98,7 @@ const DefaultParamValues : { [key in AudioParams] : number } =
     playbackRate: 1
 }
 
-const AudioParamRanges : { [key in AudioParams] : [number,number] } = 
+const AudioParamRanges : { readonly [key in AudioParams] : [number,number] } = 
 {
     gain:         [0, 24000],
     frequency:    [0, 24000],
@@ -109,7 +109,7 @@ const AudioParamRanges : { [key in AudioParams] : [number,number] } =
     playbackRate: [0, 32],
 }
 
-const hasLinearSlider : { [key in AudioParams] : boolean } = 
+const hasLinearSlider : { readonly [key in AudioParams] : boolean } = 
 {
     gain:         true,
     frequency:    false,
@@ -120,7 +120,7 @@ const hasLinearSlider : { [key in AudioParams] : boolean } =
     playbackRate: false
 }
 
-const sliderFactor : { [key in AudioParams] : number } = 
+const sliderFactor : { readonly [key in AudioParams] : number } = 
 {
     gain:         .025,
     frequency:    2**-7,

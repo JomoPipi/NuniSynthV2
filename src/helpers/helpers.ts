@@ -12,6 +12,8 @@ type Indexed = { [param : string] : any }
 interface Indexable<T> { [param : string] : T }
 
 
+
+
 const log = console.log
 
 const id = <T>(x : T) => x
@@ -30,6 +32,9 @@ const distance = (x : number, y : number, x2 : number, y2 : number) =>
 const clamp = (min : number, value : number, max : number) => 
     Math.max(Math.min(max,value), min)
 
+
+
+    
 const PHI = (Math.sqrt(5) + 1) / 2.0
 const TR2 = 2 ** (1.0 / 12.0)
 const TAU = 2 * Math.PI

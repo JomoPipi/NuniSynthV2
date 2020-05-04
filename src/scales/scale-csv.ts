@@ -11,8 +11,8 @@ const setScaleFromCSV = (_ => {
     function assignToKeyboard(arr : number[]) {
         const N = arr.length
 
-        Keyboard.scale = 
-        Keyboard.keys.map((_,i) => 
+        KB.scale = 
+        KB.keys.map((_,i) => 
             arr[i % N] + 1200 * (i / N | 0)
             )
 

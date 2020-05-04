@@ -6,10 +6,7 @@
 
 
 class JsDial {
-    /**
-     * Usage:
-     */
-
+    
     [x : string] : unknown
     isActive : boolean
     sensitivity : number

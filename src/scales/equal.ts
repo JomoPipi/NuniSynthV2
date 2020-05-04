@@ -11,7 +11,7 @@ const setEqualTemperamentScale = (_ => {
         ] as HTMLSelectElement[]
 
     const assignToKeyboard = (centDelta : number) => {
-        Keyboard.scale = Keyboard.keys.map((_,i) => 
+        KB.scale = KB.keys.map((_,i) => 
             i * centDelta)
         
         refreshKeys()

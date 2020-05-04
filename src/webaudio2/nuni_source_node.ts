@@ -93,7 +93,7 @@ class NuniSourceNode {
                 this.noteOnMono(key)
             } else {
                 // Last note priority
-                const held = Keyboard.held
+                const held = KB.held
                 held.length > 0 ? 
                     this.noteOnMono(held[held.length-1]) :
                     this.noteOff(this.MONO)
@@ -148,7 +148,7 @@ class NuniSourceNode {
     }
 
     private switchToPoly() {
-        this.ADSRs = Keyboard.keys.reduce((adsr,key) => {
+        this.ADSRs = KB.keys.reduce((adsr,key) => {
             adsr[key] = new Adsr(this.ctx)
             return adsr
         }, {} as Indexable<Adsr>)

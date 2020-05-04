@@ -5,6 +5,8 @@
 
 
 
+// Credit: Google
+
 function LZW_compress(uncompressed : string) : string {
     
     const result = []

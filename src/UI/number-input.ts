@@ -5,14 +5,6 @@
 
 
 
-window.customElements.define('number-input', 
-class extends HTMLInputElement {
-    constructor() {
-        super()
-    }
-
-})
-
 function createDraggableNumberInput(
     initialValue : number, 
     mousedownFunc : () => number,

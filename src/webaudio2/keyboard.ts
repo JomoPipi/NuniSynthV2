@@ -8,7 +8,7 @@
 type NodeKbMode = 'none' | 'mono' | 'poly'
 type KbMode = 'mono' | 'poly'
 
-const Keyboard = (() => {
+const KB = (() => {
     
     const keys = ([] as number[]).concat(...[
         '1234567890',
@@ -45,7 +45,14 @@ const Keyboard = (() => {
                 .toggle('key-pressed', keydown)
     }
     
-    const kb = { keys, keymap, held, scale, attachToGraph, mode: 'poly' as NodeKbMode, glide: 0 }
+    const kb = { 
+        keys, 
+        keymap, 
+        held, 
+        scale, 
+        attachToGraph, 
+        mode: 'poly' as NodeKbMode
+        }
 
 
     const monoBtn = D('keyboard-mono-radio')

@@ -6,7 +6,8 @@
 
 
 /** For the draggable top bar to function as expected
- *  place it as the first element in an HTML element with position: absolute.
+ *  place it as the first element in an HTML element with 
+ *  position: absolute.
  */
 function createDraggableTopBar(text? : string) {
     const bar = E('div')
@@ -37,29 +38,28 @@ function createDraggableTopBar(text? : string) {
     bar.appendChild(exitBtn)
     exitBtn.innerHTML = 'x'
 
-    let active = false
+    let isBeingDragged = false
 
     const mouseup = (e : MouseEvent) => {
-        e.stopPropagation()
-        active = false
+
+        isBeingDragged = false
         window.removeEventListener('mousemove',mousemove)
         window.removeEventListener('mouseup',mouseup)
     }
 
     const mousedown = function(e : MouseEvent) {
-        e.stopPropagation()
-        active = true
+        
+        isBeingDragged = true
         window.addEventListener('mousemove',mousemove)
         window.addEventListener('mouseup',mouseup)
     }
 
     const mousemove = function(e : MouseEvent) {
-        e.stopPropagation()
 
         const box = bar.parentElement
         if (!box) throw 'A box to drag is required.'
 
-        if (active) {
+        if (isBeingDragged) {
             UI_clamp(
                 e.clientX, 
                 e.clientY + box.offsetHeight/2 - bar.offsetHeight/2,
@@ -72,7 +72,7 @@ function createDraggableTopBar(text? : string) {
         const box = bar.parentElement
         if (!box) throw 'A box to close is required.'
 
-        box.style.display = 'none'
+        box.classList.remove('show')
     }
     
     exitBtn.onclick = closeBox

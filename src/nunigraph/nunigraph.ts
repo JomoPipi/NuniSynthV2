@@ -218,9 +218,9 @@ class NuniGraph {
 
 const G = new NuniGraph()
 
-Keyboard.attachToGraph(G)
+KB.attachToGraph(G)
 Buffers.attachToGraph(G)
 const GraphCanvas = createGraphCanvas(G, D('nunigraph-canvas') as HTMLCanvasElement)
 set_selectNodeFunc(
-    G, D('node-value-container') as HTMLDivElement, 
+    G, D('node-value-window') as HTMLDivElement, 
     D('connection-type-prompt') as HTMLDivElement)

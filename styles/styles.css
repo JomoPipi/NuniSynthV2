@@ -62,10 +62,6 @@ button {
   height: 100%;
 }
 
-.left-panel {
-  background: #171717;
-}
-
 .side-margin {
   margin: 0% 4%;
 }
@@ -222,10 +218,9 @@ button {
   grid-gap: 4px;
 }
 
-#node-value-container {
+.window {
   display: none;
   position: absolute;
-  /* right: 0; */
   background-color: #000701;
   border: 1px solid white;
   z-index: 2;
@@ -284,8 +279,16 @@ code {
   font-family: monospace;
 }
 
+.hide {
+  display: none;
+}
+
 .some-margin, .buffer-row, .box {
   margin: 5%;
+}
+
+.some-margin, .buffer-row, .box {
+  margin: 10px;
 }
 
 .some-padding {

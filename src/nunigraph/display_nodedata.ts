@@ -10,7 +10,7 @@ function set_selectNodeFunc(g : NuniGraph, container : HTMLDivElement, prompt : 
     g.selectNodeFunc = () => {
         const node = g.selectedNode as NuniGraphNode
 
-        container.style.display = node ? 'grid' : 'none'
+        container.classList.toggle('show', node != undefined)
         if (!node) return;
 
         container.innerHTML = ''
@@ -63,7 +63,7 @@ function activateKeyboardButton(an : NuniSourceNode) {
     btn.classList.toggle('selected', an.kbMode !== 'none')
     btn.onclick = () => {
         const enable = an.kbMode === 'none'
-        an.setKbMode(enable ? Keyboard.getMode() : 'none')
+        an.setKbMode(enable ? KB.mode : 'none')
         btn.classList.toggle('selected', enable)
     }
     return btn
