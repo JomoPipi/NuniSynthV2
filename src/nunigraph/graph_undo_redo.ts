@@ -13,15 +13,15 @@ const UndoRedoModule = {
         this.redos = []
     },
     undo_redo(redo : boolean) {
-        const [a,b] = (<any>[this.undos,this.redos])[redo ? 'reverse' : 'map'](id)
-
+        const [a,b] = ((a,b) => redo ? [b,a] : [a,b])(this.undos,this.redos)
         const last = a.pop()
+
         if (last) {
             b.push(G.toRawString())
             G.fromRawString(last)
             GraphCanvas.render()
             G.unselectNode()
-            D('connection-type-prompt')!.style.display = 'none'
+            D('connection-type-prompt')!.classList.remove('show')
         }
     },
     undo: function() {
@@ -33,7 +33,7 @@ const UndoRedoModule = {
 }
 
 window.addEventListener('keydown', (e : KeyboardEvent) => {
-    if (e.ctrlKey&& e.keyCode === 90) {
+    if (e.ctrlKey && e.keyCode === 90) {
         e.shiftKey ? 
             UndoRedoModule.redo() :
             UndoRedoModule.undo() 

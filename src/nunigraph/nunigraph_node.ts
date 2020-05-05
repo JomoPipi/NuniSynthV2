@@ -31,7 +31,7 @@ class NuniGraphNode {
     
     constructor(id : number, type : NodeTypes, settings : NodeSettings) {
 
-        // change display: {x,y} to just x,y later to save space on the string conversions
+        // Change display: {x,y} to just x,y later to save space on the string conversions
         // (will require changing/throwing away all currently saved graphs :/)
         const { 
             display: {x,y}, 
@@ -56,8 +56,7 @@ class NuniGraphNode {
             this.setValueOfParam(param, value)
         }
 
-        
-        if (this.audioNode instanceof NuniSourceNode &&
+        if (audioNodeSettings.kbMode &&
             audioNodeSettings.kbMode !== 'none') {
             this.audioNode.setKbMode(KB.mode)
         }

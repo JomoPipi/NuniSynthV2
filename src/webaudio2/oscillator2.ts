@@ -8,7 +8,7 @@
 class OscillatorNode2 extends NuniSourceNode {
     /**
      * A wrapper around OscillatorNode that allows
-     *  it to be compatible with the keyboard
+     * it to be played by the keyboard.
      */
 
     _type : OscillatorType
@@ -52,19 +52,7 @@ class OscillatorNode2 extends NuniSourceNode {
         this.sources[key] = src
     }
 
-    protected noteOnPoly(key : number) {
-        this.noteReallyOn(key)
-    }
-    
-    protected noteOnMono(key : number) {
-        const src = this.sources[this.MONO]
-        const keyValue = KB.scale[KB.keymap[key]]
-
-        src.detune.value = keyValue
-        this.noteReallyOn(this.MONO)
-    }
-
-    private noteReallyOn(key : number) {
+    protected noteReallyOn(key : number) {
         const adsr = this.ADSRs[key]
 
         if (adsr.releaseId >= 0) {

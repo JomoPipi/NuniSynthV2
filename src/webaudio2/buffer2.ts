@@ -31,7 +31,6 @@ class BufferNode2 extends NuniSourceNode {
 
     prepareBuffer(key : number) { // happens at noteOff
         const sources = this.sources
-        const keyValue = key === this.MONO ? 0 : KB.scale[KB.keymap[key]]
 
         sources[key] && sources[key].disconnect()
         const src = sources[key] = this.ctx.createBufferSource()
@@ -40,7 +39,10 @@ class BufferNode2 extends NuniSourceNode {
         this.detune.src.connect(src.detune)
         this.playbackRate.src.connect(src.playbackRate)
 
-        src.detune.value = keyValue
+        if (key !== this.MONO) {
+            src.detune.value = KB.scale[KB.keymap[key]]
+        }
+
         src.buffer = Buffers.buffers[this.bufferIndex]
         src.loop = this.loop
         
@@ -54,20 +56,8 @@ class BufferNode2 extends NuniSourceNode {
             src.start(this.ctx.currentTime)
         }
     }
-    
-    protected noteOnPoly(key : number) {
-        this.noteReallyOn(key)
-    }
-    
-    protected noteOnMono(key : number) {
-        const keyValue = KB.scale[KB.keymap[key]]
 
-        this.noteReallyOn(this.MONO)
-
-        this.sources[this.MONO].detune.value = keyValue
-    }
-
-    private noteReallyOn(key : number) {
+    protected noteReallyOn(key : number) {
         const adsr = this.ADSRs[key]
 
         if (adsr.releaseId >= 0) {
@@ -88,9 +78,10 @@ class BufferNode2 extends NuniSourceNode {
         } else if (this.kbMode === 'mono') {
             this.prepareBuffer(this.MONO)
 
-        } else { // this.kbMode === 'none'
+        } else if (this.kbMode === 'none') {
             this.prepareBuffer(this.MONO) 
             this.connectBuffer(this.MONO)
         }
+        else throw 'How could such a thing be?'
     }
 }

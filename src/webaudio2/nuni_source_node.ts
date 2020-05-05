@@ -128,12 +128,20 @@ class NuniSourceNode {
         throw 'Must be implemented in the "concrete" classes.'
     }
 
-    protected noteOnMono(key : number) {
+    protected noteReallyOn(key : number) {
         throw 'Must be implemented in the "concrete" classes.'
     }
-    
+
     protected noteOnPoly(key : number) {
-        throw 'Must be implemented in the "concrete" classes.'
+        this.noteReallyOn(key)
+    }
+    
+    protected noteOnMono(key : number) {
+        this.noteReallyOn(this.MONO)
+
+        const keyValue = KB.scale[KB.keymap[key]]
+        const src = this.sources[this.MONO]
+        src.detune.value = keyValue
     }
 
     private switchToNone() {

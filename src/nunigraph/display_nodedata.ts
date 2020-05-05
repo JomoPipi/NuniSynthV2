@@ -15,9 +15,10 @@ function set_selectNodeFunc(g : NuniGraph, container : HTMLDivElement, prompt : 
 
         container.innerHTML = ''
         const controls = E('div')
-        container.appendChild(
-            createDraggableTopBar(
+        
+        container.appendChild(createDraggableTopBar(
             `&nbsp; ${node.type.toUpperCase()}, &nbsp; id: ${node.id}`))
+
         container.appendChild(controls)
 
         controls.appendChild(showSubtypes(node))
@@ -27,7 +28,6 @@ function set_selectNodeFunc(g : NuniGraph, container : HTMLDivElement, prompt : 
         }
 
         if (node.audioNode instanceof NuniSourceNode) {
-            // controls.appendChild(showKeyboardConnection(node.audioNode))
             controls.appendChild(activateKeyboardButton(node.audioNode))
         }
 
@@ -44,7 +44,7 @@ function set_selectNodeFunc(g : NuniGraph, container : HTMLDivElement, prompt : 
              *  to deleted nodes become possible, and the 
              *  program blows up if you try to do that. 
              * */ 
-            prompt.style.display = 'none'
+            prompt.classList.remove('show')
 
             UndoRedoModule.save()
             g.deleteNode(node)

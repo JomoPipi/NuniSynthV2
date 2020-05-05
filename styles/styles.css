@@ -102,12 +102,12 @@ button {
   background-color: rgba(255, 0, 0, 0.204);
 }
 
-#connection-type-prompt {
+.prompt {
   display: none;
   position: absolute;
 }
 
-#connection-type-prompt button {
+.prompt button {
   font-size: 1.5em;
   border: 1px solid #1aff00;
   border-width: 2px 4px;
@@ -153,7 +153,7 @@ button {
       grid-template-columns: 1fr;
 }
 
-#info-menu-buttons .info-menu-button {
+#info-menu-buttons ._info-menu-button_ {
   color: #eee;
   pointer-events: all;
   border: 1px solid #333;

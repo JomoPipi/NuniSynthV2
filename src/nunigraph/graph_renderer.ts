@@ -451,7 +451,7 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
             (SupportsInputChannels[node2.type] ? ['channel'] : [])
             .concat(AudioNodeParams[node2.type])
 
-        prompt.style.display = 'block'
+        prompt.classList.add('show')
         prompt.innerHTML= ''
         for (const param of types as ConnectionType[]) {
             const btn = E('button')
@@ -460,7 +460,7 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
             {
                 UndoRedoModule.save()
                 g.connect(node1, node2, param)
-                prompt.style.display = 'none'
+                prompt.classList.remove('show')
                 render()
             }
             prompt.appendChild(btn)
@@ -468,7 +468,7 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         const cancel = E('button')
         cancel.innerHTML = 'cancel'
         cancel.classList.add('connection-button')
-        cancel.onclick = () => prompt.style.display = 'none'
+        cancel.onclick = () => prompt.classList.remove('show')
         prompt.appendChild(cancel)
 
         // Place the prompt in an accessible location

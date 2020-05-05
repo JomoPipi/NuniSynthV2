@@ -119,7 +119,7 @@ button {
     }
 }
 
-#connection-type-prompt {
+.prompt {
     display: none;
     position: absolute;
 
@@ -165,7 +165,7 @@ button {
     display: grid;
     grid-template-columns: 1fr;
     
-    .info-menu-button {
+    ._info-menu-button_ {
         color: #eee;
         pointer-events: all;
         border: 1px solid #333;
