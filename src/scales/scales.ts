@@ -6,16 +6,14 @@
 
 
 function refreshKeys() {
-    for (const { audioNode: an } of G.nodes) {
-        if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
-            an.refresh()
-        }
+    for (const an of G.activeKbNodes()) {
+        an.refresh()
     }
 }
 
 function previewScale() {
     let count = 0
-    for (const key of KB.keys) {
+    for (const key of KB.keyCodes) {
         const cents = KB.scale[KB.keymap[key]]
         if (cents > 2400) break;
 

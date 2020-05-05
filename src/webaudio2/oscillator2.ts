@@ -35,7 +35,6 @@ class OscillatorNode2 extends NuniSourceNode {
 
     private prepareOscillator(key : number) { // happens in refresh
         const src = this.ctx.createOscillator()
-        const keyValue = key === this.MONO ? 0 : KB.scale[KB.keymap[key]]
         this.ADSRs[key].gain.value = 0
 
         src.start(this.ctx.currentTime)
@@ -44,42 +43,42 @@ class OscillatorNode2 extends NuniSourceNode {
         this.detune.src.connect(src.detune)
         this.frequency.src.connect(src.frequency)
 
-        src.detune.value = keyValue
+        if (key !== this.MONO) {
+            src.detune.value = KB.scale[KB.keymap[key]]
+        }
+
         src.type = this._type
         src.frequency.value = 0
         this.sources[key] = src
     }
 
     protected noteOnPoly(key : number) {
-        const adsr = this.ADSRs[key]
-        if (adsr.releaseId >= 0) {
-            clearInterval(adsr.releaseId)
-        }
-        if (this.sources[key].isOn) return;
-        this.sources[key].isOn = true
-        ADSR.trigger(adsr.gain, this.ctx.currentTime)
+        this.noteReallyOn(key)
     }
     
     protected noteOnMono(key : number) {
         const src = this.sources[this.MONO]
-        const adsr = this.ADSRs[this.MONO]
-        if (adsr.releaseId >= 0 || this.lastMonoKeyPressed !== key) {
+        const keyValue = KB.scale[KB.keymap[key]]
+
+        src.detune.value = keyValue
+        this.noteReallyOn(this.MONO)
+    }
+
+    private noteReallyOn(key : number) {
+        const adsr = this.ADSRs[key]
+
+        if (adsr.releaseId >= 0) {
             clearInterval(adsr.releaseId)
         }
-        this.lastMonoKeyPressed = key
-        const keyValue = KB.scale[KB.keymap[key]]
-        src.detune.value = keyValue
-        if (src.isOn) return;
-        src.isOn = true 
-        ADSR.trigger(adsr.gain, this.ctx.currentTime)
-    } 
+        ADSR_Controller.trigger(adsr.gain, this.ctx.currentTime)
+    }
 
     refresh() {
         for (const key in this.sources) {
             this.sources[key].disconnect()
         }
         if (this.kbMode === 'poly') {
-            KB.keys.forEach(key =>
+            KB.keyCodes.forEach(key =>
                 this.prepareOscillator(key))
 
         } else if (this.kbMode === 'mono') {

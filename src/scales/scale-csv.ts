@@ -12,7 +12,7 @@ const setScaleFromCSV = (_ => {
         const N = arr.length
 
         KB.scale = 
-        KB.keys.map((_,i) => 
+        KB.keyCodes.map((_,i) => 
             arr[i % N] + 1200 * (i / N | 0)
             )
 

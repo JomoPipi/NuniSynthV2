@@ -210,7 +210,14 @@ class NuniGraph {
     fromString(s : string) {
         return this.fromRawString(LZW_decompress(s))
     }
-    
+
+    * activeKbNodes() {
+        for (const { audioNode: an } of this.nodes) {
+            if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
+                yield an
+            }
+        }
+    }
 }
 
 

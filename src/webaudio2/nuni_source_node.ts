@@ -39,7 +39,6 @@ class NuniSourceNode {
     kbMode: NodeKbMode        // The current state of the node - none | mono | poly
     ctx: AudioContext2        // The context of audio
     readonly MONO: 666420     // The Id of the mono ADSR and source
-    lastMonoKeyPressed: number 
     
     constructor(ctx: AudioContext2){
         this.MONO = 666420
@@ -48,12 +47,10 @@ class NuniSourceNode {
         this.connectees = []
         this.sources = {}
         this.ADSRs = {}
-        this.lastMonoKeyPressed = -1
     }
 
     connect(destination : Destination) {
         this.connectees.push(destination)
-
         this.connection(true, destination)
         this.refresh()
     }
@@ -61,10 +58,11 @@ class NuniSourceNode {
     disconnect(destination? : Destination) {
         if (!destination) {
             this.connectees.length = 0
-            for (const key in this.ADSRs) this.ADSRs[key].disconnect()
+            for (const key in this.ADSRs) {
+                this.ADSRs[key].disconnect()
+            }
             return;
         }
-
         this.connectees.splice(
             this.connectees.indexOf(destination), 1)
 
@@ -85,18 +83,21 @@ class NuniSourceNode {
     
     update(keydown : boolean, key : number) {
         if (this.kbMode === 'poly') {
-            keydown ? 
-                this.noteOnPoly(key) : 
+            if (keydown) {
+                this.noteOnPoly(key)
+            } else {
                 this.noteOff(key)
+            } 
         } else {
             if (keydown) {
                 this.noteOnMono(key)
             } else {
-                // Last note priority
-                const held = KB.held
-                held.length > 0 ? 
-                    this.noteOnMono(held[held.length-1]) :
+                if (KB.held.length) { 
+                    // Last note priority
+                    this.noteOnMono(KB.held[KB.held.length-1])
+                } else {
                     this.noteOff(this.MONO)
+                }
             }
         }
     }
@@ -105,21 +106,22 @@ class NuniSourceNode {
         this.disconnectAllConnectees()
 
         this.kbMode = mode
+
         if (mode === 'none') {
             this.switchToNone()
+
         } else if (mode === 'mono') {
             this.switchToMono()
+
         } else if (mode === 'poly') {
             this.switchToPoly() 
         }
+
         this.reconnectAllConnectees()
     }
 
     protected noteOff(key : number) {
-        if (this.sources[key].isOn) {
-            this.sources[key].isOn = false
-            ADSR.untrigger(this, key)
-        }
+        ADSR_Controller.untrigger(this, key)
     }
 
     refresh() {
@@ -148,7 +150,7 @@ class NuniSourceNode {
     }
 
     private switchToPoly() {
-        this.ADSRs = KB.keys.reduce((adsr,key) => {
+        this.ADSRs = KB.keyCodes.reduce((adsr,key) => {
             adsr[key] = new Adsr(this.ctx)
             return adsr
         }, {} as Indexable<Adsr>)

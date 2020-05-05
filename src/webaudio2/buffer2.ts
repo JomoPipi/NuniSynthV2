@@ -49,41 +49,40 @@ class BufferNode2 extends NuniSourceNode {
 
     private connectBuffer(key : number) {
         const src = this.sources[key] 
-        src.start(this.ctx.currentTime)
-            
-        src.isOn = true
+        if (!src.hasStarted) {
+            src.hasStarted = true
+            src.start(this.ctx.currentTime)
+        }
     }
     
     protected noteOnPoly(key : number) {
+        this.noteReallyOn(key)
+    }
+    
+    protected noteOnMono(key : number) {
+        const keyValue = KB.scale[KB.keymap[key]]
+
+        this.noteReallyOn(this.MONO)
+
+        this.sources[this.MONO].detune.value = keyValue
+    }
+
+    private noteReallyOn(key : number) {
         const adsr = this.ADSRs[key]
+
         if (adsr.releaseId >= 0) {
             clearInterval(adsr.releaseId)
             adsr.releaseId = -1
             this.prepareBuffer(key)
         }
-        if (this.sources[key].isOn) return;
-        ADSR.trigger(adsr.gain, this.ctx.currentTime)
+        
+        ADSR_Controller.trigger(adsr.gain, this.ctx.currentTime)
         this.connectBuffer(key)
-    }
-    
-    protected noteOnMono(key : number) {
-        const _k = this.MONO
-        const adsr = this.ADSRs[_k]
-        if (adsr.releaseId >= 0 || this.lastMonoKeyPressed !== key) {
-            clearInterval(adsr.releaseId)
-            this.prepareBuffer(_k)
-        }
-        this.lastMonoKeyPressed = key
-        const keyValue = KB.scale[KB.keymap[key]]
-        this.sources[_k].detune.value = keyValue
-        if (this.sources[_k].isOn) return;
-        ADSR.trigger(adsr.gain, this.ctx.currentTime)
-        this.connectBuffer(_k)
     }
 
     refresh() {
         if (this.kbMode === 'poly') {
-            KB.keys.forEach(key => 
+            KB.keyCodes.forEach(key => 
                 this.prepareBuffer(key))
 
         } else if (this.kbMode === 'mono') {
@@ -95,4 +94,3 @@ class BufferNode2 extends NuniSourceNode {
         }
     }
 }
-

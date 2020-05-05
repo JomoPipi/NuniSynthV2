@@ -11,7 +11,7 @@ class Adsr extends GainNode {
      * to add the property lastReleastId to GainNodes.
      * 
      * releaseId is -1 when the adsr is not in the release stage,
-     * and something else, otherwise.
+     * and some other number, otherwise.
      */
     releaseId : number
     constructor(ctx : AudioContext2) {
@@ -20,19 +20,19 @@ class Adsr extends GainNode {
     }
 }
 
-const ADSR = {
+const ADSR_Controller = {
+    canvas: D('adsr-canvas'),
+
     attack: 0.010416984558105469, 
     decay: 0.17708349227905273, 
     sustain: 0.2166603088378906, 
     release: 0.3812504768371582,
-    canvas: document.getElementById('adsr-canvas'),
 
     trigger: function(gain : AudioParam, t : number) {
         const { attack, decay, sustain } = this
-        gain.cancelScheduledValues(t)                          // cancel existing triggers
-        gain.setValueAtTime(0,t)                               // this needs to be disabled to allow mono-glide
-        gain.setTargetAtTime(1, t, attack)                     // attack phase
-        gain.setTargetAtTime(sustain ** 2, t + attack, decay)  // decay phase
+        gain.cancelScheduledValues(t)                          // Cancel existing triggers
+        gain.setTargetAtTime(1, t, attack)                     // Attack phase
+        gain.setTargetAtTime(sustain ** 2, t + attack, decay)  // Decay phase
     },
 
     untrigger: function(sourceNode : NuniSourceNode, key : number) {
@@ -41,6 +41,7 @@ const ADSR = {
         const t = sourceNode.ctx.currentTime
         const adsr = sourceNode.ADSRs[key]
         const gain = adsr.gain
+
         gain.cancelScheduledValues(t)
         gain.setTargetAtTime(0, t, release)
         
@@ -67,9 +68,9 @@ const ADSR = {
             }
         }, 40)
     },
-
     render: () => void 0
 }
+
 // const aux_ADSR = {
 //     attack: 0.010416984558105469, 
 //     decay: 0.17708349227905273, 
@@ -77,9 +78,9 @@ const ADSR = {
 //     release: 0.4812504768371582,
 // }
 {
-    // create render functions for these ADSR's
+    // Attach render function to ADSR_Controller
 
-    ;[/*['aux-',aux_ADSR],*/['',ADSR]].forEach(([s,adsr] : any) => { 
+    ;[/*['aux-',aux_ADSR],*/['',ADSR_Controller]].forEach(([s,adsr] : any) => { 
 
         const isAux = s === 'aux-'        
         const ctx = adsr.canvas.getContext('2d')
@@ -93,7 +94,7 @@ const ADSR = {
                 this.attack  / sum,
                 this.decay   / sum,
                 0.25         / sum,
-                // release is done by default
+                // Release is done by default
             ]
             const [aw,dw,sw] = adsrWidths
 
@@ -111,7 +112,9 @@ const ADSR = {
             ]
 
             if (isAux) {
-                // the only difference between ADSR and AD
+                // The only difference between ADSR and AD.
+                // I know it's not currently being used, 
+                // but I don't want to delete this.
                 arr[1][1] = 1
                 arr[2] = arr[3]
             }
@@ -131,8 +134,6 @@ const ADSR = {
             })
             ctx.closePath()
         }
-
-
 
         adsr.render()
     })
