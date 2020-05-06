@@ -5,21 +5,30 @@
 
 
 
-D('info-button')!.onclick = () => {
-    D('info-menu-container')!.classList.toggle('show')
-}
+{
+    const container = D('info-menu-container')!
+    const infoBtns = 
+        [...document.querySelectorAll('._info-menu-button_')] as
+        HTMLButtonElement[]
 
-D('info-menu-buttons')!.onclick = function(e : MouseEvent) {
-    const btns = document.querySelectorAll('._info-menu-button_')
-    for (const b of btns) {
-        // Toggle button styles
-        const clicked = e.target === b
-        b.classList.toggle(
-        'active-info-button', clicked)
+    D('info-button')!.onclick = () => {
+        const showMenu = container.classList.toggle('show')
+        container.onclick = showMenu ? clickInsideContainer : null
+    }
 
-        // Toggle info texts. There is tight coupling with the HTML, here.
-        D(b.innerHTML.trim() + '-info')!
-        .classList.toggle(
-        'show', clicked)
+    function clickInsideContainer(e : MouseEvent) {
+        const clickedElement = e.target
+        if (clickedElement === container) {
+            container.classList.toggle('show')
+            return;
+        }
+        for (const btn of infoBtns) {
+            const wasClicked = clickedElement === btn
+            const infoTab = D(btn.value)!
+
+            btn.classList.toggle('active-info-button', wasClicked)
+    
+            infoTab.classList.toggle('show', wasClicked)
+        }
     }
 }

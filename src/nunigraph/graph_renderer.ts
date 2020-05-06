@@ -104,8 +104,8 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         const delta = nodeRadius + nodeLineWidth
         const m = (y1-y2)/(x1-x2)                // the slope of the line
         const angle = Math.atan(m)               // angle
-        const dy = Math.sin(angle) * delta       // line shift y  
-        const dx = Math.cos(angle) * delta       // line shift x
+        const dy = Math.sin(angle) * delta       // line shift y 
+        const dx = Math.cos(angle) * delta       // line shift x 
         const z = x1 >= x2 ? -1 : 1              // invert deltas
         const W = cacheOptions ? 1 : 0           // trim line end
         const [x,y,X,Y] =                        // line coordinates
@@ -121,7 +121,7 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
                 connectionsCache[c_id] = 
                 connectionsCache[c_id] || { fromId, toId, connectionType }
 
-            // Update the location of the arrowhead/triangle
+            // Update/set the location of the arrowhead/triangle
             data.x = X - dx * z * W / 3.0
             data.y = Y - dy * z * W / 3.0
 
@@ -189,28 +189,32 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         ctx.translate(-x,-y)
     }
 
+    const getParallelConnectionGroups = (fromId : number) => {
+        return g.oneWayConnections[fromId].reduce((groups, v) => 
+            ({ 
+                ...groups, 
+                [v.id] : [...(groups[v.id] || []), v] 
+            })
+            , {} as Indexable<ConnecteeDatum[]>)
+    }
 
-    const drawNodeConnections = (nodes : NuniGraphNode[], H : number, W : number, 
-    { offsetX, offsetY } : { offsetX? : number, offsetY? : number }) => {
+    const drawNodeConnections = (
+        nodes : NuniGraphNode[], 
+        H : number, 
+        W : number, 
+        offsetX? : number, offsetY? : number) => {
+
         ctx.lineWidth = connectionLineWidth
         for (const id1 in g.oneWayConnections) {
-            const fromId = +id1 
-            // gather the groups of parallel connections
-            const idGroups = g.oneWayConnections[fromId].reduce((groups, v) => {
-                const group = groups[v.id]
-                if (group) {
-                    group.push(v)
-                } else {
-                    groups[v.id] = [v]
-                }
-                return groups
-            }, {} as { [key:number] : ConnecteeDatum[] })
+            const fromId = +id1
+            const idGroups = getParallelConnectionGroups(fromId)
             
+            // Draw the group of parallel connections
             for (const i in idGroups) {
-                const groups = idGroups[i]!
+                const groups = idGroups[i]
                 const connections = groups.length
-                groups.forEach(({ id: toId, connectionType } ,i) => {
-
+                groups.forEach(({ id: toId, connectionType }, i) => {
+                    
                     const a = nodes.find(node => node.id === fromId)!
                     const b = nodes.find(node => node.id === toId)!
                     const [xa,ya] = [ a.x*W, a.y*H ]    // node a coords
@@ -232,7 +236,6 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         }
     }
 
-
     const getNodeColor = (node : NuniGraphNode, H : number, W : number) => {
         
         const prop = (<Indexed>AudioNodeParams)[node.type][0]
@@ -249,7 +252,6 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
             
         return gradient
     }
-
 
     const drawNodes = (nodes : NuniGraphNode[], H : number, W : number, 
         options : { 
@@ -307,11 +309,9 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         ctx.font = '15px Arial'
         ctx.clearRect(0,0,W,H)
     
-        if (snapToGrid.checked) {
-            drawGridLines(H,W,buttons)
-        } 
-
-        drawNodeConnections(nodes, H, W, options)
+        if (snapToGrid.checked) drawGridLines(H,W,buttons)
+        
+        drawNodeConnections(nodes, H, W, offsetX, offsetY)
         drawNodes(nodes, H, W, options)
 
         if (fromNode) { // draw the connection currently being made
@@ -455,7 +455,7 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         prompt.innerHTML= ''
         for (const param of types as ConnectionType[]) {
             const btn = E('button')
-            btn.innerHTML = param
+            btn.innerText = param
             btn.onclick = () =>
             {
                 UndoRedoModule.save()
@@ -466,7 +466,7 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
             prompt.appendChild(btn)
         }
         const cancel = E('button')
-        cancel.innerHTML = 'cancel'
+        cancel.innerText = 'cancel'
         cancel.classList.add('connection-button')
         cancel.onclick = () => prompt.classList.remove('show')
         prompt.appendChild(cancel)

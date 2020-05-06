@@ -68,6 +68,9 @@ const KB = (() => {
             return ({ keyCode: key } : KeyboardEvent) => {
                 if (key in keymap){ 
 
+                    // Maybe only do this when the keyboard image is visible?
+                    updateKBDiv(key, keydown)
+
                     // UPDATE HELD-KEY ARRAY 
                     // Sets up last-note priority, and prevents event spamming when keys are held.
                     const idx = held.indexOf(key)
@@ -82,9 +85,6 @@ const KB = (() => {
                             return;
                         }
                     }
-                    
-                    // Maybe only do this when the keyboard image is visible?
-                    updateKBDiv(key, keydown)
 
                     // MAKE THE SOUND HAPPEN
                     for (const an of g.activeKbNodes()) {

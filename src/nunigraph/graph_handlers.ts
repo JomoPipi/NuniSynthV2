@@ -65,7 +65,7 @@ D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
         const colorbox = E('span')
         const textbox = E('span')
         colorbox.style.background = color
-        textbox.innerHTML = text
+        textbox.innerText = text
         legend.appendChild(colorbox)
         legend.appendChild(textbox)
     }

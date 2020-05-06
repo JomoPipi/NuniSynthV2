@@ -22,7 +22,7 @@ function invertBuffer(index : number) {
 ;['up','down'].forEach((s,i) => {
     D('buffer-index-'+s)!.onclick = () => {
         const idx = Buffers.currentIndex = clamp(0, Buffers.currentIndex + Math.sign(.5 - i), nBuffers-1)
-        D('buffer-index')!.innerHTML = idx.toString()
+        D('buffer-index')!.innerText = idx.toString()
         Buffers.refreshAffectedBuffers()
     }
 })

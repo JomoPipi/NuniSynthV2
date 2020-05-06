@@ -22,12 +22,12 @@
     for (const name in presets) {
         const item = E('button')
         item.classList.add('list-btn')
-        item.innerHTML = name
+        item.innerText = name
         div.appendChild(item)
     }
 
     div.onclick = function(e : MouseEvent) {
-        const name = (e.target as HTMLElement).innerHTML
+        const name = (e.target as HTMLElement).innerText
         if (name in presets) {
             G.fromString((<any>presets)[name])
             GraphCanvas.render()

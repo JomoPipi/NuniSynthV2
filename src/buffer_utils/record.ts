@@ -12,7 +12,7 @@ recordButton.onclick = () =>
 
 function recordTo(index : number) {
     const errStuff = (err : string) => {
-        recordButton.innerHTML = err
+        recordButton.innerText = err
         recordButton.style.backgroundColor = 'orange'
     }
 

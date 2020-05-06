@@ -13,13 +13,15 @@ function createDraggableTopBar(text? : string) {
     const bar = E('div')
     const exitBtn = E('button')
 
-    bar.innerHTML = text || ''
+    bar.innerText = text || ''
 
     applyStyle(bar, {
         height: '30px',
         width: '100%',
         background: '#555',
         cursor: 'move',
+        paddingLeft: '5px',
+        boxSizing: 'border-box'
         })
 
     applyStyle(exitBtn, {
@@ -36,7 +38,7 @@ function createDraggableTopBar(text? : string) {
         })
 
     bar.appendChild(exitBtn)
-    exitBtn.innerHTML = 'x'
+    exitBtn.innerText = 'x'
 
     let isBeingDragged = false
 

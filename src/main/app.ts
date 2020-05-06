@@ -24,3 +24,5 @@ const graph1 = `
 
 
 G.fromString(graph0)
+
+GraphCanvas.render()

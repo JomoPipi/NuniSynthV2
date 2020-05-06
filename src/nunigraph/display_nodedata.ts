@@ -17,9 +17,7 @@ function set_selectNodeFunc(g : NuniGraph, container : HTMLDivElement, prompt : 
         const controls = E('div')
         
         container.appendChild(createDraggableTopBar(
-            `&nbsp; ${node.type.toUpperCase()}, &nbsp; id: ${node.id}`))
-
-        container.appendChild(controls)
+            `${node.type.toUpperCase()}, id: ${node.id}`))
 
         controls.appendChild(showSubtypes(node))
 
@@ -33,32 +31,35 @@ function set_selectNodeFunc(g : NuniGraph, container : HTMLDivElement, prompt : 
 
         controls.appendChild(exposeAudioParams(node))
 
-        // Add delete button
-        if (node.id === 0) return; // Don't delete the master gain node
-        const deleteNode = E('button')
-        deleteNode.innerHTML = 'delete this node'
-        deleteNode.style.float = 'right'
-        deleteNode.onclick = _ => {  
-
-            /** If this prompt stays open then connections 
-             *  to deleted nodes become possible, and the 
-             *  program blows up if you try to do that. 
-             * */ 
-            prompt.classList.remove('show')
-
-            UndoRedoModule.save()
-            g.deleteNode(node)
-            g.unselectNode()
-            GraphCanvas.render() // Has to be generalized, as well.
+        // Add delete button, but not if id is 0, because that's the master gain.
+        if (node.id !== 0) { 
+            const deleteNode = E('button')
+            deleteNode.innerText = 'delete this node'
+            deleteNode.style.float = 'right'
+            deleteNode.onclick = _ => {  
+    
+                /** If this prompt stays open then connections 
+                 *  to deleted nodes become possible, and the 
+                 *  program blows up if you try to do that. 
+                 * */ 
+                prompt.classList.remove('show')
+    
+                UndoRedoModule.save()
+                g.deleteNode(node)
+                g.unselectNode()
+                GraphCanvas.render() // Has to be generalized, as well.
+            }
+            controls.append(deleteNode)
         }
-        controls.append(deleteNode)
+
+        container.appendChild(controls)
     }
 }
 
 function activateKeyboardButton(an : NuniSourceNode) {
     // (dis?)connects the node from the keyboard.
     const btn = E('button')
-    btn.innerHTML = '🎹'
+    btn.innerText = '🎹'
     btn.classList.add('kb-button')
     btn.classList.toggle('selected', an.kbMode !== 'none')
     btn.onclick = () => {
@@ -102,15 +103,15 @@ function samplerControls(audioNode : BufferNode2) {
     const box = E('span')
     box.innerHTML = '<span> buffer </span>'
     box.classList.add('buffer-row')
-    const value = E('span'); value.innerHTML = audioNode.bufferIndex.toString()
+    const value = E('span'); value.innerText = audioNode.bufferIndex.toString()
     box.appendChild(value)
 
     ;['-','+'].forEach((op,i) => { // change the buffer index
-        const btn = E('button'); btn.innerHTML = op
+        const btn = E('button'); btn.innerText = op
         btn.onclick = () => {
             const v = clamp(0, audioNode.bufferIndex + Math.sign(i - .5), nBuffers-1)
 
-            value.innerHTML = v.toString()
+            value.innerText = v.toString()
             audioNode.bufferIndex = v
             audioNode.refresh()
         }
@@ -118,7 +119,7 @@ function samplerControls(audioNode : BufferNode2) {
     })
  
     ;['loop'].forEach(text => { // toggleable buttons
-        const btn = E('button'); btn.innerHTML = text
+        const btn = E('button'); btn.innerText = text
         btn.classList.toggle('selected',(audioNode as Indexed)[text])
         btn.onclick = () => {
             const on = (audioNode as Indexed)[text] ^= 1
