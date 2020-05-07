@@ -18,7 +18,7 @@ Linking together basic **audio nodes** gives us the flexibility to create variou
 
 **Delay** nodes cause a delay between the arrival of input data and its propagation to the output.
 
-**Sampler** nodes allow you to play loaded or recorded samples.
+**Buffer** nodes allow you to play loaded or recorded samples.
 
 # Connections
 If you try to make a connection to any node besides the **master gain**, you will be asked to specify the connection type. 
