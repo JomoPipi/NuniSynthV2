@@ -40,18 +40,24 @@ function createDraggableTopBar(text? : string) {
     bar.appendChild(exitBtn)
     exitBtn.innerText = 'x'
 
-    let isBeingDragged = false
+    let coords : any = null
 
     const mouseup = (e : MouseEvent) => {
-
-        isBeingDragged = false
+        coords = null
         window.removeEventListener('mousemove',mousemove)
         window.removeEventListener('mouseup',mouseup)
     }
 
-    const mousedown = function(e : MouseEvent) {
-        
-        isBeingDragged = true
+    const mousedown = function({ clientX, clientY } : MouseEvent) {
+        const box = bar.parentElement
+        if (!box) throw 'A box to drag is required.'
+
+        coords = [
+            clientX, 
+            clientY, 
+            box.offsetLeft + box.offsetWidth/2, 
+            box.offsetTop + box.offsetHeight/2
+            ]
         window.addEventListener('mousemove',mousemove)
         window.addEventListener('mouseup',mouseup)
     }
@@ -61,11 +67,12 @@ function createDraggableTopBar(text? : string) {
         const box = bar.parentElement
         if (!box) throw 'A box to drag is required.'
 
-        if (isBeingDragged) {
+        if (coords) {
+            const [x, y, bx, by] = coords
             UI_clamp(
-                e.clientX, 
-                e.clientY + box.offsetHeight/2 - bar.offsetHeight/2,
-                box, 
+                e.clientX + bx - x,
+                e.clientY + by - y,
+                box,
                 document.body)
         }
     }

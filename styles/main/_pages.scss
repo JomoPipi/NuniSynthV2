@@ -6,7 +6,7 @@
 
 
 .scale-builder-container {
-    background-color: $c1;
+    background-color: $color0;
     width: 100%;
 }
 
@@ -22,17 +22,18 @@
 }
 
 .neumorph { 
+    padding: 1.5%;
     border: none;
-    color: #aaa;
+    color: $color6;
     margin: 4%;
     border-radius: 9px;
-    background: #292929;
+    background: transparent;
     box-shadow:  5px 5px 10px #212121, 
                 -5px -5px 10px #2d2d2d;
 }
 
 .selected {
-    background-color: rgb(3, 255, 0);
+    background-color: rgb(0, 255, 0);
 }
 
 .show { // Has to be at the end so that it "wins".

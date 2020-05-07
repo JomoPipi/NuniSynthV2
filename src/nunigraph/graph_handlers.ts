@@ -69,7 +69,7 @@ D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
         legend.appendChild(colorbox)
         legend.appendChild(textbox)
     }
-    append('master-gain','#222')
+    append('master-gain', MasterGainColor)
     for (const key in NodeTypes) {
         const type = (<Indexed>NodeTypes)[key] as NodeTypes
         append(type, NodeTypeColors[type])

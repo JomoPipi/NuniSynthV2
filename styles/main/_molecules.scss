@@ -6,19 +6,23 @@
 
 
 .apply-btn {
+    margin: 5px;
     padding: 0px 5px;
     border-radius: 5px;
-    color: gray;
-    background-color: $c0;
+    border: none;
+    color: $color6;
+    background-color: $color2;
     float: right;
     box-sizing: border-box;
 }
 
 .list-btn {
+    margin: 5px;
     border-width: 0.5px;
     padding: 0px 5px;
     border-radius: 5px;
-    color: gray;
-    background-color: $c0;
+    border: none;
+    color: $color6;
+    background-color: $color1;
     box-sizing: border-box;
 }

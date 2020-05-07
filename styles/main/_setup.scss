@@ -15,7 +15,7 @@ body, html {
     border-width: 0px;
     width: 100%;
     height: 100%;
-    color: #eee;
+    color: $color6;
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10+ and Edge */
     user-select: none; /* Standard syntax */
@@ -25,10 +25,10 @@ select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;       /* Remove default arrow */
-    background: $c3;
+    background: $color4;
     border: none;
     padding: 0px 10px;
-    color: $text;
+    color: $color6;
     cursor: pointer;
     /* background-image: url(...);   Add custom arrow */
 }
@@ -55,7 +55,7 @@ button {
 
 
 .top-bar {
-    background: $ui-bg;
+    background: $color0;
 }
 
 // .the-three-panels {
@@ -77,7 +77,7 @@ button {
 }
 
 .top-bar-2 {
-    background: $c2;
+    background: $color1;
     border-bottom: 2px solid rgba(128,128,128,0.2);
     box-sizing: border-box;
 }
@@ -87,8 +87,8 @@ button {
 }
 
 #tabs {
-    background: $c3;
-    color: $text;
+    background: $color2;
+    color: $color6;
     width: 100%;
     height: 100%;
 }
@@ -104,8 +104,8 @@ button {
 #graph-contextmenu {
     display: none;
     position: absolute;
-    background-color: #eee;
-    color: black;
+    background-color: white;
+    color: #999;
     z-index: 15;
     
     .contextmenu-button {
@@ -146,7 +146,7 @@ button {
 
 .info-menu {
     border: 3px solid blue;
-    background-color: $c0;
+    background-color: $color0;
     width: 400px;
     height: 400px;
     margin-top: 5%;
@@ -169,11 +169,11 @@ button {
         color: #eee;
         pointer-events: all;
         border: 1px solid #333;
-        background-color: $c2;
+        background-color: $color2;
     }
 
     .active-info-button {
-        background-color: $c0;
+        background-color: $color0;
         border-right: none;
         outline: none;
     }
@@ -241,7 +241,8 @@ button {
 .window {
     display: none;
     position: absolute;
-    background-color: rgb(0, 7, 1);
+    background-color: $color0;
+    color: $color6;
     border: 1px solid white;
     z-index: 2;
 }

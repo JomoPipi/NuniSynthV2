@@ -21,25 +21,13 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
 
     let fromNode = null as NuniGraphNode | null
     const ctx = canvas.getContext('2d')!
-    const nodeRadius = 17
+    const nodeRadius = 25
     const nodeLineWidth = 8
     const connectionLineWidth = PHI
     const innerEdgeBoundary = nodeRadius / 1.5
     const outerEdgeBoundary = nodeRadius + nodeLineWidth
     const triangleRadius = nodeRadius / 3.0
     const triangleSize = innerEdgeBoundary
-
-    const textGradient = (() => { 
-        const gradient = ctx.createLinearGradient(0,0,0,1000)
-        for (let i = 0; i < 1; i += .002) {
-            gradient.addColorStop(
-                i, 
-                "#" + [0,0,0].map(_=>
-                    'fedcba9876543'[Math.random()*8|0]).join('')
-                    )
-        }
-        return gradient
-    })()
 
     const snapToGrid = D('snap-to-grid')! as HTMLInputElement
         snapToGrid.oninput = () => render()
@@ -273,7 +261,7 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
             const shouldHighlight = hoveringInside && !fromNode
             
             ctx.strokeStyle = aroundEdge ? 'rgba(255,255,255,0.75)' :
-                node.id === 0 ? '#222' : NodeTypeColors[node.type]
+                node.id === 0 ? MasterGainColor : NodeTypeColors[node.type]
 
             ctx.lineWidth = nodeLineWidth
             ctx.fillStyle = getNodeColor(node, H, W)

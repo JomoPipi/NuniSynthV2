@@ -5,24 +5,47 @@
 
 
 
-$text: rgba(105, 255, 235, 0.8);
-$canvas-bg: rgb(51, 61, 63);
+// $canvas-bg: rgb(51, 61, 63);
 
-$c0: rgb(35, 47, 48);
-$c1: #171717;
-$c2: #212121;
-$c3: #272727;
+// $color0: rgb(35, 47, 48);
+// $color1: #171717;
+// $color2: #212121;
+// $color3: #272727;
 
-$ui-bg: linear-gradient(
-    180deg, 
-    rgb(35, 47, 48) 0%, 
-    rgb(0, 0, 0) 100%);
 
-$grad0: linear-gradient(
-    180deg, 
-    rgba(120,159,157,1) 0%, 
-    rgba(177,163,129,1) 100%);
+// $color0: rgba(237, 238, 201, 1);
+// $color1: rgba(221, 231, 199, 1);
+// $color2: rgba(191, 216, 189, 1);
+// $color3: rgba(152, 201, 163, 1);
+// $color4: rgba(119, 191, 163, 1);
+// $color0: rgba(239, 99, 81, 1);
+// $color1: rgba(243, 131, 117, 1);
+// $color2: rgba(247, 163, 153, 1);
+// $color3: rgba(251, 195, 188, 1);
+// $color4: rgba(255, 227, 224, 1);
 
+
+
+// $color0: rgb(55, 59, 55);
+// $color1: rgb(62, 71, 62);
+// $color2: rgba(124, 136, 123, 1);
+// $color3: rgba(189, 206, 187, 1);
+// $color4: rgba(192, 193, 197, 1);
+// $color5: rgba(209, 200, 200, 1);
+// $color6: rgba(238, 250, 238, 1);
+
+
+$color0: rgb(32, 30, 32);
+$color1: rgb(47, 48, 47);
+$color2: rgb(57, 58, 57);
+$color3: rgb(64, 68, 65);
+$color4: rgb(91, 93, 94);
+$color5: rgb(151, 163, 154);
+$color6: rgb(255, 255, 255);
+
+$canvas-bg: $color0;
+
+$ui-bg: $color1;
     
 @import './main/setup';
 @import './main/atoms';

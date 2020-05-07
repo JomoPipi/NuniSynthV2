@@ -55,16 +55,17 @@ const AudioNodeParams = {
 }
 
 const AudioNodeSubTypes = {
-    [NodeTypes.GAIN]:    [],
-    [NodeTypes.OSC]:     ['sine','square','triangle','sawtooth'],
+    [NodeTypes.GAIN]:   [],
+    [NodeTypes.OSC]:    ['sine','square','triangle','sawtooth'],
     [NodeTypes.FILTER]: 
         ["lowpass", "highpass", "bandpass", "lowshelf",
          "highshelf", "peaking", "notch", "allpass"],
-    [NodeTypes.PANNER]:  [],
-    [NodeTypes.DELAY]:   [],
+    [NodeTypes.PANNER]: [],
+    [NodeTypes.DELAY]:  [],
     [NodeTypes.BUFFER]: []
 }
 
+const MasterGainColor = '#555'
 const NodeTypeColors : { readonly [key in NodeTypes] : string } =
 {
     [NodeTypes.GAIN]:   'rgba(255,0,0,0.5)',

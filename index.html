@@ -98,317 +98,311 @@
 
 
 
-<div class="panel">
-    <div class="top-bar">
-      <span class="some-margin"> NuniSynth </span>
-    </div>
+<div class="the-two-panels">
+  
+  <div id="tabs-panel" class="panel">
 
-    <div class="the-two-panels">
+    <div class="top-bar-2">
+      <span>
+        <select id="tab-swapper">
+          <!-- THE VALUES HERE ARE THE IDs OF TABS -->
+          <option value="graph-tab">         Graph          </option>
+          <option value="keyboard-tab">      Keyboard       </option>
+          <option value="buffer-edit-tab">   Buffers        </option>
+          <option value="waveform-edit-tab"> Waveforms      </option>
+          <option value="sequencer-tab">     Sequencer      </option>
+        </select>
+      </span>
+      <button 
+        id="info-button" 
+        class="info-button"> 
+        i 
+      </button> 
+    </div>
+    
+    <div id="tabs">
+
+
       
-      <div id="tabs-panel" class="panel">
-
-        <div class="top-bar-2">
-          <span>
-            <select id="tab-swapper">
-              <!-- THE VALUES HERE ARE THE IDs OF TABS -->
-              <option value="graph-tab">         Graph          </option>
-              <option value="keyboard-tab">      Keyboard       </option>
-              <option value="buffer-edit-tab">   Buffers        </option>
-              <option value="waveform-edit-tab"> Waveforms      </option>
-              <option value="sequencer-tab">     Sequencer      </option>
-            </select>
-          </span>
-          <button 
-            id="info-button" 
-            class="info-button"> 
-            i 
-          </button> 
-        </div>
-        
-        <div id="tabs">
-
-
+      <div id="graph-tab" class="_tab_ show">
+          <div class="side-margin">
+              <div class="center dim-text"> Create Nodes </div>
+              <div class="three-columns">
+                <button id="create-gain" class="neumorph">        gain         </button>
+                <button id="create-oscillator" class="neumorph">  oscillator   </button>
+                <button id="create-filter" class="neumorph">      filter       </button>
+                <button id="create-panner" class="neumorph">      panner       </button>
+                <button id="create-delay" class="neumorph">       delay        </button>    
+                <button id="create-buffer" class="neumorph">      buffer       </button>    
+              </div>
           
-          <div id="graph-tab" class="_tab_ show">
-              <div class="side-margin">
-                  <div class="three-columns">
-                    <span></span> <span> Create Nodes </span> <span></span>
-                    <button id="create-gain" class="neumorph">        gain         </button>
-                    <button id="create-oscillator" class="neumorph">  oscillator   </button>
-                    <button id="create-filter" class="neumorph">      filter       </button>
-                    <button id="create-panner" class="neumorph">      panner       </button>
-                    <button id="create-delay" class="neumorph">       delay        </button>    
-                    <button id="create-buffer" class="neumorph">      buffer       </button>    
-                  </div>
-              
-                  <div class="graph-copy-buttons">
+              <div class="graph-copy-buttons">
 
-                    <button id="copy-graph-button" class="neumorph"> 
-                      copy this graph </button>
-                    <input 
-                      type="text" 
-                      id="graph-copy-output" 
-                      class="text-input">
-                    
-                    <button id="from-string-button" class="neumorph"> 
-                      new graph from code </button>
-                    <input 
-                      type="text" 
-                      id="graph-copy-input" 
-                      class="text-input" 
-                      placeholder="Paste an encoded graph, here.">
-
-                  </div>
-                  
-                  <div>
-                  </div>
-                  
-                  <div>
-                      <span> snap to grid 
-                        <input type="checkbox" id="snap-to-grid"> 
-                      </span>
-                      <button id="clear-graph-button" class="neumorph" style="float:right"> clear graph </button>
-                  </div>
-                  
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-
-                  PRESETS
-                  <div id="graph-preset-list" class="preset-list">
-                  </div>
-              </div>
-          </div>
-
-
-
-
-          <div id="keyboard-tab" class="_tab_">
-            <div class="side-margin">
-
-              <div class="adsr-and-kb">
-
-                <!-- ADSR -->
-                <span class="adsr-box">
-
-                  <!-- <span class="text0"> GAIN ADSR </span> 
-
-                  <br> -->
-
-                  <div class="some-margin"> ADSR </div>
-                  <canvas id="adsr-canvas"></canvas>
-                  
-                  <div class="adsr-knobs"> 
-
-                    <span class="shadow-knob">
-                      <div id="adsr-attack" class="js-dial">
-                      </div>
-                    </span>
-
-                    <span class="shadow-knob">
-                        <div id="adsr-decay" class="js-dial">
-                        </div>
-                    </span>
-
-                    <span class="shadow-knob">
-                        <div id="adsr-sustain" class="js-dial">
-                        </div>
-                    </span>
-
-                    <span class="shadow-knob">
-                        <div id="adsr-release" class="js-dial">
-                        </div>
-                    </span>
-                  </div>
-                </span>
-
-                <span>
-                  <br>
-
-                  <span class="keyboard" id="keyboard-image"></span>
-                  <br>
-
-                  <span id="mono-poly-select" class="center">
-                    <input id="keyboard-mono-radio" 
-                      type="radio"
-                      name="radio">
-                    <label for="keyboard-mono-radio" class="radio"> 
-                      MONO
-                    </label>
-
-                    <input id="keyboard-poly-radio"
-                      type="radio"
-                      checked="true"
-                      name="radio">
-                    <label for="keyboard-poly-radio" class="radio"> 
-                      POLY
-                    </label>
-                  </span>
-                </span>
-
-              </div>
-
-              <!-- START SCALE BUILDER CONTAINER  -->
-              <div id="scale-builder-container" class="scale-builder-container">
-
-                <div class="center">
-                  <select id="scale-kinds">
-                    <option value="preset-library"> SCALE PRESETS </option>
-                    <option value="scale-builder"> SCALE BUILDER </option>
-                  </select> 
-                </div>
+                <button id="copy-graph-button" class="neumorph"> 
+                  copy this graph </button>
+                <input 
+                  type="text" 
+                  id="graph-copy-output" 
+                  class="text-input">
                 
-                <div id="preset-library" class="_scale-tab_ show">
-                  <br>
-                  <div id="scale-preset-list" class="preset-list"></div>
-                </div>
+                <button id="from-string-button" class="neumorph"> 
+                  new graph from code </button>
+                <input 
+                  type="text" 
+                  id="graph-copy-input" 
+                  class="text-input" 
+                  placeholder="  Paste an encoded graph, here.">
 
-                <div id="scale-builder" class="_scale-tab_">
+              </div>
+              
+              <div>
+              </div>
+              
+              <div>
+                  <span> snap to grid 
+                    <input type="checkbox" id="snap-to-grid"> 
+                  </span>
+                  <button id="clear-graph-button" class="neumorph" style="float:right"> clear graph </button>
+              </div>
+              
+              <br>
+              <br>
+              <br>
+              <br>
+
+              PRESETS
+              <div id="graph-preset-list" class="preset-list">
+              </div>
+          </div>
+      </div>
+
+
+
+
+      <div id="keyboard-tab" class="_tab_">
+        <div class="side-margin">
+
+          <div class="adsr-and-kb">
+
+            <!-- ADSR -->
+            <span class="adsr-box">
+
+              <!-- <span class="text0"> GAIN ADSR </span> 
+
+              <br> -->
+
+              <div class="some-margin"> ADSR </div>
+              <canvas id="adsr-canvas"></canvas>
+              
+              <div class="adsr-knobs"> 
+
+                <span class="shadow-knob">
+                  <div id="adsr-attack" class="js-dial">
+                  </div>
+                </span>
+
+                <span class="shadow-knob">
+                    <div id="adsr-decay" class="js-dial">
+                    </div>
+                </span>
+
+                <span class="shadow-knob">
+                    <div id="adsr-sustain" class="js-dial">
+                    </div>
+                </span>
+
+                <span class="shadow-knob">
+                    <div id="adsr-release" class="js-dial">
+                    </div>
+                </span>
+              </div>
+            </span>
+
+            <span>
+              <br>
+
+              <span class="keyboard" id="keyboard-image"></span>
+              <br>
+
+              <span id="mono-poly-select" class="center">
+                <input id="keyboard-mono-radio" 
+                  type="radio"
+                  name="radio">
+                <label for="keyboard-mono-radio" class="radio"> 
+                  MONO
+                </label>
+
+                <input id="keyboard-poly-radio"
+                  type="radio"
+                  checked="true"
+                  name="radio">
+                <label for="keyboard-poly-radio" class="radio"> 
+                  POLY
+                </label>
+              </span>
+            </span>
+
+          </div>
+
+          <!-- START SCALE BUILDER CONTAINER  -->
+          <div id="scale-builder-container" class="scale-builder-container">
+
+            <div class="center">
+              <select id="scale-kinds">
+                <option value="preset-library"> SCALE PRESETS </option>
+                <option value="scale-builder"> SCALE BUILDER </option>
+              </select> 
+            </div>
+            
+            <div id="preset-library" class="_scale-tab_ show">
+              <br>
+              <div id="scale-preset-list" class="preset-list"></div>
+            </div>
+
+            <div id="scale-builder" class="_scale-tab_">
+              
+              <br>
+
+              <div class="scale-builder-section">
+
+                <code> Equal Temperament </code> <br>
+
+                <input type="number" id="intervals-per-octave" class="text-input center" value=12> 
+                <span> Intervals per Octave </span> <br>
+
+                <input type="number" id="cents-per-step" class="text-input center" value=100>
+                <span> Cents per Step </span>
+
+                <button class="apply-btn" id="apply-equal-temperament"> apply </button>
+
+              </div>
+
+
+              <div class="scale-builder-section">
                   
-                  <br>
+                Cent-Delta List Comprehension <br>
+                Use 
+                  <a 
+                    target="_blank" 
+                    href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators"> 
+                    operators </a> 
+                and
+                  <a 
+                    target="_blank"
+                    href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math"> 
+                    functions </a>
+                <br>
 
-                  <div class="scale-builder-section">
+                <code>
+                  [ <input 
+                      type="text" 
+                      id="delta-expression"
+                      class="text-input-wide center"
+                      value="100 + (n % 5) * 100"> | n &lt;- [0,1..]
+                  ]
+                </code>
 
-                    <code> Equal Temperament </code> <br>
+                <button class="apply-btn" id="apply-cent-delta"> apply </button>
 
-                    <input type="number" id="intervals-per-octave" class="text-input center" value=12> 
-                    <span> Intervals per Octave </span> <br>
-
-                    <input type="number" id="cents-per-step" class="text-input center" value=100>
-                    <span> Cents per Step </span>
-
-                    <button class="apply-btn" id="apply-equal-temperament"> apply </button>
-
-                  </div>
-
-
-                  <div class="scale-builder-section">
-                      
-                    Cent-Delta List Comprehension <br>
-                    Use 
-                      <a 
-                        target="_blank" 
-                        href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators"> 
-                        operators </a> 
-                    and
-                      <a 
-                        target="_blank"
-                        href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math"> 
-                        functions </a>
-                    <br>
-
-                    <code>
-                      [ <input 
-                          type="text" 
-                          id="delta-expression"
-                          class="text-input-wide center"
-                          value="100 + (n % 5) * 100"> | n &lt;- [0,1..]
-                      ]
-                    </code>
-
-                    <button class="apply-btn" id="apply-cent-delta"> apply </button>
-
-                  </div>
-
-
-                  <div class="scale-builder-section">
-
-                    Enter a list of comma separated values -- may be cents or ratios.
-                    1/1 is included by default. Octaves repeat. <br>
-                    
-                    <code>
-                      [
-                      <input 
-                        type="text" 
-                        id="scale-csv-input"
-                        class="text-input-wide center"
-                        value="9/8,  5/4,  3/2,  1100">
-                      ]
-                    </code>
-                      
-                    <button class="apply-btn" id="apply-scale-csv"> apply </button>
-
-                  </div>
-
-                </div>
               </div>
-              <!-- END SCALE BUILDER CONTAINER  -->
+
+
+              <div class="scale-builder-section">
+
+                Enter a list of comma separated values -- may be cents or ratios.
+                1/1 is included by default. Octaves repeat. <br>
+                
+                <code>
+                  [
+                  <input 
+                    type="text" 
+                    id="scale-csv-input"
+                    class="text-input-wide center"
+                    value="9/8,  5/4,  3/2,  1100">
+                  ]
+                </code>
+                  
+                <button class="apply-btn" id="apply-scale-csv"> apply </button>
+
+              </div>
 
             </div>
           </div>
-
-
-
-
-          <div id="buffer-edit-tab" class="_tab_">
-            <div class="side-margin">
-
-              <br>
-
-              <button id="record" class="record"> rec </button>
-              <span> buffer index: </span>
-              <button id="buffer-index-down" class="rect-0"> - </button>
-              <span id="buffer-index"> 0 </span>
-              <button id="buffer-index-up" class="rect-0"> + </button>
-
-              <br>
-              <br>
-
-              <canvas id="buffer-canvas"></canvas>
-              <div class="length-indicator"></div>
-              <span id="buffer-length-text"></span>
-
-              <br>
-              <br>
-
-              <div id="buffer-functions">
-                <button id="reverse-buffer"> reverse </button>
-                <button id="invert-buffer">  invert </button>
-              </div>
-
-              <br>
-              <br>
-              <br>
-              [BUFFER EDITING]
-            </div>
-          </div>
-
-
-
-
-          <div id="waveform-edit-tab" class="_tab_">
-            [WAVEFORM BUILDER PAGE]
-          </div>
-
-
-
-          
-          <div id="sequencer-tab" class="_tab_">
-            [SEQUENCE BUILDER PAGE]
-          </div>
-
-
-
+          <!-- END SCALE BUILDER CONTAINER  -->
 
         </div>
-
       </div>
 
-      <!-- THE GRAPH PANEL  -->
-      <div class="panel">
-        
-        <div class="top-bar-2"></div>
 
-        <div>
-          <div id="node-value-window" class="window"></div>
-          <div id="nunigraph-legend"></div>
-          <canvas id="nunigraph-canvas"></canvas>
+
+
+      <div id="buffer-edit-tab" class="_tab_">
+        <div class="side-margin">
+
+          <br>
+
+          <button id="record" class="record"> rec </button>
+          <span> buffer index: </span>
+          <button id="buffer-index-down" class="rect-0"> - </button>
+          <span id="buffer-index"> 0 </span>
+          <button id="buffer-index-up" class="rect-0"> + </button>
+
+          <br>
+          <br>
+
+          <canvas id="buffer-canvas"></canvas>
+          <div class="length-indicator"></div>
+          <span id="buffer-length-text"></span>
+
+          <br>
+          <br>
+
+          <div id="buffer-functions">
+            <button id="reverse-buffer"> reverse </button>
+            <button id="invert-buffer">  invert </button>
+          </div>
+
+          <br>
+          <br>
+          <br>
+          [BUFFER EDITING]
         </div>
-
       </div>
+
+
+
+
+      <div id="waveform-edit-tab" class="_tab_">
+        [WAVEFORM BUILDER PAGE]
+      </div>
+
+
+
+      
+      <div id="sequencer-tab" class="_tab_">
+        [SEQUENCE BUILDER PAGE]
+      </div>
+
+
+
 
     </div>
+
+  </div>
+
+  <!-- THE GRAPH PANEL  -->
+  <div class="panel">
+    
+    <div class="top-bar-2"></div>
+
+    <div>
+      <div id="node-value-window" class="window"></div>
+      <div id="nunigraph-legend"></div>
+      <canvas id="nunigraph-canvas"></canvas>
+    </div>
+
+  </div>
+
 </div>
 
 
