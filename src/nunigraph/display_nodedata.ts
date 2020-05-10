@@ -5,57 +5,6 @@
 
 
 
-// Inject (or hide) HTML that allows manipulation of the selected node
-function set_selectNodeFunc(g : NuniGraph, container : HTMLDivElement, prompt : HTMLDivElement) {
-    g.selectNodeFunc = () => {
-        const node = g.selectedNode as NuniGraphNode
-
-        container.classList.toggle('show', node != undefined)
-        if (!node) return;
-
-        container.innerHTML = ''
-        const controls = E('div')
-        
-        container.appendChild(createDraggableTopBar(
-            `${node.type.toUpperCase()}, id: ${node.id}`))
-
-        controls.appendChild(showSubtypes(node))
-
-        if (node.audioNode instanceof BufferNode2) {
-            controls.appendChild(samplerControls(node.audioNode))
-        }
-
-        if (node.audioNode instanceof NuniSourceNode) {
-            controls.appendChild(activateKeyboardButton(node.audioNode))
-        }
-
-        controls.appendChild(exposeAudioParams(node))
-
-        // Add delete button, but not if id is 0, because that's the master gain.
-        if (node.id !== 0) { 
-            const deleteNode = E('button')
-            deleteNode.innerText = 'delete this node'
-            deleteNode.style.float = 'right'
-            deleteNode.onclick = _ => {  
-    
-                /** If this prompt stays open then connections 
-                 *  to deleted nodes become possible, and the 
-                 *  program blows up if you try to do that. 
-                 * */ 
-                prompt.classList.remove('show')
-    
-                UndoRedoModule.save()
-                g.deleteNode(node)
-                g.unselectNode()
-                GraphCanvas.render() // Has to be generalized, as well.
-            }
-            controls.append(deleteNode)
-        }
-
-        container.appendChild(controls)
-    }
-}
-
 function activateKeyboardButton(an : NuniSourceNode) {
     // (dis?)connects the node from the keyboard.
     const btn = E('button')

@@ -19,8 +19,8 @@ const UndoRedoModule = {
         if (last) {
             b.push(G.toRawString())
             G.fromRawString(last)
-            GraphCanvas.render()
-            G.unselectNode()
+            // GraphRenderer.render()
+            GraphController.unselectNode()
             D('connection-type-prompt')!.classList.remove('show')
         }
     },

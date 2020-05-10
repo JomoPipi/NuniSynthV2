@@ -14,13 +14,13 @@ class NuniGraph {
     nextId : number
     nodes : NuniGraphNode[]
     oneWayConnections : Indexable<ConnecteeData>
-    selectedNode : NuniGraphNode | null
+    // selectedNode : NuniGraphNode | null
 
     constructor() {
         this.nextId = 0
         this.nodes = []
         this.oneWayConnections = {}
-        this.selectedNode = null
+        // this.selectedNode = null
 
         this.initializeMasterGain()
     }
@@ -118,24 +118,11 @@ class NuniGraph {
             connectionType === 'channel' ? x : x[connectionType] 
     }
 
-    selectNodeFunc() { throw 'Should be implemented somewhere' }
-
-    selectNode (node : NuniGraphNode) {
-        this.selectedNode = node
-        this.selectNodeFunc()
-    }
-
-    unselectNode() {
-        this.selectedNode = null
-        this.selectNodeFunc()
-    }
-
     clear() {
         for (const node of [...this.nodes]) {
             if (node.id === 0) continue
             this.deleteNode(node)
         }
-        this.selectedNode = null
     }
 
     toRawString() {
@@ -219,15 +206,3 @@ class NuniGraph {
         }
     }
 }
-
-
-
-
-const G = new NuniGraph()
-
-KB.attachToGraph(G)
-Buffers.attachToGraph(G)
-const GraphCanvas = createGraphCanvas(G, D('nunigraph-canvas') as HTMLCanvasElement)
-set_selectNodeFunc(
-    G, D('node-value-window') as HTMLDivElement, 
-    D('connection-type-prompt') as HTMLDivElement)

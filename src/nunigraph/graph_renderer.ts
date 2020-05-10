@@ -5,60 +5,68 @@
 
 
 
-function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
-/**
- * The GraphCanvas draws the graph on the canvas, and allows the user to interact with it.
- */
+enum HOVER {
+    EDGE, SELECT, CONNECTION, EMPTY
+}
 
+type GraphRenderOptions = {
+    x : number,
+    y : number,
+    hover_type? : HOVER
+    hover_id? : number | string, // could be node id or connection id
+    }
 
+type ConnectionsCache = {
+    [connectionId : string] : { 
+        x : number, 
+        y : number, 
+        fromId : number, 
+        toId : number, 
+        connectionType : ConnectionType 
+    } 
+}
 
+class NuniGraphRenderer {
 
+    fromNode : NuniGraphNode | null
+    private readonly g : NuniGraph
+    readonly canvas : HTMLCanvasElement
+    private readonly snapToGrid : HTMLInputElement
+    private readonly ctx : CanvasRenderingContext2D
+    private readonly nodeRadius : number
+    private readonly nodeLineWidth : number
+    private readonly connectionLineWidth : number
+    private readonly innerEdgeBoundary : number
+    private readonly outerEdgeBoundary : number
+    private readonly triangleRadius : number
+    private readonly triangleSize : number
+    readonly connectionsCache : ConnectionsCache
 
+    constructor(
+        g : NuniGraph, 
+        canvas : HTMLCanvasElement, 
+        snapToGrid : HTMLInputElement) {
 
+        this.fromNode = null
+        this.g = g
+        this.canvas = canvas
+        this.snapToGrid = snapToGrid
+        this.ctx = canvas.getContext('2d')!
+        this.fromNode = null
+        this.nodeRadius = 25
+        this.nodeLineWidth = 8
+        this.connectionLineWidth = PHI
+        this.innerEdgeBoundary = this.nodeRadius / 1.5
+        this.outerEdgeBoundary = this.nodeRadius + this.nodeLineWidth
+        this.triangleRadius = this.nodeRadius / 3.0
+        this.triangleSize = this.innerEdgeBoundary
+        this.connectionsCache = {}
 
+        snapToGrid.oninput = () => this.render()
+    }
 
-    // CONSTANTS //_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________
-
-    let fromNode = null as NuniGraphNode | null
-    const ctx = canvas.getContext('2d')!
-    const nodeRadius = 25
-    const nodeLineWidth = 8
-    const connectionLineWidth = PHI
-    const innerEdgeBoundary = nodeRadius / 1.5
-    const outerEdgeBoundary = nodeRadius + nodeLineWidth
-    const triangleRadius = nodeRadius / 3.0
-    const triangleSize = innerEdgeBoundary
-
-    const snapToGrid = D('snap-to-grid')! as HTMLInputElement
-        snapToGrid.oninput = () => render()
-
-    // How to get CSS variable:
-    // const [ nodeTextColor ] = ['--node-text'].map(s =>
-    //     getComputedStyle(document.documentElement).getPropertyValue(s))
-
-    const connectionsCache : {
-        /** We need this to store the locations of triangles in connection lines,
-         *  so that the user can undo connections by clicking on the triangles.
-         *  This is very similar to g.oneWayConnections, maybe it can be merged.
-         */ 
-        [connectionId : string] : { 
-            x : number, 
-            y : number, 
-            fromId : number, 
-            toId : number, 
-            connectionType : ConnectionType 
-        }
-        } = {}
-        
-
-
-
-
-
-
-
-    // FUNCTIONS //_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________
-    const circle = (x : number, y : number, r : number) => {
+    private circle(x : number, y : number, r : number) {
+        const { ctx } = this
         ctx.beginPath()
         ctx.arc(x,y,r,0,7)
         ctx.fill()
@@ -67,7 +75,8 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
     }
 
 
-    const line = (x1 : number, y1 : number, x2 : number, y2 : number) => {
+    private line(x1 : number, y1 : number, x2 : number, y2 : number) {
+        const { ctx } = this
         ctx.beginPath()
         ctx.moveTo(x1,y1)
         ctx.lineTo(x2,y2)
@@ -75,16 +84,19 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         ctx.closePath()
     }
 
-
-    const directedLine = (x1 : number, y1 : number, x2 : number, y2 : number, 
+    private directedLine(x1 : number, y1 : number, x2 : number, y2 : number, 
         cacheOptions? : { 
             fromId : number, 
             toId : number, 
-            connectionType : ConnectionType, offsetX? : number, offsetY? : number }) => {
+            connectionType : ConnectionType, offsetX? : number, offsetY? : number }) {
 
         /** The inputs (x1,y1,x2,y2) are the coordinates of the centers of nodes.
          *  If cacheOptions is falsy, the connection line hasn't been set and is being dragged by the user.
          */ 
+
+        const { ctx, nodeRadius, nodeLineWidth, 
+            connectionsCache, triangleRadius
+            } = this
 
         ctx.fillStyle = 'cyan'
         
@@ -113,28 +125,29 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
             data.x = X - dx * z * W / 3.0
             data.y = Y - dy * z * W / 3.0
 
-            if (offsetX && offsetY && distance(offsetX,offsetY,data.x,data.y) < triangleRadius) {
+            if (offsetX && offsetY && 
+                distance(offsetX,offsetY,data.x,data.y) < triangleRadius) {
             // Highlight the connection arrow because the user is hovering over it
                 ctx.fillStyle = 'orange' 
             }
         }
         
-        line(x,y,X,Y)
-        drawDirectionTriangle(X, Y, angle, x >= X)
+        this.line(x,y,X,Y)
+        this.drawDirectionTriangle(X, Y, angle, x >= X)
     }
 
-
-    const drawGridLines = (H : number, W : number, buttons? : number) => {
+    private drawGridLines(H : number, W : number, buttons? : number) {
+        const { ctx, g } = this
         ctx.lineWidth = 0.2
         ctx.strokeStyle = 'rgba(255,255,255,0.25)'
         const gridGrap = W/25
 
         for (let i = 0; i < W; i += gridGrap) {
-            line(0,i,W,i)
-            line(i,0,i,H)
+            this.line(0,i,W,i)
+            this.line(i,0,i,H)
         }
 
-        const node = g.selectedNode
+        const node = GraphController.selectedNode
         if (node && buttons === 0) { // snap this node to the grid
             const {x,y} = node
             const [X,Y] = [x*W, y*H]
@@ -151,9 +164,9 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
     }
 
 
-    const drawDirectionTriangle = 
-        (x : number, y : number, angle : number, flipH : boolean) => {
+    private drawDirectionTriangle(x : number, y : number, angle : number, flipH : boolean) {
 
+        const { ctx, triangleSize } = this
         const h = (flipH ? 1 : -1) * triangleSize
         const dt = 0.5
         const dt1 = angle + dt
@@ -177,8 +190,8 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         ctx.translate(-x,-y)
     }
 
-    const getParallelConnectionGroups = (fromId : number) => {
-        return g.oneWayConnections[fromId].reduce((groups, v) => 
+    private getParallelConnectionGroups(fromId : number) {
+        return this.g.oneWayConnections[fromId].reduce((groups, v) => 
             ({ 
                 ...groups, 
                 [v.id] : [...(groups[v.id] || []), v] 
@@ -186,16 +199,17 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
             , {} as Indexable<ConnecteeDatum[]>)
     }
 
-    const drawNodeConnections = (
+    private drawNodeConnections(
         nodes : NuniGraphNode[], 
         H : number, 
         W : number, 
-        offsetX? : number, offsetY? : number) => {
+        offsetX? : number, offsetY? : number) {
 
+        const { ctx, connectionLineWidth, nodeRadius, g } = this
         ctx.lineWidth = connectionLineWidth
         for (const id1 in g.oneWayConnections) {
             const fromId = +id1
-            const idGroups = getParallelConnectionGroups(fromId)
+            const idGroups = this.getParallelConnectionGroups(fromId)
             
             // Draw the group of parallel connections
             for (const i in idGroups) {
@@ -218,21 +232,21 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
                     
                     ctx.strokeStyle = ConnectionTypeColors[connectionType]
 
-                    directedLine(x1,y1,x2,y2, { fromId, toId, connectionType, offsetX, offsetY })
+                    this.directedLine(x1,y1,x2,y2, { fromId, toId, connectionType, offsetX, offsetY })
                 })
             }
         }
     }
 
-    const getNodeColor = (node : NuniGraphNode, H : number, W : number) => {
-        
+    private getNodeColor(node : NuniGraphNode, H : number, W : number) {
+        const { nodeRadius, ctx } = this
         const prop = (<Indexed>AudioNodeParams)[node.type][0]
         const pValue = node.audioParamValues[prop]
         const [min,max] = (<Indexed>AudioParamRanges)[prop]
         const factor = Math.log2(pValue-min) / (Math.log2(max-min) || 0.5)
         const cval = factor * 4
         const c1 = `rgb(${ [0,1,2].map(n => 100 * (1 + Math.sin(cval + n * twoThirdsPi)) |0).join(',') })`
-        const c2 = g.selectedNode === node ? 'pink' : 'black'
+        const c2 = GraphController.selectedNode === node ? 'pink' : 'black'
         const {x,y} = node, r = nodeRadius
         const gradient = ctx.createRadialGradient(x*W, y*H, r/27.0, x*W, y*H, r)
             gradient.addColorStop(0, c1)
@@ -241,11 +255,14 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         return gradient
     }
 
-    const drawNodes = (nodes : NuniGraphNode[], H : number, W : number, 
+    private drawNodes(nodes : NuniGraphNode[], H : number, W : number, 
         options : { 
             selectedNodes? : NuniGraphNode[], 
-            offsetX? : number, offsetY? : number, buttons? : number }) => {
-
+            offsetX? : number, offsetY? : number, buttons? : number }) {
+            
+        const { canvas, ctx, nodeRadius, fromNode, innerEdgeBoundary,
+            outerEdgeBoundary, nodeLineWidth
+            } = this
         const { selectedNodes, offsetX, offsetY, buttons } = options
         const [x,y] = [offsetX, offsetY]
         canvas.style.cursor = 'default'
@@ -264,18 +281,20 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
                 node.id === 0 ? MasterGainColor : NodeTypeColors[node.type]
 
             ctx.lineWidth = nodeLineWidth
-            ctx.fillStyle = getNodeColor(node, H, W)
+            ctx.fillStyle = this.getNodeColor(node, H, W)
 
             if (selectedNodes) { // Not being used, currently
                 ctx.fillStyle = selectedNodes.indexOf(node) >= 0 ? 'red' : 'gray'
             }
 
-            if (shouldHighlight)
+            if (shouldHighlight) {
+                ctx.fillStyle = 'white'
                 canvas.style.cursor = buttons === 1 ? 'grabbing' : 'grab' 
+            }
             else if (aroundEdge)
                 canvas.style.cursor = 'crosshair'
             
-            circle(X, Y, nodeRadius)
+            this.circle(X, Y, nodeRadius)
 
             // There is a legend, now. I will see if people like it.
             // ctx.fillStyle = NodeTypeColors[node.type] //textGradient//nodeTextColor
@@ -287,8 +306,10 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         }
     }
 
-
-    const render = (options = {}) => {
+    render(options = {}) {
+        const { g, snapToGrid, canvas, ctx, 
+            fromNode, connectionLineWidth 
+            } = this
         const nodes = g.nodes
         const W = canvas.width = canvas.offsetWidth
         const H = canvas.height = canvas.offsetHeight
@@ -297,35 +318,26 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         ctx.font = '15px Arial'
         ctx.clearRect(0,0,W,H)
     
-        if (snapToGrid.checked) drawGridLines(H,W,buttons)
+        if (snapToGrid.checked) this.drawGridLines(H,W,buttons)
         
-        drawNodeConnections(nodes, H, W, offsetX, offsetY)
-        drawNodes(nodes, H, W, options)
+        this.drawNodeConnections(nodes, H, W, offsetX, offsetY)
+        this.drawNodes(nodes, H, W, options)
 
         if (fromNode) { // draw the connection currently being made
             const [X,Y] = [fromNode.x*W, fromNode.y*H]
             ctx.lineWidth = connectionLineWidth
             ctx.strokeStyle = 'white'
-            directedLine(X,Y,offsetX,offsetY)
+            this.directedLine(X,Y,offsetX,offsetY)
         }
     }
-    
 
-
-
-
-
-    let mouse_is_down = false
-
-    // NODE INTERACTION HANDLERS //_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________//_____________
-    const onmousedown = function(e : MouseEvent) {
-        mouse_is_down = true
-        const W = canvas.width
-        const H = canvas.height
-        const nodes = g.nodes
-        const [x,y] = [e.offsetX, e.offsetY]
+    getGraphMouseTarget({ offsetX: x, offsetY: y } : MouseEvent) {
         
-        hideGraphContextmenu()
+        const { canvas, g, innerEdgeBoundary, outerEdgeBoundary,
+            connectionsCache, triangleRadius 
+            } = this
+        const { width: W, height: H } = canvas
+        const nodes = g.nodes
 
         /** Check if nodes were clicked.
          *  Why the outer loop? To prioritize being able
@@ -339,15 +351,11 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
     
                 if (checkNodeClicked) {
                     if (d < innerEdgeBoundary) {
-                        g.selectNode(node)
-                        render()
-                        return;
+                        return { type: HOVER.SELECT, node }
                     }
                 } else {
                     if (aroundEdge) { 
-                        g.unselectNode()
-                        fromNode = node // Start making a connection
-                        return;
+                        return { type: HOVER.EDGE, node }
                     }
                 }
             }
@@ -355,116 +363,13 @@ function createGraphCanvas(g : NuniGraph, canvas : HTMLCanvasElement) {
         
         // Check if any connection-triangles were clicked:
         for (const id in connectionsCache) {
-            const { x:X, y:Y, fromId, toId, connectionType } = connectionsCache[id]
+            const { x:X, y:Y } = connectionsCache[id]
             if (distance(x,y,X,Y) < triangleRadius) {
-                UndoRedoModule.save()
-                g.unselectNode()
-                fromNode = g.nodes.find(node => node.id === fromId)!
-                const to = g.nodes.find(node => node.id === toId)!
-                delete connectionsCache[id]
-                g.disconnect(fromNode, to, connectionType)
-                return;
+                return { type: HOVER.CONNECTION, id }
             }
         }
         
         // Nothing was clicked
-        if (g.selectedNode) g.unselectNode()
-        render()
-    }
-
-
-    const onmousemove = function(e : MouseEvent) {
-
-        const pressing = e.buttons === 1 && mouse_is_down
-        
-        if (pressing && g.selectedNode) {
-            // Drag the selected node
-            const W = canvas.width
-            const H = canvas.height
-            const node = g.selectedNode
-
-            node.x = e.offsetX/W
-            node.y = e.offsetY/H
-        }
-        render(e)
-    }
-
-
-    const onmouseup = function(e : MouseEvent) {
-        mouse_is_down = false
-        if (!fromNode) return;
-        // Connect fromNode to the destination
-
-        const W = canvas.width
-        const H = canvas.height
-        const nodes = g.nodes
-        const [x,y] = [e.offsetX, e.offsetY]
-
-        for (const node of nodes) {
-            if (node === fromNode) continue
-            const [X,Y] = [node.x*W, node.y*H]
-            const d = x && y ? distance(x,y,X,Y) : Infinity
-            if (d < outerEdgeBoundary) {
-                promptUserToSelectConnectionType
-                    (fromNode, node, x, y)
-                    
-                fromNode = null
-                return;
-            }
-        }
-        fromNode = null
-        render()
-    }
-
-
-    canvas.onmousedown = onmousedown
-    canvas.onmousemove = onmousemove
-    canvas.onmouseup   = onmouseup
-
-
-    // Ask the user where to connect the node
-    function promptUserToSelectConnectionType(
-        node1 : NuniGraphNode, node2 : NuniGraphNode, x : number, y : number) {
-            
-        if (node2.id === 0) {
-            // No prompt needed in this case. 
-            // Only allow channel connections to the master gain node.
-            // Allowing connections to someGain.gain can prevent it from being muted.
-            UndoRedoModule.save()
-            g.connect(node1, node2, 'channel')
-            return;
-        }
-        const prompt = D('connection-type-prompt')!
-        const types = 
-            (SupportsInputChannels[node2.type] ? ['channel'] : [])
-            .concat(AudioNodeParams[node2.type])
-
-        prompt.classList.add('show')
-        prompt.innerHTML= ''
-        for (const param of types as ConnectionType[]) {
-            const btn = E('button')
-            btn.innerText = param
-            btn.onclick = () =>
-            {
-                UndoRedoModule.save()
-                g.connect(node1, node2, param)
-                prompt.classList.remove('show')
-                render()
-            }
-            prompt.appendChild(btn)
-        }
-        const cancel = E('button')
-        cancel.innerText = 'cancel'
-        cancel.classList.add('connection-button')
-        cancel.onclick = () => prompt.classList.remove('show')
-        prompt.appendChild(cancel)
-
-        // Place the prompt in an accessible location
-        UI_clamp(x, y + 40, prompt, canvas)
-    }
-
-    return {
-        canvas: canvas,
-        render: render, 
+        return { type: HOVER.EMPTY }
     }
 }

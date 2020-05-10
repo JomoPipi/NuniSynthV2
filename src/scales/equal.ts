@@ -30,10 +30,11 @@ const setEqualTemperamentScale = (_ => {
         intervals.value = (1200.0 / c).toString()
     } 
 
-    return function() {
+    return function(edo? : number) {
         setTimeout(() => {// *
-            assignToKeyboard(+cents.value)
-            
+            const value = edo ? 1200.0 / edo : +cents.value
+
+            assignToKeyboard(value)
             previewScale()
         }, 100)
     }

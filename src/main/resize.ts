@@ -10,6 +10,6 @@ window.addEventListener('resize', resizeHandler)
 resizeHandler()
 
 function resizeHandler() {
-    GraphCanvas.render()
+    // GraphRenderer.render()
     resizeKeyboard()
 }

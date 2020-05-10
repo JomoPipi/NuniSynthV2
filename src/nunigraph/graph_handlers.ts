@@ -11,16 +11,17 @@ Object.values(NodeTypes).forEach(type => {
         UndoRedoModule.save()
         const node = G.newNode(type)
         const menu = D('graph-contextmenu')!
-        log('display =',menu.style.display)
+        
         if (menu.style.display !== 'none') {
             // Place the newly created node where the contextmenu was.
-            const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = GraphCanvas.canvas
+            const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = 
+                GraphController.renderer.canvas
             node.x = clamp(0, (menu.offsetLeft - offsetLeft + menu.offsetWidth / 2.0) / offsetWidth, 1)
             node.y = clamp(0, (menu.offsetTop - offsetTop + menu.offsetHeight / 2.0) / offsetHeight, 1)
             hideGraphContextmenu()
         }
 
-        GraphCanvas.render()
+                    // GraphRenderer.render()
     }
     D(`create-${type}`)!.onclick = create 
     D(`create-${type}2`)!.onclick = create
@@ -37,7 +38,7 @@ Object.values(NodeTypes).forEach(type => {
     try { 
         UndoRedoModule.save()
         G.fromString(input.value)
-        GraphCanvas.render()
+                    // GraphRenderer.render()
         input.value = ''
     } catch (e) {
         UndoRedoModule.undos.pop()
@@ -49,7 +50,7 @@ Object.values(NodeTypes).forEach(type => {
 ;(D('clear-graph-button') as HTMLButtonElement).onclick = function() {
     UndoRedoModule.save()
     G.clear()
-    GraphCanvas.render()
+                // GraphRenderer.render()
 }
 
 // Right-click options

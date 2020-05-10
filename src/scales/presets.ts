@@ -29,7 +29,11 @@
         Wholetone:  '200,400,600,800,1000',
         'Minor Pentatonic': '300,500,700,1000',
         'Major Pentatonic': '200,400,700,900',
-        'Altered': '100,300,400,600,800,1000'
+        'Altered': '100,300,400,600,800,1000',
+        '1.939 EDO': 1.93920847419315,
+        '2.536 EDO': 2.53912397616528,
+        '3.057 EDO': 3.05777409403176,
+        '6.946 EDO': 6.94695029916123
         }
     
     const div = D('scale-preset-list') as HTMLDivElement
@@ -43,8 +47,14 @@
 
     div.onclick = function(e : MouseEvent) {
         const name = (e.target as HTMLElement).innerText
-        if (name in presets) {
-            setScaleFromCSV(trace((<any>presets)[name]))
+        const P = presets as any
+        if (name in P) {
+            if (name.endsWith('EDO')) {
+                setEqualTemperamentScale(P[name])
+            } else {
+                setScaleFromCSV(P[name])
+            }
+
         }
     }
 }
