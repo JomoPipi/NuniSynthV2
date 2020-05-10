@@ -32,7 +32,7 @@
         const name = (e.target as HTMLElement).innerText
         if (name in presets) {
             G.fromString((<any>presets)[name])
-            // GraphRenderer.render()
+            GraphController.renderer.render()
         }
     }
 }

@@ -225,6 +225,12 @@ button {
   z-index: 2;
 }
 
+.graph-selection-box {
+  display: none;
+  position: absolute;
+  border: 1px dashed #aaa;
+}
+
 .buffer-row {
   display: -ms-inline-grid;
   display: inline-grid;

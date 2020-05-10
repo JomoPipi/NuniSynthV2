@@ -10,12 +10,12 @@ class NuniGraphController {
  *  Manipulates the graph and its' view
  */
 
-    g : NuniGraph
-    nodeValueContainer : HTMLElement   // belongs in view
-    connectionTypePrompt : HTMLElement // belongs in view
+    private g : NuniGraph
+    private nodeValueContainer : HTMLElement   // belongs in view
+    private connectionTypePrompt : HTMLElement // belongs in view
     renderer : NuniGraphRenderer
     selectedNode : NuniGraphNode | null
-    mouseIsDown : boolean
+    private mouseIsDown : boolean
 
     constructor (
         g : NuniGraph, 
@@ -30,23 +30,45 @@ class NuniGraphController {
         this.selectedNode = null
         this.mouseIsDown = false
 
-        renderer.canvas.onmousedown = (e : MouseEvent) => this.mousedown(e)
-        renderer.canvas.onmousemove = (e : MouseEvent) => this.mousemove(e)
-        renderer.canvas.onmouseup   = (e : MouseEvent) => this.mouseup(e)
+        const mouse_move = (e : MouseEvent) => {
+            const { x: offsetX, y: offsetY } = getMousePos(e)
+            const msg = { 
+                buttons: e.buttons, offsetX, offsetY 
+                } as MouseEvent
+            this.mousemove(msg) 
+        }
+        function getMousePos(e : MouseEvent) {
+            const rect = renderer.canvas.getBoundingClientRect();
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            }
+        }
+
+        renderer.canvas.onmousedown = (e : MouseEvent) => {
+            this.mousedown(e)
+        }
+
+        window.addEventListener('mousemove', e => mouse_move(e))
+
+        renderer.canvas.onmouseup = (e : MouseEvent) => {
+            this.mouseup(e)
+            // window.removeEventListener('mousemove', mousemove)
+        }
     }
 
     selectNode (node : NuniGraphNode) {
         this.selectedNode = node
-        this.selectNodeFunc()
+        this.toggleValuesWindow()
     }
 
     unselectNode() {
         this.selectedNode = null
-        this.selectNodeFunc()
+        this.toggleValuesWindow()
     }
 
     // Inject (or hide) HTML that allows manipulation of the selected node
-    selectNodeFunc () {
+    toggleValuesWindow() {
         const { nodeValueContainer: container, 
             connectionTypePrompt: prompt, 
             selectedNode: node } = this
@@ -88,11 +110,10 @@ class NuniGraphController {
                 UndoRedoModule.save()
                 this.g.deleteNode(node)
                 this.unselectNode()
-                this.renderer.render() // Has to be generalized, as well.
+                this.renderer.render()
             }
             controls.append(deleteNode)
         }
-
         container.appendChild(controls)
     }
 
@@ -131,20 +152,30 @@ class NuniGraphController {
 
     private mousemove(e : MouseEvent) {
 
-        const node = this.selectedNode
-        
+        const snode = this.selectedNode
+
         const isPressing = 
             e.buttons === 1 && 
             this.mouseIsDown
 
-        if (isPressing && node) {
+        if (isPressing && snode) {
             // Drag the selected node
             const { width: W, height: H } = this.renderer.canvas
-            node.x = e.offsetX/W
-            node.y = e.offsetY/H
+            snode.x = clamp(0, e.offsetX/W, 1)
+            snode.y = clamp(0, e.offsetY/H, 1)
         }
 
-        this.renderer.render(e)
+        const { type, id, node } = this.renderer.getGraphMouseTarget(e)
+
+        const options = {
+            x: e.offsetX, 
+            y: e.offsetY,
+            buttons: e.buttons,
+            hover_type: type, 
+            hover_id: node ? node.id : id
+            }
+
+        this.renderer.render(options)
     }
 
     private mouseup(e : MouseEvent) {
@@ -169,7 +200,7 @@ class NuniGraphController {
             
         ;(<Indexed>{
             [HOVER.EDGE]:       () => do_it(),
-            [HOVER.CONNECTION]: () => do_it(),
+            [HOVER.SELECT]:     () => do_it(),
             [HOVER.CONNECTION]: () => 0,
             [HOVER.EMPTY]:      () => 0
         })[type]()

@@ -5,15 +5,16 @@
 
 
 
-enum HOVER {
-    EDGE, SELECT, CONNECTION, EMPTY
-}
+enum HOVER { EDGE, SELECT, CONNECTION, EMPTY }
 
 type GraphRenderOptions = {
-    x : number,
-    y : number,
-    hover_type? : HOVER
-    hover_id? : number | string, // could be node id or connection id
+    H : number,
+    W : number,
+    x? : number,
+    y? : number,
+    buttons? : number,
+    hover_type? : HOVER,
+    hover_id? : number | string // could be node id or connection id
     }
 
 type ConnectionsCache = {
@@ -88,7 +89,7 @@ class NuniGraphRenderer {
         cacheOptions? : { 
             fromId : number, 
             toId : number, 
-            connectionType : ConnectionType, offsetX? : number, offsetY? : number }) {
+            connectionType : ConnectionType, x? : number, y? : number }) {
 
         /** The inputs (x1,y1,x2,y2) are the coordinates of the centers of nodes.
          *  If cacheOptions is falsy, the connection line hasn't been set and is being dragged by the user.
@@ -115,7 +116,7 @@ class NuniGraphRenderer {
         if (cacheOptions) { 
         // If the connection has already been set:
 
-            const { fromId, toId, connectionType, offsetX, offsetY } = cacheOptions
+            const { fromId, toId, connectionType, x, y } = cacheOptions
             const c_id = `${fromId}:${toId}:${connectionType}`
             const data = 
                 connectionsCache[c_id] = 
@@ -125,8 +126,8 @@ class NuniGraphRenderer {
             data.x = X - dx * z * W / 3.0
             data.y = Y - dy * z * W / 3.0
 
-            if (offsetX && offsetY && 
-                distance(offsetX,offsetY,data.x,data.y) < triangleRadius) {
+            if (x && y && 
+                distance(x, y, data.x,data.y) < triangleRadius) {
             // Highlight the connection arrow because the user is hovering over it
                 ctx.fillStyle = 'orange' 
             }
@@ -164,7 +165,8 @@ class NuniGraphRenderer {
     }
 
 
-    private drawDirectionTriangle(x : number, y : number, angle : number, flipH : boolean) {
+    private drawDirectionTriangle(
+        x : number, y : number, angle : number, flipH : boolean) {
 
         const { ctx, triangleSize } = this
         const h = (flipH ? 1 : -1) * triangleSize
@@ -200,10 +202,7 @@ class NuniGraphRenderer {
     }
 
     private drawNodeConnections(
-        nodes : NuniGraphNode[], 
-        H : number, 
-        W : number, 
-        offsetX? : number, offsetY? : number) {
+        nodes : NuniGraphNode[], { H, W, x, y } : GraphRenderOptions) {
 
         const { ctx, connectionLineWidth, nodeRadius, g } = this
         ctx.lineWidth = connectionLineWidth
@@ -232,7 +231,7 @@ class NuniGraphRenderer {
                     
                     ctx.strokeStyle = ConnectionTypeColors[connectionType]
 
-                    this.directedLine(x1,y1,x2,y2, { fromId, toId, connectionType, offsetX, offsetY })
+                    this.directedLine(x1,y1,x2,y2, { fromId, toId, connectionType, x, y })
                 })
             }
         }
@@ -255,37 +254,38 @@ class NuniGraphRenderer {
         return gradient
     }
 
-    private drawNodes(nodes : NuniGraphNode[], H : number, W : number, 
-        options : { 
-            selectedNodes? : NuniGraphNode[], 
-            offsetX? : number, offsetY? : number, buttons? : number }) {
+    private drawNodes(
+        nodes : NuniGraphNode[], options : GraphRenderOptions) {
             
-        const { canvas, ctx, nodeRadius, fromNode, innerEdgeBoundary,
-            outerEdgeBoundary, nodeLineWidth
+        const { canvas, ctx, nodeRadius, 
+            fromNode, nodeLineWidth
             } = this
-        const { selectedNodes, offsetX, offsetY, buttons } = options
-        const [x,y] = [offsetX, offsetY]
+
+        const {
+            H, W,
+            buttons,
+            hover_type,
+            hover_id,
+            } = options
+
+        log('x,y =', options.x, options.y)
+
         canvas.style.cursor = 'default'
         ctx.shadowBlur = nodeRadius * 2.0
         ctx.shadowColor = 'rgba(255, 255, 255, .2)'
         for (const node of nodes) {
             
             const [X,Y] = [node.x * W, node.y * H]
-            const d = x && y ? distance(x,y,X,Y) : Infinity
-            const innerBound = fromNode ? 0 : innerEdgeBoundary
-            const aroundEdge = innerBound <= d && d < outerEdgeBoundary
-            const hoveringInside = d <= innerEdgeBoundary
-            const shouldHighlight = hoveringInside && !fromNode
-            
+            const isTarget = node.id === hover_id
+            const shouldHighlight = 
+                isTarget && (fromNode || hover_type === HOVER.SELECT)
+            const aroundEdge =
+                isTarget && hover_type === HOVER.EDGE
+
             ctx.strokeStyle = aroundEdge ? 'rgba(255,255,255,0.75)' :
                 node.id === 0 ? MasterGainColor : NodeTypeColors[node.type]
-
             ctx.lineWidth = nodeLineWidth
             ctx.fillStyle = this.getNodeColor(node, H, W)
-
-            if (selectedNodes) { // Not being used, currently
-                ctx.fillStyle = selectedNodes.indexOf(node) >= 0 ? 'red' : 'gray'
-            }
 
             if (shouldHighlight) {
                 ctx.fillStyle = 'white'
@@ -295,39 +295,35 @@ class NuniGraphRenderer {
                 canvas.style.cursor = 'crosshair'
             
             this.circle(X, Y, nodeRadius)
-
-            // There is a legend, now. I will see if people like it.
-            // ctx.fillStyle = NodeTypeColors[node.type] //textGradient//nodeTextColor
-            // ctx.fillText(
-            //     node.id === 0 ? 'master-gain' : node.title,
-            //     X - nodeRadius * 1.5, 
-            //     Y - nodeRadius * 1.5
-            // )
         }
     }
 
     render(options = {}) {
+        
         const { g, snapToGrid, canvas, ctx, 
             fromNode, connectionLineWidth 
             } = this
+
         const nodes = g.nodes
         const W = canvas.width = canvas.offsetWidth
         const H = canvas.height = canvas.offsetHeight
-        const { offsetX, offsetY, buttons } = options as MouseEvent
+
+        const { x, y, buttons } = options as GraphRenderOptions
+        const innerOptions = Object.assign(options, { H, W })
 
         ctx.font = '15px Arial'
         ctx.clearRect(0,0,W,H)
     
         if (snapToGrid.checked) this.drawGridLines(H,W,buttons)
         
-        this.drawNodeConnections(nodes, H, W, offsetX, offsetY)
-        this.drawNodes(nodes, H, W, options)
+        this.drawNodeConnections(nodes, innerOptions)
+        this.drawNodes(nodes, innerOptions)
 
         if (fromNode) { // draw the connection currently being made
             const [X,Y] = [fromNode.x*W, fromNode.y*H]
             ctx.lineWidth = connectionLineWidth
             ctx.strokeStyle = 'white'
-            this.directedLine(X,Y,offsetX,offsetY)
+            this.directedLine(X, Y, x!, y!)
         }
     }
 
@@ -339,6 +335,8 @@ class NuniGraphRenderer {
         const { width: W, height: H } = canvas
         const nodes = g.nodes
 
+        log('x,y =',x,y)
+
         /** Check if nodes were clicked.
          *  Why the outer loop? To prioritize being able
          *  to drag nodes over making connection arrows.
@@ -346,7 +344,7 @@ class NuniGraphRenderer {
         for (const checkNodeClicked of [true,false]) {
             for (const node of nodes) {
                 const [X,Y] = [node.x*W, node.y*H]
-                const d = x && y ? distance(x,y,X,Y) : -1
+                const d = distance(x,y,X,Y)
                 const aroundEdge = innerEdgeBoundary < d && d < outerEdgeBoundary
     
                 if (checkNodeClicked) {
@@ -364,7 +362,7 @@ class NuniGraphRenderer {
         // Check if any connection-triangles were clicked:
         for (const id in connectionsCache) {
             const { x:X, y:Y } = connectionsCache[id]
-            if (distance(x,y,X,Y) < triangleRadius) {
+            if (distance(x, y, X, Y) < triangleRadius) {
                 return { type: HOVER.CONNECTION, id }
             }
         }
