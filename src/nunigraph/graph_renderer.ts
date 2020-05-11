@@ -15,6 +15,8 @@ type GraphRenderOptions = {
     buttons? : number,
     hover_type? : HOVER,
     hover_id? : number | string // could be node id or connection id
+    selectionStart? : [number,number]
+    selectedNodes? : NuniGraphNode[]
     }
 
 type ConnectionsCache = {
@@ -64,6 +66,17 @@ class NuniGraphRenderer {
         this.connectionsCache = {}
 
         snapToGrid.oninput = () => this.render()
+    }
+
+    private dashedBox(x : number, y : number, X : number, Y : number) {
+        const { ctx } = this
+        ctx.setLineDash([5,3])
+        ctx.strokeStyle = '#aaa'
+        ctx.lineWidth = 2
+        ctx.beginPath()
+        ctx.strokeRect(X, Y, x - X, y - Y)
+        ctx.setLineDash([])
+        return
     }
 
     private circle(x : number, y : number, r : number) {
@@ -237,7 +250,7 @@ class NuniGraphRenderer {
         }
     }
 
-    private getNodeColor(node : NuniGraphNode, H : number, W : number) {
+    private getNodeColor(node : NuniGraphNode, H : number, W : number, highlight : boolean) {
         const { nodeRadius, ctx } = this
         const prop = (<Indexed>AudioNodeParams)[node.type][0]
         const pValue = node.audioParamValues[prop]
@@ -245,7 +258,7 @@ class NuniGraphRenderer {
         const factor = Math.log2(pValue-min) / (Math.log2(max-min) || 0.5)
         const cval = factor * 4
         const c1 = `rgb(${ [0,1,2].map(n => 100 * (1 + Math.sin(cval + n * twoThirdsPi)) |0).join(',') })`
-        const c2 = GraphController.selectedNode === node ? 'pink' : 'black'
+        const c2 = highlight ? 'pink' : 'black'
         const {x,y} = node, r = nodeRadius
         const gradient = ctx.createRadialGradient(x*W, y*H, r/27.0, x*W, y*H, r)
             gradient.addColorStop(0, c1)
@@ -266,9 +279,8 @@ class NuniGraphRenderer {
             buttons,
             hover_type,
             hover_id,
+            selectedNodes
             } = options
-
-        log('x,y =', options.x, options.y)
 
         canvas.style.cursor = 'default'
         ctx.shadowBlur = nodeRadius * 2.0
@@ -277,22 +289,34 @@ class NuniGraphRenderer {
             
             const [X,Y] = [node.x * W, node.y * H]
             const isTarget = node.id === hover_id
-            const shouldHighlight = 
-                isTarget && (fromNode || hover_type === HOVER.SELECT)
-            const aroundEdge =
-                isTarget && hover_type === HOVER.EDGE
 
-            ctx.strokeStyle = aroundEdge ? 'rgba(255,255,255,0.75)' :
+            const shouldHighlight = 
+                selectedNodes?.includes(node) ||
+                (isTarget && (fromNode || hover_type === HOVER.SELECT))
+
+            const highlightEdge =
+                selectedNodes?.length === 0 && 
+                !fromNode &&
+                isTarget && 
+                hover_type === HOVER.EDGE
+
+            ctx.strokeStyle = highlightEdge ? 'rgba(255,255,255,0.75)' :
                 node.id === 0 ? MasterGainColor : NodeTypeColors[node.type]
             ctx.lineWidth = nodeLineWidth
-            ctx.fillStyle = this.getNodeColor(node, H, W)
+            ctx.fillStyle = 
+                this.getNodeColor(
+                    node,
+                    H, 
+                    W, 
+                    shouldHighlight ? true :
+                    GraphController.selectedNode === node)
 
             if (shouldHighlight) {
-                ctx.fillStyle = 'white'
                 canvas.style.cursor = buttons === 1 ? 'grabbing' : 'grab' 
             }
-            else if (aroundEdge)
+            else if (highlightEdge) {
                 canvas.style.cursor = 'crosshair'
+            }
             
             this.circle(X, Y, nodeRadius)
         }
@@ -308,13 +332,18 @@ class NuniGraphRenderer {
         const W = canvas.width = canvas.offsetWidth
         const H = canvas.height = canvas.offsetHeight
 
-        const { x, y, buttons } = options as GraphRenderOptions
+        const { x, y, buttons, selectionStart, selectedNodes } = options as GraphRenderOptions
         const innerOptions = Object.assign(options, { H, W })
 
         ctx.font = '15px Arial'
         ctx.clearRect(0,0,W,H)
     
         if (snapToGrid.checked) this.drawGridLines(H,W,buttons)
+
+        if (selectionStart) {
+            const [X,Y] = selectionStart
+            this.dashedBox(x!, y!, X, Y)
+        }
         
         this.drawNodeConnections(nodes, innerOptions)
         this.drawNodes(nodes, innerOptions)
@@ -334,8 +363,6 @@ class NuniGraphRenderer {
             } = this
         const { width: W, height: H } = canvas
         const nodes = g.nodes
-
-        log('x,y =',x,y)
 
         /** Check if nodes were clicked.
          *  Why the outer loop? To prioritize being able

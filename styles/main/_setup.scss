@@ -236,6 +236,7 @@ button {
     grid-template-columns: 20px 85%;
     grid-template-rows: 20px;
     grid-gap: 4px;
+    pointer-events: none;
 }
 
 .window {
@@ -247,11 +248,6 @@ button {
     z-index: 2;
 }
 
-.graph-selection-box {
-    display: none;
-    position: absolute;
-    border: 1px dashed #aaa;
-}
 
 .buffer-row {
     @extend .some-margin;

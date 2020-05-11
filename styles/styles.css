@@ -214,6 +214,7 @@ button {
   -ms-grid-rows: 20px;
       grid-template-rows: 20px;
   grid-gap: 4px;
+  pointer-events: none;
 }
 
 .window {
@@ -223,12 +224,6 @@ button {
   color: white;
   border: 1px solid white;
   z-index: 2;
-}
-
-.graph-selection-box {
-  display: none;
-  position: absolute;
-  border: 1px dashed #aaa;
 }
 
 .buffer-row {

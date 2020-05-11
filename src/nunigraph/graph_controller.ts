@@ -14,8 +14,10 @@ class NuniGraphController {
     private nodeValueContainer : HTMLElement   // belongs in view
     private connectionTypePrompt : HTMLElement // belongs in view
     renderer : NuniGraphRenderer
-    selectedNode : NuniGraphNode | null
+    selectedNode? : NuniGraphNode
     private mouseIsDown : boolean
+    private selectionStart? : [number,number]
+    selectedNodes? : NuniGraphNode[]
 
     constructor (
         g : NuniGraph, 
@@ -27,22 +29,14 @@ class NuniGraphController {
         this.nodeValueContainer = container
         this.connectionTypePrompt = prompt
         this.renderer = renderer
-        this.selectedNode = null
         this.mouseIsDown = false
 
         const mouse_move = (e : MouseEvent) => {
-            const { x: offsetX, y: offsetY } = getMousePos(e)
+            const { x: offsetX, y: offsetY } = this.getMousePos(e)
             const msg = { 
                 buttons: e.buttons, offsetX, offsetY 
                 } as MouseEvent
             this.mousemove(msg) 
-        }
-        function getMousePos(e : MouseEvent) {
-            const rect = renderer.canvas.getBoundingClientRect();
-            return {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            }
         }
 
         renderer.canvas.onmousedown = (e : MouseEvent) => {
@@ -57,13 +51,21 @@ class NuniGraphController {
         }
     }
 
+    getMousePos(e : MouseEvent) {
+        const rect = this.renderer.canvas.getBoundingClientRect();
+        return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        }
+    }
+
     selectNode (node : NuniGraphNode) {
         this.selectedNode = node
         this.toggleValuesWindow()
     }
 
     unselectNode() {
-        this.selectedNode = null
+        this.selectedNode = undefined
         this.toggleValuesWindow()
     }
 
@@ -116,24 +118,50 @@ class NuniGraphController {
         }
         container.appendChild(controls)
     }
+    
+    private getNodesInBox(x : number, y : number) {
+        const { width: W, height: H } = this.renderer.canvas
+        if (!this.mouseIsDown) {
+            return this.selectedNodes
+        }
+        if (this.selectionStart) {
+            const [X,Y] = this.selectionStart
+            return this.selectedNodes = 
+            this.g.nodes.filter(node => {
+                const [ax, bx] = [x!, X].sort((a,b)=>a-b)
+                const [ay, by] = [y!, Y].sort((a,b)=>a-b)
+                const isInside = (nx : number, ny : number) => 
+                    ax < nx && nx < bx && 
+                    ay < ny && ny < by
+
+                return isInside(node.x*W, node.y*H)
+            })
+        }
+        return []
+    }
 
     private mousedown(e : MouseEvent) {
+        
+        hideGraphContextmenu()
         this.mouseIsDown = true
         
         const { type, id, node } = this.renderer.getGraphMouseTarget(e)
 
         ;(<Indexed>{
             [HOVER.SELECT]: () => {
+                if (this.selectedNodes?.length) return;
                 this.selectNode(node!)
                 this.renderer.render()
             },
             [HOVER.EDGE]: () => {
+                if (this.selectedNodes?.length) return;
                 this.unselectNode()
                 this.renderer.fromNode = node!
             },
             [HOVER.CONNECTION]: () => { 
+                this.selectedNodes = undefined
+
                 const cache = <Indexed>this.renderer.connectionsCache
-            
                 const { fromId, toId, connectionType } = cache[id!]
 
                 UndoRedoModule.save()
@@ -146,42 +174,67 @@ class NuniGraphController {
 
                 this.g.disconnect(this.renderer.fromNode, to, connectionType)
             },
-            [HOVER.EMPTY]: () => this.unselectNode()
+            [HOVER.EMPTY]: () => {
+                this.unselectNode()
+                this.selectedNodes = undefined
+                const { x, y } = this.getMousePos(e)
+                this.selectionStart = [x, y]
+                this.renderer.render()
+            }
         })[type]()
     }
 
     private mousemove(e : MouseEvent) {
 
-        const snode = this.selectedNode
+        const { type, id, node } = this.renderer.getGraphMouseTarget(e)
+        const { width: W, height: H } = this.renderer.canvas
+        const { selectedNodes } = this
 
+        const snode = this.selectedNode
         const isPressing = 
             e.buttons === 1 && 
             this.mouseIsDown
 
+        if (!this.selectionStart && 
+            selectedNodes?.length && 
+            isPressing) {
+                log('selectedNodes =',selectedNodes)
+            const dx = -node!.x + e.offsetX / W
+            const dy = -node!.y + e.offsetY / H
+            
+            selectedNodes.forEach(n => {
+                n.x = clamp(0, n.x + dx, 1)
+                n.y = clamp(0, n.y + dy, 1)
+            })
+        }
+
         if (isPressing && snode) {
             // Drag the selected node
-            const { width: W, height: H } = this.renderer.canvas
             snode.x = clamp(0, e.offsetX/W, 1)
             snode.y = clamp(0, e.offsetY/H, 1)
         }
-
-        const { type, id, node } = this.renderer.getGraphMouseTarget(e)
 
         const options = {
             x: e.offsetX, 
             y: e.offsetY,
             buttons: e.buttons,
             hover_type: type, 
-            hover_id: node ? node.id : id
+            hover_id: node ? node.id : id,
+            selectionStart: this.selectionStart,
+            selectedNodes: 
+                this.getNodesInBox(e.offsetX, e.offsetY)
             }
 
         this.renderer.render(options)
     }
 
     private mouseup(e : MouseEvent) {
+        
         this.mouseIsDown = false
+        this.selectionStart = undefined
 
         const { renderer } = this
+
         const fromNode = renderer.fromNode
         if (!fromNode) return;
 
@@ -206,7 +259,7 @@ class NuniGraphController {
         })[type]()
 
         renderer.fromNode = null
-        renderer.render()
+        renderer.render({ selectedNodes: this.selectedNodes })
     }
 
     private promptUserToSelectConnectionType(

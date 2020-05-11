@@ -10,6 +10,6 @@ window.addEventListener('resize', resizeHandler)
 resizeHandler()
 
 function resizeHandler() {
-    // GraphRenderer.render()
+    GraphController.renderer.render()
     resizeKeyboard()
 }
