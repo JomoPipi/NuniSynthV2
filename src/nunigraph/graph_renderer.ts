@@ -16,7 +16,7 @@ type GraphRenderOptions = {
     hover_type? : HOVER,
     hover_id? : number | string // could be node id or connection id
     selectionStart? : [number,number]
-    selectedNodes? : NuniGraphNode[]
+    selectedNodes : NuniGraphNode[]
     }
 
 type ConnectionsCache = {
@@ -285,6 +285,7 @@ class NuniGraphRenderer {
         canvas.style.cursor = 'default'
         ctx.shadowBlur = nodeRadius * 2.0
         ctx.shadowColor = 'rgba(255, 255, 255, .2)'
+
         for (const node of nodes) {
             
             const [X,Y] = [node.x * W, node.y * H]
@@ -332,8 +333,14 @@ class NuniGraphRenderer {
         const W = canvas.width = canvas.offsetWidth
         const H = canvas.height = canvas.offsetHeight
 
-        const { x, y, buttons, selectionStart, selectedNodes } = options as GraphRenderOptions
-        const innerOptions = Object.assign(options, { H, W })
+        const { 
+            x, 
+            y,
+            buttons, 
+            selectionStart, 
+            selectedNodes
+            } = options as GraphRenderOptions
+        const innerOptions = { ...options, H, W, selectedNodes }
 
         ctx.font = '15px Arial'
         ctx.clearRect(0,0,W,H)
@@ -372,7 +379,8 @@ class NuniGraphRenderer {
             for (const node of nodes) {
                 const [X,Y] = [node.x*W, node.y*H]
                 const d = distance(x,y,X,Y)
-                const aroundEdge = innerEdgeBoundary < d && d < outerEdgeBoundary
+                const aroundEdge = 
+                    innerEdgeBoundary < d && d < outerEdgeBoundary
     
                 if (checkNodeClicked) {
                     if (d < innerEdgeBoundary) {

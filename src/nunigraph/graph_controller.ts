@@ -16,8 +16,9 @@ class NuniGraphController {
     renderer : NuniGraphRenderer
     selectedNode? : NuniGraphNode
     private mouseIsDown : boolean
+    selectedNodes : NuniGraphNode[]
+    private lastMouseDownMsg : any
     private selectionStart? : [number,number]
-    selectedNodes? : NuniGraphNode[]
 
     constructor (
         g : NuniGraph, 
@@ -30,7 +31,8 @@ class NuniGraphController {
         this.connectionTypePrompt = prompt
         this.renderer = renderer
         this.mouseIsDown = false
-
+        this.selectedNodes = []
+        
         const mouse_move = (e : MouseEvent) => {
             const { x: offsetX, y: offsetY } = this.getMousePos(e)
             const msg = { 
@@ -39,19 +41,12 @@ class NuniGraphController {
             this.mousemove(msg) 
         }
 
-        renderer.canvas.onmousedown = (e : MouseEvent) => {
-            this.mousedown(e)
-        }
-
+        renderer.canvas.onmousedown = e => this.mousedown(e)
         window.addEventListener('mousemove', e => mouse_move(e))
-
-        renderer.canvas.onmouseup = (e : MouseEvent) => {
-            this.mouseup(e)
-            // window.removeEventListener('mousemove', mousemove)
-        }
+        window.addEventListener('mouseup', e => this.mouseup(e))
     }
 
-    getMousePos(e : MouseEvent) {
+    private getMousePos(e : MouseEvent) {
         const rect = this.renderer.canvas.getBoundingClientRect();
         return {
             x: e.clientX - rect.left,
@@ -137,6 +132,9 @@ class NuniGraphController {
                 return isInside(node.x*W, node.y*H)
             })
         }
+        if (this.selectedNodes.length) {
+            return this.selectedNodes
+        }
         return []
     }
 
@@ -145,21 +143,44 @@ class NuniGraphController {
         hideGraphContextmenu()
         this.mouseIsDown = true
         
-        const { type, id, node } = this.renderer.getGraphMouseTarget(e)
+        const { type, id, node } = 
+            this.lastMouseDownMsg = 
+            this.renderer.getGraphMouseTarget(e)
+
+        if (this.selectedNodes && node) {
+            const nodes = this.selectedNodes
+            // this is all about keeping those nodes in the canvas
+            // while being dragged.
+            const o = {
+                top:    nodes.reduce((a,node) => Math.max(a,node.y), -Infinity),
+                bottom: nodes.reduce((a,node) => Math.min(a,node.y), Infinity),
+                left:   nodes.reduce((a,node) => Math.min(a,node.x), Infinity),
+                right:  nodes.reduce((a,node) => Math.max(a,node.x), -Infinity),
+            }
+            this.lastMouseDownMsg.deltas = {
+                U: o.top - node!.y,
+                D: node!.y - o.bottom,
+                L: node!.x - o.left,
+                R: o.right - node!.x
+                }
+        }
 
         ;(<Indexed>{
             [HOVER.SELECT]: () => {
-                if (this.selectedNodes?.length) return;
+                UndoRedoModule.save() // A node will probably be moved, here.
+                if (this.selectedNodes.includes(node!)) return;
+                this.selectedNodes = []
                 this.selectNode(node!)
                 this.renderer.render()
             },
             [HOVER.EDGE]: () => {
-                if (this.selectedNodes?.length) return;
+                if (this.selectedNodes.includes(node!)) return;
+                this.selectedNodes = []
                 this.unselectNode()
                 this.renderer.fromNode = node!
             },
             [HOVER.CONNECTION]: () => { 
-                this.selectedNodes = undefined
+                this.selectedNodes = []
 
                 const cache = <Indexed>this.renderer.connectionsCache
                 const { fromId, toId, connectionType } = cache[id!]
@@ -175,8 +196,9 @@ class NuniGraphController {
                 this.g.disconnect(this.renderer.fromNode, to, connectionType)
             },
             [HOVER.EMPTY]: () => {
+                this.selectedNodes = []
+
                 this.unselectNode()
-                this.selectedNodes = undefined
                 const { x, y } = this.getMousePos(e)
                 this.selectionStart = [x, y]
                 this.renderer.render()
@@ -186,29 +208,42 @@ class NuniGraphController {
 
     private mousemove(e : MouseEvent) {
 
-        const { type, id, node } = this.renderer.getGraphMouseTarget(e)
-        const { width: W, height: H } = this.renderer.canvas
-        const { selectedNodes } = this
-
         const snode = this.selectedNode
         const isPressing = 
             e.buttons === 1 && 
             this.mouseIsDown
 
+        const { type, id, node } = this.renderer.getGraphMouseTarget(e)
+        const { width: W, height: H } = this.renderer.canvas
+        const { selectedNodes } = this
+
         if (!this.selectionStart && 
-            selectedNodes?.length && 
+            selectedNodes.length && 
             isPressing) {
-                log('selectedNodes =',selectedNodes)
-            const dx = -node!.x + e.offsetX / W
-            const dy = -node!.y + e.offsetY / H
+                
+            const { node, deltas } = this.lastMouseDownMsg
+            const { U, D, L, R } = deltas
+            if (!node) throw `
+                Clicking on something that's not a node
+                should have cleared selectedNodes.length`
             
+            const _x = node.x
+            const _y = node.y 
+            const _dx = e.offsetX / W - _x
+            const _dy = e.offsetY / H - _y
+            node.x = clamp(L, _x + _dx, 1-R)
+            node.y = clamp(D, _y + _dy, 1-U)
+            const dx = node.x - _x
+            const dy = node.y - _y
+
             selectedNodes.forEach(n => {
-                n.x = clamp(0, n.x + dx, 1)
-                n.y = clamp(0, n.y + dy, 1)
+                if (n === node) return;
+                n.x += dx
+                n.y += dy
             })
         }
 
-        if (isPressing && snode) {
+        if (isPressing && snode && !selectedNodes.length) {
             // Drag the selected node
             snode.x = clamp(0, e.offsetX/W, 1)
             snode.y = clamp(0, e.offsetY/H, 1)
@@ -221,8 +256,7 @@ class NuniGraphController {
             hover_type: type, 
             hover_id: node ? node.id : id,
             selectionStart: this.selectionStart,
-            selectedNodes: 
-                this.getNodesInBox(e.offsetX, e.offsetY)
+            selectedNodes: this.getNodesInBox(e.offsetX, e.offsetY)
             }
 
         this.renderer.render(options)
