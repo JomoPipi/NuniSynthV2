@@ -29,13 +29,12 @@ const UndoRedoModule = {
     },
     redo: function() {
         this.undo_redo(true)
+    },
+    tryInput: function(e : KeyboardEvent) {
+        if (e.ctrlKey && e.keyCode === 90) {
+            e.shiftKey ? 
+                this.redo() :
+                this.undo() 
+        }
     }
 }
-
-window.addEventListener('keydown', (e : KeyboardEvent) => {
-    if (e.ctrlKey && e.keyCode === 90) {
-        e.shiftKey ? 
-            UndoRedoModule.redo() :
-            UndoRedoModule.undo() 
-    }
-})

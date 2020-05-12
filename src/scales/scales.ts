@@ -6,7 +6,7 @@
 
 
 function refreshKeys() {
-    for (const an of G.activeKbNodes()) {
+    for (const an of KB.connectedNodes()) {
         an.refresh()
     }
 }

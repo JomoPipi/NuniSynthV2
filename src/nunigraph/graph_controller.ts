@@ -19,6 +19,7 @@ class NuniGraphController {
     selectedNodes : NuniGraphNode[]
     private lastMouseDownMsg : any
     private selectionStart? : [number,number]
+    private copiedNodes? : string
 
     constructor (
         g : NuniGraph, 
@@ -44,6 +45,7 @@ class NuniGraphController {
         renderer.canvas.onmousedown = e => this.mousedown(e)
         window.addEventListener('mousemove', e => mouse_move(e))
         window.addEventListener('mouseup', e => this.mouseup(e))
+        window.addEventListener('keydown', e => this.keydown(e))
     }
 
     private getMousePos(e : MouseEvent) {
@@ -156,8 +158,8 @@ class NuniGraphController {
                 bottom: nodes.reduce((a,node) => Math.min(a,node.y), Infinity),
                 left:   nodes.reduce((a,node) => Math.min(a,node.x), Infinity),
                 right:  nodes.reduce((a,node) => Math.max(a,node.x), -Infinity),
-            }
-            this.lastMouseDownMsg.deltas = {
+                }
+            this.lastMouseDownMsg.bounds = {
                 U: o.top - node!.y,
                 D: node!.y - o.bottom,
                 L: node!.x - o.left,
@@ -165,7 +167,7 @@ class NuniGraphController {
                 }
         }
 
-        ;(<Indexed>{
+        ;({
             [HOVER.SELECT]: () => {
                 UndoRedoModule.save() // A node will probably be moved, here.
                 if (this.selectedNodes.includes(node!)) return;
@@ -173,16 +175,18 @@ class NuniGraphController {
                 this.selectNode(node!)
                 this.renderer.render()
             },
+
             [HOVER.EDGE]: () => {
                 if (this.selectedNodes.includes(node!)) return;
                 this.selectedNodes = []
                 this.unselectNode()
                 this.renderer.fromNode = node!
             },
+
             [HOVER.CONNECTION]: () => { 
                 this.selectedNodes = []
 
-                const cache = <Indexed>this.renderer.connectionsCache
+                const cache = this.renderer.connectionsCache
                 const { fromId, toId, connectionType } = cache[id!]
 
                 UndoRedoModule.save()
@@ -195,6 +199,7 @@ class NuniGraphController {
 
                 this.g.disconnect(this.renderer.fromNode, to, connectionType)
             },
+
             [HOVER.EMPTY]: () => {
                 this.selectedNodes = []
 
@@ -203,7 +208,7 @@ class NuniGraphController {
                 this.selectionStart = [x, y]
                 this.renderer.render()
             }
-        })[type]()
+        })[type as HOVER]()
     }
 
     private mousemove(e : MouseEvent) {
@@ -217,16 +222,18 @@ class NuniGraphController {
         const { width: W, height: H } = this.renderer.canvas
         const { selectedNodes } = this
 
-        if (!this.selectionStart && 
-            selectedNodes.length && 
-            isPressing) {
+        if (!this.selectionStart && // A selection is not currently being made
+            selectedNodes.length && // A group of nodes is selected
+            isPressing) {           // The user is pressing
                 
-            const { node, deltas } = this.lastMouseDownMsg
-            const { U, D, L, R } = deltas
-            if (!node) throw `
-                Clicking on something that's not a node
-                should have cleared selectedNodes.length`
+            const { 
+                node, 
+                bounds: { U, D, L, R } 
+                } = this.lastMouseDownMsg
             
+            // Don't let any node in the 
+            // group of selected nodes
+            // leave the canvas.
             const _x = node.x
             const _y = node.y 
             const _dx = e.offsetX / W - _x
@@ -236,11 +243,11 @@ class NuniGraphController {
             const dx = node.x - _x
             const dy = node.y - _y
 
-            selectedNodes.forEach(n => {
-                if (n === node) return;
+            for (const n of selectedNodes) {
+                if (n === node) continue
                 n.x += dx
                 n.y += dy
-            })
+            }
         }
 
         if (isPressing && snode && !selectedNodes.length) {
@@ -267,7 +274,7 @@ class NuniGraphController {
         this.mouseIsDown = false
         this.selectionStart = undefined
 
-        const { renderer } = this
+        const { renderer, selectedNodes } = this
 
         const fromNode = renderer.fromNode
         if (!fromNode) return;
@@ -280,20 +287,42 @@ class NuniGraphController {
             return;
         }
 
-        const { offsetX: x, offsetY: y } = e
 
         const do_it = () =>
-            this.promptUserToSelectConnectionType(fromNode, node!, x, y)
+            this.promptUserToSelectConnectionType(
+                fromNode, 
+                node!,
+                e.offsetX,
+                e.offsetY)
             
         ;(<Indexed>{
             [HOVER.EDGE]:       () => do_it(),
             [HOVER.SELECT]:     () => do_it(),
-            [HOVER.CONNECTION]: () => 0,
-            [HOVER.EMPTY]:      () => 0
+            [HOVER.CONNECTION]: () => {},
+            [HOVER.EMPTY]:      () => {}
         })[type]()
 
         renderer.fromNode = null
-        renderer.render({ selectedNodes: this.selectedNodes })
+        renderer.render({ selectedNodes })
+    }
+
+    private keydown(e : KeyboardEvent) {
+        UndoRedoModule.tryInput(e)
+        log('e =',e)
+        if (e.keyCode === 46) {
+            UndoRedoModule.save()
+            for (const node of this.selectedNodes) {
+                if (node.id !== 0) {
+                    this.g.deleteNode(node)
+                }
+            }
+            this.selectedNodes = []
+            this.renderer.render()
+        }
+        if (e.ctrlKey && e.keyCode === 86) { // ctrl + V
+            this.selectedNodes = 
+                this.g.copyNodes(this.selectedNodes)
+        }
     }
 
     private promptUserToSelectConnectionType(

@@ -55,6 +55,52 @@ class NuniGraph {
         return node
     }
 
+    copyNode(node : NuniGraphNode) {
+          const { 
+            id, 
+            type, 
+            x, 
+            y, 
+            audioParamValues, 
+            audioNodeType,  
+            audioNode,
+            } = JSON.parse(JSON.stringify(node))
+
+        const settings = {
+            display: { x: x + 0.05, y },
+            audioParamValues,
+            audioNodeType,
+            audioNodeSettings: {
+                kbMode: audioNode.kbMode
+                }
+            }
+
+        return this.newNode(type, settings)
+    }
+
+    copyNodes(nodes : NuniGraphNode[]) {
+        const correspondenceMap = nodes.reduce((map,node) => {
+            map[node.id] = this.copyNode(node)
+            return map
+            }, {} as { [key : number] : NuniGraphNode })
+
+        const connections = this.oneWayConnections
+        for (const id in connections) {
+            for (const { id: id2, connectionType } of connections[id]) {
+                const nodeA = this.nodes.find(node => node.id === +id)!
+                const nodeB = this.nodes.find(node => node.id === id2)!
+                const a = correspondenceMap[nodeA.id]
+                const b = correspondenceMap[nodeB.id]
+
+                if (a && b) {
+                    this.connect(a, b, connectionType)
+                }
+            }
+        }
+
+        return Object.values(correspondenceMap)
+    }
+
     deleteNode(node : NuniGraphNode) {
         // disconnect from other audioNodes
         node.audioNode.disconnect()
@@ -196,13 +242,5 @@ class NuniGraph {
 
     fromString(s : string) {
         return this.fromRawString(LZW_decompress(s))
-    }
-
-    * activeKbNodes() {
-        for (const { audioNode: an } of this.nodes) {
-            if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
-                yield an
-            }
-        }
     }
 }

@@ -6,7 +6,13 @@
 
 
 type NodeKbMode = 'none' | 'mono' | 'poly'
-type KbMode = 'mono' | 'poly'
+type KbMode              = 'mono' | 'poly'
+
+class Keyboard {
+    constructor() {
+        
+    }
+}
 
 const KB = (() => {
     
@@ -40,7 +46,9 @@ const KB = (() => {
         held, 
         scale,
         attachToGraph, 
-        mode: 'poly' as KbMode
+        mode: 'mono' as KbMode,
+        connectedNodes: <any>0,
+        ADSRs: {} as { [key : number] : ConstantSourceNode }
         }
 
 
@@ -49,13 +57,21 @@ const KB = (() => {
 
     function attachToGraph(g : NuniGraph) {
 
+        kb.connectedNodes = function*() {
+            for (const { audioNode: an } of g.nodes) {
+                if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
+                    yield an
+                }
+            }
+        }
+
         D('mono-poly-select')!.onclick = function (e : MouseEvent) {
             const t = e.target
             const isMono = t === monoBtn
             
             if (isMono || t === polyBtn) {
                 kb.mode = isMono ? 'mono' : 'poly'
-                for (const an of g.activeKbNodes()) {
+                for (const an of kb.connectedNodes()) {
                     an.setKbMode(kb.mode)
                 }
             }
@@ -87,7 +103,8 @@ const KB = (() => {
                     }
 
                     // MAKE THE SOUND HAPPEN
-                    for (const an of g.activeKbNodes()) {
+                    log('go go go')
+                    for (const an of kb.connectedNodes()) {
                         an.update(keydown, key)
                     }
                 } else {
