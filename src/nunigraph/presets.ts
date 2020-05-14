@@ -37,7 +37,7 @@
     div.onclick = function(e : MouseEvent) {
         const name = (e.target as HTMLElement).innerText
         if (name in presets) {
-            G.fromString((<any>presets)[name])
+            G.fromString((<Indexed>presets)[name])
             GraphController.renderer.render()
         }
     }

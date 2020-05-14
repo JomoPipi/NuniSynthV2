@@ -26,8 +26,8 @@ type ConnectionsCache = {
         fromId : number, 
         toId : number, 
         connectionType : ConnectionType 
-    } 
-}
+        } 
+    }
 
 class NuniGraphRenderer {
 
@@ -348,7 +348,9 @@ class NuniGraphRenderer {
         ctx.font = '15px Arial'
         ctx.clearRect(0,0,W,H)
     
-        if (snapToGrid.checked) this.drawGridLines(H,W,buttons)
+        if (snapToGrid.checked) {
+            this.drawGridLines(H,W,buttons)
+        }
 
         if (selectionStart) {
             const [X,Y] = selectionStart

@@ -5,7 +5,7 @@
 
 
 
-const UndoRedoModule = {
+const GraphUndoRedoModule = {
     undos: <string[]>[],
     redos: <string[]>[],
     save: function() {

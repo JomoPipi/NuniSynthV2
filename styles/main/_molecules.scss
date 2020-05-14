@@ -17,12 +17,23 @@
 }
 
 .list-btn {
-    margin: 5px;
-    border-width: 0.5px;
-    padding: 0px 5px;
-    border-radius: 5px;
-    border: none;
-    color: $color5;
-    background-color: $color1;
+    padding: 0px 10px;
+    color: lighten($color: $color4, $amount: 15%);
+    background: lighten($color:  $color1, $amount: 6%);
     box-sizing: border-box;
+    text-align: left;
+    border: none; 
+}
+.list-btn:nth-child(odd) { 
+    background: linear-gradient($color2,$color1);
+}
+
+::-webkit-scrollbar {
+    width:15px;
+}
+::-webkit-scrollbar-track{
+    background:linear-gradient($color1,$color0); border-radius: 5x;
+}
+::-webkit-scrollbar-thumb{
+    background:linear-gradient($color3,$color2); border-radius: 5px;
 }

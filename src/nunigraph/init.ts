@@ -10,10 +10,6 @@ const G = new NuniGraph()
 KB.attachToGraph(G)
 Buffers.attachToGraph(G)
 
-// const GraphRenderer = 
-//     createGraphCanvas(G, D('nunigraph-canvas') as HTMLCanvasElement)
-
-
 const GraphController = 
     new NuniGraphController(
         G, 

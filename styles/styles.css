@@ -1,5 +1,5 @@
 * {
-  font-family: BalooChettan2;
+  font-family: MicroFLF;
   margin: 0px;
   padding: 0px;
 }
@@ -113,8 +113,8 @@ button {
 
 #graph-contextmenu .contextmenu-button {
   text-align: left;
-  margin: 0;
-  padding: 0;
+  margin: 0px;
+  padding: 0 10px;
 }
 
 #graph-contextmenu .contextmenu-button:hover {
@@ -242,7 +242,7 @@ button {
   position: absolute;
   background-color: #201e20;
   color: #97a39a;
-  border: 1px solid white;
+  border: 1px solid #404441;
   z-index: 2;
 }
 
@@ -259,6 +259,8 @@ button {
   display: grid;
   -ms-grid-columns: 39% 61%;
       grid-template-columns: 39% 61%;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 #buffer-canvas {
@@ -321,7 +323,7 @@ code {
 
 .text-input, .text-input-wide {
   background-color: rgba(0, 0, 0, 0.1);
-  border-width: 0.25px;
+  border: 1px solid #404441;
   color: white;
 }
 
@@ -334,10 +336,14 @@ code {
 }
 
 .preset-list {
+  border: 1px solid #404441;
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 50% 50%;
-      grid-template-columns: 50% 50%;
+  -ms-grid-columns: 1fr;
+      grid-template-columns: 1fr;
+  max-height: 200px;
+  overflow-y: scroll;
+  text-align: left;
 }
 
 .rect-0 {
@@ -349,6 +355,13 @@ code {
 
 .dim-text {
   color: #5b5d5e;
+}
+
+.vert-split {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-rows: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
 }
 
 .apply-btn {
@@ -364,15 +377,34 @@ code {
 }
 
 .list-btn {
-  margin: 5px;
-  border-width: 0.5px;
-  padding: 0px 5px;
-  border-radius: 5px;
-  border: none;
-  color: #97a39a;
-  background-color: #2f302f;
+  padding: 0px 10px;
+  color: #818385;
+  background: #3e3f3e;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  text-align: left;
+  border: none;
+}
+
+.list-btn:nth-child(odd) {
+  background: -webkit-gradient(linear, left top, left bottom, from(#393a39), to(#2f302f));
+  background: linear-gradient(#393a39, #2f302f);
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+::-webkit-scrollbar-track {
+  background: -webkit-gradient(linear, left top, left bottom, from(#2f302f), to(#201e20));
+  background: linear-gradient(#2f302f, #201e20);
+  border-radius: 5x;
+}
+
+::-webkit-scrollbar-thumb {
+  background: -webkit-gradient(linear, left top, left bottom, from(#404441), to(#393a39));
+  background: linear-gradient(#404441, #393a39);
+  border-radius: 5px;
 }
 
 .info-button {
@@ -433,10 +465,12 @@ code {
 }
 
 .number-grab {
-  font-family: Arial, Helvetica, sans-serif;
-  background: transparent;
-  color: white;
-  border: 1px solid #201e20;
+  font: 1em Roboto;
+  letter-spacing: 0.2em;
+  background: -webkit-gradient(linear, left top, left bottom, from(#2f302f), to(black));
+  background: linear-gradient(#2f302f, black);
+  color: #97a39a;
+  border: 1px solid #404441;
   padding: 10px;
   cursor: -webkit-grab;
   cursor: grab;
@@ -639,7 +673,7 @@ code {
 }
 
 @font-face {
-  font-family: BalooChettan2;
-  src: url("BalooChettan2-Regular.ttf") format("truetype");
+  font-family: MicroFLF;
+  src: url("OpenSans-Regular.ttf") format("truetype");
 }
 /*# sourceMappingURL=styles.css.map */

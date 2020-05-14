@@ -25,7 +25,11 @@ $ui-bg: $color1;
 @import './main/pages';
 @import './theft/keyboard';
 
+// @font-face { 
+// 	font-family: BalooChettan2;
+// 	src: url('BalooChettan2-Regular.ttf') format('truetype');
+// }
 @font-face { 
-	font-family: BalooChettan2;
-	src: url('BalooChettan2-Regular.ttf') format('truetype');
+	font-family: MicroFLF;
+	src: url("OpenSans-Regular.ttf") format('truetype');
 }

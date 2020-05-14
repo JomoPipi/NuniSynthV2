@@ -67,15 +67,23 @@ class NuniGraphController {
     }
 
     // Inject (or hide) HTML that allows manipulation of the selected node
-    toggleValuesWindow() {
+    private toggleValuesWindow() {
         const { nodeValueContainer: container, 
-            connectionTypePrompt: prompt, 
             selectedNode: node } = this
 
         container.classList.toggle('show', node != undefined)
+        container.innerHTML = ''
+
         if (!node) return;
 
-        container.innerHTML = ''
+        this.showValuesWindow(node)
+    }
+
+    private showValuesWindow(node : NuniGraphNode) {
+        const { nodeValueContainer: container, 
+            connectionTypePrompt: prompt
+            } = this
+        
         const controls = E('div')
         
         container.appendChild(createDraggableTopBar(
@@ -106,7 +114,7 @@ class NuniGraphController {
                  * */ 
                 prompt.classList.remove('show')
     
-                UndoRedoModule.save()
+                GraphUndoRedoModule.save()
                 this.g.deleteNode(node)
                 this.unselectNode()
                 this.renderer.render()
@@ -115,6 +123,8 @@ class NuniGraphController {
         }
         container.appendChild(controls)
     }
+
+
     
     private getNodesInBox(x : number, y : number) {
         const { width: W, height: H } = this.renderer.canvas
@@ -169,7 +179,7 @@ class NuniGraphController {
 
         ;({
             [HOVER.SELECT]: () => {
-                UndoRedoModule.save() // A node will probably be moved, here.
+                GraphUndoRedoModule.save() // A node will probably be moved, here.
                 if (this.selectedNodes.includes(node!)) return;
                 this.selectedNodes = []
                 this.selectNode(node!)
@@ -189,7 +199,7 @@ class NuniGraphController {
                 const cache = this.renderer.connectionsCache
                 const { fromId, toId, connectionType } = cache[id!]
 
-                UndoRedoModule.save()
+                GraphUndoRedoModule.save()
                 this.unselectNode()
                 this.renderer.fromNode = 
                     this.g.nodes.find(node => node.id === fromId)!
@@ -307,12 +317,12 @@ class NuniGraphController {
     }
 
     private keydown(e : KeyboardEvent) {
-        if (UndoRedoModule.tryInput(e)) {
+        if (GraphUndoRedoModule.tryInput(e)) {
             this.renderer.render()
         }
-        log('e =',e)
+        
         if (e.keyCode === 46) {
-            UndoRedoModule.save()
+            GraphUndoRedoModule.save()
             if (this.selectedNode) {
                 this.g.deleteNode(this.selectedNode)
             }
@@ -326,7 +336,7 @@ class NuniGraphController {
             this.renderer.render()
         }
         if (e.ctrlKey && e.keyCode === 86) { // ctrl + V
-            UndoRedoModule.save()
+            GraphUndoRedoModule.save()
 
             if (this.selectedNode)
                 this.selectedNode = this.g.copyNodes([this.selectedNode])[0]
@@ -350,7 +360,7 @@ class NuniGraphController {
             // No prompt needed in this case. 
             // Only allow channel connections to the master gain node.
             // Allowing connections to someGain.gain can prevent it from being muted.
-            UndoRedoModule.save()
+            GraphUndoRedoModule.save()
             this.g.connect(node1, node2, 'channel')
             return;
         }
@@ -366,7 +376,7 @@ class NuniGraphController {
             btn.innerText = param
             btn.onclick = () =>
             {
-                UndoRedoModule.save()
+                GraphUndoRedoModule.save()
                 this.g.connect(node1, node2, param)
                 prompt.classList.remove('show')
                 renderer.render()

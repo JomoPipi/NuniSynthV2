@@ -46,6 +46,7 @@
     <script src="dist/webaudio2/oscillator2.js"      defer></script>
     <script src="dist/webaudio2/buffer2.js"          defer></script>
     <script src="dist/webaudio2/webaudio2.js"        defer></script>
+    <script src="dist/webaudio2/init.js"             defer></script>
 
     <script src="dist/nunigraph/graph_undo_redo.js"  defer></script>
     <script src="dist/nunigraph/display_nodedata.js" defer></script>
@@ -127,54 +128,55 @@
 
       
       <div id="graph-tab" class="_tab_ show">
-          <div class="side-margin">
-              <div class="center dim-text"> Create Nodes </div>
-              <div class="three-columns">
-                <button id="create-gain" class="neumorph">        gain         </button>
-                <button id="create-oscillator" class="neumorph">  oscillator   </button>
-                <button id="create-filter" class="neumorph">      filter       </button>
-                <button id="create-panner" class="neumorph">      panner       </button>
-                <button id="create-delay" class="neumorph">       delay        </button>    
-                <button id="create-buffer" class="neumorph">      buffer       </button>    
-              </div>
-          
-              <div class="graph-copy-buttons">
-
-                <button id="copy-graph-button" class="neumorph"> 
-                  copy this graph </button>
-                <input 
-                  type="text" 
-                  id="graph-copy-output" 
-                  class="text-input">
+          <div class="side-margin vert-split">
+              <div>
                 
-                <button id="from-string-button" class="neumorph"> 
-                  new graph from code </button>
-                <input 
-                  type="text" 
-                  id="graph-copy-input" 
-                  class="text-input" 
-                  placeholder="  Paste an encoded graph, here.">
+                <div class="center dim-text"> Create Nodes </div>
+                <div class="three-columns">
+                  <button id="create-gain" class="neumorph">        gain         </button>
+                  <button id="create-oscillator" class="neumorph">  oscillator   </button>
+                  <button id="create-filter" class="neumorph">      filter       </button>
+                  <button id="create-panner" class="neumorph">      panner       </button>
+                  <button id="create-delay" class="neumorph">       delay        </button>    
+                  <button id="create-buffer" class="neumorph">      buffer       </button>    
+                </div>
+            
+                <div class="graph-copy-buttons">
+
+                  <button id="copy-graph-button" class="neumorph"> 
+                    copy this graph </button>
+                  <input 
+                    type="text" 
+                    id="graph-copy-output" 
+                    class="text-input">
+                  
+                  <button id="from-string-button" class="neumorph"> 
+                    new graph from code </button>
+                  <input 
+                    type="text" 
+                    id="graph-copy-input" 
+                    class="text-input" 
+                    placeholder="paste a graph here">
+
+                </div>
+                
+                <div>
+                    <span> snap to grid 
+                      <input type="checkbox" id="snap-to-grid"> 
+                    </span>
+                    <button id="clear-graph-button" class="neumorph" style="float:right"> clear graph </button>
+                </div>
 
               </div>
               
               <div>
-              </div>
-              
-              <div>
-                  <span> snap to grid 
-                    <input type="checkbox" id="snap-to-grid"> 
-                  </span>
-                  <button id="clear-graph-button" class="neumorph" style="float:right"> clear graph </button>
-              </div>
-              
-              <br>
-              <br>
-              <br>
-              <br>
 
-              PRESETS
-              <div id="graph-preset-list" class="preset-list">
+                PRESETS
+                <div id="graph-preset-list" class="preset-list">
+                </div>
+                
               </div>
+
           </div>
       </div>
 
@@ -239,7 +241,7 @@
                   type="radio"
                   name="radio">
                 <label for="keyboard-poly-radio" class="radio"> 
-                  POLY
+                  POLY (beta)
                 </label>
               </span>
             </span>
@@ -257,7 +259,6 @@
             </div>
             
             <div id="preset-library" class="_scale-tab_ show">
-              <br>
               <div id="scale-preset-list" class="preset-list"></div>
             </div>
 

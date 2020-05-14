@@ -31,7 +31,7 @@ code {
 
 .text-input {
     background-color: rgba(0,0,0,0.1);
-    border-width: 0.25px;
+    border: 1px solid $color3;
     color: $color6;
 }
 .text-input-wide {
@@ -44,8 +44,12 @@ code {
 }
 
 .preset-list {
+    border: 1px solid $color3;
     display: grid;
-    grid-template-columns: 50% 50%;
+    grid-template-columns: 1fr;
+    max-height: 200px;
+    overflow-y: scroll;
+    text-align: left;
 }
 
 .rect-0 {
@@ -57,4 +61,9 @@ code {
 
 .dim-text {
     color: $color4;
+}
+
+.vert-split {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
 }

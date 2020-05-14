@@ -6,7 +6,10 @@
 
 
 * {
-    font-family: BalooChettan2;
+    font-family: MicroFLF; // Roboto;//BalooChettan2;
+    // letter-spacing: 0.2em;
+    // text-transform: uppercase;
+    // text-decoration: wavy;
     margin: 0px;
     padding: 0px;
 }
@@ -126,8 +129,8 @@ button {
     
     .contextmenu-button {
         text-align: left;
-        margin: 0;
-        padding: 0;
+        margin: 0px;
+        padding: 0 10px;
 
         &:hover {
             background-color: rgba(255, 0, 0, 0.204);
@@ -260,7 +263,7 @@ button {
     position: absolute;
     background-color: $color0;
     color: $color5;
-    border: 1px solid white;
+    border: 1px solid $color3;
     z-index: 2;
 }
 
@@ -275,6 +278,7 @@ button {
     @extend .some-margin;
     display: grid;
     grid-template-columns: 39% 61%;
+    box-sizing: border-box;
 }
 
 

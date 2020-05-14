@@ -78,10 +78,11 @@
 
 
 .number-grab {
-    font-family: Arial, Helvetica, sans-serif;
-    background: transparent;
-    color: $color6;
-    border: 1px solid $canvas-bg;
+    font: 1em Roboto;
+    letter-spacing: 0.2em;
+    background: linear-gradient($color1, black);  
+    color: $color5;
+    border: 1px solid $color3;
     padding: 10px;
     cursor: grab;
     

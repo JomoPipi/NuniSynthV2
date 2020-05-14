@@ -19,6 +19,9 @@ function activateKeyboardButton(an : NuniSourceNode) {
     return btn
 }
 
+
+
+
 function showSubtypes(node : NuniGraphNode) : Node {
     const subtypes = AudioNodeSubTypes[node.type] as string[]
     const box = E('span')
@@ -28,7 +31,7 @@ function showSubtypes(node : NuniGraphNode) : Node {
         insertOptions(select, subtypes)
         select.value = node.audioNode.type
         select.oninput = function() {
-            UndoRedoModule.save()
+            GraphUndoRedoModule.save()
             node.audioNodeType = 
             node.audioNode.type = select.value
         } 
@@ -58,7 +61,7 @@ function samplerControls(audioNode : BufferNode2) {
     ;['-','+'].forEach((op,i) => { // change the buffer index
         const btn = E('button'); btn.innerText = op
         btn.onclick = () => {
-            const v = clamp(0, audioNode.bufferIndex + Math.sign(i - .5), nBuffers-1)
+            const v = clamp(0, audioNode.bufferIndex + Math.sign(i - .5), Buffers.nBuffers-1)
 
             value.innerText = v.toString()
             audioNode.bufferIndex = v
@@ -69,7 +72,7 @@ function samplerControls(audioNode : BufferNode2) {
  
     ;['loop'].forEach(text => { // toggleable buttons
         const btn = E('button'); btn.innerText = text
-        btn.classList.toggle('selected',(audioNode as Indexed)[text])
+        btn.classList.toggle('selected', (audioNode as Indexed)[text])
         btn.onclick = () => {
             const on = (audioNode as Indexed)[text] ^= 1
             btn.classList.toggle('selected', <any>on)
@@ -98,11 +101,11 @@ function exposeAudioParams(node : NuniGraphNode) : Node {
             createUpdateParamFunc(node,param)
 
         const mousedownFunc = () => {
-            UndoRedoModule.save()
+            GraphUndoRedoModule.save()
             return node.audioParamValues[param]
         }
         const manualUpdater = (x:number) => {
-            UndoRedoModule.save()
+            GraphUndoRedoModule.save()
             node.setValueOfParam(param, x)
         }
         

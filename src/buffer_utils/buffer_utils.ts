@@ -21,7 +21,7 @@ function invertBuffer(index : number) {
 // Change buffer index
 ;['up','down'].forEach((s,i) => {
     D('buffer-index-'+s)!.onclick = () => {
-        const idx = Buffers.currentIndex = clamp(0, Buffers.currentIndex + Math.sign(.5 - i), nBuffers-1)
+        const idx = Buffers.currentIndex = clamp(0, Buffers.currentIndex + Math.sign(.5 - i), Buffers.nBuffers-1)
         D('buffer-index')!.innerText = idx.toString()
         Buffers.refreshAffectedBuffers()
     }
