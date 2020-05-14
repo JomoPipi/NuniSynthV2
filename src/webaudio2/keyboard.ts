@@ -103,7 +103,6 @@ const KB = (() => {
                     }
 
                     // MAKE THE SOUND HAPPEN
-                    log('go go go')
                     for (const an of kb.connectedNodes()) {
                         an.update(keydown, key)
                     }

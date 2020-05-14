@@ -21,7 +21,7 @@ Object.values(NodeTypes).forEach(type => {
             hideGraphContextmenu()
         }
 
-                    // GraphRenderer.render()
+        GraphController.renderer.render()
     }
     D(`create-${type}`)!.onclick = create 
     D(`create-${type}2`)!.onclick = create
@@ -50,7 +50,19 @@ Object.values(NodeTypes).forEach(type => {
 ;(D('clear-graph-button') as HTMLButtonElement).onclick = function() {
     UndoRedoModule.save()
     G.clear()
-                // GraphRenderer.render()
+    GraphController.renderer.render()
+}
+
+// Undo button
+;(D('graph-undo-button') as HTMLButtonElement).onclick = function() {
+    UndoRedoModule.undo()
+    GraphController.renderer.render()
+}
+
+// Redo button
+;(D('graph-redo-button') as HTMLButtonElement).onclick = function() {
+    UndoRedoModule.redo()
+    GraphController.renderer.render()
 }
 
 // Right-click options

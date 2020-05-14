@@ -35,6 +35,7 @@ const UndoRedoModule = {
             e.shiftKey ? 
                 this.redo() :
                 this.undo() 
+            return true
         }
     }
 }

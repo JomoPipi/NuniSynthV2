@@ -32,7 +32,7 @@ code {
 .text-input {
     background-color: rgba(0,0,0,0.1);
     border-width: 0.25px;
-    color: $color3;
+    color: $color6;
 }
 .text-input-wide {
     @extend .text-input;
@@ -52,9 +52,9 @@ code {
     width: 40px;
     height: 25px;
     background-color: $color1;
-    color: $color6;
+    color: $color5;
 }
 
 .dim-text {
-    color: $color5;
+    color: $color4;
 }

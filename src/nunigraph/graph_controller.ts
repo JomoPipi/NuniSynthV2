@@ -307,21 +307,37 @@ class NuniGraphController {
     }
 
     private keydown(e : KeyboardEvent) {
-        UndoRedoModule.tryInput(e)
+        if (UndoRedoModule.tryInput(e)) {
+            this.renderer.render()
+        }
         log('e =',e)
         if (e.keyCode === 46) {
             UndoRedoModule.save()
+            if (this.selectedNode) {
+                this.g.deleteNode(this.selectedNode)
+            }
             for (const node of this.selectedNodes) {
                 if (node.id !== 0) {
                     this.g.deleteNode(node)
                 }
             }
+            this.selectedNode = undefined
             this.selectedNodes = []
             this.renderer.render()
         }
         if (e.ctrlKey && e.keyCode === 86) { // ctrl + V
+            UndoRedoModule.save()
+
+            if (this.selectedNode)
+                this.selectedNode = this.g.copyNodes([this.selectedNode])[0]
+
             this.selectedNodes = 
                 this.g.copyNodes(this.selectedNodes)
+
+            this.renderer.render({ 
+                selectedNodes: this.selectedNodes,
+                selectedNode: this.selectedNode
+                })
         }
     }
 

@@ -153,7 +153,7 @@ class NuniGraphRenderer {
     private drawGridLines(H : number, W : number, buttons? : number) {
         const { ctx, g } = this
         ctx.lineWidth = 0.2
-        ctx.strokeStyle = 'rgba(255,255,255,0.25)'
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)'
         const gridGrap = W/25
 
         for (let i = 0; i < W; i += gridGrap) {
@@ -162,17 +162,20 @@ class NuniGraphRenderer {
         }
 
         const node = GraphController.selectedNode
-        if (node && buttons === 0) { // snap this node to the grid
-            const {x,y} = node
-            const [X,Y] = [x*W, y*H]
-            const [newX, newY] = [
-                Math.round(X / gridGrap) * gridGrap / W, 
-                Math.round(Y / gridGrap) * gridGrap / H]
-
-            if (!g.nodes.some(node => node.x === newX && node.y === newY)) {
-            // the condition prevents the user from stacking nodes
-                node.x = newX
-                node.y = newY
+        const nodes = node ? [node] : GraphController.selectedNodes
+        if (buttons === 0) { // snap these nodes to the grid
+            for (const node of nodes) {
+                const {x,y} = node
+                const [X,Y] = [x*W, y*H]
+                const [newX, newY] = [
+                    Math.round(X / gridGrap) * gridGrap / W, 
+                    Math.round(Y / gridGrap) * gridGrap / H]
+    
+                if (!g.nodes.some(node => node.x === newX && node.y === newY)) {
+                // the condition prevents the user from stacking nodes
+                    node.x = newX
+                    node.y = newY
+                }
             }
         }
     }

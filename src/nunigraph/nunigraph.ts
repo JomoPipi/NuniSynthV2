@@ -89,10 +89,10 @@ class NuniGraph {
             for (const { id: id2, connectionType } of connections[id]) {
                 const nodeA = this.nodes.find(node => node.id === +id)!
                 const nodeB = this.nodes.find(node => node.id === id2)!
-                const a = correspondenceMap[nodeA.id]
-                const b = correspondenceMap[nodeB.id]
+                const a = correspondenceMap[nodeA.id] || nodeA
+                const b = correspondenceMap[nodeB.id] || nodeB
 
-                if (a && b) {
+                if (a !== nodeA || b !== nodeB) {
                     this.connect(a, b, connectionType)
                 }
             }
