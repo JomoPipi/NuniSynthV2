@@ -541,7 +541,12 @@ code {
 }
 
 .selected {
-  background-color: lime;
+  background: rgba(0, 255, 0, 0.75);
+  border: 2px solid green;
+}
+
+.selected2 {
+  border: 2px solid cyan;
 }
 
 .show {

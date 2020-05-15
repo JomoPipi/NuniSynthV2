@@ -65,6 +65,8 @@ const Buffers = {
         div.onclick = (e : MouseEvent) =>{
             const btn = e.target as HTMLButtonElement
             const [_,n] = btn.id.split('-').map(Number)
+            D(`buff-${this.currentIndex}`)?.classList.remove('selected2')
+            D(`buff-${n}`)?.classList.add('selected2')
             this.currentIndex = n
             D('buffer-index')!.innerText = n.toString()
 

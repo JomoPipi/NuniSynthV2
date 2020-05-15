@@ -33,8 +33,14 @@
 }
 
 .selected {
-    background-color: rgb(0, 255, 0);
+    background: rgba(0, 255, 0, 0.75);
+    border: 2px solid green;
 }
+
+.selected2 {
+    border: 2px solid cyan;
+}
+
 
 .show { // Has to be at the end so that it "wins".
     display: inline-block;
