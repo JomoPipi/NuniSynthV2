@@ -47,7 +47,16 @@ code {
     border: 1px solid $color3;
     display: grid;
     grid-template-columns: 1fr;
-    max-height: 200px;
+    height: 200px;
+    overflow-y: scroll;
+    text-align: left;
+}
+
+.buffers-list {
+    border: 1px solid $color3;
+    display: grid;
+    grid-template-columns: 1fr;
+    height: 120px;
     overflow-y: scroll;
     text-align: left;
 }

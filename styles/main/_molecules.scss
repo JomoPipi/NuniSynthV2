@@ -22,6 +22,7 @@
     background: lighten($color:  $color1, $amount: 6%);
     box-sizing: border-box;
     text-align: left;
+    font-size: 1em;
     border: none; 
 }
 .list-btn:nth-child(odd) { 

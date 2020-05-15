@@ -17,7 +17,7 @@ function drawBuffer(buff : AudioBuffer, canvas : HTMLCanvasElement) {
     ctx.translate(0, H / 2)
     ctx.globalAlpha = 0.06
     for (let i = 0; i < channel.length; i++) {
-        const x = W * i / channel.length |0
+        const x = W * i / channel.length | 0
         const y = channel[i] * H / 2
         ctx.beginPath()
         ctx.moveTo(x, 0)

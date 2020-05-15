@@ -341,7 +341,18 @@ code {
   display: grid;
   -ms-grid-columns: 1fr;
       grid-template-columns: 1fr;
-  max-height: 200px;
+  height: 200px;
+  overflow-y: scroll;
+  text-align: left;
+}
+
+.buffers-list {
+  border: 1px solid #404441;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr;
+      grid-template-columns: 1fr;
+  height: 120px;
   overflow-y: scroll;
   text-align: left;
 }
@@ -383,6 +394,7 @@ code {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   text-align: left;
+  font-size: 1em;
   border: none;
 }
 

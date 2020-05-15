@@ -344,31 +344,29 @@
 
           <br>
 
-          <button id="record" class="record"> rec </button>
-          <span> buffer index: </span>
-          <button id="buffer-index-down" class="rect-0"> - </button>
-          <span id="buffer-index"> 0 </span>
-          <button id="buffer-index-up" class="rect-0"> + </button>
-
-          <br>
-          <br>
-
-          <canvas id="buffer-canvas"></canvas>
-          <div class="length-indicator"></div>
-          <span id="buffer-length-text"></span>
-
-          <br>
-          <br>
+          <span>
+            <span> buffer index: </span>
+            <span id="buffer-index"> 0 </span>
+          </span>
+  
+          <div class="box">
+            <div id="buffer-container" class="buffers-list"></div>
+            <span>
+              <canvas id="buffer-canvas"></canvas>
+              <div class="length-indicator"></div>
+              <span id="buffer-length-text"></span>
+            </span>
+          </div>
 
           <div id="buffer-functions">
+            <button id="record" class="record"> rec </button>
             <button id="reverse-buffer"> reverse </button>
             <button id="invert-buffer">  invert </button>
           </div>
 
           <br>
-          <br>
-          <br>
           [BUFFER EDITING]
+          
         </div>
       </div>
 
