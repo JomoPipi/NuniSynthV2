@@ -6,7 +6,7 @@
 
 
 * {
-    font-family: MicroFLF; // Roboto;//BalooChettan2;
+    font-family: OpenSans; // Roboto;//BalooChettan2;
     // letter-spacing: 0.2em;
     // text-transform: uppercase;
     // text-decoration: wavy;
@@ -38,6 +38,9 @@ select {
 
 button {
     cursor: pointer;
+    background-color: $color2;
+    color: $color5;
+    font-weight: bolder;
 }
 
 

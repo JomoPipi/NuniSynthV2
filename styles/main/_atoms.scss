@@ -56,9 +56,14 @@ code {
     border: 1px solid $color3;
     display: grid;
     grid-template-columns: 1fr;
-    height: 120px;
     overflow-y: scroll;
     text-align: left;
+}
+
+.buffer-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 150px; 
 }
 
 .rect-0 {
@@ -75,4 +80,15 @@ code {
 .vert-split {
     display: grid;
     grid-template-rows: 1fr 1fr;
+}
+
+.flat-grid {
+    // display: gr
+    text-align: justify;
+    -ms-text-justify: distribute-all-lines;
+    text-justify: distribute-all-lines;
+
+    span { 
+        margin: 0 3%;
+    }
 }

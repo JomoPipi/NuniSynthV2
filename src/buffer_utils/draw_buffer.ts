@@ -25,6 +25,5 @@ function drawBuffer(buff : AudioBuffer, canvas : HTMLCanvasElement) {
         ctx.stroke()
     }
     ctx.restore()
-    D('buffer-length-text')!.innerText = `${buff.duration} sec`
     console.log('Done rendering buffer')
 }

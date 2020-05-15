@@ -33,6 +33,7 @@
     <script src="dist/UI/jsdials.js"           defer></script>
     <script src="dist/UI/draggable-top-bar.js" defer></script>
     <script src="dist/UI/number-input.js"      defer></script>
+    <script src="dist/UI/page-group.js"        defer></script>
     <script src="dist/UI/info_menu.js"         defer></script>
 
     <script src="dist/buffer_utils/init_buffers.js" defer></script>
@@ -107,14 +108,13 @@
 
     <div class="top-bar-2">
       <span>
-        <select id="tab-swapper">
-          <!-- THE VALUES HERE ARE THE IDs OF TABS -->
-          <option value="graph-tab">         Graph          </option>
-          <option value="keyboard-tab">      Keyboard       </option>
-          <option value="buffer-edit-tab">   Buffers        </option>
-          <option value="waveform-edit-tab"> Waveforms      </option>
-          <option value="sequencer-tab">     Sequencer      </option>
-        </select>
+        <div id="tab-swapper" class="flat-grid">
+          <span id="graph-tab-btn">         Graph          </span>
+          <span id="keyboard-tab-btn">      Keyboard       </span>
+          <span id="buffer-edit-tab-btn">   Buffers        </span>
+          <span id="waveform-edit-tab-btn"> Waveforms      </span>
+          <span id="sequencer-tab-btn">     Sequencer      </span>
+        </div>
       </span>
       <button 
         id="info-button" 
@@ -252,10 +252,10 @@
           <div id="scale-builder-container" class="scale-builder-container">
 
             <div class="center">
-              <select id="scale-kinds">
-                <option value="preset-library"> SCALE PRESETS </option>
-                <option value="scale-builder"> SCALE BUILDER </option>
-              </select> 
+              <span id="scale-kinds">
+                <span id="preset-library-btn"> SCALE PRESETS </span>
+                <span id="scale-builder-btn">  SCALE BUILDER </span>
+              </span> 
             </div>
             
             <div id="preset-library" class="_scale-tab_ show">
@@ -344,28 +344,40 @@
 
           <br>
 
-          <span>
-            <span> buffer index: </span>
-            <span id="buffer-index"> 0 </span>
-          </span>
+          <div class="lcd-display">
+            <code> BUFFER </code>
+            <code id="buffer-info"> A -- 3 seconds </code>
+          </div>
   
-          <div class="box">
+          <div class="buffer-box">
             <div id="buffer-container" class="buffers-list"></div>
             <span>
               <canvas id="buffer-canvas"></canvas>
-              <div class="length-indicator"></div>
-              <span id="buffer-length-text"></span>
             </span>
           </div>
 
-          <div id="buffer-functions">
-            <button id="record" class="record"> rec </button>
-            <button id="reverse-buffer"> reverse </button>
-            <button id="invert-buffer">  invert </button>
-          </div>
-
           <br>
-          [BUFFER EDITING]
+
+          <select id="buffer-edit-create-select">
+            <option value=""> edit </option>
+            <option value=""> create </option>
+          </select>
+
+          <div id="buffer-functions">
+
+            <button id="record" class="record"> 
+              rec </button>
+
+            <button id="reverse-buffer" class="neumorph"> 
+              reverse </button>
+
+            <button id="invert-buffer" class="neumorph">  
+              invert </button>
+
+            <button id="trim-buffer" class="neumorph">   
+              trim </button>
+
+          </div>
           
         </div>
       </div>

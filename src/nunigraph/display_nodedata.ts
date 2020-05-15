@@ -55,7 +55,7 @@ function samplerControls(audioNode : BufferNode2) {
     const box = E('span')
     box.innerHTML = '<span> buffer </span>'
     box.classList.add('buffer-row')
-    const value = E('span'); value.innerText = audioNode.bufferIndex.toString()
+    const value = E('span'); value.innerText = String.fromCharCode(65 + audioNode.bufferIndex)
     box.appendChild(value)
 
     ;['-','+'].forEach((op,i) => { // change the buffer index
@@ -63,7 +63,7 @@ function samplerControls(audioNode : BufferNode2) {
         btn.onclick = () => {
             const v = clamp(0, audioNode.bufferIndex + Math.sign(i - .5), Buffers.nBuffers-1)
 
-            value.innerText = v.toString()
+            value.innerText = String.fromCharCode(65 + v)
             audioNode.bufferIndex = v
             audioNode.refresh()
         }

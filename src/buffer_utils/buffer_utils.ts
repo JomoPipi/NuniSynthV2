@@ -18,12 +18,13 @@ function invertBuffer(index : number) {
     Buffers.refreshAffectedBuffers()
 }
 
-// Reverse buffer at current index
-D('reverse-buffer')!.onclick = () => {
-    reverseBuffer(Buffers.currentIndex)
-}
-
-// Reverse buffer at current index
-D('invert-buffer')!.onclick = () => {
-    invertBuffer(Buffers.currentIndex)
+D('buffer-functions')!.onclick = (e : MouseEvent) => {
+    const btn = e.target as HTMLButtonElement
+    
+    if (!btn) return
+    ;((<Indexed> {
+        record:           () => recordTo(Buffers.currentIndex),
+        'reverse-buffer': () => reverseBuffer(Buffers.currentIndex),
+        'invert-buffer':  () => invertBuffer(Buffers.currentIndex)
+    })[btn.id] || id)()
 }

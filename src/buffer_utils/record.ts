@@ -5,12 +5,9 @@
 
 
 
-const recordButton = D('record')!
-recordButton.onclick = () => 
-    recordTo(Buffers.currentIndex)
-
-
 function recordTo(index : number) {
+    const recordButton = D('record')!
+
     const errStuff = (err : string) => {
         recordButton.innerText = err
         recordButton.style.backgroundColor = 'orange'

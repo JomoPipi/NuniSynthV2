@@ -19,6 +19,19 @@ const presets = (i:number, channel : number) => ([
     Math.sin(i / 32.0) + Math.cos(i / 27.0)
 ])
 
+// const _Buffers = new class{
+//         buffers : AudioBuffer[];
+//         readonly nBuffers : number;
+//         currentIndex : number;
+//         lastRecorderRequestId : number;
+//         constructor() {
+//             this.buffers = []
+//             this.nBuffers = 16
+//             this.currentIndex = 0
+//             this.lastRecorderRequestId = 0
+//         }
+//     }
+
 const Buffers = {
     buffers: <AudioBuffer[]>[],
     nBuffers: 16,
@@ -30,8 +43,8 @@ const Buffers = {
         this.refreshAffectedBuffers = () => {
             const canvas = D('buffer-canvas') as HTMLCanvasElement
         
-            drawBuffer(Buffers.buffers[this.currentIndex], canvas)
-        
+            updateBufferUI()
+
             for (const { audioNode: an } of g.nodes) {
                 if (an instanceof BufferNode2 && an.bufferIndex === this.currentIndex) {
                     an.refresh()
@@ -61,6 +74,8 @@ const Buffers = {
             }
             Buffers.buffers.push(buffer)
         }
+        
+        D('buff-0')!.classList.add('selected2')
 
         div.onclick = (e : MouseEvent) =>{
             const btn = e.target as HTMLButtonElement
@@ -68,11 +83,21 @@ const Buffers = {
             D(`buff-${this.currentIndex}`)?.classList.remove('selected2')
             D(`buff-${n}`)?.classList.add('selected2')
             this.currentIndex = n
-            D('buffer-index')!.innerText = n.toString()
-
-            drawBuffer(
-                Buffers.buffers[this.currentIndex], 
-                D('buffer-canvas') as HTMLCanvasElement)
+            updateBufferUI()
         }
     }
+}
+
+function updateBufferUI() {
+    const n = Buffers.currentIndex
+    D('buffer-info')!.innerText =
+    `${
+        String.fromCharCode(65 + n)
+    } -- ${
+        Buffers.buffers[n].duration
+    } seconds`
+
+    drawBuffer(
+        Buffers.buffers[n], 
+        D('buffer-canvas') as HTMLCanvasElement)
 }
