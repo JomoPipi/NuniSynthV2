@@ -7,15 +7,11 @@
 
 .adsr-and-kb {
     display: grid;
-    grid-template-columns: 35% 65%;
+    grid-template-columns: 39% 61%;
 }
 
 
 ._tab_ {
     display: none;
     width: 100%;
-}
-
-._scale-tab_ {
-    @extend ._tab_;
 }

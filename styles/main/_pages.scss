@@ -5,8 +5,12 @@
 
 
 
+a {
+    color: rgb(121, 157, 146);
+}
+
 .scale-builder-container {
-    background-color: $color0;
+    background-color: $color1;
     width: 100%;
 }
 
@@ -20,21 +24,25 @@
     border: 1px solid white;
     box-sizing: border-box;
 }
+.builder-section {
+    padding: 2%;
+    border: 1px solid white;
+    box-sizing: border-box;
+}
 
 .neumorph {
     padding: 1.5%;
     border: none;
-    color: $color5;
+    color: $color4a;
     margin: 4%;
     border-radius: 9px;
     background: transparent;
-    box-shadow:  5px 5px 10px #212121, 
-                -5px -5px 10px #2d2d2d;
+    box-shadow:  5px 5px 10px $color1, 
+                -5px -5px 10px $color3;
 }
 
 .selected {
     background: rgba(0, 255, 0, 0.25);
-    border: 2px solid green;
 }
 
 .selected2 {
@@ -44,4 +52,9 @@
 
 .show { // Has to be at the end so that it "wins".
     display: inline-block;
+}
+
+.buffer-formula-container {
+    background-color: $color0;
+    color: $color4;
 }

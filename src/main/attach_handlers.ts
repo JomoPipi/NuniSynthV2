@@ -4,32 +4,6 @@
 
 
 {
-    const [tabSwapper, scaleKinds] = 
-        [D('tab-swapper'), D('scale-kinds')] as HTMLSelectElement[]
-
-    // Switch tabs
-    tabSwapper.oninput = function() {
-        const value = tabSwapper.value
-        for (const { id, classList } of 
-            document.getElementsByClassName('_tab_')) {
-
-            classList.toggle('show', value === id)
-        }
-        resizeHandler()
-    }
-
-    // Switch tabs in scale edit tab
-    scaleKinds.oninput = function() {
-        const value = scaleKinds.value
-        for (const { id, classList } of 
-            document.getElementsByClassName('_scale-tab_')) {
-
-            classList.toggle('show', value === id)
-        }
-    }
-
-
-
     // Attach JS dials to ADSR
     MY_JS_DIALS.forEach((dial : JsDial) => {
         const id = dial.id as string

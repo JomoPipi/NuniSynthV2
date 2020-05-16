@@ -18,7 +18,7 @@
 
 .list-btn {
     padding: 0px 10px;
-    color: lighten($color: $color4, $amount: 15%);
+    color: $color4a;
     background: lighten($color:  $color1, $amount: 2%);
     box-sizing: border-box;
     text-align: left;
@@ -37,4 +37,10 @@
 }
 ::-webkit-scrollbar-thumb{
     background:linear-gradient($color3,$color2); border-radius: 5px;
+}
+
+.swapper {
+    span {
+        cursor: pointer;
+    }
 }

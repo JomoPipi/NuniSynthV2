@@ -9,6 +9,10 @@ code {
     font-family: monospace;
 }
 
+.code2{
+    background-color: rgba(0,0,0,0.4);
+}
+
 .hide {
     display: none;
 }
@@ -63,7 +67,7 @@ code {
 .buffer-box {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    height: 150px; 
+    height: 100px;
 }
 
 .rect-0 {
@@ -83,12 +87,27 @@ code {
 }
 
 .flat-grid {
-    // display: gr
-    text-align: justify;
-    -ms-text-justify: distribute-all-lines;
-    text-justify: distribute-all-lines;
+    display: flex;
+    justify-content: space-between;
 
     span { 
-        margin: 0 3%;
+        width: 100%;
+        text-align: center;
     }
+}
+
+.table { 
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+
+.vcontainer {
+    min-height: 10em;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.color1 {
+    background: $color1;
 }

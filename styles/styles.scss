@@ -10,6 +10,7 @@ $color1: rgb(47, 48, 47);
 $color2: rgb(57, 58, 57);
 $color3: rgb(64, 68, 65);
 $color4: rgb(91, 93, 94);
+$color4a: lighten($color: $color4, $amount: 15%);
 $color5: rgb(151, 163, 154);
 $color6: rgb(255, 255, 255);
 

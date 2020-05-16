@@ -11,5 +11,5 @@ resizeHandler()
 
 function resizeHandler() {
     GraphController.renderer.render()
-    resizeKeyboard()
+    // resizeKeyboard()
 }

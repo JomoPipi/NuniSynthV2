@@ -36,10 +36,11 @@
     <script src="dist/UI/page-group.js"        defer></script>
     <script src="dist/UI/info_menu.js"         defer></script>
 
-    <script src="dist/buffer_utils/init_buffers.js" defer></script>
-    <script src="dist/buffer_utils/draw_buffer.js"  defer></script>
-    <script src="dist/buffer_utils/record.js"       defer></script>
-    <script src="dist/buffer_utils/buffer_utils.js" defer></script>
+    <script src="dist/buffer_utils/init_buffers.js"   defer></script>
+    <script src="dist/buffer_utils/draw_buffer.js"    defer></script>
+    <script src="dist/buffer_utils/record.js"         defer></script>
+    <script src="dist/buffer_utils/buffer-formula.js" defer></script>
+    <script src="dist/buffer_utils/buffer_utils.js"   defer></script>
 
     <script src="dist/webaudio2/keyboard.js"         defer></script>
     <script src="dist/webaudio2/adsr.js"             defer></script>
@@ -108,7 +109,7 @@
 
     <div class="top-bar-2">
       <span>
-        <div id="tab-swapper" class="flat-grid">
+        <div id="tab-swapper" class="flat-grid swapper">
           <span id="graph-tab-btn">         Graph          </span>
           <span id="keyboard-tab-btn">      Keyboard       </span>
           <span id="buffer-edit-tab-btn">   Buffers        </span>
@@ -116,11 +117,6 @@
           <span id="sequencer-tab-btn">     Sequencer      </span>
         </div>
       </span>
-      <button 
-        id="info-button" 
-        class="info-button"> 
-        i 
-      </button> 
     </div>
     
     <div id="tabs">
@@ -222,69 +218,98 @@
               </div>
             </span>
 
-            <span>
-              <br>
+            <span class="table">
 
-              <span class="keyboard" id="keyboard-image"></span>
-              <br>
-
-              <span id="mono-poly-select" class="center">
-                <input id="keyboard-mono-radio" 
-                  type="radio"
-                  name="radio"
-                  checked="true">
-                <label for="keyboard-mono-radio" class="radio"> 
-                  MONO
-                </label>
-
-                <input id="keyboard-poly-radio"
-                  type="radio"
-                  name="radio">
-                <label for="keyboard-poly-radio" class="radio"> 
-                  POLY (beta)
-                </label>
+              <span class="vcontainer">
+              
+                <div class="keyboard" id="keyboard-image"></div>
+  
+                <div id="mono-poly-select" class="center">
+                  <input id="keyboard-mono-radio" 
+                    type="radio"
+                    name="radio"
+                    checked="true">
+                  <label for="keyboard-mono-radio" class="radio"> 
+                    MONO
+                  </label>
+  
+                  <input id="keyboard-poly-radio"
+                    type="radio"
+                    name="radio">
+                  <label for="keyboard-poly-radio" class="radio"> 
+                    POLY (beta)
+                  </label>
+                </div>
+  
               </span>
+
             </span>
 
           </div>
 
-          <!-- START SCALE BUILDER CONTAINER  -->
+          <br>
+          
           <div id="scale-builder-container" class="scale-builder-container">
 
             <div class="center">
-              <span id="scale-kinds">
+              <span id="scale-kinds" class="flat-grid swapper">
                 <span id="preset-library-btn"> SCALE PRESETS </span>
                 <span id="scale-builder-btn">  SCALE BUILDER </span>
               </span> 
             </div>
             
-            <div id="preset-library" class="_scale-tab_ show">
+            <div id="preset-library" class="_tab_ show">
               <div id="scale-preset-list" class="preset-list"></div>
             </div>
 
-            <div id="scale-builder" class="_scale-tab_">
+            <div id="scale-builder" class="_tab_">
               
-              <br>
-
               <div class="scale-builder-section">
 
                 <code> EDO (Equal Divisions of Octave) </code> <br>
 
-                <input type="number" id="intervals-per-octave" class="text-input center" value=12> 
+                <input 
+                  type="number" 
+                  id="intervals-per-octave" 
+                  class="text-input center" 
+                  value=12> 
                 <span> Intervals per Octave </span> <br>
 
-                <input type="number" id="cents-per-step" class="text-input center" value=100>
+                <input 
+                  type="number" 
+                  id="cents-per-step" 
+                  class="text-input center" 
+                  value=100>
                 <span> Cents per Step </span>
 
                 <button class="apply-btn" id="apply-equal-temperament"> apply </button>
 
               </div>
 
+              <div class="scale-builder-section">
+
+                Enter a list of comma separated values -- may be cents or ratios.
+                1/1 is included by default. Octaves repeat. <br>
+                
+                <code>
+                  [
+                  <input
+                    type="text" 
+                    id="scale-csv-input"
+                    class="text-input-wide center"
+                    value="9/8,  5/4,  3/2,  1100">
+                    
+                  ]
+                </code>
+                  
+                <button class="apply-btn" id="apply-scale-csv"> apply </button>
+
+              </div>
 
               <div class="scale-builder-section">
                   
-                Cent-Delta List Comprehension <br>
-                Use 
+                Scale Cents Expression <br>
+                Use
                   <a 
                     target="_blank" 
                     href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators"> 
@@ -297,7 +322,7 @@
                 <br>
 
                 <code>
-                  [ <input 
+                  [ <input
                       type="text" 
                       id="delta-expression"
                       class="text-input-wide center"
@@ -306,26 +331,6 @@
                 </code>
 
                 <button class="apply-btn" id="apply-cent-delta"> apply </button>
-
-              </div>
-
-
-              <div class="scale-builder-section">
-
-                Enter a list of comma separated values -- may be cents or ratios.
-                1/1 is included by default. Octaves repeat. <br>
-                
-                <code>
-                  [
-                  <input 
-                    type="text" 
-                    id="scale-csv-input"
-                    class="text-input-wide center"
-                    value="9/8,  5/4,  3/2,  1100">
-                  ]
-                </code>
-                  
-                <button class="apply-btn" id="apply-scale-csv"> apply </button>
 
               </div>
 
@@ -342,8 +347,6 @@
       <div id="buffer-edit-tab" class="_tab_">
         <div class="side-margin">
 
-          <br>
-
           <div class="lcd-display">
             <code> BUFFER </code>
             <code id="buffer-info"> A -- 3 seconds </code>
@@ -358,27 +361,87 @@
 
           <br>
 
-          <select id="buffer-edit-create-select">
-            <option value=""> edit </option>
-            <option value=""> create </option>
-          </select>
+          <span id="buffer-edit-create-select" class="flat-grid color1 swapper">
+            <span id="buffer-edit-btn"> EDIT </span>
+            <span id="buffer-create-btn"> CREATE </span>
+          </span>
 
           <div id="buffer-functions">
+            
+            <div id="buffer-edit" class="_tab_ show">
 
-            <button id="record" class="record"> 
-              rec </button>
+              <button id="reverse-buffer" class="neumorph"> 
+                reverse </button>
 
-            <button id="reverse-buffer" class="neumorph"> 
-              reverse </button>
+              <button id="invert-buffer" class="neumorph">  
+                invert </button>
 
-            <button id="invert-buffer" class="neumorph">  
-              invert </button>
+              <button id="trim-buffer" class="neumorph">   
+                trim </button>
+              
 
-            <button id="trim-buffer" class="neumorph">   
-              trim </button>
+            </div>
 
+            
+            <div id="buffer-create" class="_tab_">
+
+              <button id="record" class="record"> 
+                rec </button>
+
+              <button id="buffer-copy-from" class="neumorph"> 
+                copy from </button>
+
+              <br>
+
+              <div class="buffer-formula-container builder-section">
+                Buffer Expression <br>
+
+                <span>
+                  output length:
+                  <input 
+                    id="buffer-formula-length"
+                    type="range" 
+                    min=0.1 
+                    max=10 
+                    step=0.1
+                    value=3> 
+                  <span 
+                    id="buffer-formula-length-text"> 
+                    3 
+                  </span> seconds
+                </span>
+
+                <br>
+                
+                <span class="code2">  n  </span> represents the position of each value, in the buffer.
+                <!-- <span class="code2">  x  </span> represents the value at position n, in the buffer.  -->
+                Output values should be between -1 and 1. Use
+                  <a 
+                    target="_blank" 
+                    href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators"> 
+                    operators </a> 
+                and
+                  <a 
+                    target="_blank"
+                    href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math"> 
+                    functions </a>
+                <br>
+
+                [ <input
+                    type="text" 
+                    id="buffer-formula"
+                    class="text-input-wide center"
+                    value="sin(n/30) + sin(n/20)"> | n &lt;- [0,1..]
+                ]
+
+                <button class="apply-btn" id="apply-buffer-formula"> apply </button>
+
+              </div>
+
+            </div>
+            
           </div>
-          
+
         </div>
       </div>
 
@@ -407,6 +470,11 @@
   <div class="panel">
     
     <div class="top-bar-2">
+      <button 
+        id="info-button" 
+        class="info-button"> 
+        i 
+      </button> 
       <button class="top-bar-btn undo-btn" id="graph-undo-button">↺</button>
       <button class="top-bar-btn redo-btn" id="graph-redo-button">↻</button>
     </div>
