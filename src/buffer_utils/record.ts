@@ -15,11 +15,11 @@ function recordTo(index : number) {
 
     const isRecording = recordButton.classList.toggle('recording')
     if (!isRecording) {
-        clearTimeout(Buffers.lastRecorderRequestId)
-        Buffers.stopLastRecorder()
+        clearTimeout(bufferController.lastRecorderRequestId)
+        bufferController.stopLastRecorder()
         return;
     }
-    
+
     log('recording...')
 
     if ((<any>D('record-mic')).checked) {
@@ -30,21 +30,24 @@ function recordTo(index : number) {
             .catch(errStuff)
     } else {
         const mediaStreamDestination = 
-            audioCtx.createMediaStreamDestination();
+            audioCtx.createMediaStreamDestination()
 
-        G.nodes
-            .find(node=>node.id === 0)!
-            .audioNode
-            .connect(mediaStreamDestination)
+        const masterGain = 
+            G.nodes.find(node=>node.id === 0)!.audioNode
+        
+        masterGain.connect(mediaStreamDestination)
 
-        handleStream(mediaStreamDestination.stream)
+        handleStream(
+            mediaStreamDestination.stream,
+            () => masterGain.disconnect(mediaStreamDestination))
     }
 
-    function handleStream(stream : MediaStream) {
+    function handleStream(stream : MediaStream, f? : Function) {
         const mediaRecorder = new MediaRecorder(stream)
         mediaRecorder.start()
 
         const audioChunks : Blob[] = []
+        
         mediaRecorder.addEventListener('dataavailable', (event : any) => {
             audioChunks.push(event.data)
         })
@@ -56,18 +59,20 @@ function recordTo(index : number) {
                 audioCtx.decodeAudioData(arraybuffer)
                 .then((audiobuffer : AudioBuffer) => 
                 {
-                    Buffers.buffers[index] = audiobuffer
-                    Buffers.refreshAffectedBuffers()
+                    bufferController.buffers[index] = audiobuffer
+                    bufferController.refreshAffectedBuffers()
                     recordButton.classList.remove('recording')
+                    f && f()
                 })
                 .catch(errStuff)
             })
             .catch(errStuff)
         })
-        Buffers.stopLastRecorder = () => mediaRecorder.stop()
-        Buffers.lastRecorderRequestId = 
+
+        bufferController.stopLastRecorder = () => mediaRecorder.stop()
+        bufferController.lastRecorderRequestId = 
             setTimeout(
-                Buffers.stopLastRecorder, 
-                Buffers.templateLength * 1000)
+                bufferController.stopLastRecorder, 
+                bufferController.nextBufferDuration * 1000)
     }
 }

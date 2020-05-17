@@ -8,7 +8,7 @@
 function formulateBuffer(index : number) {
     log('we  in')
     const formula =D('buffer-formula') as HTMLInputElement
-    const seconds = Buffers.templateLength
+    const seconds = bufferController.nextBufferDuration
        
     const buffer = audioCtx
         .createBuffer(
@@ -24,8 +24,8 @@ function formulateBuffer(index : number) {
         return;
     } 
     else {
-        Buffers.buffers[index] = buffer
-        Buffers.refreshAffectedBuffers()
+        bufferController.buffers[index] = buffer
+        bufferController.refreshAffectedBuffers()
         log('buffer formulation complete')
     }
     

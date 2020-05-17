@@ -6,16 +6,16 @@
 
 
 function reverseBuffer(index : number) {
-    Buffers.buffers[index].getChannelData(0).reverse()
-    Buffers.refreshAffectedBuffers()
+    bufferController.buffers[index].getChannelData(0).reverse()
+    bufferController.refreshAffectedBuffers()
 }
 
 function invertBuffer(index : number) {
-    const arr = Buffers.buffers[index].getChannelData(0)
+    const arr = bufferController.buffers[index].getChannelData(0)
     for (let i =0; i < arr.length; i++)
         arr[i] *= -1
 
-    Buffers.refreshAffectedBuffers()
+    bufferController.refreshAffectedBuffers()
 }
 
 ;(<Indexed>D('buffer-functions')).onclick = (e : MouseEvent) => {
@@ -23,15 +23,15 @@ function invertBuffer(index : number) {
     log('btn =',btn)
     if (!btn) return
     ;((<Indexed> {
-        record:                 () => recordTo(Buffers.currentIndex),
-        'reverse-buffer':       () => reverseBuffer(Buffers.currentIndex),
-        'invert-buffer':        () => invertBuffer(Buffers.currentIndex),
-        'apply-buffer-formula': () => formulateBuffer(Buffers.currentIndex),
+        record:                 () => recordTo(bufferController.currentIndex),
+        'reverse-buffer':       () => reverseBuffer(bufferController.currentIndex),
+        'invert-buffer':        () => invertBuffer(bufferController.currentIndex),
+        'apply-buffer-formula': () => formulateBuffer(bufferController.currentIndex),
         'new-buffer-length':() => {
             const value = 
             (D('new-buffer-length') as HTMLSelectElement).value
             D('new-buffer-length-text')!.innerText = value
-            Buffers.templateLength = +value
+            bufferController.nextBufferDuration = +value
 
         }
     })[btn.id] || id)()

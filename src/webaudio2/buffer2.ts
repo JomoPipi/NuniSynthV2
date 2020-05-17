@@ -43,7 +43,7 @@ class BufferNode2 extends NuniSourceNode {
             src.detune.value = KB.scale[KB.keymap[key]]
         }
 
-        src.buffer = Buffers.buffers[this.bufferIndex]
+        src.buffer = bufferController.buffers[this.bufferIndex]
         src.loop = this.loop
         
         src.connect(this.ADSRs[key])

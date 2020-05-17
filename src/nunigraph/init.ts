@@ -7,8 +7,9 @@
 
 const G = new NuniGraph()
 
+const bufferController = new BufferController(G)
+
 KB.attachToGraph(G)
-Buffers.attachToGraph(G)
 
 const GraphController = 
     new NuniGraphController(

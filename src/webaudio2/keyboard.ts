@@ -112,19 +112,20 @@ const KB = (() => {
                 }
             }
         }
-        
-        function updateKBDiv(code : number, keydown : boolean) {
-            // Updates the keyboard defined in UI/init_kb_image.ts
-            const selector = [
-                '[data-key="' + code + '"]',
-                '[data-char*="' + encodeURIComponent(String.fromCharCode(code)) + '"]'
-                ].join(',')
-        
-            document.querySelector(selector)!
-                .classList
-                .toggle('key-pressed', keydown)
-        }
     }
 
     return kb
+
+
+    function updateKBDiv(code : number, keydown : boolean) {
+        // Updates the keyboard defined in UI/init_kb_image.ts
+        const selector = [
+            '[data-key="' + code + '"]',
+            '[data-char*="' + encodeURIComponent(String.fromCharCode(code)) + '"]'
+            ].join(',')
+    
+        document.querySelector(selector)!
+            .classList
+            .toggle('key-pressed', keydown)
+    }
 })()

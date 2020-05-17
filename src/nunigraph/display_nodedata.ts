@@ -61,7 +61,9 @@ function samplerControls(audioNode : BufferNode2) {
     ;['-','+'].forEach((op,i) => { // change the buffer index
         const btn = E('button'); btn.innerText = op
         btn.onclick = () => {
-            const v = clamp(0, audioNode.bufferIndex + Math.sign(i - .5), Buffers.nBuffers-1)
+            const v = clamp(0, 
+                audioNode.bufferIndex + Math.sign(i - .5), 
+                BufferController.nBuffers-1)
 
             value.innerText = String.fromCharCode(65 + v)
             audioNode.bufferIndex = v

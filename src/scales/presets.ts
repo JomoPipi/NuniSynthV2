@@ -6,25 +6,14 @@
 
 
 {
-    const diatonic = (n : number) => 
-        (xs => 
-            [...xs.slice(n), ...xs.slice(0,n-2)]
-            .reduce((a,v) => 
-                a.concat(a[a.length-1] + v * 100)
-                , [0]))
-        ([2,2,1,2,2,2,1])
-        .slice(1, 7)
-        .join(',')
-    
-
     const presets = {
-        Ionian:     diatonic(0),
-        Dorian:     diatonic(1),
-        Phrygian:   diatonic(2),
-        Lydian:     diatonic(3),
-        Mixolydian: diatonic(4),
-        Aeolian:    diatonic(5),
-        Locrian:    diatonic(6),
+        Ionian:     '200,400,500,700,900,1100',
+        Dorian:     '200,300,500,700,900,1000',
+        Phrygian:   '100,300,500,700,800,1000',
+        Lydian:     '200,400,600,700,900,1100',
+        Mixolydian: '200,400,500,700,900,1000',
+        Aeolian:    '200,300,500,700,800,1000',
+        Locrian:    '100,300,500,600,800,1000',
         Chromatic:  '100,200,300,400,500,600,700,800,900,1100',
         Wholetone:  '200,400,600,800,1000',
         'Minor Pentatonic': '300,500,700,1000',
