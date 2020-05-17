@@ -19,10 +19,28 @@ function recordTo(index : number) {
         Buffers.stopLastRecorder()
         return;
     }
+    
     log('recording...')
 
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+    if ((<any>D('record-mic')).checked) {
+        navigator
+            .mediaDevices
+            .getUserMedia({ audio: true })
+            .then(handleStream)
+            .catch(errStuff)
+    } else {
+        const mediaStreamDestination = 
+            audioCtx.createMediaStreamDestination();
 
+        G.nodes
+            .find(node=>node.id === 0)!
+            .audioNode
+            .connect(mediaStreamDestination)
+
+        handleStream(mediaStreamDestination.stream)
+    }
+
+    function handleStream(stream : MediaStream) {
         const mediaRecorder = new MediaRecorder(stream)
         mediaRecorder.start()
 
@@ -47,7 +65,9 @@ function recordTo(index : number) {
             .catch(errStuff)
         })
         Buffers.stopLastRecorder = () => mediaRecorder.stop()
-        Buffers.lastRecorderRequestId = setTimeout(Buffers.stopLastRecorder, 10000)
-
-    }).catch(errStuff)
+        Buffers.lastRecorderRequestId = 
+            setTimeout(
+                Buffers.stopLastRecorder, 
+                Buffers.templateLength * 1000)
+    }
 }

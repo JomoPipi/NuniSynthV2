@@ -39,10 +39,9 @@ const Buffers = {
     currentIndex: 0,
     lastRecorderRequestId: 0,
     stopLastRecorder : log,
+    templateLength: 10,
     attachToGraph: function (g : NuniGraph) {
         this.refreshAffectedBuffers = () => {
-            const canvas = D('buffer-canvas') as HTMLCanvasElement
-        
             updateBufferUI()
 
             for (const { audioNode: an } of g.nodes) {

@@ -333,6 +333,7 @@ class NuniGraphController {
             }
             this.selectedNode = undefined
             this.selectedNodes = []
+            this.unselectNode()
             this.renderer.render()
         }
         if (e.ctrlKey && e.keyCode === 86) { // ctrl + V

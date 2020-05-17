@@ -264,7 +264,7 @@
 
             <div id="scale-builder" class="_tab_">
               
-              <div class="scale-builder-section">
+              <div class="builder-section">
 
                 <code> EDO (Equal Divisions of Octave) </code> <br>
 
@@ -286,7 +286,7 @@
 
               </div>
 
-              <div class="scale-builder-section">
+              <div class="builder-section">
 
                 Enter a list of comma separated values -- may be cents or ratios.
                 1/1 is included by default. Octaves repeat. <br>
@@ -306,7 +306,7 @@
 
               </div>
 
-              <div class="scale-builder-section">
+              <div class="builder-section">
                   
                 Scale Cents Expression <br>
                 Use
@@ -379,38 +379,57 @@
               <button id="trim-buffer" class="neumorph">   
                 trim </button>
               
+              <button id="buffer-copy-from" class="neumorph"> 
+                copy from </button>
 
             </div>
 
             
             <div id="buffer-create" class="_tab_">
 
-              <button id="record" class="record"> 
-                rec </button>
+              <span>
+                NEW BUFFER LENGTH:
+                <span class="code2"
+                  id="new-buffer-length-text"> 
+                  3 
+                </span> seconds </span> <br>
 
-              <button id="buffer-copy-from" class="neumorph"> 
-                copy from </button>
+                <input 
+                  id="new-buffer-length"
+                  type="range" 
+                  min=0.1 
+                  max=10 
+                  step=0.1
+                  value=3> 
 
               <br>
 
-              <div class="buffer-formula-container builder-section">
+              <div class="builder-section">
+
+                <button id="record" class="record"> 
+                  rec </button>
+
+                <div id="record-type-radio" class="center">
+                  <input id="record-mic" 
+                    type="radio"
+                    name="record-radio"
+                    checked="true">
+                  <label for="record-mic" class="record-radio"> 
+                    record mic
+                  </label>
+                  
+                  <input id="record-graph" 
+                    type="radio"
+                    name="record-radio">
+                  <label for="record-graph" class="record-radio"> 
+                    record graph
+                  </label>
+                </div>
+
+              </div>
+
+              <div class="builder-section">
                 Buffer Expression <br>
-
-                <span>
-                  output length:
-                  <input 
-                    id="buffer-formula-length"
-                    type="range" 
-                    min=0.1 
-                    max=10 
-                    step=0.1
-                    value=3> 
-                  <span 
-                    id="buffer-formula-length-text"> 
-                    3 
-                  </span> seconds
-                </span>
-
                 <br>
                 
                 <span class="code2">  n  </span> represents the position of each value, in the buffer.

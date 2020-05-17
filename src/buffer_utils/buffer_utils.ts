@@ -27,9 +27,12 @@ function invertBuffer(index : number) {
         'reverse-buffer':       () => reverseBuffer(Buffers.currentIndex),
         'invert-buffer':        () => invertBuffer(Buffers.currentIndex),
         'apply-buffer-formula': () => formulateBuffer(Buffers.currentIndex),
-        'buffer-formula-length':() => {
-            D('buffer-formula-length-text')!.innerText = 
-            (D('buffer-formula-length') as HTMLSelectElement).value
+        'new-buffer-length':() => {
+            const value = 
+            (D('new-buffer-length') as HTMLSelectElement).value
+            D('new-buffer-length-text')!.innerText = value
+            Buffers.templateLength = +value
+
         }
     })[btn.id] || id)()
 }

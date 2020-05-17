@@ -19,14 +19,10 @@ a {
     grid-template-columns: 1fr 1fr;
 }
 
-.scale-builder-section {
-    padding: 2%;
-    border: 1px solid white;
-    box-sizing: border-box;
-}
 .builder-section {
-    padding: 2%;
-    border: 1px solid white;
+    padding: 4%;
+    background-color: $color1;
+    border: 1px solid $color4a; 
     box-sizing: border-box;
 }
 
@@ -52,9 +48,4 @@ a {
 
 .show { // Has to be at the end so that it "wins".
     display: inline-block;
-}
-
-.buffer-formula-container {
-    background-color: $color0;
-    color: $color4;
 }
