@@ -46,7 +46,7 @@ const ADSR_Controller = {
         gain.setTargetAtTime(0, t, release)
         
         let lastGain = -Infinity
-        adsr.releaseId = setInterval(() => {
+        adsr.releaseId = window.setInterval(() => {
             
             /** Repeat may happen because an audio buffer may end before
              *  the release phase begins. And that seemed to cause a 
@@ -136,5 +136,26 @@ const ADSR_Controller = {
         }
 
         adsr.render()
+    })
+}
+
+{
+    // Attach JS dials to ADSR
+    MY_JS_DIALS.forEach((dial : JsDial) => {
+        const id = dial.id as string
+        if (id.includes('adsr')) 
+        {
+            const adsr = ADSR_Controller as Indexed
+            const s = id.split('-')[1]
+            dial.value = adsr[s]
+            dial.render()
+            dial.attach((x : number) => {
+                adsr[s] = x * x
+                ADSR_Controller.render()
+            })
+
+        } else {
+            throw 'Check what JsDials you have.'
+        }
     })
 }

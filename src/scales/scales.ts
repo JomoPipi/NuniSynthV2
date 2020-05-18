@@ -19,19 +19,23 @@ function previewScale() {
 
         // ( ͡° ͜ʖ ͡°)
         const speed = 69
+
         setTimeout(() => {
 
             for (const an of KB.connectedNodes()) {
                 an.update(true, key)
             }
             
-            setTimeout(() => {
-                for (const an of KB.connectedNodes()) {
-                    an.update(false, key)
-                }    
-            }, speed / PHI)
+        }, ++count * speed)
 
-        }, count++ * speed)
+        setTimeout(() => {
+
+            for (const an of KB.connectedNodes()) {
+                an.update(false, key)
+            }
+
+        }, count * speed + speed / 2.0)
+
     }
 }
 

@@ -28,17 +28,19 @@ class AudioParam2 {
 
 
 
+type NotePack = { adsr : Adsr, source : AudioScheduledSourceNode }
 
 class NuniSourceNode {
     /** Parent interface for Sampler and Oscillator nodes
      *  Allows for 3 keyboard modes - none | mono | poly
      */
-    connectees: Destination[] // The list of things that the node connects to
-    ADSRs: Indexable<Adsr>    // The gain-ADSRs
-    sources: Indexed          // The AudioScheduledSourceNode containers
-    kbMode: NodeKbMode        // The current state of the node - none | mono | poly
-    ctx: AudioContext2        // The context of audio
-    readonly MONO: 666420     // The Id of the mono ADSR and source
+    connectees : Destination[] // The list of things that the node connects to
+    sources : Indexable<NotePack> 
+    // ADSRs : Indexable<Adsr>    // The gain-ADSRs
+    // sources : Indexed          // The AudioScheduledSourceNode containers
+    kbMode : NodeKbMode        // The current state of the node - none | mono | poly
+    ctx : AudioContext2        // The context of audio
+    readonly MONO : 666420     // The Id of the mono ADSR and source
     
     constructor(ctx: AudioContext2){
         this.MONO = 666420
@@ -46,7 +48,7 @@ class NuniSourceNode {
         this.kbMode = 'poly'
         this.connectees = []
         this.sources = {}
-        this.ADSRs = {}
+        // this.ADSRs = {}
     }
 
     connect(destination : Destination) {
@@ -58,8 +60,11 @@ class NuniSourceNode {
     disconnect(destination? : Destination) {
         if (!destination) {
             this.connectees.length = 0
-            for (const key in this.ADSRs) {
-                this.ADSRs[key].disconnect()
+            // for (const key in this.ADSRs) {
+            //     this.ADSRs[key].disconnect()
+            // }
+            for (const key in this.sources) {
+                this.sources[key].adsr.disconnect() // saving here
             }
             return;
         }
@@ -174,10 +179,11 @@ class NuniSourceNode {
 
     private disconnectAllConnectees() {
         for (const key in this.ADSRs) {
+            
             this.sources[key].disconnect()
             this.ADSRs[key].disconnect()
-            delete this.sources[key]
-            delete this.ADSRs[key]
+            clearInterval(this.ADSRs[key].releaseId)
         }
+
     }
 }
