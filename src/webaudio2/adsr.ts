@@ -59,7 +59,7 @@ const ADSR_Controller = {
                 gain.cancelScheduledValues(t)
                 gain.setValueAtTime(0, sourceNode.ctx.currentTime)
                 
-                clearInterval(adsr.releaseId) 
+                clearInterval(adsr.releaseId)
                 adsr.releaseId = -1
 
                 if (sourceNode instanceof BufferNode2) {

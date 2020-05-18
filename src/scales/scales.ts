@@ -12,6 +12,7 @@ function refreshKeys() {
 }
 
 function previewScale() {
+    const mode = KB.mode // *
     let count = 0
     for (const key of KB.keyCodes) {
         const cents = KB.scale[KB.keymap[key]]
@@ -19,24 +20,25 @@ function previewScale() {
 
         // ( ͡° ͜ʖ ͡°)
         const speed = 69
-
+        
         setTimeout(() => {
-
-            for (const an of KB.connectedNodes()) {
-                an.update(true, key)
+            if (mode === KB.mode) { // *
+                for (const an of KB.connectedNodes()) {
+                    an.update(true, key)
+                }
             }
-            
         }, ++count * speed)
 
         setTimeout(() => {
-
-            for (const an of KB.connectedNodes()) {
-                an.update(false, key)
+            if (mode === KB.mode) { // *
+                for (const an of KB.connectedNodes()) {
+                    an.update(false, key)
+                }
             }
-
         }, count * speed + speed / 2.0)
-
     }
+    // * prevents bug that may happen when user switches 
+    // modes while the scale is being previewed.
 }
 
 {
