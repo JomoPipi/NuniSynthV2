@@ -83,8 +83,8 @@ button {
 }
 
 .top-bar-2 {
-    background: $color1;
-    border-bottom: 2px solid rgba(128,128,128,0.2);
+    background: 
+    linear-gradient($color1,darken($color1, 4%));
     box-sizing: border-box;
 }
 
@@ -259,6 +259,7 @@ button {
     grid-template-rows: 20px;
     grid-gap: 4px;
     pointer-events: none;
+    padding: 5px;
 }
 
 .window {

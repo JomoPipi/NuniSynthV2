@@ -102,7 +102,7 @@ class NuniGraphController {
         controls.appendChild(exposeAudioParams(node))
 
         // Add delete button, but not if id is 0, because that's the master gain.
-        if (node.id !== 0) { 
+        if (node.id !== 0) {
             const deleteNode = E('button')
             deleteNode.innerText = 'delete this node'
             deleteNode.style.float = 'right'

@@ -36,14 +36,13 @@
 
     div.onclick = function(e : MouseEvent) {
         const name = (e.target as HTMLElement).innerText
-        const P = presets as any
+        const P = <Indexed>presets
         if (name in P) {
             if (name.endsWith('EDO')) {
                 setEqualTemperamentScale(P[name])
             } else {
                 setScaleFromCSV(P[name])
             }
-
         }
     }
 }

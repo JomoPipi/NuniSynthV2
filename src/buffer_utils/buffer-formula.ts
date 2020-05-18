@@ -6,7 +6,7 @@
 
 
 function formulateBuffer(index : number) {
-    log('we  in')
+    
     const formula =D('buffer-formula') as HTMLInputElement
     const seconds = bufferController.nextBufferDuration
        

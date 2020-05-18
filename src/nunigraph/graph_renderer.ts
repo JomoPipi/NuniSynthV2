@@ -55,7 +55,6 @@ class NuniGraphRenderer {
         this.canvas = canvas
         this.snapToGrid = snapToGrid
         this.ctx = canvas.getContext('2d')!
-        this.fromNode = null
         this.nodeRadius = 25
         this.nodeLineWidth = 8
         this.connectionLineWidth = PHI
@@ -286,8 +285,6 @@ class NuniGraphRenderer {
             } = options
 
         canvas.style.cursor = 'default'
-        ctx.shadowBlur = nodeRadius * 2.0
-        ctx.shadowColor = 'rgba(255, 255, 255, .2)'
 
         for (const node of nodes) {
             
@@ -315,7 +312,11 @@ class NuniGraphRenderer {
                     shouldHighlight ? true :
                     GraphController.selectedNode === node)
 
+            ctx.shadowBlur = 0
+            ctx.shadowColor = ''
             if (shouldHighlight) {
+                ctx.shadowBlur = nodeRadius * 2.0
+                ctx.shadowColor = 'rgba(255, 255, 255, .2)'
                 canvas.style.cursor = buttons === 1 ? 'grabbing' : 'grab' 
             }
             else if (highlightEdge) {

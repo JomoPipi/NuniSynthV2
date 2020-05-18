@@ -15,24 +15,20 @@ function previewScale() {
     let count = 0
     for (const key of KB.keyCodes) {
         const cents = KB.scale[KB.keymap[key]]
-        if (cents > 2400) break;
+        if (cents > 2400) return;
 
         // ( ͡° ͜ʖ ͡°)
         const speed = 69
         setTimeout(() => {
 
-            for (const { audioNode:an } of G.nodes) {
-                if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
-                    an.update(true, key)
-                }
+            for (const an of KB.connectedNodes()) {
+                an.update(true, key)
             }
             
             setTimeout(() => {
-                for (const { audioNode:an } of G.nodes) {
-                    if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
-                        an.update(false, key)
-                    }
-                }
+                for (const an of KB.connectedNodes()) {
+                    an.update(false, key)
+                }    
             }, speed / PHI)
 
         }, count++ * speed)
@@ -47,14 +43,20 @@ function previewScale() {
     D('scale-builder')!.onclick = function(e : MouseEvent) {
         const btnId = (e.target as HTMLElement).id
         
-        if (btnId === deltaBtnId) {
-            setDeltaExpressionScale()
+        ;(<Indexed>{
+            [deltaBtnId]: setDeltaExpressionScale,
+            [equalBtnId]: setEqualTemperamentScale,
+            [csvBtnId]:   setScaleFromCSV
+        })[btnId]()
 
-        } else if (btnId === equalBtnId) {
-            setEqualTemperamentScale()
+        // if (btnId === deltaBtnId) {
+        //     setDeltaExpressionScale()
 
-        } else if (btnId === csvBtnId) {
-            setScaleFromCSV()
-        }
+        // } else if (btnId === equalBtnId) {
+        //     setEqualTemperamentScale()
+
+        // } else if (btnId === csvBtnId) {
+        //     setScaleFromCSV()
+        // }
     }
 }

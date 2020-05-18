@@ -16,10 +16,9 @@
     <link rel="stylesheet" 
           type="text/css" 
           href="styles/styles.css">
-
-    <link rel="icon" 
-          type="image/png"
-          href="favicon-32x32.png">
+          
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 
 
 
@@ -110,11 +109,11 @@
     <div class="top-bar-2">
       <span>
         <div id="tab-swapper" class="flat-grid swapper">
-          <span id="graph-tab-btn">         Graph          </span>
-          <span id="keyboard-tab-btn">      Keyboard       </span>
-          <span id="buffer-edit-tab-btn">   Buffers        </span>
-          <span id="waveform-edit-tab-btn"> Waveforms      </span>
-          <span id="sequencer-tab-btn">     Sequencer      </span>
+          <span id="graph-tab-btn" class="flex-center">         Graph          </span>
+          <span id="keyboard-tab-btn" class="flex-center">      Keyboard       </span>
+          <span id="buffer-edit-tab-btn" class="flex-center">   Buffers        </span>
+          <span id="waveform-edit-tab-btn" class="flex-center"> Waveforms      </span>
+          <span id="sequencer-tab-btn" class="flex-center">     Sequencer      </span>
         </div>
       </span>
     </div>
@@ -187,11 +186,7 @@
             <!-- ADSR -->
             <span class="adsr-box">
 
-              <!-- <span class="text0"> GAIN ADSR </span> 
-
-              <br> -->
-
-              <div class="some-margin"> ADSR </div>
+              <div class="center"> ADSR </div>
               <canvas id="adsr-canvas"></canvas>
               
               <div class="adsr-knobs"> 
@@ -218,12 +213,12 @@
               </div>
             </span>
 
-            <span class="table">
+            <div class="flex-center">
 
-              <span class="vcontainer">
-              
+              <span>
+
                 <div class="keyboard" id="keyboard-image"></div>
-  
+
                 <div id="mono-poly-select" class="center">
                   <input id="keyboard-mono-radio" 
                     type="radio"
@@ -240,10 +235,10 @@
                     POLY (beta)
                   </label>
                 </div>
-  
-              </span>
 
-            </span>
+              </span>  
+
+            </div>
 
           </div>
 
@@ -382,6 +377,9 @@
               <button id="buffer-copy-from" class="neumorph"> 
                 copy from </button>
 
+              <button id="buffer-copy-from" class="neumorph"> 
+                merge </button>
+
             </div>
 
             
@@ -496,8 +494,10 @@
         class="info-button"> 
         i 
       </button> 
-      <button class="top-bar-btn undo-btn" id="graph-undo-button">↺</button>
-      <button class="top-bar-btn redo-btn" id="graph-redo-button">↻</button>
+      <span id="graph-undo-redo-btns">
+        <button class="top-bar-btn undo-btn" id="graph-undo-button">↺</button>
+        <button class="top-bar-btn redo-btn" id="graph-redo-button">↻</button>
+      </span>
     </div>
     <div>
       <div id="node-value-window" class="window"></div>

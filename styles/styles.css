@@ -65,8 +65,8 @@ button {
 }
 
 .top-bar-2 {
-  background: #2f302f;
-  border-bottom: 2px solid rgba(128, 128, 128, 0.2);
+  background: -webkit-gradient(linear, left top, left bottom, from(#2f302f), to(#252625));
+  background: linear-gradient(#2f302f, #252625);
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
 }
@@ -234,6 +234,7 @@ button {
       grid-template-rows: 20px;
   grid-gap: 4px;
   pointer-events: none;
+  padding: 5px;
 }
 
 .window {
@@ -415,6 +416,18 @@ code {
   background: #2f302f;
 }
 
+.flex-center {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
 .apply-btn {
   margin: 5px;
   padding: 0px 5px;
@@ -498,7 +511,8 @@ code {
   width: 40px;
   height: 40px;
   border-radius: 100%;
-  background-image: url("images/shadow-knob.png");
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.7)), to(rgba(0, 0, 0, 0.7))), url("images/shadow-knob.png");
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("images/shadow-knob.png");
   background-size: 100% 100%;
   pointer-events: none;
 }
@@ -512,6 +526,7 @@ code {
   width: 40px;
   height: 40px;
   border-radius: 100%;
+  border: 2px solid #818385;
   background-image: url("images/knob.png");
   background-size: 100% 100%;
   background-repeat: no-repeat;

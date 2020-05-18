@@ -16,7 +16,8 @@ const presets = (i:number, channel : number) => ([
     Math.sin(i / Math.sqrt(i/3.0)) * Math.cos(i ** 0.3),
     Math.sin(i / 32.0) + Math.sin(i / 81.0),
     Math.sin(i / 32.0) + Math.sin(i / 25.0),
-    Math.sin(i / 32.0) + Math.cos(i / 27.0)
+    Math.sin(i / 32.0) + Math.cos(i / 27.0),
+    [...Array(90)].reduce((a,_,n) => a + Math.abs(Math.sin(i/(n * 10))) / 90, 0)
 ])
 
 class BufferController {

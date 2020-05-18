@@ -20,6 +20,7 @@ Object.values(NodeTypes).forEach(type => {
             node.y = clamp(0, (menu.offsetTop - offsetTop + menu.offsetHeight / 2.0) / offsetHeight, 1)
             hideGraphContextmenu()
         }
+        
         GraphController.renderer.render()
     }
     D(`create-${type}`)!.onclick = create 
@@ -45,22 +46,25 @@ Object.values(NodeTypes).forEach(type => {
     }
 }
 
+// Undo / redo btns
+;(D('graph-undo-redo-btns') as HTMLElement).onclick = function(e : MouseEvent) {
+    const undoBtnId = 'graph-undo-button'
+    const redoBtnId = 'graph-redo-button'
+    const id = (<HTMLElement>e.target).id
+    
+    if (id === undoBtnId) {
+        GraphUndoRedoModule.undo()
+        GraphController.renderer.render()
+    } else if (id === redoBtnId) {
+        GraphUndoRedoModule.redo()
+        GraphController.renderer.render()
+    }
+}
+
 // Clear the graph
 ;(D('clear-graph-button') as HTMLButtonElement).onclick = function() {
     GraphUndoRedoModule.save()
     G.clear()
-    GraphController.renderer.render()
-}
-
-// Undo button
-;(D('graph-undo-button') as HTMLButtonElement).onclick = function() {
-    GraphUndoRedoModule.undo()
-    GraphController.renderer.render()
-}
-
-// Redo button
-;(D('graph-redo-button') as HTMLButtonElement).onclick = function() {
-    GraphUndoRedoModule.redo()
     GraphController.renderer.render()
 }
 

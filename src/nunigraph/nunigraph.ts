@@ -14,13 +14,11 @@ class NuniGraph {
     nextId : number
     nodes : NuniGraphNode[]
     oneWayConnections : Indexable<ConnecteeData>
-    // selectedNode : NuniGraphNode | null
 
     constructor() {
         this.nextId = 0
         this.nodes = []
         this.oneWayConnections = {}
-        // this.selectedNode = null
 
         this.initializeMasterGain()
     }
@@ -57,7 +55,6 @@ class NuniGraph {
 
     copyNode(node : NuniGraphNode) {
           const { 
-            id, 
             type, 
             x, 
             y, 
@@ -66,8 +63,10 @@ class NuniGraph {
             audioNode,
             } = JSON.parse(JSON.stringify(node))
 
+        const newX = clamp(0, x+0.07, 1)
+        const newY = newX === 1 ? clamp(0, y-0.07, 1) : y
         const settings = {
-            display: { x: x + 0.05, y },
+            display: { x: newX, y: newY },
             audioParamValues,
             audioNodeType,
             audioNodeSettings: {
@@ -188,10 +187,23 @@ class NuniGraph {
         }
 
         this.clear() 
-        
+
+        this.copyFrom(nodes, connections)
+    }
+
+    toString() {
+        return LZW_compress(this.toRawString())
+    }
+
+    fromString(s : string) {
+        return this.fromRawString(LZW_decompress(s))
+    }
+
+    private copyFrom(nodes : NuniGraphNode[], connections : Indexable<ConnecteeData>) {
+
         if (nodes[0].id !== 0) throw 'Oh, I did not expect this.'
 
-        // manually copy the master-gain
+        // Manually copy the master-gain, because it can't be deleted
         this.nodes[0].x = nodes[0].x
         this.nodes[0].y = nodes[0].y
         this.nodes[0].setValueOfParam('gain', nodes[0].audioParamValues.gain)
@@ -232,15 +244,8 @@ class NuniGraph {
                 this.connect(nodeA, nodeB, connectionType)
             }
         }
+
         this.nextId = 
             Math.max(...this.nodes.map(node=>node.id)) + 1
-    }
-
-    toString() {
-        return LZW_compress(this.toRawString())
-    }
-
-    fromString(s : string) {
-        return this.fromRawString(LZW_decompress(s))
     }
 }

@@ -20,8 +20,8 @@ function invertBuffer(index : number) {
 
 ;(<Indexed>D('buffer-functions')).onclick = (e : MouseEvent) => {
     const btn = e.target as HTMLButtonElement
-    log('btn =',btn)
-    if (!btn) return
+    
+    if (!btn) return;
     ;((<Indexed> {
         record:                 () => recordTo(bufferController.currentIndex),
         'reverse-buffer':       () => reverseBuffer(bufferController.currentIndex),
