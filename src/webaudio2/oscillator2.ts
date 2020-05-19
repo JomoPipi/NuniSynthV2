@@ -56,7 +56,7 @@ class OscillatorNode2 extends NuniSourceNode {
         const adsr = this.ADSRs[key]
 
         if (adsr.releaseId >= 0) {
-            clearInterval(adsr.releaseId)
+            clearTimeout(adsr.releaseId)
         }
         ADSR_Controller.trigger(adsr.gain, this.ctx.currentTime)
     }

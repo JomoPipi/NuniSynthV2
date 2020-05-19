@@ -37,7 +37,6 @@ const ADSR_Controller = {
 
     untrigger: function(sourceNode : NuniSourceNode, key : number) {
         const { release } = this
-        const lowVol = 0.001
         const t = sourceNode.ctx.currentTime
         const adsr = sourceNode.ADSRs[key]
         const gain = adsr.gain
@@ -45,28 +44,21 @@ const ADSR_Controller = {
         gain.cancelScheduledValues(t)
         gain.setTargetAtTime(0, t, release)
         
-        let lastGain = -Infinity
-        adsr.releaseId = window.setInterval(() => {
+        adsr.releaseId = window.setTimeout(() => {
+        
+            gain.cancelScheduledValues(t)
+            gain.setValueAtTime(0, sourceNode.ctx.currentTime)
             
-            /** Repeat may happen because an audio buffer may end before
-             *  the release phase begins. And that seemed to cause a 
-             *  problem.
-             * */ 
-            const repeat = lastGain === gain.value
-            lastGain = gain.value
+            adsr.releaseId = -1
 
-            if (gain.value <= lowVol || repeat) { // to completely turn it off
-                gain.cancelScheduledValues(t)
-                gain.setValueAtTime(0, sourceNode.ctx.currentTime)
-                
-                clearInterval(adsr.releaseId)
-                adsr.releaseId = -1
-
-                if (sourceNode instanceof BufferNode2) {
-                    sourceNode.prepareBuffer(key)
-                }
+            if (sourceNode instanceof BufferNode2) {
+                sourceNode.prepareBuffer(key)
             }
-        }, 40)
+
+        }, 10 * release * 1000)
+        // Why 10 * relase ? It gives the `gain.setTargetAtTime(0, t, release)`
+        // call enough time to get the volume down by ~99.995%, according to
+        // https://developer.mozilla.org/en-US/docs/Web/API/AudioParam/setTargetAtTime#Choosing_a_good_timeConstant
     },
     render: () => void 0
 }

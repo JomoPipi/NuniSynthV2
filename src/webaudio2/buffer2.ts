@@ -61,7 +61,7 @@ class BufferNode2 extends NuniSourceNode {
         const adsr = this.ADSRs[key]
 
         if (adsr.releaseId >= 0) {
-            clearInterval(adsr.releaseId)
+            clearTimeout(adsr.releaseId)
             adsr.releaseId = -1
             this.prepareBuffer(key)
         }

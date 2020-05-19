@@ -18,24 +18,21 @@ function previewScale() {
         const cents = KB.scale[KB.keymap[key]]
         if (cents > 2400) return;
 
+        const [on,off] = [true,false].map(bool => 
+            () => {
+                if (mode === KB.mode) { // *
+                    for (const an of KB.connectedNodes()) {
+                        an.update(bool, key)
+                    }
+                }
+            })
+
         // ( ͡° ͜ʖ ͡°)
         const speed = 69
         
-        setTimeout(() => {
-            if (mode === KB.mode) { // *
-                for (const an of KB.connectedNodes()) {
-                    an.update(true, key)
-                }
-            }
-        }, ++count * speed)
+        setTimeout(on, ++count * speed)
 
-        setTimeout(() => {
-            if (mode === KB.mode) { // *
-                for (const an of KB.connectedNodes()) {
-                    an.update(false, key)
-                }
-            }
-        }, count * speed + speed / 2.0)
+        setTimeout(off, count * speed + speed / 2.0)
     }
     // * prevents bug that may happen when user switches 
     // modes while the scale is being previewed.
@@ -49,20 +46,20 @@ function previewScale() {
     D('scale-builder')!.onclick = function(e : MouseEvent) {
         const btnId = (e.target as HTMLElement).id
         
-        ;(<Indexed>{
+        ;((<Indexed>{
             [deltaBtnId]: setDeltaExpressionScale,
             [equalBtnId]: setEqualTemperamentScale,
             [csvBtnId]:   setScaleFromCSV
-        })[btnId]()
+        })[btnId] || id)()
 
-        // if (btnId === deltaBtnId) {
-        //     setDeltaExpressionScale()
+        if (btnId === deltaBtnId) {
+            setDeltaExpressionScale()
 
-        // } else if (btnId === equalBtnId) {
-        //     setEqualTemperamentScale()
+        } else if (btnId === equalBtnId) {
+            setEqualTemperamentScale()
 
-        // } else if (btnId === csvBtnId) {
-        //     setScaleFromCSV()
-        // }
+        } else if (btnId === csvBtnId) {
+            setScaleFromCSV()
+        }
     }
 }

@@ -174,10 +174,9 @@ class NuniSourceNode {
 
     private disconnectAllConnectees() {
         for (const key in this.ADSRs) {
-            
             this.sources[key].disconnect()
             this.ADSRs[key].disconnect()
-            clearInterval(this.ADSRs[key].releaseId)
+            clearTimeout(this.ADSRs[key].releaseId)
         }
         this.sources = {}
         this.ADSRs = {}
