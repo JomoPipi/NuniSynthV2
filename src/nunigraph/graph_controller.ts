@@ -5,7 +5,17 @@
 
 
 
-class NuniGraphController {
+import { GraphUndoRedoModule } from './graph_undo_redo.js'
+import { NuniGraph } from './nunigraph.js'
+import { NuniGraphRenderer } from './graph_renderer.js'
+import { HOVER } from './graph_renderer.js'
+import { NuniGraphNode } from './nunigraph_node.js'
+import { BufferNode2 } from '../webaudio2/buffer2.js'
+import { NuniSourceNode } from '../webaudio2/nuni_source_node.js'
+import { hideGraphContextmenu } from './graph_handlers.js'
+import { showSubtypes, activateKeyboardButton, samplerControls, exposeAudioParams } from './display_nodedata.js'
+
+export class NuniGraphController {
 /**
  *  Manipulates the graph and its' view
  */

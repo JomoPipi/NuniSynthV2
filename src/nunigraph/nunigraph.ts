@@ -5,7 +5,17 @@
 
 
 
-class NuniGraph {
+import { 
+    audioCtx, 
+    connect_node_to_destination, 
+    disconnect_node_from_destination 
+    } from '../webaudio2/webaudio2.js'
+    
+import { NuniGraphNode, NodeSettings } from './nunigraph_node.js'
+import { LZW_compress, LZW_decompress } from '../helpers/lzw_compression.js'
+
+
+export class NuniGraph {
     /**
      * The job of the NuniGraph is to keep track of nodes and their connections.
      * It has a list of nodes and a connection map.*

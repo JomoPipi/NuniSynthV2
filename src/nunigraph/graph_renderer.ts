@@ -5,7 +5,11 @@
 
 
 
-enum HOVER { EDGE, SELECT, CONNECTION, EMPTY }
+import { GraphController } from './init.js'
+import { NuniGraphNode } from './nunigraph_node.js'
+import { NuniGraph } from './nunigraph.js'
+
+export enum HOVER { EDGE, SELECT, CONNECTION, EMPTY }
 
 type GraphRenderOptions = {
     H : number,
@@ -29,7 +33,7 @@ type ConnectionsCache = {
         } 
     }
 
-class NuniGraphRenderer {
+export class NuniGraphRenderer {
 
     fromNode : NuniGraphNode | null
     private readonly g : NuniGraph

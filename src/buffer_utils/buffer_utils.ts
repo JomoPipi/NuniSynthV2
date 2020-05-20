@@ -5,6 +5,10 @@
 
 
 
+import { bufferController } from '../nunigraph/init.js'
+import { recordTo } from '../buffer_utils/record.js'
+import { formulateBuffer } from '../buffer_utils/buffer-formula.js'
+
 function reverseBuffer(index : number) {
     bufferController.buffers[index].getChannelData(0).reverse()
     bufferController.refreshAffectedBuffers()
@@ -18,7 +22,7 @@ function invertBuffer(index : number) {
     bufferController.refreshAffectedBuffers()
 }
 
-;(<Indexed>D('buffer-functions')).onclick = (e : MouseEvent) => {
+;(<HTMLElement>D('buffer-functions')).onclick = (e : MouseEvent) => {
     const btn = e.target as HTMLButtonElement
     
     if (!btn) return;

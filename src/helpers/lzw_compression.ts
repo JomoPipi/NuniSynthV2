@@ -7,7 +7,7 @@
 
 // Credit: Google
 
-function LZW_compress(uncompressed : string) : string {
+export function LZW_compress(uncompressed : string) : string {
     
     const result = []
     let word = ''
@@ -46,7 +46,7 @@ function LZW_compress(uncompressed : string) : string {
 
 
 
-function LZW_decompress(compressedStr : string) : string
+export function LZW_decompress(compressedStr : string) : string
 {
     const compressed = 
         compressedStr.split('').map((c : string)=>c.charCodeAt(0))

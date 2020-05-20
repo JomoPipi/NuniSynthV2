@@ -5,7 +5,7 @@
 
 
 
-function drawBuffer(buff : AudioBuffer, canvas : HTMLCanvasElement) {
+export function drawBuffer(buff : AudioBuffer, canvas : HTMLCanvasElement) {
     const ctx = canvas.getContext('2d')!
     const H = canvas.height, W = canvas.width
     const channel = buff.getChannelData(0)

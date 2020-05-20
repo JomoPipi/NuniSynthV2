@@ -5,6 +5,9 @@
 
 
 
+import { G, GraphController } from './init.js'
+import { GraphUndoRedoModule } from  './graph_undo_redo.js'
+
 // Create Nodes
 Object.values(NodeTypes).forEach(type => {
     const create = () => {
@@ -93,13 +96,13 @@ D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
 }
 
 
-function showGraphContextMenu(x : number, y : number) {
+export function showGraphContextMenu(x : number, y : number) {
     const menu = D('graph-contextmenu') as HTMLDivElement
 
     menu.style.display = 'grid'
     UI_clamp(x, y, menu, document.body)
 }
 
-function hideGraphContextmenu() {
+export function hideGraphContextmenu() {
     D('graph-contextmenu')!.style.display = 'none'
 }

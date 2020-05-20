@@ -5,6 +5,8 @@
 
 
 
+import { audioCtx } from '../webaudio2/webaudio2.js'
+
 function newRandomWaveForm(N : number) : PeriodicWave {
 
     const real = new Float32Array(N);

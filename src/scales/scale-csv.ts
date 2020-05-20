@@ -5,7 +5,10 @@
 
 
 
-const setScaleFromCSV = (_ => {
+import { KB } from '../webaudio2/keyboard.js'
+import { refreshKeys, previewScale } from './scales.js'
+
+export const setScaleFromCSV = (_ => {
     const valueInput = D('scale-csv-input') as HTMLInputElement
 
     function assignToKeyboard(arr : number[]) {

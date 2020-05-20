@@ -35,7 +35,7 @@ function createDraggableNumberInput(
             updateFunc(startY-e.clientY + (e.clientX-startX)/128.0, startValue)
     }
 
-    const mouseup = (e : MouseEvent) => {
+    const mouseup = () => {
         window.removeEventListener('mousemove',mousemove)
         window.removeEventListener('mouseup',mouseup)
     }

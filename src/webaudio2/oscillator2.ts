@@ -5,7 +5,11 @@
 
 
 
-class OscillatorNode2 extends NuniSourceNode {
+import { ADSR_Controller } from './adsr.js'
+import { NuniSourceNode, AudioParam2 } from './nuni_source_node.js'
+import { KB } from './keyboard.js'
+
+export class OscillatorNode2 extends NuniSourceNode {
     /**
      * A wrapper around OscillatorNode that allows
      * it to be played by the keyboard.
@@ -15,7 +19,7 @@ class OscillatorNode2 extends NuniSourceNode {
     detune : AudioParam2
     frequency : AudioParam2
 
-    constructor(ctx : AudioContext2) {
+    constructor(ctx : AudioContext) {
         super(ctx)
 
         this._type = 'sine'

@@ -5,7 +5,15 @@
 
 
 
-function activateKeyboardButton(an : NuniSourceNode) {
+import { NuniSourceNode } from '../webaudio2/nuni_source_node.js'
+import { GraphUndoRedoModule } from './graph_undo_redo.js'
+import { NuniGraphNode } from './nunigraph_node.js'
+import { BufferNode2 } from '../webaudio2/buffer2.js'
+import { KB } from '../webaudio2/keyboard.js'
+import { BufferController } from '../buffer_utils/init_buffers.js'
+
+
+export function activateKeyboardButton(an : NuniSourceNode) {
     // (dis?)connects the node from the keyboard.
     const btn = E('button')
     btn.innerText = '🎹'
@@ -22,7 +30,7 @@ function activateKeyboardButton(an : NuniSourceNode) {
 
 
 
-function showSubtypes(node : NuniGraphNode) : Node {
+export function showSubtypes(node : NuniGraphNode) : Node {
     const subtypes = AudioNodeSubTypes[node.type] as string[]
     const box = E('span')
     if (subtypes.length > 0) { // Show subtypes selector
@@ -51,7 +59,7 @@ function insertOptions(select : HTMLSelectElement, options : string[]) {
 
 
 
-function samplerControls(audioNode : BufferNode2) {
+export function samplerControls(audioNode : BufferNode2) {
     const box = E('span')
     box.innerHTML = '<span> buffer </span>'
     box.classList.add('buffer-row')
@@ -89,7 +97,7 @@ function samplerControls(audioNode : BufferNode2) {
 
 
 
-function exposeAudioParams(node : NuniGraphNode) : Node {
+export function exposeAudioParams(node : NuniGraphNode) : Node {
     const allParams = E('div')
     for (const param of AudioNodeParams[node.type as NodeTypes]) {
         const box = E('div')

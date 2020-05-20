@@ -5,7 +5,10 @@
 
 
 
-class Adsr extends GainNode {
+import { BufferNode2 } from './buffer2.js'
+import { NuniSourceNode } from './nuni_source_node.js'
+
+export class Adsr extends GainNode {
     /**
      * The only purpose of this class right now is 
      * to add the property lastReleastId to GainNodes.
@@ -14,13 +17,13 @@ class Adsr extends GainNode {
      * and some other number, otherwise.
      */
     releaseId : number
-    constructor(ctx : AudioContext2) {
+    constructor(ctx : AudioContext) {
         super(ctx)
         this.releaseId = -1
     }
 }
 
-const ADSR_Controller = {
+export const ADSR_Controller = {
     canvas: D('adsr-canvas'),
 
     attack: 0.010416984558105469, 

@@ -5,7 +5,12 @@
 
 
 
-class BufferNode2 extends NuniSourceNode {
+import { bufferController } from '../nunigraph/init.js'
+import { NuniSourceNode, AudioParam2 } from './nuni_source_node.js'
+import { ADSR_Controller } from './adsr.js'
+import { KB } from './keyboard.js'
+
+export class BufferNode2 extends NuniSourceNode {
     /**
      * audioBufferSourceNodes need to get disconnected
      * as keys get pressed/unpressed.
@@ -18,7 +23,7 @@ class BufferNode2 extends NuniSourceNode {
     detune : AudioParam2
     playbackRate : AudioParam2
     
-    constructor(ctx : AudioContext2) {
+    constructor(ctx : AudioContext) {
         super(ctx)
 
         this.loop = true
@@ -61,7 +66,7 @@ class BufferNode2 extends NuniSourceNode {
         const adsr = this.ADSRs[key]
 
         if (adsr.releaseId >= 0) {
-            clearTimeout(adsr.releaseId)
+            clearInterval(adsr.releaseId)
             adsr.releaseId = -1
             this.prepareBuffer(key)
         }

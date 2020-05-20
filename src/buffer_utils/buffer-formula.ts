@@ -5,7 +5,10 @@
 
 
 
-function formulateBuffer(index : number) {
+import { bufferController } from '../nunigraph/init.js'
+import { audioCtx } from '../webaudio2/webaudio2.js'
+
+export function formulateBuffer(index : number) {
     
     const formula =D('buffer-formula') as HTMLInputElement
     const seconds = bufferController.nextBufferDuration

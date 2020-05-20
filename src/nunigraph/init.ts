@@ -5,13 +5,19 @@
 
 
 
-const G = new NuniGraph()
+import { NuniGraphRenderer } from './graph_renderer.js'
+import { NuniGraph } from './nunigraph.js'
+import { NuniGraphController } from './graph_controller.js'
+import { BufferController } from '../buffer_utils/init_buffers.js'
+import { KB } from '../webaudio2/keyboard.js'
+
+export const G = new NuniGraph()
 
 KB.attachToGraph(G)
 
-const bufferController = new BufferController(G)
+export const bufferController = new BufferController(G)
 
-const GraphController = new NuniGraphController(
+export const GraphController = new NuniGraphController(
     G, 
     D('node-value-window')!,
     D('connection-type-prompt')!,

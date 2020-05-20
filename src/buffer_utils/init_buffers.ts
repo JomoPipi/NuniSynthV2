@@ -5,6 +5,11 @@
 
 
 
+import { NuniGraph } from '../nunigraph/nunigraph.js'
+import { audioCtx } from '../webaudio2/webaudio2.js'
+import { BufferNode2 } from '../webaudio2/buffer2.js'
+import { drawBuffer } from './draw_buffer.js'
+
 const presets = (i:number, channel : number) => ([
     Math.sin(i / 32.0) + Math.sin(i / 512.0),
     Math.sin(i / Math.sqrt(i/3.0)) - Math.cos(i ** 0.3), 
@@ -20,7 +25,7 @@ const presets = (i:number, channel : number) => ([
     [...Array(90)].reduce((a,_,n) => a + Math.abs(Math.sin(i/(n * 10))) / 90, 0)
 ])
 
-class BufferController {
+export class BufferController {
     static readonly nBuffers = 16;
 
     g : NuniGraph;
@@ -63,7 +68,7 @@ class BufferController {
         }
     }
     
-    initBuffers(ctx : AudioContext2) {
+    initBuffers(ctx : AudioContext) {
         const seconds = 3
         this.buffers.length = 0
         const div = D('buffer-container')!

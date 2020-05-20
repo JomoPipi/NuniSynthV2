@@ -5,6 +5,9 @@
 
 
 
+import { setScaleFromCSV } from './scale-csv.js'
+import { setEqualTemperamentScale } from './equal.js'
+
 {
     const presets = {
         Ionian:     '200,400,500,700,900,1100',

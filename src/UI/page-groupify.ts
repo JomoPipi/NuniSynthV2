@@ -20,21 +20,3 @@ function pageGroupify(parent : HTMLElement, pageIds : string[]) {
         }
     }
 }
-
-pageGroupify(D('tab-swapper')!, [
-    'graph-tab',
-    'keyboard-tab',
-    'buffer-edit-tab',
-    'waveform-edit-tab',
-    'sequencer-tab'
-    ])
-
-pageGroupify(D('scale-kinds')!, [
-    'preset-library',
-    'scale-builder'
-    ])
-
-pageGroupify(D('buffer-edit-create-select')!, [
-    'buffer-edit',
-    'buffer-create'
-    ])

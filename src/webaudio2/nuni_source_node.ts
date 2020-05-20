@@ -5,7 +5,12 @@
 
 
 
-class AudioParam2 {
+import { Adsr, ADSR_Controller } from './adsr.js'
+import { KB, NodeKbMode } from '../webaudio2/keyboard.js'
+
+export type Destination = AudioNode | AudioParam | AudioParam2
+
+export class AudioParam2 {
     /** AudioParams that are compatible with NuniSourceNodes
      */
     src: ConstantSourceNode
@@ -25,11 +30,7 @@ class AudioParam2 {
 
 
 
-
-
-
-
-class NuniSourceNode {
+export class NuniSourceNode {
     /** Parent interface for Sampler and Oscillator nodes
      *  Allows for 3 keyboard modes - none | mono | poly
      */
@@ -37,10 +38,10 @@ class NuniSourceNode {
     ADSRs : Indexable<Adsr>    // The gain-ADSRs
     sources : Indexed          // The AudioScheduledSourceNode containers
     kbMode : NodeKbMode        // The current state of the node - none | mono | poly
-    ctx : AudioContext2        // The context of audio
+    ctx : AudioContext         // The context of audio
     readonly MONO : 666420     // The Id of the mono ADSR and source
     
-    constructor(ctx : AudioContext2){
+    constructor(ctx : AudioContext){
         this.MONO = 666420
         this.ctx = ctx
         this.kbMode = 'poly'

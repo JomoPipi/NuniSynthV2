@@ -5,6 +5,12 @@
 
 
 
+import { BufferNode2 } from './buffer2.js'
+import { OscillatorNode2 } from './oscillator2.js'
+import { Destination, AudioParam2 } from './nuni_source_node.js'
+import { NuniGraphNode } from '../nunigraph/nunigraph_node.js'
+
+
 class AudioContext2 extends AudioContext {
     /** con·text    /ˈkäntekst/ 
      *  noun
@@ -25,9 +31,7 @@ class AudioContext2 extends AudioContext {
     }
 }
 
-type Destination = AudioNode | AudioParam | AudioParam2
-
-function connect_node_to_destination(node1 : NuniGraphNode, destination : Destination) {
+export function connect_node_to_destination(node1 : NuniGraphNode, destination : Destination) {
     if (destination instanceof AudioParam2) 
     {
         node1.audioNode.connect(destination.src.offset)
@@ -36,7 +40,7 @@ function connect_node_to_destination(node1 : NuniGraphNode, destination : Destin
     }
 }
 
-function disconnect_node_from_destination(node1 : NuniGraphNode, destination : Destination) {
+export function disconnect_node_from_destination(node1 : NuniGraphNode, destination : Destination) {
     if (destination instanceof AudioParam2) 
     {
         node1.audioNode.disconnect(destination.src.offset)
@@ -44,3 +48,5 @@ function disconnect_node_from_destination(node1 : NuniGraphNode, destination : D
         node1.audioNode.disconnect(destination)
     }
 }
+
+export const audioCtx = new AudioContext2()

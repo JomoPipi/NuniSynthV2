@@ -5,7 +5,10 @@
 
 
 
-function recordTo(index : number) {
+import { G, bufferController } from '../nunigraph/init.js'
+import { audioCtx } from '../webaudio2/webaudio2.js'
+
+export function recordTo(index : number) {
     const recordButton = D('record')!
 
     const errStuff = (err : string) => {

@@ -5,7 +5,9 @@
 
 
 
-const GraphUndoRedoModule = {
+import { G, GraphController } from '../nunigraph/init.js'
+
+export const GraphUndoRedoModule = {
     undos: <string[]>[],
     redos: <string[]>[],
     save: function() {

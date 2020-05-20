@@ -5,16 +5,13 @@
 
 
 
-type NodeKbMode = 'none' | 'mono' | 'poly'
-type KbMode              = 'mono' | 'poly'
+import { NuniSourceNode } from './nuni_source_node.js'
+import { NuniGraph } from '../nunigraph/nunigraph.js'
 
-class Keyboard {
-    constructor() {
-        
-    }
-}
+export type NodeKbMode = 'none' | 'mono' | 'poly'
+export type KbMode              = 'mono' | 'poly'
 
-const KB = (() => {
+export const KB = (() => {
     
     const keyCodes = ([] as number[]).concat(...[
         '1234567890',

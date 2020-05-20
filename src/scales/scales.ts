@@ -5,13 +5,18 @@
 
 
 
-function refreshKeys() {
+import { KB } from '../webaudio2/keyboard.js'
+import { setScaleFromCSV } from './scale-csv.js'
+import { setEqualTemperamentScale } from './equal.js'
+import { setDeltaExpressionScale } from './deltas.js'
+
+export function refreshKeys() {
     for (const an of KB.connectedNodes()) {
         an.refresh()
     }
 }
 
-function previewScale() {
+export function previewScale() {
     const mode = KB.mode // *
     let count = 0
     for (const key of KB.keyCodes) {
@@ -27,11 +32,9 @@ function previewScale() {
                 }
             })
 
-        // ( ͡° ͜ʖ ͡°)
-        const speed = 69
-        
-        setTimeout(on, ++count * speed)
+        const speed = 150
 
+        setTimeout(on, ++count * speed)
         setTimeout(off, count * speed + speed / 2.0)
     }
     // * prevents bug that may happen when user switches 
@@ -46,11 +49,11 @@ function previewScale() {
     D('scale-builder')!.onclick = function(e : MouseEvent) {
         const btnId = (e.target as HTMLElement).id
         
-        ;((<Indexed>{
-            [deltaBtnId]: setDeltaExpressionScale,
-            [equalBtnId]: setEqualTemperamentScale,
-            [csvBtnId]:   setScaleFromCSV
-        })[btnId] || id)()
+        // ;((<Indexed>{
+        //     [deltaBtnId]: setDeltaExpressionScale,
+        //     [equalBtnId]: setEqualTemperamentScale,
+        //     [csvBtnId]:   setScaleFromCSV
+        // })[btnId] || id)()
 
         if (btnId === deltaBtnId) {
             setDeltaExpressionScale()

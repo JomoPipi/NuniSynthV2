@@ -5,7 +5,11 @@
 
 
 
-type NodeSettings = { 
+import { NodeKbMode } from '../webaudio2/keyboard.js'
+import { audioCtx } from '../webaudio2/webaudio2.js'
+import { KB } from '../webaudio2/keyboard.js'
+
+export type NodeSettings = { 
     display : { x : number, y : number }, 
     audioParamValues : Indexed,
     audioNodeType : string,
@@ -14,7 +18,7 @@ type NodeSettings = {
         },
 }
 
-class NuniGraphNode {
+export class NuniGraphNode {
     /**
      * Each NuniGraphNode holds and updates an AudioNode.
      * The node is just a data container, but the AudioNode

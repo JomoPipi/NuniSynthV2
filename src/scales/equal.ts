@@ -5,7 +5,10 @@
 
 
 
-const setEqualTemperamentScale = (_ => {
+import { KB } from '../webaudio2/keyboard.js'
+import { refreshKeys, previewScale } from './scales.js'
+
+export const setEqualTemperamentScale = (_ => {
     const [intervals, cents] = [
         D('intervals-per-octave'), D('cents-per-step')
         ] as HTMLSelectElement[]

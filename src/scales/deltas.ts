@@ -5,7 +5,10 @@
 
 
 
-const setDeltaExpressionScale = (_ => {
+import { KB } from '../webaudio2/keyboard.js'
+import { refreshKeys, previewScale } from './scales.js'
+
+export const setDeltaExpressionScale = (_ => {
     const deltaExp = D('delta-expression') as HTMLInputElement
     return function() {
         const [newScale, isError] = validateExp(deltaExp.value)
