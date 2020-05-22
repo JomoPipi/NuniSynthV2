@@ -5,7 +5,6 @@
 
 
 
-import { BufferNode2 } from './buffer2.js'
 import { NuniSourceNode } from './nuni_source_node.js'
 
 export class Adsr extends GainNode {
@@ -48,15 +47,9 @@ export const ADSR_Controller = {
         gain.setTargetAtTime(0, t, release)
         
         adsr.releaseId = window.setTimeout(() => {
-        
-            gain.cancelScheduledValues(t)
-            gain.setValueAtTime(0, sourceNode.ctx.currentTime)
-            
-            adsr.releaseId = -1
 
-            if (sourceNode instanceof BufferNode2) {
-                sourceNode.prepareBuffer(key)
-            }
+            adsr.releaseId = -1
+            sourceNode.prepareSource(key)
 
         }, 10 * release * 1000)
         // Why 10 * relase ? It gives the `gain.setTargetAtTime(0, t, release)`

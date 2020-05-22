@@ -75,7 +75,7 @@ export class BufferController {
 
         for (let n = 0; n < BufferController.nBuffers; n++) {
             const btn = E('button')
-            btn.innerText=`buffer ${String.fromCharCode(65+n)}`
+            btn.innerText = String.fromCharCode(65+n)
             btn.id = `buff-${n}`
             btn.classList.add('list-btn')
             div.appendChild(btn)

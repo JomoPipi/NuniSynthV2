@@ -28,7 +28,6 @@ pageGroupify(D('buffer-edit-create-select')!, [
 
 
 // Set up the info menu
-// TODO: use page-groupify for this
 {
     const container = D('info-menu-container')!
     const infoBtns = 

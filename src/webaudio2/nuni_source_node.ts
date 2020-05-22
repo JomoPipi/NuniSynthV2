@@ -126,10 +126,22 @@ export class NuniSourceNode {
     }
 
     refresh() {
-        throw 'Must be implemented in the "concrete" classes.'
-    }
+        if (this.kbMode === 'poly') {
+            KB.keyCodes.forEach(key =>
+                this.prepareSource(key))
 
-    protected noteReallyOn(key : number) {
+        } else if (this.kbMode === 'mono') {
+            this.prepareSource(this.MONO)
+
+        } else if (this.kbMode === 'none') {
+            this.prepareSource(this.MONO) 
+            this.startSource(this.MONO)
+            this.ADSRs[this.MONO].gain.value = 1
+        }
+        else throw 'How could such a thing be?'
+    }
+    
+    prepareSource(key : number) {
         throw 'Must be implemented in the "concrete" classes.'
     }
 
@@ -143,6 +155,26 @@ export class NuniSourceNode {
         const keyValue = KB.scale[KB.keymap[key]]
         const src = this.sources[this.MONO]
         src.detune.value = keyValue
+    }
+    
+    protected noteReallyOn(key : number) {
+        const adsr = this.ADSRs[key]
+
+        if (adsr.releaseId >= 0) {
+            clearTimeout(adsr.releaseId)
+            adsr.releaseId = -1
+            this.prepareSource(key)
+        }
+        this.startSource(key)
+        ADSR_Controller.trigger(adsr.gain, this.ctx.currentTime)
+    }
+    
+    protected startSource(key : number) {
+        const src = this.sources[key] 
+        if (!src.hasStarted) {
+            src.hasStarted = true
+            src.start(this.ctx.currentTime, 0)
+        }
     }
 
     private switchToNone() {

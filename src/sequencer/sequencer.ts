@@ -12,3 +12,8 @@
 
 // composer idea
 // https://dram.cf/synth/
+// https://tonejs.github.io/demos
+// https://danielx.net/composer/
+
+// similar program
+// https://eternal.robcheung.com/

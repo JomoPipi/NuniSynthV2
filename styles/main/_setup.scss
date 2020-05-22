@@ -94,9 +94,15 @@ button {
     cursor: pointer;
     background-color: $color2; 
     color: $color4;
-    margin: 4px;
+    margin: 7px 0px;
     border: none;
 }
+
+.top-bar-group {
+    width: 100px; 
+    height: 100%;
+}
+
 .undo-btn {
     transform: rotate(-90deg);
 }
@@ -128,7 +134,7 @@ button {
     position: absolute;
     background-color: white;
     color: #999;
-    z-index: 15;
+    z-index: 3;
     
     .contextmenu-button {
         text-align: left;
@@ -163,7 +169,7 @@ button {
     left: 0px;
     right: 0px;
     text-align: center;
-    z-index: 20;
+    z-index: 4;
 }
 
 .info-menu {

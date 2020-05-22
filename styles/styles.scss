@@ -6,12 +6,12 @@
 
 
 $color0: rgb(32, 30, 32);
-$color1: rgb(47, 48, 47);
-$color2: rgb(57, 58, 57);
-$color3: rgb(64, 68, 65);
-$color4: rgb(91, 93, 94);
+$color1: rgb(48, 47, 48);
+$color2: rgb(58, 57, 58);
+$color3: rgb(68, 64, 68);
+$color4: rgb(93, 91, 94);
 $color4a: lighten($color: $color4, $amount: 15%);
-$color5: rgb(151, 163, 154);
+$color5: rgb(154, 151, 163);
 $color6: rgb(255, 255, 255);
 
 $canvas-bg: $color0;
@@ -24,7 +24,8 @@ $ui-bg: $color1;
 @import './main/organisms';
 @import './main/templates';
 @import './main/pages';
-@import './theft/keyboard.js';
+@import './theft/keyboard';
+@import './theft/loader';
 
 
 @font-face { 

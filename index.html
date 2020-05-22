@@ -19,6 +19,11 @@
           
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+    <script> // loading screen
+
+
+    </script>
     
     <script src="dist/helpers/helpers.js"         defer></script>
 
@@ -38,7 +43,15 @@
 <body>
 
 
-  
+<div id="loading-screen" class="loader">
+  <div id="loading-text" class="loading-text"> LOADING - PLEASE WAIT </div>
+  <div class="l_main">
+    <div class="l_square"><span></span><span></span><span></span></div>
+    <div class="l_square"><span></span><span></span><span></span></div>
+    <div class="l_square"><span></span><span></span><span></span></div>
+    <div class="l_square"><span></span><span></span><span></span></div>
+  </div>
+</div>
 
 <div id="graph-contextmenu">
   <span style="color:rgba(0,0,0,0.65)"> Create.. </span>
@@ -181,15 +194,15 @@
                 <div id="mono-poly-select" class="center">
                   <input id="keyboard-mono-radio" 
                     type="radio"
-                    name="radio"
-                    checked="true">
+                    name="radio">
                   <label for="keyboard-mono-radio" class="radio"> 
                     MONO
                   </label>
   
                   <input id="keyboard-poly-radio"
                     type="radio"
-                    name="radio">
+                    name="radio"
+                    checked="true">
                   <label for="keyboard-poly-radio" class="radio"> 
                     POLY (beta)
                   </label>
@@ -308,17 +321,15 @@
   
           <div class="buffer-box">
             <div id="buffer-container" class="buffers-list"></div>
-            <span>
-              <canvas id="buffer-canvas"></canvas>
-            </span>
+            <canvas id="buffer-canvas"></canvas>
           </div>
 
           <br>
 
-          <span id="buffer-edit-create-select" class="flat-grid color1 swapper">
+          <div id="buffer-edit-create-select" class="flat-grid color1 swapper">
             <span id="buffer-edit-btn"> EDIT </span>
             <span id="buffer-create-btn"> CREATE </span>
-          </span>
+          </div>
 
           <div id="buffer-functions">
             
@@ -448,14 +459,18 @@
   <div class="panel">
     
     <div class="top-bar-2">
-      <button 
-        id="info-button" 
-        class="info-button"> 
-        i 
-      </button> 
-      <span id="graph-undo-redo-btns">
-        <button class="top-bar-btn undo-btn" id="graph-undo-button">↺</button>
-        <button class="top-bar-btn redo-btn" id="graph-redo-button">↻</button>
+      <span class="flex-center top-bar-group">
+        <button 
+          id="info-button" 
+          class="info-button"> 
+          i 
+        </button> 
+        &nbsp;
+        &nbsp;
+        <span id="graph-undo-redo-btns">
+          <button class="top-bar-btn undo-btn" id="graph-undo-button">↺</button>
+          <button class="top-bar-btn redo-btn" id="graph-redo-button">↻</button>
+        </span>
       </span>
     </div>
     <div>

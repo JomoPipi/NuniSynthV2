@@ -9,6 +9,7 @@ import { KB } from '../webaudio2/keyboard.js'
 import { setScaleFromCSV } from './scale-csv.js'
 import { setEqualTemperamentScale } from './equal.js'
 import { setDeltaExpressionScale } from './deltas.js'
+import { NuniSourceNode } from '../webaudio2/nuni_source_node.js'
 
 export function refreshKeys() {
     for (const an of KB.connectedNodes()) {
@@ -23,6 +24,14 @@ export function previewScale() {
         const cents = KB.scale[KB.keymap[key]]
         if (cents > 2400) return;
 
+        // const speed = 0.25
+        // for (const an of KB.connectedNodes()) {
+        //     if (an instanceof NuniSourceNode) {
+        //         an.update(true, key, ++count * speed)
+        //         an.update(false, key, count * speed + speed / 2.0)
+        //     }
+        // }
+
         const [on,off] = [true,false].map(bool => 
             () => {
                 if (mode === KB.mode) { // *
@@ -35,7 +44,7 @@ export function previewScale() {
         const speed = 150
 
         setTimeout(on, ++count * speed)
-        setTimeout(off, count * speed + speed / 2.0)
+        setTimeout(off, count * speed + speed / 4.0)
     }
     // * prevents bug that may happen when user switches 
     // modes while the scale is being previewed.

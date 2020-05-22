@@ -5,11 +5,12 @@
 
 
 
-import { NuniSourceNode } from './nuni_source_node.js'
 import { NuniGraph } from '../nunigraph/nunigraph.js'
+import { NuniSourceNode } from '../webaudio2/nuni_source_node.js'
 
 export type NodeKbMode = 'none' | 'mono' | 'poly'
 export type KbMode              = 'mono' | 'poly'
+
 
 export const KB = (() => {
     
@@ -19,7 +20,7 @@ export const KB = (() => {
         'asdfghjkl',
         'zxcvbnm'
         ].map((s,i) => 
-            [...s].map(c=>c.toUpperCase().charCodeAt(0))
+            [...s.toUpperCase()].map(c => c.charCodeAt(0))
                 .concat([ // add the [];',./ (aka {}:"<>?) keyCodes
                     [189,187],
                     [219,221],
@@ -27,7 +28,7 @@ export const KB = (() => {
                     [188,190,191]
                 ][i]) // some of these keyCodes might not work in browsers such as FireFox
             ))
-    
+            
     const keymap = keyCodes.reduce((map,key,i) => {
         map[key] = i
         return map
@@ -43,7 +44,7 @@ export const KB = (() => {
         held, 
         scale,
         attachToGraph, 
-        mode: 'mono' as KbMode,
+        mode: 'poly' as KbMode,
         connectedNodes: <any>0,
         ADSRs: {} as { [key : number] : ConstantSourceNode }
         }
@@ -82,7 +83,8 @@ export const KB = (() => {
                 if (key in keymap){ 
 
                     // Maybe only do this when the keyboard image is visible?
-                    updateKBDiv(key, keydown)
+                    // TODO: make it match what it actually plays
+                    updateKBImage(key, keydown)
 
                     // UPDATE HELD-KEY ARRAY 
                     // Sets up last-note priority, and prevents event spamming when keys are held.
@@ -112,17 +114,16 @@ export const KB = (() => {
     }
 
     return kb
-
-
-    function updateKBDiv(code : number, keydown : boolean) {
-        // Updates the keyboard defined in UI/init_kb_image.ts
-        const selector = [
-            '[data-key="' + code + '"]',
-            '[data-char*="' + encodeURIComponent(String.fromCharCode(code)) + '"]'
-            ].join(',')
-    
-        document.querySelector(selector)!
-            .classList
-            .toggle('key-pressed', keydown)
-    }
 })()
+
+function updateKBImage(code : number, keydown : boolean) {
+    // Updates the keyboard defined in UI/init_kb_image.ts
+    const selector = [
+        '[data-key="' + code + '"]',
+        '[data-char*="' + encodeURIComponent(String.fromCharCode(code)) + '"]'
+        ].join(',')
+
+    document.querySelector(selector)!
+        .classList
+        .toggle('key-pressed', keydown)
+}
