@@ -10,7 +10,7 @@ import { audioCtx } from '../webaudio2/webaudio2.js'
 
 export function formulateBuffer(index : number) {
     
-    const formula =D('buffer-formula') as HTMLInputElement
+    const formula = D('buffer-formula') as HTMLInputElement
     const seconds = bufferController.nextBufferDuration
        
     const buffer = audioCtx

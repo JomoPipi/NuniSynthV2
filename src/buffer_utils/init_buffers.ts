@@ -40,7 +40,7 @@ export class BufferController {
         this.currentIndex = 0
         this.lastRecorderRequestId = 0
         this.stopLastRecorder = id
-        this.nextBufferDuration = 10
+        this.nextBufferDuration = +(D('new-buffer-length') as HTMLSelectElement).value
         this.initBuffers(audioCtx)
         this.refreshAffectedBuffers()
     }
@@ -69,11 +69,12 @@ export class BufferController {
     }
     
     initBuffers(ctx : AudioContext) {
-        const seconds = 3
+        const _seconds = 0.1
         this.buffers.length = 0
         const div = D('buffer-container')!
 
         for (let n = 0; n < BufferController.nBuffers; n++) {
+            const seconds = n === 0 ? 10 : _seconds
             const btn = E('button')
             btn.innerText = String.fromCharCode(65+n)
             btn.id = `buff-${n}`

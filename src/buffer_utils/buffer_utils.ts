@@ -32,8 +32,7 @@ function invertBuffer(index : number) {
         'invert-buffer':        () => invertBuffer(bufferController.currentIndex),
         'apply-buffer-formula': () => formulateBuffer(bufferController.currentIndex),
         'new-buffer-length':() => {
-            const value = 
-            (D('new-buffer-length') as HTMLSelectElement).value
+            const value = (D('new-buffer-length') as HTMLSelectElement).value
             D('new-buffer-length-text')!.innerText = value
             bufferController.nextBufferDuration = +value
 

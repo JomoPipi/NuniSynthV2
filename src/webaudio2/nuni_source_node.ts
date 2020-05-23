@@ -10,6 +10,9 @@ import { KB, NodeKbMode } from '../webaudio2/keyboard.js'
 
 export type Destination = AudioNode | AudioParam | AudioParam2
 
+
+
+
 export class AudioParam2 {
     /** AudioParams that are compatible with NuniSourceNodes
      */
@@ -81,27 +84,6 @@ export class NuniSourceNode {
             }
         }
     }
-    
-    update(keydown : boolean, key : number) {
-        if (this.kbMode === 'poly') {
-            if (keydown) {
-                this.noteOnPoly(key)
-            } else {
-                this.noteOff(key)
-            } 
-        } else {
-            if (keydown) {
-                this.noteOnMono(key)
-            } else {
-                if (KB.held.length) { 
-                    // Last note priority
-                    this.noteOnMono(KB.held[KB.held.length-1])
-                } else {
-                    this.noteOff(this.MONO)
-                }
-            }
-        }
-    }
 
     setKbMode(mode : NodeKbMode) {
         this.disconnectAllConnectees()
@@ -121,62 +103,16 @@ export class NuniSourceNode {
         this.reconnectAllConnectees()
     }
 
-    protected noteOff(key : number) {
-        ADSR_Controller.untrigger(this, key)
-    }
-
-    refresh() {
-        if (this.kbMode === 'poly') {
-            KB.keyCodes.forEach(key =>
-                this.prepareSource(key))
-
-        } else if (this.kbMode === 'mono') {
-            this.prepareSource(this.MONO)
-
-        } else if (this.kbMode === 'none') {
-            this.prepareSource(this.MONO) 
-            this.startSource(this.MONO)
-            this.ADSRs[this.MONO].gain.value = 1
+    private disconnectAllConnectees() {
+        for (const key in this.ADSRs) {
+            this.sources[key].disconnect()
+            this.ADSRs[key].disconnect()
+            clearTimeout(this.ADSRs[key].releaseId)
         }
-        else throw 'How could such a thing be?'
+        this.sources = {}
+        this.ADSRs = {}
     }
     
-    prepareSource(key : number) {
-        throw 'Must be implemented in the "concrete" classes.'
-    }
-
-    protected noteOnPoly(key : number) {
-        this.noteReallyOn(key)
-    }
-    
-    protected noteOnMono(key : number) {
-        this.noteReallyOn(this.MONO)
-
-        const keyValue = KB.scale[KB.keymap[key]]
-        const src = this.sources[this.MONO]
-        src.detune.value = keyValue
-    }
-    
-    protected noteReallyOn(key : number) {
-        const adsr = this.ADSRs[key]
-
-        if (adsr.releaseId >= 0) {
-            clearTimeout(adsr.releaseId)
-            adsr.releaseId = -1
-            this.prepareSource(key)
-        }
-        this.startSource(key)
-        ADSR_Controller.trigger(adsr.gain, this.ctx.currentTime)
-    }
-    
-    protected startSource(key : number) {
-        const src = this.sources[key] 
-        if (!src.hasStarted) {
-            src.hasStarted = true
-            src.start(this.ctx.currentTime, 0)
-        }
-    }
-
     private switchToNone() {
         this.ADSRs[this.MONO] = new Adsr(this.ctx)
         this.ADSRs[this.MONO].gain.setValueAtTime(1, this.ctx.currentTime)
@@ -205,13 +141,80 @@ export class NuniSourceNode {
         })
     }
 
-    private disconnectAllConnectees() {
-        for (const key in this.ADSRs) {
-            this.sources[key].disconnect()
-            this.ADSRs[key].disconnect()
-            clearTimeout(this.ADSRs[key].releaseId)
+    refresh() {
+        if (this.kbMode === 'poly') {
+            KB.keyCodes.forEach(key =>
+                this.prepareSource(key))
+
+        } else if (this.kbMode === 'mono') {
+            this.prepareSource(this.MONO)
+
+        } else if (this.kbMode === 'none') {
+            this.prepareSource(this.MONO) 
+            this.startSource(this.MONO)
+            this.ADSRs[this.MONO].gain.value = 1
         }
-        this.sources = {}
-        this.ADSRs = {}
+        else throw 'How could such a thing be?'
+    }
+
+    update(keydown : boolean, key : number) {
+        if (this.kbMode === 'poly') {
+            if (keydown) {
+                this.noteOnPoly(key)
+            } else {
+                this.noteOff(key)
+            } 
+        } else {
+            if (keydown) {
+                this.noteOnMono(key)
+            } else {
+                if (KB.held.length) { 
+                    // Last note priority
+                    this.noteOnMono(KB.held[KB.held.length-1])
+                } else {
+                    this.noteOff(this.MONO)
+                }
+            }
+        }
+    }
+
+    private noteOnPoly(key : number) {
+        this.noteReallyOn(key)
+    }
+
+    private noteOnMono(key : number) {
+        this.noteReallyOn(this.MONO)
+
+        const keyValue = KB.scale[KB.keymap[key]]
+        const src = this.sources[this.MONO]
+        src.detune.value = keyValue
+    }
+    
+    private noteReallyOn(key : number) {
+        const adsr = this.ADSRs[key]
+
+        if (adsr.releaseId >= 0) {
+            clearTimeout(adsr.releaseId)
+            adsr.releaseId = -1
+            this.prepareSource(key)
+        }
+        this.startSource(key)
+        ADSR_Controller.trigger(adsr.gain, this.ctx.currentTime)
+    }
+
+    private startSource(key : number) {
+        const src = this.sources[key] 
+        if (!src.hasStarted) {
+            src.hasStarted = true
+            src.start(this.ctx.currentTime, 0)
+        }
+    }
+    
+    private noteOff(key : number) {
+        ADSR_Controller.untrigger(this, key)
+    }
+
+    prepareSource(key : number) {
+        throw 'Must be implemented in the "concrete" classes.'
     }
 }

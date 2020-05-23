@@ -15,6 +15,7 @@ export type NodeSettings = {
     audioNodeType : string,
     audioNodeSettings : {
         kbMode? : NodeKbMode
+        bufferIndex? : number
         },
 }
 
@@ -42,7 +43,7 @@ export class NuniGraphNode {
             audioParamValues, 
             audioNodeType,
             audioNodeSettings
-        
+            
             } = settings
 
         this.id = id
@@ -63,6 +64,11 @@ export class NuniGraphNode {
         if (audioNodeSettings.kbMode &&
             audioNodeSettings.kbMode !== 'none') {
             this.audioNode.setKbMode(KB.mode)
+        }
+
+        
+        if (audioNodeSettings.bufferIndex != undefined) {
+            this.audioNode.bufferIndex = audioNodeSettings.bufferIndex
         }
     }
 

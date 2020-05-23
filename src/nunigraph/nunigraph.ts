@@ -238,7 +238,8 @@ export class NuniGraph {
                 audioParamValues,
                 audioNodeType,
                 audioNodeSettings: {
-                    kbMode: audioNode.kbMode
+                    kbMode: audioNode.kbMode,
+                    bufferIndex: audioNode.bufferIndex
                     }
                 }
 

@@ -52,6 +52,7 @@ export function recordTo(index : number) {
         const audioChunks : Blob[] = []
         
         mediaRecorder.addEventListener('dataavailable', (event : any) => {
+            log('event.data =',event.data.arrayBuffer()) 
             audioChunks.push(event.data)
         })
 
@@ -62,7 +63,13 @@ export function recordTo(index : number) {
                 audioCtx.decodeAudioData(arraybuffer)
                 .then((audiobuffer : AudioBuffer) => 
                 {
-                    bufferController.buffers[index] = audiobuffer
+                    const rate =  audioCtx.sampleRate
+
+                    // This new buffer ensures that the length is exact
+                    const buffer = audioCtx.createBuffer(1, bufferController.nextBufferDuration * rate, rate)
+                    buffer.copyToChannel(audiobuffer.getChannelData(0), 0)
+
+                    bufferController.buffers[index] = buffer
                     bufferController.refreshAffectedBuffers()
                     recordButton.classList.remove('recording')
                     f && f()
