@@ -13,7 +13,13 @@ import { NuniGraphNode } from './nunigraph_node.js'
 import { BufferNode2 } from '../webaudio2/buffer2.js'
 import { NuniSourceNode } from '../webaudio2/nuni_source_node.js'
 import { hideGraphContextmenu } from './graph_handlers.js'
-import { showSubtypes, activateKeyboardButton, samplerControls, exposeAudioParams } from './display_nodedata.js'
+import { showSubtypes, 
+    activateKeyboardButton, 
+    samplerControls, 
+    exposeAudioParams, 
+    createValuesWindow 
+    } from './display_nodedata/display_nodedata.js'
+import { SubgraphSequencer } from '../webaudio2/sequencers/subgraph-sequencer.js'
 
 export class NuniGraphController {
 /**
@@ -76,7 +82,6 @@ export class NuniGraphController {
         this.toggleValuesWindow()
     }
 
-    // Inject (or hide) HTML that allows manipulation of the selected node
     private toggleValuesWindow() {
         const { nodeValueContainer: container, 
             selectedNode: node } = this
@@ -94,47 +99,11 @@ export class NuniGraphController {
             connectionTypePrompt: prompt
             } = this
         
-        const controls = E('div')
-        
         container.appendChild(createDraggableTopBar(
             `${node.type.toUpperCase()}, id: ${node.id}`))
 
-        controls.appendChild(showSubtypes(node))
-
-        if (node.audioNode instanceof BufferNode2) {
-            controls.appendChild(samplerControls(node.audioNode))
-        }
-
-        if (node.audioNode instanceof NuniSourceNode) {
-            controls.appendChild(activateKeyboardButton(node.audioNode))
-        }
-
-        controls.appendChild(exposeAudioParams(node))
-
-        // Add delete button, but not if id is 0, because that's the master gain.
-        if (node.id !== 0) {
-            const deleteNode = E('button')
-            deleteNode.innerText = 'delete this node'
-            deleteNode.style.float = 'right'
-            deleteNode.onclick = _ => {  
-    
-                /** If this prompt stays open then connections 
-                 *  to deleted nodes become possible, and the 
-                 *  program blows up if you try to do that. 
-                 * */ 
-                prompt.classList.remove('show')
-    
-                GraphUndoRedoModule.save()
-                this.g.deleteNode(node)
-                this.unselectNode()
-                this.renderer.render()
-            }
-            controls.append(deleteNode)
-        }
-        container.appendChild(controls)
+        container.appendChild(createValuesWindow(node, prompt))
     }
-
-
     
     private getNodesInBox(x : number, y : number) {
         const { width: W, height: H } = this.renderer.canvas
@@ -367,7 +336,7 @@ export class NuniGraphController {
         
         const { renderer } = this
 
-        if (node2.id === 0) {
+        if (node2.id === 0 || node2.type === NodeTypes.SGS) {
             // No prompt needed in this case. 
             // Only allow channel connections to the master gain node.
             // Allowing connections to someGain.gain can prevent it from being muted.

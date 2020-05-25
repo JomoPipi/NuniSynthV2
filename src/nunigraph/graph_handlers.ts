@@ -12,7 +12,7 @@ import { GraphUndoRedoModule } from  './graph_undo_redo.js'
 Object.values(NodeTypes).forEach(type => {
     const create = () => {
         GraphUndoRedoModule.save()
-        const node = G.newNode(type)
+        const node = G.createNewNode(type)
         const menu = D('graph-contextmenu')!
         
         if (menu.style.display !== 'none') {
@@ -26,7 +26,7 @@ Object.values(NodeTypes).forEach(type => {
         
         GraphController.renderer.render()
     }
-    D(`create-${type}`)!.onclick = create 
+    // D(`create-${type}`)!.onclick = create 
     D(`create-${type}2`)!.onclick = create
 })
 

@@ -429,6 +429,19 @@ code {
           justify-content: center;
 }
 
+.vert-grid {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr;
+      grid-template-columns: 1fr;
+}
+
+.note-box {
+  background-color: white;
+  width: 70px;
+  height: 70px;
+}
+
 .apply-btn {
   margin: 5px;
   padding: 0px 5px;
@@ -620,6 +633,14 @@ a {
 
 .selected2 {
   border: 2px solid cyan;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.highlighted {
+  border: 8px solid cyan;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 .show {

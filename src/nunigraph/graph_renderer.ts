@@ -258,6 +258,15 @@ export class NuniGraphRenderer {
 
     private getNodeColor(node : NuniGraphNode, H : number, W : number, highlight : boolean) {
         const { nodeRadius, ctx } = this
+        if (node.type === NodeTypes.SGS) {
+            const c2 = highlight ? 'pink' : 'black'
+            const {x,y} = node, r = nodeRadius
+            const gradient = ctx.createRadialGradient(x*W, y*H, r/27.0, x*W, y*H, r)
+                gradient.addColorStop(0, 'gray')
+                gradient.addColorStop(0.9, c2) 
+                
+            return gradient
+        }
         const prop = (<Indexed>AudioNodeParams)[node.type][0]
         const pValue = node.audioParamValues[prop]
         const [min,max] = (<Indexed>AudioParamRanges)[prop]

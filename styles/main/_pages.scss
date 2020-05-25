@@ -43,6 +43,12 @@ a {
 
 .selected2 {
     border: 2px solid cyan;
+    box-sizing: border-box;
+}
+
+.highlighted {
+    border: 8px solid cyan;
+    box-sizing: border-box;
 }
 
 

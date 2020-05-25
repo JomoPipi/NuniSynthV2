@@ -6,7 +6,7 @@
 
 
 import { bufferController } from '../nunigraph/init.js'
-import { NuniSourceNode, AudioParam2 } from './nuni_source_node.js'
+import { NuniSourceNode, NuniSourceAudioParam } from './nuni_source_node.js'
 import { KB } from './keyboard.js'
 
 export class BufferNode2 extends NuniSourceNode {
@@ -17,16 +17,16 @@ export class BufferNode2 extends NuniSourceNode {
 
     loop : boolean
     bufferIndex : number
-    detune : AudioParam2
-    playbackRate : AudioParam2
+    detune : NuniSourceAudioParam
+    playbackRate : NuniSourceAudioParam
     
     constructor(ctx : AudioContext) {
         super(ctx)
 
         this.loop = true
         this.bufferIndex = 0
-        this.detune = new AudioParam2(ctx)
-        this.playbackRate = new AudioParam2(ctx)
+        this.detune = new NuniSourceAudioParam(ctx)
+        this.playbackRate = new NuniSourceAudioParam(ctx)
 
         this.setKbMode('none')
     }

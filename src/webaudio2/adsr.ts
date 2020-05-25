@@ -37,6 +37,12 @@ export const ADSR_Controller = {
         gain.setTargetAtTime(sustain ** 2, t + attack, decay)  // Decay phase
     },
 
+    untriggerAdsr: function(gain : AudioParam, time : number) {
+        const { release } = this
+        gain.cancelScheduledValues(time)
+        gain.setTargetAtTime(0, time, release)
+    },
+
     untrigger: function(sourceNode : NuniSourceNode, key : number) {
         const { release } = this
         const t = sourceNode.ctx.currentTime

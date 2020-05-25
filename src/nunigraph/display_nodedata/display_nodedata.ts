@@ -5,12 +5,66 @@
 
 
 
-import { NuniSourceNode } from '../webaudio2/nuni_source_node.js'
-import { GraphUndoRedoModule } from './graph_undo_redo.js'
-import { NuniGraphNode } from './nunigraph_node.js'
-import { BufferNode2 } from '../webaudio2/buffer2.js'
-import { KB } from '../webaudio2/keyboard.js'
-import { BufferController } from '../buffer_utils/init_buffers.js'
+import { NuniSourceNode } from '../../webaudio2/nuni_source_node.js'
+import { GraphUndoRedoModule } from '../graph_undo_redo.js'
+import { NuniGraphNode } from '../nunigraph_node.js'
+import { BufferNode2 } from '../../webaudio2/buffer2.js'
+import { KB } from '../../webaudio2/keyboard.js'
+import { BufferController } from '../../buffer_utils/init_buffers.js'
+import { SubgraphSequencer } from '../../webaudio2/sequencers/subgraph-sequencer.js'
+import { sequencerControls } from './sequencer-controls.js'
+import { GraphController, G } from '../init.js'
+
+
+
+
+
+
+
+export function createValuesWindow(node : NuniGraphNode, prompt : HTMLElement) {
+    const controls = E('div')
+
+    controls.appendChild(showSubtypes(node))
+
+    if (node.audioNode instanceof SubgraphSequencer) {
+        controls.appendChild(sequencerControls(node.audioNode))
+    }
+
+    if (node.audioNode instanceof BufferNode2) {
+        controls.appendChild(samplerControls(node.audioNode))
+    }
+
+    if (node.audioNode instanceof NuniSourceNode) {
+        controls.appendChild(activateKeyboardButton(node.audioNode))
+    }
+
+    controls.appendChild(exposeAudioParams(node))
+
+    // Add delete button, but not if id is 0, because that's the master gain.
+    if (node.id !== 0) {
+        const deleteNode = E('button')
+        deleteNode.innerText = 'delete this node'
+        deleteNode.style.float = 'right'
+        deleteNode.onclick = _ => {  
+
+            /** If this prompt stays open then connections 
+             *  to deleted nodes become possible, and the 
+             *  program blows up if you try to do that. 
+             * */ 
+            prompt.classList.remove('show')
+
+            GraphUndoRedoModule.save()
+            G.deleteNode(node)
+            GraphController.unselectNode()
+            GraphController.renderer.render()
+        }
+        controls.append(deleteNode)
+    }
+    
+    return controls
+}
+
+
 
 
 export function activateKeyboardButton(an : NuniSourceNode) {

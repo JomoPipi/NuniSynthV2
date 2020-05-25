@@ -7,13 +7,15 @@
 
 import { Adsr, ADSR_Controller } from './adsr.js'
 import { KB, NodeKbMode } from '../webaudio2/keyboard.js'
+import { SubgraphSequencer } from './sequencers/subgraph-sequencer.js'
+import AdsrSplitter from './adsr-splitter.js'
 
-export type Destination = AudioNode | AudioParam | AudioParam2
+export type Destination = AudioNode | AudioParam | NuniSourceAudioParam | SubgraphSequencer
 
 
 
 
-export class AudioParam2 {
+export class NuniSourceAudioParam {
     /** AudioParams that are compatible with NuniSourceNodes
      */
     src: ConstantSourceNode
@@ -33,56 +35,23 @@ export class AudioParam2 {
 
 
 
-export class NuniSourceNode {
+export class NuniSourceNode extends AdsrSplitter {
     /** Parent interface for Sampler and Oscillator nodes
      *  Allows for 3 keyboard modes - none | mono | poly
      */
-    connectees : Destination[] // The list of things that the node connects to
-    ADSRs : Indexable<Adsr>    // The gain-ADSRs
-    sources : Indexed          // The AudioScheduledSourceNode containers
-    kbMode : NodeKbMode        // The current state of the node - none | mono | poly
-    ctx : AudioContext         // The context of audio
-    readonly MONO : 666420     // The Id of the mono ADSR and source
+    private outputs : Destination[]    // The list of things that the node connects to
+    ADSRs : Indexable<Adsr>            // The gain-ADSRs
+    protected sources : Indexed        // The AudioScheduledSourceNode containers
+    kbMode : NodeKbMode                // The current state of the node - none | mono | poly
+    readonly MONO : 666420             // The Id of the mono ADSR and source
     
     constructor(ctx : AudioContext){
+        super(ctx)
         this.MONO = 666420
-        this.ctx = ctx
         this.kbMode = 'poly'
-        this.connectees = []
         this.sources = {}
         this.ADSRs = {}
-    }
-
-    connect(destination : Destination) {
-        this.connectees.push(destination)
-        this.connection(true, destination)
-        this.refresh()
-    }
-
-    disconnect(destination? : Destination) {
-        if (!destination) {
-            this.connectees.length = 0
-            for (const key in this.ADSRs) {
-                this.ADSRs[key].disconnect()
-            }
-            return;
-        }
-        this.connectees.splice(
-            this.connectees.indexOf(destination), 1)
-
-        this.connection(false, destination)
-        this.refresh()
-    }
-
-    private connection(on : boolean, d : Destination) {
-        for (const key in this.ADSRs) {
-            const dest = d instanceof AudioParam2 ? d.src.offset : d as any
-            if (on) {
-                this.ADSRs[key].connect(dest) 
-            } else {
-                this.ADSRs[key].disconnect(dest)
-            }
-        }
+        this.outputs = []
     }
 
     setKbMode(mode : NodeKbMode) {
@@ -136,7 +105,10 @@ export class NuniSourceNode {
     }
 
     private reconnectAllConnectees() {
-        this.connectees.forEach(c => {
+        for (const key in this.ADSRs) {
+            this.ADSRs[key].connect(this.volumeNode)
+        }
+        this.outputs.forEach(c => {
             this.connection(true, c)
         })
     }

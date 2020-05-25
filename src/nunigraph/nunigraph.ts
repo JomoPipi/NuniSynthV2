@@ -5,14 +5,11 @@
 
 
 
-import { 
-    audioCtx, 
-    connect_node_to_destination, 
-    disconnect_node_from_destination 
-    } from '../webaudio2/webaudio2.js'
+import { audioCtx } from '../webaudio2/webaudio2.js'
     
 import { NuniGraphNode, NodeSettings } from './nunigraph_node.js'
 import { LZW_compress, LZW_decompress } from '../helpers/lzw_compression.js'
+import { SubgraphSequencer } from '../webaudio2/sequencers/subgraph-sequencer.js'
 
 
 export class NuniGraph {
@@ -41,12 +38,12 @@ export class NuniGraph {
             audioNodeSettings: {}
             }
 
-        this.newNode(NodeTypes.GAIN, masterGainSettings)
+        this.createNewNode(NodeTypes.GAIN, masterGainSettings)
             .audioNode
             .connect(audioCtx.destination)
     }
 
-    newNode(type : NodeTypes, settings? : NodeSettings) {
+    createNewNode(type : NodeTypes, settings? : NodeSettings) {
 
         if (!settings) {
             settings = {
@@ -64,14 +61,16 @@ export class NuniGraph {
     }
 
     copyNode(node : NuniGraphNode) {
-          const { 
+        const copiedNode = JSON.parse(JSON.stringify(node))
+        log('node, copiedNode =',node,copiedNode)
+        const { 
             type, 
             x, 
             y, 
             audioParamValues, 
             audioNodeType,  
             audioNode,
-            } = JSON.parse(JSON.stringify(node))
+            } = copiedNode
 
         const newX = clamp(0, x+0.07, 1)
         const newY = newX === 1 ? clamp(0, y-0.07, 1) : y
@@ -80,11 +79,12 @@ export class NuniGraph {
             audioParamValues,
             audioNodeType,
             audioNodeSettings: {
-                kbMode: audioNode.kbMode
+                kbMode: audioNode.kbMode,
+                bufferIndex: audioNode.bufferIndex,
                 }
             }
 
-        return this.newNode(type, settings)
+        return this.createNewNode(type, settings)
     }
 
     copyNodes(nodes : NuniGraphNode[]) {
@@ -107,19 +107,40 @@ export class NuniGraph {
             }
         }
 
-        return Object.values(correspondenceMap)
+        const copiedNodes = Object.values(correspondenceMap)
+
+        this.copyThingsThatCanOnlyBeCopiedAfterConnectionsAreMade(nodes, copiedNodes)
+
+        return copiedNodes
+    }
+
+    private copyThingsThatCanOnlyBeCopiedAfterConnectionsAreMade(
+        nodes : NuniGraphNode[], 
+        mapToNewNode : Indexable<NuniGraphNode>) {
+
+        for (const node of nodes) {
+            if (node.audioNode instanceof SubgraphSequencer) {
+                mapToNewNode[node.id].audioNode.nSteps = node.audioNode.nSteps
+                mapToNewNode[node.id].audioNode.stepMatrix = node.audioNode.stepMatrix
+            }
+        }
     }
 
     deleteNode(node : NuniGraphNode) {
-        // disconnect from other audioNodes
+        // Without this, the setTimeout could keep looping forever:
+        if (node.type === NodeTypes.SGS) {
+            node.audioNode.stop()
+        }
+
+        // Disconnect from other audioNodes:
         node.audioNode.disconnect()
 
-        // remove from this.nodes
+        // Remove from this.nodes:
         const idx = this.nodes.findIndex(_node => 
             _node === node)
         this.nodes.splice(idx,1)
 
-        // remove from this.oneWayConnections
+        // Remove from this.oneWayConnections:
         delete this.oneWayConnections[node.id]
         for (const id in this.oneWayConnections) {
             this.oneWayConnections[id] = 
@@ -149,7 +170,7 @@ export class NuniGraph {
 
     
         const destination = this.prepareDestination(connectionType)(node2.audioNode)
-        connect_node_to_destination(node1, destination)
+        audioCtx.connect_node_to_destination(node1, destination)
     }
 
     disconnect(node1 : NuniGraphNode, node2 : NuniGraphNode, connectionType : ConnectionType) {
@@ -165,7 +186,7 @@ export class NuniGraph {
         connections.splice(connectionIndex, 1)
 
         const destination = this.prepareDestination(connectionType)(node2.audioNode)
-        disconnect_node_from_destination(node1, destination)
+        audioCtx.disconnect_node_from_destination(node1, destination)
     }
 
     private prepareDestination (connectionType : ConnectionType) {
@@ -255,6 +276,16 @@ export class NuniGraph {
                 this.connect(nodeA, nodeB, connectionType)
             }
         }
+
+        // Sampler needs to have stepMatrix and nSteps copied after connections are made
+        for (const node of nodes) {
+            if (node.audioNode instanceof SubgraphSequencer) {
+                node.audioNode.refresh()
+                const thisNode = this.nodes.find(n => n.id === node.id)!
+                Object.assign(thisNode.audioNode, node.audioNode)
+            }
+        }
+
 
         this.nextId = 
             Math.max(...this.nodes.map(node=>node.id)) + 1

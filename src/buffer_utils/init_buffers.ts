@@ -74,7 +74,7 @@ export class BufferController {
         const div = D('buffer-container')!
 
         for (let n = 0; n < BufferController.nBuffers; n++) {
-            const seconds = n === 0 ? 10 : _seconds
+            const seconds = n === 0 ? 4 : _seconds
             const btn = E('button')
             btn.innerText = String.fromCharCode(65+n)
             btn.id = `buff-${n}`
