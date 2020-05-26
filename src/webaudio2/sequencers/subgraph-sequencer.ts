@@ -92,7 +92,7 @@ export class SubgraphSequencer extends AdsrSplitter {
         
         let updateBox = true
         while (this.noteTime < currentTime + 0.200) {
-            log('tick =',this.tick)
+            
             const patternTime = this.noteTime + this.startTime
 
             this.playStepsAtTime(patternTime, updateBox)
@@ -114,11 +114,12 @@ export class SubgraphSequencer extends AdsrSplitter {
             const stepIsActive = this.stepMatrix[key][this.currentStep]
             if (!this.mutedChannel[key]) {
 
-                // Highlight box
-                D(`${key}:${this.currentStep}`)?.classList.toggle('highlighted', true)
-                const before = this.currentStep === 0 ? this.nSteps - 1 : this.currentStep - 1
-                D(`${key}:${before}`)?.classList.toggle('highlighted', false)
-
+                if (updateBox) {
+                    // Highlight box
+                    D(`${key}:${this.currentStep}`)?.classList.toggle('highlighted', true)
+                    const before = this.currentStep === 0 ? this.nSteps - 1 : this.currentStep - 1
+                    D(`${key}:${before}`)?.classList.toggle('highlighted', false)
+                }
 
                 if (stepIsActive) {
                     ADSR_Controller.trigger(adsr.gain, time)

@@ -60,7 +60,7 @@ export class NuniGraph {
         return node
     }
 
-    copyNode(node : NuniGraphNode) {
+    private copyNode(node : NuniGraphNode) {
         const copiedNode = JSON.parse(JSON.stringify(node))
         log('node, copiedNode =',node,copiedNode)
         const { 
@@ -107,11 +107,9 @@ export class NuniGraph {
             }
         }
 
-        const copiedNodes = Object.values(correspondenceMap)
+        this.copyThingsThatCanOnlyBeCopiedAfterConnectionsAreMade(nodes, correspondenceMap)
 
-        this.copyThingsThatCanOnlyBeCopiedAfterConnectionsAreMade(nodes, copiedNodes)
-
-        return copiedNodes
+        return Object.values(correspondenceMap)
     }
 
     private copyThingsThatCanOnlyBeCopiedAfterConnectionsAreMade(
@@ -279,10 +277,13 @@ export class NuniGraph {
 
         // Sampler needs to have stepMatrix and nSteps copied after connections are made
         for (const node of nodes) {
-            if (node.audioNode instanceof SubgraphSequencer) {
-                node.audioNode.refresh()
+            // Can't use instanceof to check if audioNode is a SubgraphSequencer
+            // because those nodes were parsed with JSON.parse
+            if (node.type === NodeTypes.SGS) {
                 const thisNode = this.nodes.find(n => n.id === node.id)!
-                Object.assign(thisNode.audioNode, node.audioNode)
+
+                thisNode.audioNode.nSteps = node.audioNode.nSteps
+                thisNode.audioNode.stepMatrix = node.audioNode.stepMatrix
             }
         }
 
