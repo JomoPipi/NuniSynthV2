@@ -20,6 +20,7 @@ import { showSubtypes,
     createValuesWindow 
     } from './display_nodedata/display_nodedata.js'
 import { SubgraphSequencer } from '../webaudio2/sequencers/subgraph-sequencer.js'
+import { G } from './init.js'
 
 export class NuniGraphController {
 /**
@@ -27,7 +28,6 @@ export class NuniGraphController {
  */
 
     private g : NuniGraph
-    private nodeValueContainer : HTMLElement   // belongs in view
     private connectionTypePrompt : HTMLElement // belongs in view
     renderer : NuniGraphRenderer
     selectedNode? : NuniGraphNode
@@ -35,20 +35,20 @@ export class NuniGraphController {
     selectedNodes : NuniGraphNode[]
     private lastMouseDownMsg : any
     private selectionStart? : [number,number]
+    openWindow : Indexable<HTMLElement> // [node.id]:nodeValuesWindow
     private copiedNodes? : string
 
     constructor (
         g : NuniGraph, 
-        container : HTMLElement, 
         prompt : HTMLElement, 
         renderer : NuniGraphRenderer ) {
 
         this.g = g
-        this.nodeValueContainer = container
         this.connectionTypePrompt = prompt
         this.renderer = renderer
         this.mouseIsDown = false
         this.selectedNodes = []
+        this.openWindow = {}
         
         const mouse_move = (e : MouseEvent) => {
             const { x: offsetX, y: offsetY } = this.getMousePos(e)
@@ -73,38 +73,86 @@ export class NuniGraphController {
     }
 
     selectNode (node : NuniGraphNode) {
+        this.unselectNode()
         this.selectedNode = node
-        this.toggleValuesWindow()
+        this.showValuesWindow(node)
+        this.openWindow[node.id].classList.add('selected2')
     }
 
     unselectNode() {
         this.selectedNode = undefined
-        this.toggleValuesWindow()
+        for (const key in this.openWindow) {
+            this.openWindow[key].classList.remove('selected2')
+        }
     }
 
-    private toggleValuesWindow() {
-        const { nodeValueContainer: container, 
-            selectedNode: node } = this
+    closeWindow(node : NuniGraphNode) {
+        const window = this.openWindow[node.id]
+        if (window) {
+            D('nunigraph-stuff')!.removeChild(window)
+            delete this.openWindow[node.id]
+        }
+    }
 
-        container.classList.toggle('show', node != undefined)
-        container.innerHTML = ''
-
-        if (!node) return;
-
-        this.showValuesWindow(node)
+    deleteNode(node : NuniGraphNode) {
+        this.connectionTypePrompt.classList.remove('show')
+        this.closeWindow(node)
+        this.g.deleteNode(node)
+        this.unselectNode()
+        this.selectedNodes = []
+        this.renderer.render()
     }
 
     private showValuesWindow(node : NuniGraphNode) {
-        const { nodeValueContainer: container, 
-            connectionTypePrompt: prompt
-            } = this
-        
-        container.appendChild(createDraggableTopBar(
-            `${node.type.toUpperCase()}, id: ${node.id}`))
+        if (this.openWindow[node.id]) return;
 
-        container.appendChild(createValuesWindow(node, prompt))
+        const moveContainerToTop = (box : HTMLElement) => {
+            let max = -Infinity
+            for (const key in this.openWindow) {
+                const zi = +this.openWindow[key].style.zIndex
+                max = Math.max(max, zi)
+            }
+            box.style.zIndex = (max+1).toString()
+        }
+
+        const clickCallback = (box : HTMLElement) => {
+            moveContainerToTop(box)
+            this.selectNode(node)
+            this.renderer.render()
+        }
+
+        const closeCallback = () => {
+            this.closeWindow(node)
+        }
+
+        const deleteCallBack = () => {  
+            GraphUndoRedoModule.save()
+            this.deleteNode(node)
+        }
+
+        const container =
+            createDraggableWindow({
+                text: `${node.type.toUpperCase()}, id: ${node.id}`,
+                clickCallback,
+                closeCallback,
+                color: node.id === 0 
+                    ? MasterGainColor 
+                    : NodeTypeColors[node.type]
+                })
+
+        this.openWindow[node.id] = container
+
+        container.appendChild(
+            createValuesWindow(
+                node, 
+                deleteCallBack))
+        
+        D('nunigraph-stuff')!.appendChild(container)
+        moveContainerToTop(container)
     }
-    
+
+
+
     private getNodesInBox(x : number, y : number) {
         const { width: W, height: H } = this.renderer.canvas
         if (!this.mouseIsDown) {
@@ -301,20 +349,20 @@ export class NuniGraphController {
         }
         
         if (e.keyCode === 46) {
-            GraphUndoRedoModule.save()
             if (this.selectedNode) {
-                this.g.deleteNode(this.selectedNode)
+                GraphUndoRedoModule.save()
+                this.deleteNode(this.selectedNode)
+            }
+            if (this.selectedNodes.length) {
+                GraphUndoRedoModule.save()
             }
             for (const node of this.selectedNodes) {
                 if (node.id !== 0) {
-                    this.g.deleteNode(node)
+                    this.deleteNode(node)
                 }
             }
-            this.selectedNode = undefined
-            this.selectedNodes = []
-            this.unselectNode()
-            this.renderer.render()
         }
+
         if (e.ctrlKey && e.keyCode === 86) { // ctrl + V
             GraphUndoRedoModule.save()
 

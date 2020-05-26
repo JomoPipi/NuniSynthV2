@@ -437,7 +437,8 @@ code {
 }
 
 .note-box {
-  background-color: white;
+  background-color: #9a97a3;
+  border: 2px solid #201e20;
   width: 70px;
   height: 70px;
 }
@@ -632,7 +633,7 @@ a {
 }
 
 .selected2 {
-  border: 2px solid cyan;
+  border: 2px solid white;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
 }

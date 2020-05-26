@@ -21,13 +21,13 @@ import { GraphController, G } from '../init.js'
 
 
 
-export function createValuesWindow(node : NuniGraphNode, prompt : HTMLElement) {
+export function createValuesWindow(node : NuniGraphNode, deleteCallback : Function) {
     const controls = E('div')
 
     controls.appendChild(showSubtypes(node))
 
     if (node.audioNode instanceof SubgraphSequencer) {
-        controls.appendChild(sequencerControls(node.audioNode))
+        controls.appendChild(sequencerControls(node))
     }
 
     if (node.audioNode instanceof BufferNode2) {
@@ -43,21 +43,14 @@ export function createValuesWindow(node : NuniGraphNode, prompt : HTMLElement) {
     // Add delete button, but not if id is 0, because that's the master gain.
     if (node.id !== 0) {
         const deleteNode = E('button')
-        deleteNode.innerText = 'delete this node'
-        deleteNode.style.float = 'right'
-        deleteNode.onclick = _ => {  
-
-            /** If this prompt stays open then connections 
-             *  to deleted nodes become possible, and the 
-             *  program blows up if you try to do that. 
-             * */ 
-            prompt.classList.remove('show')
-
-            GraphUndoRedoModule.save()
-            G.deleteNode(node)
-            GraphController.unselectNode()
-            GraphController.renderer.render()
-        }
+        deleteNode.innerText = '🗑️'
+        applyStyle(deleteNode, {
+            float: 'right',
+            backgroundColor: 'transparent',
+            border: 'none',
+            fontSize: '1.25em'
+        })
+        deleteNode.onclick = () => deleteCallback()
         controls.append(deleteNode)
     }
     

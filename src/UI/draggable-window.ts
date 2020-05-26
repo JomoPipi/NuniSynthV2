@@ -5,20 +5,36 @@
 
 
 
-/** For the draggable top bar to function as expected
- *  place it as the first element in an HTML element with 
- *  position: absolute.
- */
-function createDraggableTopBar(text? : string) {
+function createDraggableWindow({ 
+    text, 
+    clickCallback, 
+    closeCallback,
+    color
+} : {
+    text : string, 
+    clickCallback : (box : HTMLElement) => void,
+    closeCallback : (box : HTMLElement) => void
+    color? : string
+    }) {
+
+    const box = E('div')
+    
+    box.classList.add('window')
+    box.classList.add('show')
+    box.style.left = '50vw'
+    box.style.top = '50vh'
+
     const bar = E('div')
     const exitBtn = E('button')
 
-    bar.innerText = text || ''
+    box.appendChild(bar)
+    bar.innerText = text
 
     applyStyle(bar, {
         height: '30px',
         width: '100%',
-        background: '#555',
+        background: color || '#555',
+        color: rgbaColorContrast(color||'#555'),
         cursor: 'move',
         paddingLeft: '5px',
         boxSizing: 'border-box'
@@ -29,10 +45,10 @@ function createDraggableTopBar(text? : string) {
         border: '0.2px solid #444',
         boxSizing: 'border-box',
         backgroundColor: 'inherit',
+        color: 'inherit',
         height: '30px',
         width: '30px',
         float: 'right',
-        color: '#a99',
         textAlign: 'center',
         lineHeight: '30px'
         })
@@ -48,24 +64,23 @@ function createDraggableTopBar(text? : string) {
         window.removeEventListener('mouseup',mouseup)
     }
 
-    const mousedown = function({ clientX, clientY } : MouseEvent) {
-        const box = bar.parentElement
-        if (!box) throw 'A box to drag is required.'
+    const mousedown = function(e : MouseEvent) {
+        if (e.target === bar) {
+            coords = [
+                e.clientX, 
+                e.clientY, 
+                box.offsetLeft + box.offsetWidth/2, 
+                box.offsetTop + box.offsetHeight/2
+                ]
+        }
 
-        coords = [
-            clientX, 
-            clientY, 
-            box.offsetLeft + box.offsetWidth/2, 
-            box.offsetTop + box.offsetHeight/2
-            ]
         window.addEventListener('mousemove',mousemove)
         window.addEventListener('mouseup',mouseup)
+
+        clickCallback(box)
     }
 
     const mousemove = function(e : MouseEvent) {
-
-        const box = bar.parentElement
-        if (!box) throw 'A box to drag is required.'
 
         if (coords) {
             const [x, y, bx, by] = coords
@@ -77,16 +92,11 @@ function createDraggableTopBar(text? : string) {
         }
     }
 
-    const closeBox = () => {
-        const box = bar.parentElement
-        if (!box) throw 'A box to close is required.'
-
-        box.classList.remove('show')
-    }
+    const closeBox = () => closeCallback(box)
     
     exitBtn.onclick = closeBox
-    bar.onmousedown = mousedown
+    box.onmousedown = mousedown
     bar.onmousemove = mousemove
 
-    return bar
+    return box
 }

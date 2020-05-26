@@ -6,10 +6,11 @@
 
 
 import { SubgraphSequencer } from '../../webaudio2/sequencers/subgraph-sequencer.js'
+import { NuniGraphNode } from '../nunigraph_node.js'
 
-export function sequencerControls(an : SubgraphSequencer) {
+export function sequencerControls(node : NuniGraphNode) {
+    const an = node.audioNode
     const controls = E('div')
-    const grid = E('div')
 
     {
         const btn = E('button')
@@ -39,36 +40,14 @@ export function sequencerControls(an : SubgraphSequencer) {
     
                 text.innerText = v.toString()
                 an.updateSteps(v)
-                gridSetup()
+                an.gridSetup()
             }
             controls.appendChild(btn)
         })
         controls.appendChild(text)
     }
 
-    function gridSetup () {
-        grid.innerHTML = ''
-        const { nSteps, ADSRs } = an
-        for (const key in ADSRs) {
-            const row = E('span')
-            row.classList.add('flex-center')
-            for (let i = 0; i < nSteps; i++) {
-                const box = E('span')
-                box.classList.add('note-box')
-                box.innerText = ':)'
-                box.id = `${key}:${i}`
-                box.classList.toggle('selected', an.stepMatrix[key][i])
-                box.onclick = () => {
-                    const on = box.classList.toggle('selected')
-                    an.stepMatrix[key][i] = on
-                }
-                row.appendChild(box)
-            }
-            grid.appendChild(row)
-        }
-        controls.appendChild(grid)
-    }
-    gridSetup()
-
+    controls.appendChild(an.HTMLGrid)
+    
     return controls
 }

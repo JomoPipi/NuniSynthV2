@@ -19,7 +19,6 @@ export const bufferController = new BufferController(G)
 
 export const GraphController = new NuniGraphController(
     G, 
-    D('node-value-window')!,
     D('connection-type-prompt')!,
     new NuniGraphRenderer(
         G, 

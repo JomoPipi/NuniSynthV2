@@ -31,6 +31,9 @@ export class SubgraphSequencer extends AdsrSplitter {
     noteTime : number
     isPlaying : boolean
     tick : number
+    windowIsOpen : boolean
+    HTMLGrid : HTMLElement
+    private HTMLBoxes : Indexable<HTMLElement>
 
     constructor(ctx : AudioContext2) {
         super(ctx)
@@ -43,6 +46,10 @@ export class SubgraphSequencer extends AdsrSplitter {
         this.noteTime = 0
         this.isPlaying = false
         this.tick = (this.ctx.tempo / 60) / this.nSteps
+        this.windowIsOpen = false
+        this.HTMLGrid = E('div')
+        this.HTMLBoxes = {}
+        this.refresh()
     }
 
     addInput(node : NuniGraphNode) {
@@ -114,11 +121,13 @@ export class SubgraphSequencer extends AdsrSplitter {
             const stepIsActive = this.stepMatrix[key][this.currentStep]
             if (!this.mutedChannel[key]) {
 
-                if (updateBox) {
-                    // Highlight box
-                    D(`${key}:${this.currentStep}`)?.classList.toggle('highlighted', true)
-                    const before = this.currentStep === 0 ? this.nSteps - 1 : this.currentStep - 1
-                    D(`${key}:${before}`)?.classList.toggle('highlighted', false)
+                if (this.HTMLGrid.offsetParent != null) {
+                    if (updateBox) {
+                        // Highlight box
+                        this.HTMLBoxes[`${key}:${this.currentStep}`].classList.toggle('highlighted', true)
+                        const lastStep = (this.currentStep === 0 ? this.nSteps : this.currentStep) - 1
+                        this.HTMLBoxes[`${key}:${lastStep}`].classList.toggle('highlighted', false)
+                    }
                 }
 
                 if (stepIsActive) {
@@ -136,5 +145,35 @@ export class SubgraphSequencer extends AdsrSplitter {
     refresh() {
         this.isPlaying = false
         this.currentStep = 0
+        this.gridSetup()
+    }
+
+    gridSetup() {
+        this.HTMLGrid.innerHTML = ''
+        this.HTMLBoxes = {}
+        const grid = this.HTMLGrid
+        const { nSteps, ADSRs } = this
+        for (const key in ADSRs) {
+            const row = E('span')
+            row.classList.add('flex-center')
+            for (let i = 0; i < nSteps; i++) {
+                const box = E('span')
+                this.HTMLBoxes[`${key}:${i}`] = box
+                box.classList.add('note-box')
+                box.classList.toggle('selected', this.stepMatrix[key][i])
+                box.onclick = () => {
+                    const on = box.classList.toggle('selected')
+                    this.stepMatrix[key][i] = on
+                }
+                row.appendChild(box)
+            }
+            grid.appendChild(row)
+        }
+    }
+}
+
+class SequencerRenderer {
+    constructor() {
+
     }
 }

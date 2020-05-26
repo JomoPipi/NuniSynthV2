@@ -120,7 +120,8 @@ code {
 }
 
 .note-box {
-    background-color: white;
+    background-color: $color5;
+    border: 2px solid $color0;
     width: 70px;
     height: 70px;
 }
