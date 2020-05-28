@@ -10,17 +10,8 @@ import { NuniGraph } from './nunigraph.js'
 import { NuniGraphRenderer } from './graph_renderer.js'
 import { HOVER } from './graph_renderer.js'
 import { NuniGraphNode } from './nunigraph_node.js'
-import { BufferNode2 } from '../webaudio2/buffer2.js'
-import { NuniSourceNode } from '../webaudio2/nuni_source_node.js'
 import { hideGraphContextmenu } from './graph_handlers.js'
-import { showSubtypes, 
-    activateKeyboardButton, 
-    samplerControls, 
-    exposeAudioParams, 
-    createValuesWindow 
-    } from './display_nodedata/display_nodedata.js'
-import { SubgraphSequencer } from '../webaudio2/sequencers/subgraph-sequencer.js'
-import { G } from './init.js'
+import createValuesWindow from './display_nodedata/display_nodedata.js'
 
 export class NuniGraphController {
 /**
@@ -86,17 +77,23 @@ export class NuniGraphController {
         }
     }
 
-    closeWindow(node : NuniGraphNode) {
-        const window = this.openWindow[node.id]
+    closeWindow(id : number) {
+        const window = this.openWindow[id]
         if (window) {
             D('nunigraph-stuff')!.removeChild(window)
-            delete this.openWindow[node.id]
+            delete this.openWindow[id]
+        }
+    }
+
+    closeAllWindows() {
+        for (const nodeId in this.openWindow) {
+            this.closeWindow(+nodeId)
         }
     }
 
     deleteNode(node : NuniGraphNode) {
         this.connectionTypePrompt.classList.remove('show')
-        this.closeWindow(node)
+        this.closeWindow(node.id)
         this.g.deleteNode(node)
         this.unselectNode()
         this.selectedNodes = []
@@ -104,7 +101,6 @@ export class NuniGraphController {
     }
 
     private showValuesWindow(node : NuniGraphNode) {
-        if (this.openWindow[node.id]) return;
 
         const moveContainerToTop = (box : HTMLElement) => {
             let max = -Infinity
@@ -115,6 +111,11 @@ export class NuniGraphController {
             box.style.zIndex = (max+1).toString()
         }
 
+        if (this.openWindow[node.id]) {
+            moveContainerToTop(this.openWindow[node.id])
+            return;
+        }
+
         const clickCallback = (box : HTMLElement) => {
             moveContainerToTop(box)
             this.selectNode(node)
@@ -122,7 +123,7 @@ export class NuniGraphController {
         }
 
         const closeCallback = () => {
-            this.closeWindow(node)
+            this.closeWindow(node.id)
         }
 
         const deleteCallBack = () => {  
@@ -196,6 +197,7 @@ export class NuniGraphController {
                 left:   nodes.reduce((a,node) => Math.min(a,node.x), Infinity),
                 right:  nodes.reduce((a,node) => Math.max(a,node.x), -Infinity),
                 }
+
             this.lastMouseDownMsg.bounds = {
                 U: o.top - node!.y,
                 D: node!.y - o.bottom,
@@ -345,6 +347,12 @@ export class NuniGraphController {
 
     private keydown(e : KeyboardEvent) {
         if (GraphUndoRedoModule.tryInput(e)) {
+            const IDs = new Set(this.g.nodes.map(node => node.id))
+            for (const nodeId in this.openWindow) {
+                if (!IDs.has(+nodeId)) {
+                    this.closeWindow(+nodeId)
+                }
+            }
             this.renderer.render()
         }
         

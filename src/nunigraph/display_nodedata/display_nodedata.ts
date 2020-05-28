@@ -13,7 +13,6 @@ import { KB } from '../../webaudio2/keyboard.js'
 import { BufferController } from '../../buffer_utils/init_buffers.js'
 import { SubgraphSequencer } from '../../webaudio2/sequencers/subgraph-sequencer.js'
 import { sequencerControls } from './sequencer-controls.js'
-import { GraphController, G } from '../init.js'
 
 
 
@@ -21,7 +20,8 @@ import { GraphController, G } from '../init.js'
 
 
 
-export function createValuesWindow(node : NuniGraphNode, deleteCallback : Function) {
+
+export default function createValuesWindow(node : NuniGraphNode, deleteCallback : Function) {
     const controls = E('div')
 
     controls.appendChild(showSubtypes(node))
@@ -42,16 +42,16 @@ export function createValuesWindow(node : NuniGraphNode, deleteCallback : Functi
 
     // Add delete button, but not if id is 0, because that's the master gain.
     if (node.id !== 0) {
-        const deleteNode = E('button')
-        deleteNode.innerText = '🗑️'
-        applyStyle(deleteNode, {
+        const deleteNodeBtn = E('button')
+        deleteNodeBtn.innerText = '🗑️'
+        applyStyle(deleteNodeBtn, {
             float: 'right',
             backgroundColor: 'transparent',
             border: 'none',
             fontSize: '1.25em'
         })
-        deleteNode.onclick = () => deleteCallback()
-        controls.append(deleteNode)
+        deleteNodeBtn.onclick = () => deleteCallback()
+        controls.append(deleteNodeBtn)
     }
     
     return controls
@@ -60,7 +60,11 @@ export function createValuesWindow(node : NuniGraphNode, deleteCallback : Functi
 
 
 
-export function activateKeyboardButton(an : NuniSourceNode) {
+
+
+
+
+function activateKeyboardButton(an : NuniSourceNode) {
     // (dis?)connects the node from the keyboard.
     const btn = E('button')
     btn.innerText = '🎹'
@@ -77,7 +81,7 @@ export function activateKeyboardButton(an : NuniSourceNode) {
 
 
 
-export function showSubtypes(node : NuniGraphNode) : Node {
+function showSubtypes(node : NuniGraphNode) : Node {
     const subtypes = AudioNodeSubTypes[node.type] as string[]
     const box = E('span')
     if (subtypes.length > 0) { // Show subtypes selector
@@ -106,7 +110,7 @@ function insertOptions(select : HTMLSelectElement, options : string[]) {
 
 
 
-export function samplerControls(audioNode : BufferNode2) {
+function samplerControls(audioNode : BufferNode2) {
     const box = E('span')
     box.innerHTML = '<span> buffer </span>'
     box.classList.add('buffer-row')
@@ -144,7 +148,7 @@ export function samplerControls(audioNode : BufferNode2) {
 
 
 
-export function exposeAudioParams(node : NuniGraphNode) : Node {
+function exposeAudioParams(node : NuniGraphNode) : Node {
     const allParams = E('div')
     for (const param of AudioNodeParams[node.type as NodeTypes]) {
         const box = E('div')

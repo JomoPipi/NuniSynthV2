@@ -46,8 +46,9 @@ export function sequencerControls(node : NuniGraphNode) {
         })
         controls.appendChild(text)
     }
-
-    controls.appendChild(an.HTMLGrid)
     
+    an.gridSetup()
+    controls.appendChild(an.HTMLGrid)
+
     return controls
 }

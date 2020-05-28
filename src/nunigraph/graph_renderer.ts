@@ -38,7 +38,7 @@ export class NuniGraphRenderer {
     fromNode : NuniGraphNode | null
     private readonly g : NuniGraph
     readonly canvas : HTMLCanvasElement
-    private readonly snapToGrid : HTMLInputElement
+    private snapToGrid : boolean
     private readonly ctx : CanvasRenderingContext2D
     private readonly nodeRadius : number
     private readonly nodeLineWidth : number
@@ -52,12 +52,12 @@ export class NuniGraphRenderer {
     constructor(
         g : NuniGraph, 
         canvas : HTMLCanvasElement, 
-        snapToGrid : HTMLInputElement) {
+        snapToGridBtn : HTMLElement) {
 
         this.fromNode = null
         this.g = g
         this.canvas = canvas
-        this.snapToGrid = snapToGrid
+        this.snapToGrid = false
         this.ctx = canvas.getContext('2d')!
         this.nodeRadius = 25
         this.nodeLineWidth = 8
@@ -68,7 +68,10 @@ export class NuniGraphRenderer {
         this.triangleSize = this.innerEdgeBoundary
         this.connectionsCache = {}
 
-        snapToGrid.oninput = () => this.render()
+        snapToGridBtn.onclick = () => {
+            this.snapToGrid = snapToGridBtn.classList.toggle('selected')
+            this.render()
+        }
     }
 
     private dashedBox(x : number, y : number, X : number, Y : number) {
@@ -362,7 +365,7 @@ export class NuniGraphRenderer {
         ctx.font = '15px Arial'
         ctx.clearRect(0,0,W,H)
     
-        if (snapToGrid.checked) {
+        if (snapToGrid) {
             this.drawGridLines(H,W,buttons)
         }
 

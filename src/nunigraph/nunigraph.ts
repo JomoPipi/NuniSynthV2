@@ -62,7 +62,7 @@ export class NuniGraph {
 
     private copyNode(node : NuniGraphNode) {
         const copiedNode = JSON.parse(JSON.stringify(node))
-        log('node, copiedNode =',node,copiedNode)
+        
         const { 
             type, 
             x, 
@@ -119,7 +119,10 @@ export class NuniGraph {
         for (const node of nodes) {
             if (node.audioNode instanceof SubgraphSequencer) {
                 mapToNewNode[node.id].audioNode.nSteps = node.audioNode.nSteps
-                mapToNewNode[node.id].audioNode.stepMatrix = node.audioNode.stepMatrix
+                const matrix = node.audioNode.stepMatrix
+                for (const key in matrix) {
+                    mapToNewNode[node.id].audioNode.stepMatrix[key] = matrix[key].slice()
+                }
             }
         }
     }
@@ -281,12 +284,11 @@ export class NuniGraph {
             // because those nodes were parsed with JSON.parse
             if (node.type === NodeTypes.SGS) {
                 const thisNode = this.nodes.find(n => n.id === node.id)!
-
+                
                 thisNode.audioNode.nSteps = node.audioNode.nSteps
                 thisNode.audioNode.stepMatrix = node.audioNode.stepMatrix
             }
         }
-
 
         this.nextId = 
             Math.max(...this.nodes.map(node=>node.id)) + 1

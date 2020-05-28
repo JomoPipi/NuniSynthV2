@@ -45,6 +45,7 @@ import { GraphUndoRedoModule } from './graph_undo_redo.js'
         if (name in presets) {
             GraphUndoRedoModule.save()
             G.fromString((<Indexed>presets)[name])
+            GraphController.closeAllWindows()
             GraphController.renderer.render()
         }
     }

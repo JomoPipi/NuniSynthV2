@@ -23,6 +23,6 @@ export const GraphController = new NuniGraphController(
     new NuniGraphRenderer(
         G, 
         D('nunigraph-canvas') as HTMLCanvasElement,
-        D('snap-to-grid') as HTMLInputElement
+        D('snap-to-grid-btn') as HTMLButtonElement
         )
     )

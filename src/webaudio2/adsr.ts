@@ -132,24 +132,19 @@ export const ADSR_Controller = {
         adsr.render()
     })
 }
-
+ 
 {
-    // Attach JS dials to ADSR
-    MY_JS_DIALS.forEach((dial : JsDial) => {
-        const id = dial.id as string
-        if (id.includes('adsr')) 
-        {
-            const adsr = ADSR_Controller as Indexed
-            const s = id.split('-')[1]
-            dial.value = adsr[s]
-            dial.render()
-            dial.attach((x : number) => {
-                adsr[s] = x * x
-                ADSR_Controller.render()
-            })
-
-        } else {
-            throw 'Check what JsDials you have.'
-        }
+    const knobs = D('adsr-knobs')!
+    'attack,decay,sustain,release'.split(',').forEach(s => {
+        const dial = new JsDial()
+        const adsr = ADSR_Controller as Indexed
+        
+        dial.value = adsr[s]
+        dial.render()
+        dial.attach((value : number) => {
+            adsr[s] = value * value
+            ADSR_Controller.render()
+        })
+        knobs.appendChild(dial.html)
     })
 }

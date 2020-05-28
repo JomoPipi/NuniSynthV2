@@ -11,7 +11,6 @@ pageGroupify(D('tab-swapper')!, [
     'keyboard-tab',
     'buffer-edit-tab',
     'waveform-edit-tab',
-    'sequencer-tab'
     ])
 
 pageGroupify(D('scale-kinds')!, [

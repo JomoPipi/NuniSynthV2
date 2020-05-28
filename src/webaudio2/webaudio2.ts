@@ -23,7 +23,7 @@ export class AudioContext2 extends AudioContext {
 
     constructor() {
         super()
-        this.tempo = 116
+        this.tempo = 120
     }
 
     createBuffer2() {

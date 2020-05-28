@@ -17,13 +17,8 @@
           type="text/css" 
           href="styles/styles.css">
           
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-
-    <script> // loading screen
-
-
-    </script>
+    <link rel="icon" type="image/png" sizes="32x32" href="/styles/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/styles/favicon.ico">
     
     <script src="dist/helpers/helpers.js"         defer></script>
 
@@ -88,7 +83,6 @@
           <span id="keyboard-tab-btn" class="flex-center">      Keyboard       </span>
           <span id="buffer-edit-tab-btn" class="flex-center">   Buffers        </span>
           <span id="waveform-edit-tab-btn" class="flex-center"> Waveforms      </span>
-          <span id="sequencer-tab-btn" class="flex-center">     Sequencers      </span>
         </div>
       </span>
     </div>
@@ -131,11 +125,15 @@
                 </div>
                 
                 <div>
-                    <span> snap to grid 
-                      <input type="checkbox" id="snap-to-grid"> 
-                    </span>
                     <button id="clear-graph-button" class="neumorph" style="float:right"> clear graph </button>
                 </div>
+
+                <span>
+                  Tempo
+                  <span id="tempo-input-container">
+                    
+                  </span>
+                </span>
 
               </div>
               
@@ -164,27 +162,10 @@
               <div class="center"> ADSR </div>
               <canvas id="adsr-canvas"></canvas>
               
-              <div class="adsr-knobs"> 
+              <div id="adsr-knobs" class="adsr-knobs"> 
+                
+                <!-- INSERT WITH JavaScript -->
 
-                <span class="shadow-knob">
-                  <div id="adsr-attack" class="js-dial">
-                  </div>
-                </span>
-
-                <span class="shadow-knob">
-                    <div id="adsr-decay" class="js-dial">
-                    </div>
-                </span>
-
-                <span class="shadow-knob">
-                    <div id="adsr-sustain" class="js-dial">
-                    </div>
-                </span>
-
-                <span class="shadow-knob">
-                    <div id="adsr-release" class="js-dial">
-                    </div>
-                </span>
               </div>
             </span>
 
@@ -384,7 +365,6 @@
                   max=10 
                   step=0.1
                   value=3> 
-
               <br>
 
               <div class="builder-section center">
@@ -458,13 +438,6 @@
 
 
 
-      
-      <div id="sequencer-tab" class="_tab_">
-        [SEQUENCE BUILDER PAGE]
-      </div>
-
-
-
 
     </div>
 
@@ -474,20 +447,34 @@
   <div class="panel">
     
     <div class="top-bar-2">
-      <span class="flex-center top-bar-group">
-        <button 
-          id="info-button" 
-          class="info-button"> 
-          i 
-        </button> 
-        &nbsp;
-        &nbsp;
-        <span id="graph-undo-redo-btns">
+
+      <span class="flat-grid full">
+
+        <span class="flex-center full">
+          <button class="nuni-logo"></button>
+        </span>
+
+        <span id="graph-undo-redo-btns" class="flex-center full">
           <button class="top-bar-btn undo-btn" id="graph-undo-button">↺</button>
           <button class="top-bar-btn redo-btn" id="graph-redo-button">↻</button>
         </span>
+
+        <span class="flex-center full">
+          <button id="snap-to-grid-btn" class="grid-icon"></button>
+        </span>
+
+        <span class="flex-center full">
+          <button 
+            id="info-button" 
+            class="info-button"> 
+            i 
+          </button> 
+        </span>
+        
       </span>
+
     </div>
+
     <div id="nunigraph-stuff">
       <div id="nunigraph-legend"></div>
       <canvas id="nunigraph-canvas"></canvas>

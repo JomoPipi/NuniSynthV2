@@ -35,7 +35,6 @@ function invertBuffer(index : number) {
             const value = (D('new-buffer-length') as HTMLSelectElement).value
             D('new-buffer-length-text')!.innerText = value
             bufferController.nextBufferDuration = +value
-
         }
     })[btn.id] || id)()
 }

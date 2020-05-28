@@ -77,13 +77,8 @@ button {
   cursor: pointer;
   background-color: #3a393a;
   color: #5d5b5e;
-  margin: 7px 0px;
+  margin: 7px 2px;
   border: none;
-}
-
-.top-bar-group {
-  width: 100px;
-  height: 100%;
 }
 
 .undo-btn {
@@ -407,6 +402,11 @@ code {
   width: 100%;
 }
 
+.full {
+  width: 100%;
+  height: 100%;
+}
+
 .vcontainer {
   min-height: 10em;
   display: table-cell;
@@ -525,9 +525,10 @@ code {
   display: inline-block;
   width: 40px;
   height: 40px;
+  margin: 2px;
   border-radius: 100%;
-  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.7)), to(rgba(0, 0, 0, 0.7))), url("images/shadow-knob.png");
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("images/shadow-knob.png");
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.7))), url("images/shadow-knob.png");
+  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7)), url("images/shadow-knob.png");
   background-size: 100% 100%;
   pointer-events: none;
 }
@@ -581,6 +582,24 @@ code {
   letter-spacing: 0.15em;
 }
 
+.nuni-logo {
+  background-image: url("favicon-32x32.png");
+  background-size: 100%;
+  width: 25px;
+  height: 25px;
+  border: none;
+  background-color: transparent;
+}
+
+.grid-icon {
+  background-image: url("grid-icon.png");
+  background-size: 100%;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background-color: transparent;
+}
+
 .adsr-and-kb {
   display: -ms-grid;
   display: grid;
@@ -629,11 +648,11 @@ a {
 }
 
 .selected {
-  background: rgba(0, 255, 0, 0.25);
+  background-color: rgba(0, 255, 0, 0.25);
 }
 
 .selected2 {
-  border: 2px solid white;
+  border: 2px solid cyan;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
 }

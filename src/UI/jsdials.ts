@@ -15,18 +15,19 @@ class JsDial {
     value : number
     max : number
     min : number
-    dial : HTMLDivElement
+    dial : HTMLElement
+    html : HTMLElement
 
-    constructor(dial : HTMLDivElement) {
+    constructor() {
+        this.dial = E('div')
+        this.dial.classList.add('js-dial')
+        this.html = E('div') 
+        this.html.classList.add('shadow-knob')
+        this.html.appendChild(this.dial)
         this.isActive = false
         this.lastY = this.lastX = 0
         this.max = 1
-        this.dial = dial
         this.value = this.min = this.sensitivity = 2**-7
-        
-        for (const attr of dial.attributes) {
-            this[attr.name] = (x => isNaN(+x) ? x : +x)(attr.value)
-        }
     }
     
     attach(func : Function, startFunc? : Function, endFunc? : Function) {
@@ -46,6 +47,7 @@ class JsDial {
         const mouseMove  = (e : MouseEvent) => move (e.clientX,e.clientY)
         
         const move = (x:number, y:number) => {
+            if (y === 0) log('onwheel event')
             if (!this.isActive) return;
             this.value += (this.lastY - y + x - this.lastX) * this.sensitivity
             this.value = clamp(this.min, this.value, this.max)
@@ -67,7 +69,3 @@ class JsDial {
             `rotate(${this.value * 320 + imgDegreeOffset}deg)`
     }
 }
-
-const MY_JS_DIALS = 
-    [...document.querySelectorAll('.js-dial')]
-    .map(dial => new JsDial(dial as HTMLDivElement))

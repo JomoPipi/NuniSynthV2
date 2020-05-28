@@ -7,6 +7,7 @@
 
 import { G, GraphController } from './init.js'
 import { GraphUndoRedoModule } from  './graph_undo_redo.js'
+import { audioCtx } from '../webaudio2/webaudio2.js';
 
 // Create Nodes
 Object.values(NodeTypes).forEach(type => {
@@ -93,6 +94,39 @@ D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
         const type = (<Indexed>NodeTypes)[key] as NodeTypes
         append(type, NodeTypeColors[type])
     }
+}
+
+// const updateFunc = 
+// createUpdateParamFunc(node,param)
+
+// const mousedownFunc = () => {
+// GraphUndoRedoModule.save()
+// return node.audioParamValues[param]
+// }
+// const manualUpdater = (x:number) => {
+// GraphUndoRedoModule.save()
+// node.setValueOfParam(param, x)
+// }
+
+// box.appendChild(
+// createDraggableNumberInput(
+//     initialValue, 
+//     mousedownFunc, 
+//     updateFunc, 
+//     manualUpdater))
+
+{
+    D('tempo-input-container')!
+        .appendChild(createDraggableNumberInput(
+            120,
+            () => audioCtx.tempo,
+            (delta : number, value : number) => {
+                const result =(audioCtx.tempo = clamp(20, value + delta, 999)).toFixed(0)
+                log('result =',result)
+                return result
+            },
+            (value : number) => audioCtx.tempo = value 
+        ))
 }
 
 
