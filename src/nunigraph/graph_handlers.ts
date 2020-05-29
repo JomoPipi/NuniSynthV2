@@ -116,17 +116,19 @@ D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
 //     manualUpdater))
 
 {
-    D('tempo-input-container')!
-        .appendChild(createDraggableNumberInput(
-            120,
-            () => audioCtx.tempo,
-            (delta : number, value : number) => {
-                const result =(audioCtx.tempo = clamp(20, value + delta, 999)).toFixed(0)
-                log('result =',result)
-                return result
-            },
-            (value : number) => audioCtx.tempo = value 
-        ))
+    const input = createDraggableNumberInput(
+        120,
+        () => audioCtx.tempo,
+        (delta : number, value : number) => {
+            const result = (audioCtx.tempo = clamp(20, value + delta, 999)).toFixed(0)
+            return result
+        },
+        (value : number) => audioCtx.tempo = value 
+    )
+    input.style.width = '100px'
+    D('tempo-input-container')!.appendChild(input)
+
+        
 }
 
 

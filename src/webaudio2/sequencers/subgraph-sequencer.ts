@@ -9,6 +9,7 @@ import { NuniGraphNode } from "../../nunigraph/nunigraph_node.js"
 import { Adsr, ADSR_Controller } from '../adsr.js'
 import AdsrSplitter from "../adsr-splitter.js"
 import { AudioContext2 } from '../webaudio2.js' 
+// import { MasterClock } from "./master-clock.js"
 
 
 
@@ -33,6 +34,8 @@ export class SubgraphSequencer extends AdsrSplitter {
     windowIsOpen : boolean
     HTMLGrid : HTMLElement
     private HTMLBoxes : Indexable<HTMLElement>
+    isInSync : boolean
+    subdiv : number
 
     constructor(ctx : AudioContext2) {
         super(ctx)
@@ -48,6 +51,8 @@ export class SubgraphSequencer extends AdsrSplitter {
         this.windowIsOpen = false
         this.HTMLGrid = E('div')
         this.HTMLBoxes = {}
+        this.isInSync = true
+        this.subdiv = 6
     }
 
     addInput(node : NuniGraphNode) {
@@ -67,7 +72,7 @@ export class SubgraphSequencer extends AdsrSplitter {
     }
 
     updateTempo() {
-        this.tick = (60*4 / this.ctx.tempo) / this.nSteps
+        this.tick = (60*4 / this.ctx.tempo) / this.subdiv
     }
 
     updateSteps(nSteps : number) {
@@ -87,7 +92,7 @@ export class SubgraphSequencer extends AdsrSplitter {
         this.isPlaying = true
         this.noteTime = 0
         this.currentStep = 0
-        this.startTime = this.ctx.currentTime + 0.01
+        this.startTime = this.isInSync ? 0 : this.ctx.currentTime + 0.001
         this.scheduleNotes()
     }
 
@@ -150,7 +155,7 @@ export class SubgraphSequencer extends AdsrSplitter {
         this.HTMLGrid.innerHTML = ''
         this.HTMLBoxes = {}
         const grid = this.HTMLGrid
-        const { nSteps, ADSRs } = this
+        const { nSteps, ADSRs, mutedChannel } = this
         for (const key in ADSRs) {
             const row = E('span')
             row.classList.add('flex-center')
@@ -175,19 +180,18 @@ export class SubgraphSequencer extends AdsrSplitter {
             else if (box.dataset.sequencerRowKey) {
                 const key = box.dataset.sequencerRowKey
                 const mutesolo = box.innerText
+                const activate = box.classList.toggle('selected')
                 if (mutesolo === 'M') {
-                    const activate = box.classList.toggle('selected')
                     this.mutedChannel[key] = activate
                 }
                 else if (mutesolo === 'S') {
-                    const activate = box.classList.toggle('selected')
                     this.soloChannel = activate
                         ? key
                         : undefined
                 }
             }
         }
-
+        
         function muteSoloButtons(key : string) {
             const muteSoloBox = E('div')
             const mute = E('button')
@@ -198,6 +202,7 @@ export class SubgraphSequencer extends AdsrSplitter {
             solo.innerText = 'S'
             mute.dataset.sequencerRowKey = key
             solo.dataset.sequencerRowKey = key
+            mute.classList.toggle('selected', mutedChannel[key] === true)
             muteSoloBox.appendChild(mute)
             return muteSoloBox
         }

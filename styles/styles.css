@@ -244,6 +244,8 @@ button {
   color: #9a97a3;
   border: 1px solid #444044;
   z-index: 2;
+  max-width: 500px;
+  max-height: 500px;
 }
 
 .buffer-row {

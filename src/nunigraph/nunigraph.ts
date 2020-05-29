@@ -191,8 +191,8 @@ export class NuniGraph {
     }
 
     private prepareDestination (connectionType : ConnectionType) {
-        return (x : Indexed) => 
-            connectionType === 'channel' ? x : x[connectionType] 
+        return (destination : Indexed) => 
+            connectionType === 'channel' ? destination : destination[connectionType] 
     }
 
     clear() {

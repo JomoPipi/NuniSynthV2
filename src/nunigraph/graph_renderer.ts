@@ -40,13 +40,14 @@ export class NuniGraphRenderer {
     readonly canvas : HTMLCanvasElement
     private snapToGrid : boolean
     private readonly ctx : CanvasRenderingContext2D
-    private readonly nodeRadius : number
-    private readonly nodeLineWidth : number
-    private readonly connectionLineWidth : number
-    private readonly innerEdgeBoundary : number
-    private readonly outerEdgeBoundary : number
-    private readonly triangleRadius : number
-    private readonly triangleSize : number
+    private nodeRadius : number
+    private nodeLineWidth : number
+    private connectionLineWidth : number
+    private innerEdgeBoundary : number
+    private outerEdgeBoundary : number
+    private triangleRadius : number
+    private triangleSize : number
+    // private zoom : number
     readonly connectionsCache : ConnectionsCache
 
     constructor(
@@ -60,18 +61,37 @@ export class NuniGraphRenderer {
         this.snapToGrid = false
         this.ctx = canvas.getContext('2d')!
         this.nodeRadius = 25
-        this.nodeLineWidth = 8
+        this.nodeLineWidth = this.nodeRadius/5 + 3
         this.connectionLineWidth = PHI
         this.innerEdgeBoundary = this.nodeRadius / 1.5
         this.outerEdgeBoundary = this.nodeRadius + this.nodeLineWidth
         this.triangleRadius = this.nodeRadius / 3.0
         this.triangleSize = this.innerEdgeBoundary
+        // this.zoom = 1
         this.connectionsCache = {}
+
+        // window.onwheel = (e : WheelEvent) => {
+            // const direction = 2 **  Math.sign(e.deltaY)
+            // this.setNodeRadius(this.nodeRadius /= direction)
+            // this.zoom /= direction
+
+        //     this.render()
+        // }
 
         snapToGridBtn.onclick = () => {
             this.snapToGrid = snapToGridBtn.classList.toggle('selected')
             this.render()
         }
+    }
+
+    setNodeRadius(r : number) {
+        this.nodeRadius = r
+        this.nodeLineWidth = this.nodeRadius/5 + 3
+        this.connectionLineWidth = PHI
+        this.innerEdgeBoundary = this.nodeRadius / 1.5
+        this.outerEdgeBoundary = this.nodeRadius + this.nodeLineWidth
+        this.triangleRadius = this.nodeRadius / 3.0
+        this.triangleSize = this.innerEdgeBoundary
     }
 
     private dashedBox(x : number, y : number, X : number, Y : number) {
