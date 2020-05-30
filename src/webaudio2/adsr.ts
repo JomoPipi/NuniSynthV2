@@ -7,6 +7,11 @@
 
 import { NuniSourceNode } from './nuni_source_node.js'
 
+interface SourceNode {
+    start : (when : number) => void;
+    stop : (when : number) => void;
+}
+
 export class Adsr extends GainNode {
     /**
      * The only purpose of this class right now is 
@@ -30,11 +35,27 @@ export const ADSR_Controller = {
     sustain: 0.2166603088378906, 
     release: 0.3812504768371582,
 
-    trigger: function(gain : AudioParam, t : number) {
+    trigger: function(gain : AudioParam, time : number) {
         const { attack, decay, sustain } = this
-        gain.cancelScheduledValues(t)                          // Cancel existing triggers
-        gain.setTargetAtTime(1, t, attack)                     // Attack phase
-        gain.setTargetAtTime(sustain ** 2, t + attack, decay)  // Decay phase
+        gain.cancelScheduledValues(time)                          // Cancel existing triggers
+        gain.setTargetAtTime(1, time, attack)                     // Attack phase
+        gain.setTargetAtTime(sustain ** 2, time + attack, decay)  // Decay phase
+    },
+
+    
+    triggerSource: function(source : SourceNode, gain : AudioParam, time : number) {
+        const { attack, decay, sustain } = this
+        gain.cancelScheduledValues(time)                          // Cancel existing triggers
+        gain.setTargetAtTime(1, time, attack)                     // Attack phase
+        gain.setTargetAtTime(sustain ** 2, time + attack, decay)  // Decay phase
+        source.start(time)
+    },
+
+    untriggerSource: function(source : SourceNode, gain : AudioParam, time : number) {
+        const { release } = this
+        gain.cancelScheduledValues(time)
+        gain.setTargetAtTime(0, time, release)
+        source.stop(time + release * 10)
     },
 
     untriggerAdsr: function(gain : AudioParam, time : number) {

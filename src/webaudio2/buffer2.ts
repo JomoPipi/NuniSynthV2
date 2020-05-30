@@ -31,24 +31,15 @@ export class BufferNode2 extends NuniSourceNode {
         this.setKbMode('none')
     }
 
-    prepareSource(key : number) { // happens at noteOff
-        const sources = this.sources
+    createSource() {
+        const src = this.ctx.createBufferSource()
 
-        sources[key] && sources[key].disconnect()
-        const src = sources[key] = this.ctx.createBufferSource()
         src.playbackRate.setValueAtTime(0, this.ctx.currentTime)
-
         this.detune.src.connect(src.detune)
         this.playbackRate.src.connect(src.playbackRate)
-
-        if (key !== this.MONO) {
-            src.detune.value = KB.scale[KB.keymap[key]]
-        }
-
         src.buffer = bufferController.buffers[this.bufferIndex]
         src.loop = this.loop
-        
-        this.ADSRs[key].gain.setValueAtTime(0, 0)
-        src.connect(this.ADSRs[key])
+
+        return src
     }
 }

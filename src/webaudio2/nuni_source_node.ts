@@ -9,6 +9,7 @@ import { Adsr, ADSR_Controller } from './adsr.js'
 import { KB, NodeKbMode } from '../webaudio2/keyboard.js'
 import { SubgraphSequencer } from './sequencers/subgraph-sequencer.js'
 import AdsrSplitter from './adsr-splitter.js'
+import { OscillatorNode2 } from './oscillator2.js'
 
 export type Destination = AudioNode | AudioParam | NuniSourceAudioParam | SubgraphSequencer
 
@@ -186,7 +187,39 @@ export class NuniSourceNode extends AdsrSplitter {
         ADSR_Controller.untrigger(this, key)
     }
 
-    prepareSource(key : number) {
+    createSource() : AudioBufferSourceNode | OscillatorNode {
         throw 'Must be implemented in the "concrete" classes.'
+    }
+
+    prepareSource(key : number) {
+
+        this.sources[key] && this.sources[key].disconnect()
+        const src = this.sources[key] = this.createSource()
+
+        if (key !== this.MONO) {
+            src.detune.value = KB.scale[KB.keymap[key]]
+        }
+        
+        this.ADSRs[key].gain.setValueAtTime(0, 0)
+        src.connect(this.ADSRs[key])
+    }
+
+    
+
+
+    playKeyAtTime(key : number, time : number, duration : number) {
+
+        const src = this.createSource()
+        src.detune.value = KB.scale[KB.keymap[key]]
+
+        const adsr = this.ctx.createGain()
+        adsr.gain.setValueAtTime(1.0/44.0, 0)
+        adsr.connect(this.volumeNode)
+        
+        src.connect(adsr)
+        // src.start(time)
+        // src.stop(time + duration)
+        ADSR_Controller.triggerSource(src, adsr.gain, time)
+        ADSR_Controller.untriggerSource(src, adsr.gain, time + duration)
     }
 }

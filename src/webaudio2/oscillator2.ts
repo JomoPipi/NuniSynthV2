@@ -36,23 +36,14 @@ export class OscillatorNode2 extends NuniSourceNode {
     }
     get type() { return this._type }
 
-    prepareSource(key : number) { // happens in refreshconst sources = this.sources
-        const sources = this.sources
+    createSource() {
+        const src = this.ctx.createOscillator()
 
-        sources[key] && sources[key].disconnect()
-        const src = sources[key] = this.ctx.createOscillator()
         src.frequency.setValueAtTime(0, this.ctx.currentTime)
-
         this.detune.src.connect(src.detune)
         this.frequency.src.connect(src.frequency)
-
-        if (key !== this.MONO) {
-            src.detune.value = KB.scale[KB.keymap[key]]
-        }
-
         src.type = this._type
-        
-        this.ADSRs[key].gain.setValueAtTime(0, 0)
-        src.connect(this.ADSRs[key])
+
+        return src
     }
 }
