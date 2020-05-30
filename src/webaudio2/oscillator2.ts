@@ -25,7 +25,7 @@ export class OscillatorNode2 extends NuniSourceNode {
         this.detune = new NuniSourceAudioParam(ctx)
         this.frequency = new NuniSourceAudioParam(ctx)
         
-        this.setKbMode('none')
+        this.kbMode = 'none'
     }
 
     set type(t : OscillatorType) {

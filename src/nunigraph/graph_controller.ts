@@ -359,7 +359,9 @@ export class NuniGraphController {
         if (e.keyCode === 46) {
             if (this.selectedNode) {
                 GraphUndoRedoModule.save()
-                this.deleteNode(this.selectedNode)
+                if (this.selectedNode.id !== 0) {
+                    this.deleteNode(this.selectedNode)
+                }
             }
             if (this.selectedNodes.length) {
                 GraphUndoRedoModule.save()

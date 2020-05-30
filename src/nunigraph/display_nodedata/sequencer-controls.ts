@@ -5,7 +5,6 @@
 
 
 
-import { SubgraphSequencer } from '../../webaudio2/sequencers/subgraph-sequencer.js'
 import { NuniGraphNode } from '../nunigraph_node.js'
 
 export function sequencerControls(node : NuniGraphNode) {
@@ -16,14 +15,13 @@ export function sequencerControls(node : NuniGraphNode) {
         const btn = E('button')
         btn.innerText = 'play'
         btn.classList.add('kb-button')
-        btn.classList.toggle('selected', an.isPlaying)
+        btn.classList.add('selected', an.isPlaying)
         btn.onclick = () => {
-            const play = !an.isPlaying
+            const play = btn.classList.toggle('selected')
             if (play) 
                 an.play()
             else 
                 an.stop()
-            btn.classList.toggle('selected', play)
         }
         controls.appendChild(btn)
     }
@@ -54,7 +52,15 @@ export function sequencerControls(node : NuniGraphNode) {
         text.innerText = 'sync'
         const box = E('input') as HTMLInputElement
         box.type = 'checkbox'
-        box.onclick = function() { an.isInSync = box.checked }
+        log('an = ',an)
+        box.checked = an.isInSync
+        box.onclick = function() { 
+            an.isInSync = box.checked
+            log(typeof box.checked)
+            if (an.isInSync) {
+                an.startTime = 0
+            }
+        }
         controls.append(text, box)
     }
 

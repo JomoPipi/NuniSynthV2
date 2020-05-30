@@ -5,33 +5,23 @@
 
 
 
-import { NodeKbMode } from '../webaudio2/keyboard.js'
 import { audioCtx } from '../webaudio2/webaudio2.js'
-import { KB } from '../webaudio2/keyboard.js'
 
 export type NodeSettings = { 
     display : { x : number, y : number }, 
     audioParamValues : Indexed,
-    audioNodeType : string,
-    audioNodeSettings : {
-        kbMode? : NodeKbMode
-        bufferIndex? : number
-        },
+    audioNodeProperties : Indexed
 }
 
 export class NuniGraphNode {
     /**
-     * Each NuniGraphNode holds and updates an AudioNode.
-     * The node is just a data container, but the AudioNode
-     * can be connected in several ways.
+     * Each NuniGraphNode holds and updates a Web Audio Api AudioNode.
      */
     id : number
     type : NodeTypes
     audioNode : Indexed
     x : number
     y : number
-    title : string
-    audioNodeType : string
     audioParamValues : Indexed
     
     constructor(id : number, type : NodeTypes, settings : NodeSettings) {
@@ -41,40 +31,35 @@ export class NuniGraphNode {
         const { 
             display: {x,y}, 
             audioParamValues, 
-            audioNodeType,
-            audioNodeSettings
+            audioNodeProperties,
             
             } = settings
 
         this.id = id
-        this.title = this.type = type
+        this.type = type
         this.x = x
         this.y = y
 
         this.audioNode = (<Indexed>audioCtx)[createAudioNode[type]]()
-        this.audioNodeType = audioNodeType || this.audioNode.type
-        this.audioNode.type = this.audioNodeType
-        this.audioParamValues = audioParamValues 
+        for (const prop in audioNodeProperties) {
+            this.audioNode[prop] 
+                =  audioNodeProperties[prop]
+                ?? this.audioNode[prop]
+        }
+
+        this.audioParamValues = audioParamValues
 
         for (const param of AudioNodeParams[type]) {
-            const value = audioParamValues[param] ?? DefaultParamValues[param]
+            const value 
+                =  audioParamValues[param] 
+                ?? DefaultParamValues[param]
             this.setValueOfParam(param, value)
-        }
-
-        if (audioNodeSettings.kbMode &&
-            audioNodeSettings.kbMode !== 'none') {
-            this.audioNode.setKbMode(KB.mode)
-        }
-
-        
-        if (audioNodeSettings.bufferIndex != undefined) {
-            this.audioNode.bufferIndex = audioNodeSettings.bufferIndex
         }
     }
 
     setValueOfParam(param : string, value: number) {
         
         this.audioParamValues[param] = value
-        ;(this.audioNode as Indexed)[param].setValueAtTime(value, 0)
+        ;(<Indexed>this.audioNode)[param].setValueAtTime(value, 0)
     }
 }

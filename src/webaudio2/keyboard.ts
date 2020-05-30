@@ -70,7 +70,7 @@ export const KB = (() => {
             if (isMono || t === polyBtn) {
                 kb.mode = isMono ? 'mono' : 'poly'
                 for (const an of kb.connectedNodes()) {
-                    an.setKbMode(kb.mode)
+                    an.kbMode = kb.mode
                 }
             }
         }

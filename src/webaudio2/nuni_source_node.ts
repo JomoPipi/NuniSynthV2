@@ -9,7 +9,6 @@ import { Adsr, ADSR_Controller } from './adsr.js'
 import { KB, NodeKbMode } from '../webaudio2/keyboard.js'
 import { SubgraphSequencer } from './sequencers/subgraph-sequencer.js'
 import AdsrSplitter from './adsr-splitter.js'
-import { OscillatorNode2 } from './oscillator2.js'
 
 export type Destination = AudioNode | AudioParam | NuniSourceAudioParam | SubgraphSequencer
 
@@ -43,22 +42,23 @@ export class NuniSourceNode extends AdsrSplitter {
     private outputs : Destination[]    // The list of things that the node connects to
     ADSRs : Indexable<Adsr>            // The gain-ADSRs
     protected sources : Indexed        // The AudioScheduledSourceNode containers
-    kbMode : NodeKbMode                // The current state of the node - none | mono | poly
+    private _kbMode : NodeKbMode       // The current state of the node - none | mono | poly
     readonly MONO : 666420             // The Id of the mono ADSR and source
     
     constructor(ctx : AudioContext){
         super(ctx)
         this.MONO = 666420
-        this.kbMode = 'poly'
+        this._kbMode = 'poly'
         this.sources = {}
         this.ADSRs = {}
         this.outputs = []
     }
 
-    setKbMode(mode : NodeKbMode) {
+    get kbMode() { return this._kbMode }
+    set kbMode(mode : NodeKbMode) {
         this.disconnectAllConnectees()
 
-        this.kbMode = mode
+        this._kbMode = mode
 
         if (mode === 'none') {
             this.switchToNone()
@@ -204,7 +204,7 @@ export class NuniSourceNode extends AdsrSplitter {
         src.connect(this.ADSRs[key])
     }
 
-    
+
 
 
     playKeyAtTime(key : number, time : number, duration : number) {

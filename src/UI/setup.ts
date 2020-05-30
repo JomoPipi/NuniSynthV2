@@ -44,12 +44,14 @@ pageGroupify(D('buffer-edit-create-select')!, [
             container.classList.toggle('show')
             return;
         }
+        if (!infoBtns.includes(clickedElement as HTMLButtonElement)) {
+            return;
+        }
         for (const btn of infoBtns) {
             const wasClicked = clickedElement === btn
             const infoTab = D(btn.value)!
 
             btn.classList.toggle('active-info-button', wasClicked)
-    
             infoTab.classList.toggle('show', wasClicked)
         }
     }

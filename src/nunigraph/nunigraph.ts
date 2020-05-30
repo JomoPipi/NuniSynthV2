@@ -11,6 +11,11 @@ import { NuniGraphNode, NodeSettings } from './nunigraph_node.js'
 import { LZW_compress, LZW_decompress } from '../helpers/lzw_compression.js'
 import { SubgraphSequencer } from '../webaudio2/sequencers/subgraph-sequencer.js'
 
+const defaultSettings = () => ({
+    display: {x:0.5, y:0.5},
+    audioParamValues: {},
+    audioNodeProperties: {}
+})
 
 export class NuniGraph {
     /**
@@ -31,12 +36,10 @@ export class NuniGraph {
     }
 
     private initializeMasterGain() {
-        const masterGainSettings = { 
+        const masterGainSettings = Object.assign(defaultSettings(), { 
             audioParamValues: { [NodeTypes.GAIN]: 0.5 },
-            display: { x: 0.5, y: 0.125 },
-            audioNodeType: '',
-            audioNodeSettings: {}
-            }
+            display: { x: 0.5, y: 0.125 }
+            })
 
         this.createNewNode(NodeTypes.GAIN, masterGainSettings)
             .audioNode
@@ -46,12 +49,7 @@ export class NuniGraph {
     createNewNode(type : NodeTypes, settings? : NodeSettings) {
 
         if (!settings) {
-            settings = {
-                display: {x:0.5, y:0.5},
-                audioParamValues: {},
-                audioNodeType: '',
-                audioNodeSettings: {},
-                }
+            settings = defaultSettings()
         }
 
         const node = new NuniGraphNode(this.nextId++, type, settings)
@@ -61,15 +59,14 @@ export class NuniGraph {
     }
 
     private copyNode(node : NuniGraphNode) {
-        const copiedNode = JSON.parse(JSON.stringify(node))
+        const copiedNode = this.convertNodeToNodeSettings(node)
         
         const { 
             type, 
             x, 
             y, 
             audioParamValues, 
-            audioNodeType,  
-            audioNode,
+            audioNodeProperties,
             } = copiedNode
 
         const newX = clamp(0, x+0.07, 1)
@@ -77,11 +74,7 @@ export class NuniGraph {
         const settings = {
             display: { x: newX, y: newY },
             audioParamValues,
-            audioNodeType,
-            audioNodeSettings: {
-                kbMode: audioNode.kbMode,
-                bufferIndex: audioNode.bufferIndex,
-                }
+            audioNodeProperties
             }
 
         return this.createNewNode(type, settings)
@@ -118,7 +111,7 @@ export class NuniGraph {
 
         for (const node of nodes) {
             if (node.audioNode instanceof SubgraphSequencer) {
-                mapToNewNode[node.id].audioNode.nSteps = node.audioNode.nSteps
+                
                 const matrix = node.audioNode.stepMatrix
                 for (const key in matrix) {
                     mapToNewNode[node.id].audioNode.stepMatrix[key] = matrix[key].slice()
@@ -205,9 +198,23 @@ export class NuniGraph {
     toRawString() {
         return JSON.stringify({
             connections: this.oneWayConnections,
-            nodes: this.nodes
-            })
+            nodes: this.nodes.map(this.convertNodeToNodeSettings)
+        })
             
+    }
+
+    convertNodeToNodeSettings(node : NuniGraphNode) : Indexed {
+        const settings = { 
+            ...JSON.parse(JSON.stringify(node)), 
+            audioNodeProperties: {}
+            }
+        for (const prop in isTransferable) {
+            if (prop in node.audioNode) {
+                settings.audioNodeProperties[prop] = 
+                    node.audioNode[prop]
+            }
+        }
+        return settings
     }
 
     fromRawString(s : string) {
@@ -231,7 +238,7 @@ export class NuniGraph {
         return this.fromRawString(LZW_decompress(s))
     }
 
-    private copyFrom(nodes : NuniGraphNode[], connections : Indexable<ConnecteeData>) {
+    private copyFrom(nodes : Indexed[], connections : Indexable<ConnecteeData>) {
 
         if (nodes[0].id !== 0) throw 'Oh, I did not expect this.'
 
@@ -249,8 +256,8 @@ export class NuniGraph {
                 x, 
                 y, 
                 audioParamValues, 
-                audioNodeType,  
-                audioNode,
+                audioNodeProperties
+                
                 } of nodes) {
 
             if (id === 0) continue
@@ -258,12 +265,9 @@ export class NuniGraph {
             const settings = {
                 display: { x, y },
                 audioParamValues,
-                audioNodeType,
-                audioNodeSettings: {
-                    kbMode: audioNode.kbMode,
-                    bufferIndex: audioNode.bufferIndex
-                    }
+                audioNodeProperties
                 }
+            log('properties=',settings.audioNodeProperties)
 
             this.nodes.push(new NuniGraphNode(id, type, settings))
         }
@@ -284,8 +288,7 @@ export class NuniGraph {
             // because those nodes were parsed with JSON.parse
             if (node.type === NodeTypes.SGS) {
                 const thisNode = this.nodes.find(n => n.id === node.id)!
-                
-                thisNode.audioNode.nSteps = node.audioNode.nSteps
+
                 thisNode.audioNode.stepMatrix = node.audioNode.stepMatrix
             }
         }

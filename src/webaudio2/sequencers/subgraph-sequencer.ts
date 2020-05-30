@@ -110,8 +110,9 @@ export class SubgraphSequencer extends AdsrSplitter {
             updateBox = false
             this.nextNote()
         }
-        window.setTimeout(() => this.scheduleNotes())
-        // requestAnimationFrame(() => this.scheduleNotes())
+        // window.setTimeout(() => this.scheduleNotes())
+        // More efficient, but sequencer stops when tabs are switched.
+        requestAnimationFrame(() => this.scheduleNotes())
     }
 
     nextNote() {

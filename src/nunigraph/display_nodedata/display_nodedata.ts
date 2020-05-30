@@ -72,7 +72,7 @@ function activateKeyboardButton(an : NuniSourceNode) {
     btn.classList.toggle('selected', an.kbMode !== 'none')
     btn.onclick = () => {
         const enable = an.kbMode === 'none'
-        an.setKbMode(enable ? KB.mode : 'none')
+        an.kbMode = enable ? KB.mode : 'none'
         btn.classList.toggle('selected', enable)
     }
     return btn
@@ -91,7 +91,6 @@ function showSubtypes(node : NuniGraphNode) : Node {
         select.value = node.audioNode.type
         select.oninput = function() {
             GraphUndoRedoModule.save()
-            node.audioNodeType = 
             node.audioNode.type = select.value
         } 
         box.appendChild(select)
@@ -133,9 +132,10 @@ function samplerControls(audioNode : BufferNode2) {
  
     ;['loop'].forEach(text => { // toggleable buttons
         const btn = E('button'); btn.innerText = text
-        btn.classList.toggle('selected', (audioNode as Indexed)[text])
+        const an = audioNode as Indexed
+        btn.classList.toggle('selected', an[text])
         btn.onclick = () => {
-            const on = (audioNode as Indexed)[text] ^= 1
+            const on = an[text] ^= 1
             btn.classList.toggle('selected', <any>on)
             audioNode.refresh()
         }

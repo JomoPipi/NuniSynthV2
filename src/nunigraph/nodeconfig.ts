@@ -137,3 +137,10 @@ const sliderFactor : { readonly [key in AudioParams] : number } =
     delayTime:    .005,
     playbackRate: 2**-6
 }
+
+const isTransferable =
+    'kbMode,type,subdiv,isInSync,bufferIndex,nSteps'
+    .split(',')
+    .reduce((acc,prop) => 
+        ({ ...acc, [prop]: true })
+    , {} as Indexed)
