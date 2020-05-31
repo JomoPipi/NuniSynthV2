@@ -19,8 +19,8 @@ pageGroupify(D('scale-kinds')!, [
     ])
 
 pageGroupify(D('buffer-edit-create-select')!, [
-    'buffer-edit',
-    'buffer-create'
+    'buffer-create',
+    'buffer-edit'
     ])
 
 

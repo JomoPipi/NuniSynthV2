@@ -21,9 +21,8 @@ export class NuniGraphController {
     private g : NuniGraph
     private connectionTypePrompt : HTMLElement // belongs in view
     renderer : NuniGraphRenderer
-    selectedNode? : NuniGraphNode
     private mouseIsDown : boolean
-    selectedNodes : NuniGraphNode[]
+    private selectedNodes : NuniGraphNode[]
     private lastMouseDownMsg : any
     private selectionStart? : [number,number]
     openWindow : Indexable<HTMLElement> // [node.id]:nodeValuesWindow
@@ -65,13 +64,13 @@ export class NuniGraphController {
 
     selectNode (node : NuniGraphNode) {
         this.unselectNode()
-        this.selectedNode = node
+        this.selectedNodes = [node]
         this.openValuesWindow(node)
         this.openWindow[node.id].classList.add('selected2')
     }
 
     unselectNode() {
-        this.selectedNode = undefined
+        this.selectedNodes = []
         for (const key in this.openWindow) {
             this.openWindow[key].classList.remove('selected2')
         }
@@ -119,7 +118,7 @@ export class NuniGraphController {
         const clickCallback = (box : HTMLElement) => {
             moveContainerToTop(box)
             this.selectNode(node)
-            this.renderer.render()
+            this.renderer.render({ selectedNodes: [node] })
         }
 
         const closeCallback = () => {
@@ -150,6 +149,7 @@ export class NuniGraphController {
         
         D('nunigraph-stuff')!.appendChild(container)
         moveContainerToTop(container)
+        UI_clamp(0, 0, container, document.body)
     }
 
 
@@ -210,13 +210,12 @@ export class NuniGraphController {
             [HOVER.SELECT]: () => {
                 GraphUndoRedoModule.save() // A node will probably be moved, here.
                 if (this.selectedNodes.includes(node!)) return;
-                this.selectedNodes = []
                 this.selectNode(node!)
-                this.renderer.render()
+                this.renderer.render({ selectedNodes: [node] })
             },
 
             [HOVER.EDGE]: () => {
-                if (this.selectedNodes.includes(node!)) return;
+                // if (this.selectedNodes.includes(node!)) return;
                 this.selectedNodes = []
                 this.unselectNode()
                 this.renderer.fromNode = node!
@@ -252,7 +251,6 @@ export class NuniGraphController {
 
     private mousemove(e : MouseEvent) {
 
-        const snode = this.selectedNode
         const isPressing = 
             e.buttons === 1 && 
             this.mouseIsDown
@@ -287,12 +285,6 @@ export class NuniGraphController {
                 n.x += dx
                 n.y += dy
             }
-        }
-
-        if (isPressing && snode && !selectedNodes.length) {
-            // Drag the selected node
-            snode.x = clamp(0, e.offsetX/W, 1)
-            snode.y = clamp(0, e.offsetY/H, 1)
         }
 
         const options = {
@@ -362,18 +354,12 @@ export class NuniGraphController {
         }
         
         if (e.keyCode === 46) {
-            if (this.selectedNode) {
-                GraphUndoRedoModule.save()
-                if (this.selectedNode.id !== 0) {
-                    this.deleteNode(this.selectedNode)
-                }
-            }
             if (this.selectedNodes.length) {
                 GraphUndoRedoModule.save()
-            }
-            for (const node of this.selectedNodes) {
-                if (node.id !== 0) {
-                    this.deleteNode(node)
+                for (const node of this.selectedNodes) {
+                    if (node.id !== 0) {
+                        this.deleteNode(node)
+                    }
                 }
             }
         }
@@ -381,16 +367,10 @@ export class NuniGraphController {
         if (e.ctrlKey && e.keyCode === 86) { // ctrl + V
             GraphUndoRedoModule.save()
 
-            if (this.selectedNode)
-                this.selectedNode = this.g.copyNodes([this.selectedNode])[0]
-
             this.selectedNodes = 
                 this.g.copyNodes(this.selectedNodes)
 
-            this.renderer.render({ 
-                selectedNodes: this.selectedNodes,
-                selectedNode: this.selectedNode
-                })
+            this.renderer.render({ selectedNodes: this.selectedNodes })
         }
     }
 

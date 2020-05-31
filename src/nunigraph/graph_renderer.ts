@@ -176,7 +176,11 @@ export class NuniGraphRenderer {
         this.drawDirectionTriangle(X, Y, angle, x >= X)
     }
 
-    private drawGridLines(H : number, W : number, buttons? : number) {
+    private drawGridLines(
+        H : number, 
+        W : number, 
+        buttons = -1, 
+        selectedNodes : NuniGraphNode[]) {
         const { ctx, g } = this
         ctx.lineWidth = 0.2
         ctx.strokeStyle = 'rgba(255,255,255,0.5)'
@@ -186,11 +190,9 @@ export class NuniGraphRenderer {
             this.line(0,i,W,i)
             this.line(i,0,i,H)
         }
-
-        const node = GraphController.selectedNode
-        const nodes = node ? [node] : GraphController.selectedNodes
+        
         if (buttons === 0) { // snap these nodes to the grid
-            for (const node of nodes) {
+            for (const node of selectedNodes) {
                 const {x,y} = node
                 const [X,Y] = [x*W, y*H]
                 const [newX, newY] = [
@@ -320,43 +322,50 @@ export class NuniGraphRenderer {
             selectedNodes
             } = options
 
-        canvas.style.cursor = 'default'
+            const isSelect = hover_type === HOVER.SELECT
+            const isEdge   = hover_type === HOVER.EDGE
+
+        canvas.style.cursor = 
+            isSelect || (fromNode && isEdge) 
+            ? buttons === 1 ? 'grabbing' : 'grab'
+            : isEdge ? 'crosshair'
+            : 'default'
 
         for (const node of nodes) {
             
             const [X,Y] = [node.x * W, node.y * H]
             const isTarget = node.id === hover_id
 
-            const shouldHighlight = 
-                selectedNodes?.includes(node) ||
-                (isTarget && (fromNode || hover_type === HOVER.SELECT))
-
             const highlightEdge =
-                selectedNodes?.length === 0 && 
                 !fromNode &&
                 isTarget && 
                 hover_type === HOVER.EDGE
 
-            ctx.strokeStyle = highlightEdge ? 'rgba(255,255,255,0.75)' :
-                node.id === 0 ? MasterGainColor : NodeTypeColors[node.type]
+            const highlightCenter = 
+                selectedNodes.includes(node) ||
+                (isTarget && (fromNode || hover_type === HOVER.SELECT)) 
+                ? true : false
+
+
+            ctx.strokeStyle = 
+                highlightEdge 
+                ? 'rgba(255,255,255,0.75)' 
+                : node.id === 0 ? MasterGainColor : NodeTypeColors[node.type]
+
             ctx.lineWidth = nodeLineWidth
+            ctx.shadowBlur = 0
+            ctx.shadowColor = ''
             ctx.fillStyle = 
                 this.getNodeColor(
                     node,
                     H, 
                     W, 
-                    shouldHighlight ? true :
-                    GraphController.selectedNode === node)
+                    highlightCenter)
 
-            ctx.shadowBlur = 0
-            ctx.shadowColor = ''
-            if (shouldHighlight) {
+            
+            if (highlightCenter) {
                 ctx.shadowBlur = nodeRadius * 2.0
                 ctx.shadowColor = 'rgba(255, 255, 255, .2)'
-                canvas.style.cursor = buttons === 1 ? 'grabbing' : 'grab' 
-            }
-            else if (highlightEdge) {
-                canvas.style.cursor = 'crosshair'
             }
             
             this.circle(X, Y, nodeRadius)
@@ -380,13 +389,13 @@ export class NuniGraphRenderer {
             selectionStart, 
             selectedNodes
             } = options as GraphRenderOptions
-        const innerOptions = { ...options, H, W, selectedNodes }
+        const innerOptions = { ...options, H, W, selectedNodes: selectedNodes||[] }
 
         ctx.font = '15px Arial'
         ctx.clearRect(0,0,W,H)
     
         if (snapToGrid) {
-            this.drawGridLines(H,W,buttons)
+            this.drawGridLines(H, W, buttons, selectedNodes)
         }
 
         if (selectionStart) {
