@@ -11,11 +11,13 @@ export function sequencerControls(node : NuniGraphNode) {
     const an = node.audioNode
     const controls = E('div')
 
+    const syncCheckBox = E('input') as HTMLInputElement
+
     addPlayButton: {
         const btn = E('button')
         btn.innerText = 'play'
         btn.classList.add('kb-button')
-        btn.classList.add('selected', an.isPlaying)
+        btn.classList.toggle('selected', an.isPlaying)
         btn.onclick = () => {
             const play = btn.classList.toggle('selected')
             if (play) 
@@ -38,7 +40,10 @@ export function sequencerControls(node : NuniGraphNode) {
     
                 text.innerText = v.toString()
                 an.updateSteps(v)
-                an.gridSetup()
+                an.setupGrid()
+
+                // We go out of sync because of this
+                syncCheckBox.checked = an.isInSync = false
             }
             controls.appendChild(btn)
         })
@@ -50,18 +55,19 @@ export function sequencerControls(node : NuniGraphNode) {
         text.style.marginLeft = '30px'
         text.style.marginRight = '5px'
         text.innerText = 'sync'
-        const box = E('input') as HTMLInputElement
-        box.type = 'checkbox'
-        log('an = ',an)
-        box.checked = an.isInSync
-        box.onclick = function() { 
-            an.isInSync = box.checked
-            log(typeof box.checked)
+        syncCheckBox.type = 'checkbox'
+        syncCheckBox.checked = an.isInSync
+
+        syncCheckBox.onclick = function() { 
+            an.isInSync = syncCheckBox.checked
             if (an.isInSync) {
-                an.startTime = 0
+                an.noteTime = an.startTime = an.currentStep = 0
+            }
+            else {
+                an.noteTime = an.ctx.currentTime
             }
         }
-        controls.append(text, box)
+        controls.append(text, syncCheckBox)
     }
 
     changeSubdivision: {
@@ -77,11 +83,12 @@ export function sequencerControls(node : NuniGraphNode) {
         input.oninput = function() { 
             an.subdiv = +input.value 
             an.updateTempo()
+            syncCheckBox.checked = an.isInSync = false
         }
         controls.append(text, input)
     }
     
-    an.gridSetup()
+    an.setupGrid()
     controls.appendChild(an.HTMLGrid)
 
     return controls

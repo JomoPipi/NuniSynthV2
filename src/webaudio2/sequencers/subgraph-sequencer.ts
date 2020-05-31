@@ -9,9 +9,6 @@ import { NuniGraphNode } from "../../nunigraph/nunigraph_node.js"
 import { Adsr, ADSR_Controller } from '../adsr.js'
 import AdsrSplitter from "../adsr-splitter.js"
 import { AudioContext2 } from '../webaudio2.js' 
-// import { MasterClock } from "./master-clock.js"
-
-
 
 
 
@@ -21,16 +18,16 @@ export class SubgraphSequencer extends AdsrSplitter {
      * This creates an N-step sequencer out of
      * whatever inputs are connected to it.
      */
-    ctx : AudioContext2
+    readonly ctx : AudioContext2
     nSteps : number
     stepMatrix : Indexable<boolean[]>
     mutedChannel : Indexable<boolean>
     soloChannel? : string
-    currentStep : number
+    private currentStep : number
     startTime : number
-    noteTime : number
+    private noteTime : number
     isPlaying : boolean
-    tick : number
+    private tick : number
     windowIsOpen : boolean
     HTMLGrid : HTMLElement
     private HTMLBoxes : Indexable<HTMLElement>
@@ -65,7 +62,9 @@ export class SubgraphSequencer extends AdsrSplitter {
     }
 
     removeInput(node : NuniGraphNode) {
-        this.ADSRs[node.id].disconnect()
+        // The ? flexibility was needed because of the method, 
+        // "disconnectFromSpecialNodes", in nunigraph.ts.
+        this.ADSRs[node.id]?.disconnect()
         delete this.ADSRs[node.id]
         delete this.stepMatrix[node.id]
         this.refresh()
@@ -92,7 +91,7 @@ export class SubgraphSequencer extends AdsrSplitter {
         this.isPlaying = true
         this.noteTime = 0
         this.currentStep = 0
-        this.startTime = this.isInSync ? 0 : this.ctx.currentTime + 0.001
+        this.startTime = this.isInSync ? 0 : this.ctx.currentTime + 0.005
         this.scheduleNotes()
     }
 
@@ -101,7 +100,7 @@ export class SubgraphSequencer extends AdsrSplitter {
         this.updateTempo()
         const currentTime = this.ctx.currentTime - this.startTime
         
-        let updateBox = true
+        let updateBox = true && this.noteTime > 0
         while (this.noteTime < currentTime + 0.200) {
             
             const patternTime = this.noteTime + this.startTime
@@ -111,6 +110,7 @@ export class SubgraphSequencer extends AdsrSplitter {
             this.nextNote()
         }
         // window.setTimeout(() => this.scheduleNotes())
+
         // More efficient, but sequencer stops when tabs are switched.
         requestAnimationFrame(() => this.scheduleNotes())
     }
@@ -128,13 +128,14 @@ export class SubgraphSequencer extends AdsrSplitter {
             if (!this.mutedChannel[key] && (!this.soloChannel || this.soloChannel === key)) {
 
                 if (this.HTMLGrid.offsetParent != null && updateBox) {
-                    // Highlight box
-                    this.HTMLBoxes[`${key}:${this.currentStep}`]?.classList.toggle('highlighted', true)
+                    // Highlight box+
+                    log('going here')
+                    this.HTMLBoxes[`${key}:${this.currentStep}`]?.classList.add('highlighted')
                     const lastStep = (this.currentStep === 0 ? this.nSteps : this.currentStep) - 1
-                    this.HTMLBoxes[`${key}:${lastStep}`]?.classList.toggle('highlighted', false)
+                    this.HTMLBoxes[`${key}:${lastStep}`]?.classList.remove('highlighted')
                 }
 
-                if (stepIsActive) {
+                if (stepIsActive && (this.soloChannel == undefined || this.soloChannel === key)) {
                     ADSR_Controller.trigger(adsr.gain, time)
                     ADSR_Controller.untriggerAdsr(adsr.gain, time + this.tick / 2.0)
                 }
@@ -144,15 +145,19 @@ export class SubgraphSequencer extends AdsrSplitter {
 
     stop() {
         this.isPlaying = false
+
+        for (const key in this.HTMLBoxes) {
+            this.HTMLBoxes[key].classList.remove('highlighted')
+        }
     }
 
     refresh() {
         this.isPlaying = false
         this.currentStep = 0
-        this.gridSetup()
+        this.setupGrid()
     }
 
-    gridSetup() {
+    setupGrid() {
         this.HTMLGrid.innerHTML = ''
         this.HTMLBoxes = {}
         const grid = this.HTMLGrid
@@ -163,10 +168,11 @@ export class SubgraphSequencer extends AdsrSplitter {
             row.appendChild(muteSoloButtons(key))
             for (let i = 0; i < nSteps; i++) {
                 const box = E('span')
-                this.HTMLBoxes[`${key}:${i}`] = box
+                const id = `${key}:${i}`
+                this.HTMLBoxes[id] = box
                 box.classList.add('note-box')
                 box.classList.toggle('selected', this.stepMatrix[key][i])
-                box.dataset.sequencerKey = `${key}:${i}`
+                box.dataset.sequencerKey = id
                 row.appendChild(box)
             }
             grid.appendChild(row)
@@ -204,7 +210,7 @@ export class SubgraphSequencer extends AdsrSplitter {
             mute.dataset.sequencerRowKey = key
             solo.dataset.sequencerRowKey = key
             mute.classList.toggle('selected', mutedChannel[key] === true)
-            muteSoloBox.appendChild(mute)
+            muteSoloBox.appendChild(mute)//, solo)
             return muteSoloBox
         }
     }

@@ -66,7 +66,7 @@ export class NuniGraphController {
     selectNode (node : NuniGraphNode) {
         this.unselectNode()
         this.selectedNode = node
-        this.showValuesWindow(node)
+        this.openValuesWindow(node)
         this.openWindow[node.id].classList.add('selected2')
     }
 
@@ -77,7 +77,7 @@ export class NuniGraphController {
         }
     }
 
-    closeWindow(id : number) {
+    private closeValuesWindow(id : number) {
         const window = this.openWindow[id]
         if (window) {
             D('nunigraph-stuff')!.removeChild(window)
@@ -87,20 +87,20 @@ export class NuniGraphController {
 
     closeAllWindows() {
         for (const nodeId in this.openWindow) {
-            this.closeWindow(+nodeId)
+            this.closeValuesWindow(+nodeId)
         }
     }
 
     deleteNode(node : NuniGraphNode) {
         this.connectionTypePrompt.classList.remove('show')
-        this.closeWindow(node.id)
+        this.closeValuesWindow(node.id)
         this.g.deleteNode(node)
         this.unselectNode()
         this.selectedNodes = []
         this.renderer.render()
     }
 
-    private showValuesWindow(node : NuniGraphNode) {
+    private openValuesWindow(node : NuniGraphNode) {
 
         const moveContainerToTop = (box : HTMLElement) => {
             let max = -Infinity
@@ -123,7 +123,7 @@ export class NuniGraphController {
         }
 
         const closeCallback = () => {
-            this.closeWindow(node.id)
+            this.closeValuesWindow(node.id)
         }
 
         const deleteCallBack = () => {  
@@ -347,12 +347,17 @@ export class NuniGraphController {
 
     private keydown(e : KeyboardEvent) {
         if (GraphUndoRedoModule.tryInput(e)) {
-            const IDs = new Set(this.g.nodes.map(node => node.id))
-            for (const nodeId in this.openWindow) {
-                if (!IDs.has(+nodeId)) {
-                    this.closeWindow(+nodeId)
-                }
-            }
+
+            // SGS doesn't support window staying open throughout undo/redo
+            this.closeAllWindows()
+
+            // Close the ones that shouldn't be there anymore
+            // const IDs = new Set(this.g.nodes.map(node => node.id))
+            // for (const nodeId in this.openWindow) {
+            //     if (!IDs.has(+nodeId)) {
+            //         this.closeValuesWindow(+nodeId)
+            //     }
+            // }
             this.renderer.render()
         }
         

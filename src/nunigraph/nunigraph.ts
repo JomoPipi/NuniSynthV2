@@ -120,6 +120,24 @@ export class NuniGraph {
         }
     }
 
+    disconnectFromSpecialNodes(node : NuniGraphNode) { 
+        /** Motivation:
+         * Since some nodes get 
+         * disconnected in a custom way,
+         * they won't get the message when 
+         * an AudioNode calls disconnect() (with no arguments). 
+         * So This is a temporary fix, here.
+         * 
+         * A better solution may be to wrap disconnect(), or 
+         * stop using it all together.
+         *  */ 
+        for (const otherNode of this.nodes) {
+            if (otherNode.type === NodeTypes.SGS) {
+                otherNode.audioNode.removeInput(node)
+            }
+        }
+    }
+
     deleteNode(node : NuniGraphNode) {
         // Without this, the setTimeout could keep looping forever:
         if (node.type === NodeTypes.SGS) {
@@ -128,6 +146,7 @@ export class NuniGraph {
 
         // Disconnect from other audioNodes:
         node.audioNode.disconnect()
+        this.disconnectFromSpecialNodes(node)
 
         // Remove from this.nodes:
         const idx = this.nodes.findIndex(_node => 
