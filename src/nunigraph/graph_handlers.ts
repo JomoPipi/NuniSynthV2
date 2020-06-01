@@ -7,7 +7,7 @@
 
 import { G, GraphController } from './init.js'
 import { GraphUndoRedoModule } from  './graph_undo_redo.js'
-import { audioCtx } from '../webaudio2/webaudio2.js';
+import MasterClock from '../webaudio2/sequencers/master-clock.js';
 
 // Create Nodes
 Object.values(NodeTypes).forEach(type => {
@@ -96,39 +96,22 @@ D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
     }
 }
 
-// const updateFunc = 
-// createUpdateParamFunc(node,param)
-
-// const mousedownFunc = () => {
-// GraphUndoRedoModule.save()
-// return node.audioParamValues[param]
-// }
-// const manualUpdater = (x:number) => {
-// GraphUndoRedoModule.save()
-// node.setValueOfParam(param, x)
-// }
-
-// box.appendChild(
-// createDraggableNumberInput(
-//     initialValue, 
-//     mousedownFunc, 
-//     updateFunc, 
-//     manualUpdater))
-
+// Add tempo input
 {
+
     const input = createDraggableNumberInput(
         120,
-        () => audioCtx.tempo,
-        (delta : number, value : number) => {
-            const result = (audioCtx.tempo = clamp(20, value + delta, 999)).toFixed(0)
-            return result
-        },
-        (value : number) => audioCtx.tempo = value 
+        
+        () => MasterClock.tempo,
+
+        (delta : number, value : number) =>
+            (MasterClock.tempo = clamp(20, value + delta, 999)).toFixed(0),
+
+        (value : number) => 
+            MasterClock.tempo = value 
     )
     input.style.width = '100px'
     D('tempo-input-container')!.appendChild(input)
-
-        
 }
 
 

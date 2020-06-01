@@ -5,8 +5,8 @@
 
 
 
-import { NuniGraph } from '../nunigraph/nunigraph.js'
-import { NuniSourceNode } from '../webaudio2/nuni_source_node.js'
+import { NuniGraph } from '../../nunigraph/nunigraph.js'
+import { NuniSourceNode } from './nuni_source_node.js'
 
 export type NodeKbMode = 'none' | 'mono' | 'poly'
 export type KbMode              = 'mono' | 'poly'

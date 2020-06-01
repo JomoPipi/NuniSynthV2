@@ -5,11 +5,11 @@
 
 
 
-import { NuniSourceNode } from '../../webaudio2/nuni_source_node.js'
+import { NuniSourceNode } from '../../webaudio2/note_in/nuni_source_node.js'
 import { GraphUndoRedoModule } from '../graph_undo_redo.js'
 import { NuniGraphNode } from '../nunigraph_node.js'
-import { BufferNode2 } from '../../webaudio2/buffer2.js'
-import { KB } from '../../webaudio2/keyboard.js'
+import { BufferNode2 } from '../../webaudio2/note_in/buffer2.js'
+import { KB } from '../../webaudio2/note_in/keyboard.js'
 import { BufferController } from '../../buffer_utils/init_buffers.js'
 import { SubgraphSequencer } from '../../webaudio2/sequencers/subgraph-sequencer.js'
 import { sequencerControls } from './sequencer-controls.js'

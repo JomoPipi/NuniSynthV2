@@ -7,7 +7,7 @@
 
 import { NuniGraph } from '../nunigraph/nunigraph.js'
 import { audioCtx } from '../webaudio2/webaudio2.js'
-import { BufferNode2 } from '../webaudio2/buffer2.js'
+import { BufferNode2 } from '../webaudio2/note_in/buffer2.js'
 import { drawBuffer } from './draw_buffer.js'
 
 const presets = (i:number, channel : number) => ([

@@ -81,7 +81,7 @@ export function sequencerControls(node : NuniGraphNode) {
         input.max = '128'
         input.value = an.subdiv.toString()
         input.oninput = function() { 
-            an.subdiv = +input.value 
+            an.subdiv = clamp(2**-8, +input.value, 1e6)
             an.updateTempo()
             syncCheckBox.checked = an.isInSync = false
         }

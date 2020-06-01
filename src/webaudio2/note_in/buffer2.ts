@@ -5,7 +5,7 @@
 
 
 
-import { bufferController } from '../nunigraph/init.js'
+import { bufferController } from '../../nunigraph/init.js'
 import { NuniSourceNode, NuniSourceAudioParam } from './nuni_source_node.js'
 
 export class BufferNode2 extends NuniSourceNode {

@@ -5,10 +5,10 @@
 
 
 
-import { Adsr, ADSR_Controller } from './adsr.js'
-import { KB, NodeKbMode } from '../webaudio2/keyboard.js'
-import { SubgraphSequencer } from './sequencers/subgraph-sequencer.js'
-import AdsrSplitter from './adsr-splitter.js'
+import { Adsr, ADSR_Controller } from '../adsr.js'
+import { KB, NodeKbMode } from './keyboard.js'
+import { SubgraphSequencer } from '../sequencers/subgraph-sequencer.js'
+import AdsrSplitter from '../adsr-splitter.js'
 
 export type Destination = AudioNode | AudioParam | NuniSourceAudioParam | SubgraphSequencer
 

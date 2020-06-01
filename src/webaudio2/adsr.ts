@@ -5,7 +5,7 @@
 
 
 
-import { NuniSourceNode } from './nuni_source_node.js'
+import { NuniSourceNode } from './note_in/nuni_source_node.js'
 
 interface SourceNode {
     start : (when : number) => void;

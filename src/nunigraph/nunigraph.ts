@@ -131,9 +131,10 @@ export class NuniGraph {
          * A better solution may be to wrap disconnect(), or 
          * stop using it all together.
          *  */ 
-        for (const otherNode of this.nodes) {
-            if (otherNode.type === NodeTypes.SGS) {
-                otherNode.audioNode.removeInput(node)
+        for (const { type, audioNode } of this.nodes) {
+            if (type === NodeTypes.SGS && audioNode.ADSRs[node.id]) 
+            {
+                audioNode.removeInput(node)
             }
         }
     }

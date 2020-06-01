@@ -9,6 +9,7 @@ import { NuniGraphNode } from "../../nunigraph/nunigraph_node.js"
 import { Adsr, ADSR_Controller } from '../adsr.js'
 import AdsrSplitter from "../adsr-splitter.js"
 import { AudioContext2 } from '../webaudio2.js' 
+import MasterClock from './master-clock.js'
 
 
 
@@ -20,6 +21,7 @@ export class SubgraphSequencer extends AdsrSplitter {
      */
     readonly ctx : AudioContext2
     nSteps : number
+    subdiv : number
     stepMatrix : Indexable<boolean[]>
     mutedChannel : Indexable<boolean>
     soloChannel? : string
@@ -32,24 +34,23 @@ export class SubgraphSequencer extends AdsrSplitter {
     HTMLGrid : HTMLElement
     private HTMLBoxes : Indexable<HTMLElement>
     isInSync : boolean
-    subdiv : number
 
     constructor(ctx : AudioContext2) {
         super(ctx)
         this.ctx = ctx
-        this.nSteps = 6
+        this.nSteps = 8
+        this.subdiv = 8
         this.stepMatrix = {}
         this.mutedChannel = {}
         this.currentStep = 
         this.startTime = 
         this.noteTime = 0
         this.isPlaying = false
-        this.tick = (60 / this.ctx.tempo) / this.nSteps
+        this.tick = (60*4 / MasterClock.tempo) / this.subdiv
         this.windowIsOpen = false
         this.HTMLGrid = E('div')
         this.HTMLBoxes = {}
         this.isInSync = true
-        this.subdiv = 6
     }
 
     addInput(node : NuniGraphNode) {
@@ -62,16 +63,21 @@ export class SubgraphSequencer extends AdsrSplitter {
     }
 
     removeInput(node : NuniGraphNode) {
-        // The ? flexibility was needed because of the method, 
-        // "disconnectFromSpecialNodes", in nunigraph.ts.
-        this.ADSRs[node.id]?.disconnect()
+        this.ADSRs[node.id].disconnect()
         delete this.ADSRs[node.id]
         delete this.stepMatrix[node.id]
         this.refresh()
     }
 
-    updateTempo() {
-        this.tick = (60*4 / this.ctx.tempo) / this.subdiv
+    updateTempo(tempo : number) {
+        const newTick = (60 * 4 / tempo) / this.subdiv
+        if (this.tick !== newTick) {
+            this.tick = newTick
+            this.isInSync = false
+            // this.declareOutOfSync() 
+            // What this method should do, when it exists,
+            // is uncheck the `sync` checkbox.
+        }
     }
 
     updateSteps(nSteps : number) {
@@ -79,7 +85,7 @@ export class SubgraphSequencer extends AdsrSplitter {
         for (const key in m) {
             if (m[key].length < nSteps) {
                 // We need to add steps
-                m[key] = m[key].concat([...Array(nSteps - m[key].length)].fill(0))
+                m[key] = m[key].concat(Array(nSteps - m[key].length).fill(0))
             } else {
                 m[key] = m[key].slice(0, nSteps)
             }
@@ -92,12 +98,11 @@ export class SubgraphSequencer extends AdsrSplitter {
         this.noteTime = 0
         this.currentStep = 0
         this.startTime = this.isInSync ? 0 : this.ctx.currentTime + 0.005
-        this.scheduleNotes()
     }
 
-    scheduleNotes() {
+    scheduleNotes(tempo : number) {
         if (!this.isPlaying) return;
-        this.updateTempo()
+        this.updateTempo(tempo)
         const currentTime = this.ctx.currentTime - this.startTime
         
         let updateBox = true && this.noteTime > 0
@@ -109,10 +114,6 @@ export class SubgraphSequencer extends AdsrSplitter {
             updateBox = false
             this.nextNote()
         }
-        // window.setTimeout(() => this.scheduleNotes())
-
-        // More efficient, but sequencer stops when tabs are switched.
-        requestAnimationFrame(() => this.scheduleNotes())
     }
 
     nextNote() {

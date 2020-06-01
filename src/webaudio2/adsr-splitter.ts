@@ -1,5 +1,5 @@
 import { Adsr } from "./adsr.js"
-import { Destination, NuniSourceAudioParam } from "./nuni_source_node.js"
+import { Destination, NuniSourceAudioParam } from "./note_in/nuni_source_node.js"
 
 
 
