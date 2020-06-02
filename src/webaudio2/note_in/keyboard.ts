@@ -5,9 +5,6 @@
 
 
 
-import { NuniGraph } from '../../nunigraph/nunigraph.js'
-import { NuniSourceNode } from './nuni_source_node.js'
-
 export type NodeKbMode = 'none' | 'mono' | 'poly'
 export type KbMode              = 'mono' | 'poly'
 
@@ -53,15 +50,9 @@ export const KB = (() => {
     const monoBtn = D('keyboard-mono-radio')
     const polyBtn = D('keyboard-poly-radio')
 
-    function attachToGraph(g : NuniGraph) {
+    function attachToGraph(getNodes :  () => Generator) {
 
-        kb.connectedNodes = function*() {
-            for (const { audioNode: an } of g.nodes) {
-                if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
-                    yield an
-                }
-            }
-        }
+        kb.connectedNodes = getNodes
 
         D('mono-poly-select')!.onclick = function (e : MouseEvent) {
             const t = e.target

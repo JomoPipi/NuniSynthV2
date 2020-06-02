@@ -5,7 +5,8 @@
 
 
 
-import { G, bufferController } from '../nunigraph/init.js'
+import { G } from '../nunigraph/init.js'
+import { bufferController } from './internal.js'
 import { audioCtx } from '../webaudio2/webaudio2.js'
 
 export function recordTo(index : number) {

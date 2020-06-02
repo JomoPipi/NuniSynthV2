@@ -5,9 +5,9 @@
 
 
 
-import './nunigraph/presets.js'
+import './nunigraph/controller/presets.js'
 import './scales/presets.js'
-import './buffer_utils/buffer_utils.js'
+import './buffer_utils/internal.js'
 import './main/resize.js'
 
 

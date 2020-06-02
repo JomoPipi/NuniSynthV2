@@ -5,19 +5,45 @@
 
 
 
-import { NuniGraphRenderer } from './graph_renderer.js'
-import { NuniGraph } from './nunigraph.js'
-import { NuniGraphController } from './graph_controller.js'
-import { BufferController } from '../buffer_utils/init_buffers.js'
+import { NuniGraphRenderer } from './view/graph_renderer.js'
+import { NuniGraph } from './model/nunigraph.js'
 import { KB } from '../webaudio2/note_in/keyboard.js'
 import MasterClock from '../webaudio2/sequencers/master-clock.js'
+import { bufferController } from '../buffer_utils/internal.js'
+import { audioCtx } from '../webaudio2/webaudio2.js'
+import { NuniGraphController } from './controller/graph_controller.js'
+import { NuniSourceNode } from '../webaudio2/note_in/nuni_source_node.js'
+import { BufferNode2 } from '../webaudio2/note_in/buffer2.js'
+import { SubgraphSequencer } from '../webaudio2/sequencers/subgraph-sequencer.js'
 
 export const G = new NuniGraph()
 
-KB.attachToGraph(G)
-MasterClock.attachToGraph(G)
 
-export const bufferController = new BufferController(G)
+KB.attachToGraph(function*() {
+    for (const { audioNode: an } of G.nodes) {
+        if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
+            yield an
+        }
+    }
+})
+
+MasterClock.setSchedule((tempo : number) => {
+    for (const { audioNode: an } of G.nodes) {
+        if (an instanceof SubgraphSequencer) {
+            an.scheduleNotes(tempo)
+        }
+    }
+})
+
+bufferController.initBuffers(audioCtx)
+bufferController.setRefreshBufferFunc((index : number) => {
+    for (const { audioNode: an } of G.nodes) {
+        if (an instanceof BufferNode2 && an.bufferIndex === index) {
+            an.refresh()
+        }
+    }
+})
+
 
 export const GraphController = new NuniGraphController(
     G, 

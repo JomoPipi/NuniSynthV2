@@ -5,7 +5,7 @@
 
 
 
-import { bufferController } from '../nunigraph/init.js'
+import { bufferController } from './internal.js'
 import { audioCtx } from '../webaudio2/webaudio2.js'
 
 export function formulateBuffer(index : number) {

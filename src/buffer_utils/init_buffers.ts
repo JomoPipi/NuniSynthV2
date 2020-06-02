@@ -5,10 +5,10 @@
 
 
 
-import { NuniGraph } from '../nunigraph/nunigraph.js'
-import { audioCtx } from '../webaudio2/webaudio2.js'
-import { BufferNode2 } from '../webaudio2/note_in/buffer2.js'
-import { drawBuffer } from './draw_buffer.js'
+import { drawBuffer } from './internal.js'
+
+
+
 
 const presets = (i:number, channel : number) => ([
     Math.sin(i / 32.0) + Math.sin(i / 512.0),
@@ -25,24 +25,24 @@ const presets = (i:number, channel : number) => ([
     [...Array(90)].reduce((a,_,n) => a + Math.abs(Math.sin(i/(n * 10))) / 90, 0)
 ])
 
-export class BufferController {
-    static readonly nBuffers = 16;
-
-    g : NuniGraph;
+class BufferController {
+    
     buffers : AudioBuffer[];
     currentIndex : number;
     lastRecorderRequestId : number;
     stopLastRecorder : Function;
     nextBufferDuration : number;
-    constructor(g : NuniGraph) {
-        this.g = g
+    nBuffers : number;
+    private refreshFunc : Function;
+
+    constructor() {
         this.buffers = []
         this.currentIndex = 0
         this.lastRecorderRequestId = 0
         this.stopLastRecorder = id
         this.nextBufferDuration = +(D('new-buffer-length') as HTMLSelectElement).value
-        this.initBuffers(audioCtx)
-        this.refreshAffectedBuffers()
+        this.nBuffers = 5
+        this.refreshFunc = (x : never) => x
     }
 
     updateBufferUI() {
@@ -60,12 +60,11 @@ export class BufferController {
     }
 
     refreshAffectedBuffers() {
-        this.updateBufferUI()
-        for (const { audioNode: an } of this.g.nodes) {
-            if (an instanceof BufferNode2 && an.bufferIndex === this.currentIndex) {
-                an.refresh()
-            }
-        }
+        this.refreshFunc(this.currentIndex)
+    }
+
+    setRefreshBufferFunc(f : Function) {
+        this.refreshFunc = f
     }
     
     initBuffers(ctx : AudioContext) {
@@ -73,7 +72,7 @@ export class BufferController {
         this.buffers.length = 0
         const div = D('buffer-container')!
 
-        for (let n = 0; n < BufferController.nBuffers; n++) {
+        for (let n = 0; n < this.nBuffers; n++) {
             const seconds = n === 0 ? 4 : _seconds
             const btn = E('button')
             btn.innerText = String.fromCharCode(65+n)
@@ -103,3 +102,5 @@ export class BufferController {
         }
     }
 }
+
+export const bufferController = new BufferController()

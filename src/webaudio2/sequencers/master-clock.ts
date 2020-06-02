@@ -5,41 +5,29 @@
 
 
 
-import { NuniGraph } from "../../nunigraph/nunigraph.js"
-import { SubgraphSequencer } from "./subgraph-sequencer.js"
-
-
-
-
-
 let activated = false
 
-
-// API
 const MasterClock = {
     tempo: 120,
-    attachToGraph: function (g : NuniGraph) {
+
+    setSchedule: function (scheduleNotes : (tempo : number) => void) {
         if (activated) 
-            throw 'MasterClock has already been attached to a graph.'
+            throw 'MasterClock already has a schedule.'
         activated = true
-        checkForNotesToSchedule(g)
+        startScheduling(scheduleNotes)
     }
 }
-export default MasterClock
 
+function startScheduling(scheduleNotes : (tempo : number) => void) {
 
-function checkForNotesToSchedule(g : NuniGraph) {
-    const tempo = MasterClock.tempo
-    for (const { audioNode: an } of g.nodes) {
-        if (an instanceof SubgraphSequencer) {
-            an.scheduleNotes(tempo)
-        }
-    }
+    scheduleNotes(MasterClock.tempo)
 
-    const goAgain = checkForNotesToSchedule.bind(null, g)
+    const goAgain = startScheduling.bind(null, scheduleNotes)
 
     window.setTimeout(goAgain)
 
     // More efficient, but sequencer stops when tabs are switched.
     // window.requestAnimationFrame(goAgain)
 }
+
+export default MasterClock

@@ -439,7 +439,8 @@ code {
 }
 
 .note-box {
-  background-color: #9a97a3;
+  background: -webkit-gradient(linear, left top, left bottom, from(#9a97a3), to(#444044));
+  background: linear-gradient(#9a97a3, #444044);
   border: 2px solid #201e20;
   width: 70px;
   height: 70px;
@@ -650,7 +651,7 @@ a {
 }
 
 .selected {
-  background-color: rgba(0, 255, 0, 0.25);
+  background: rgba(0, 255, 0, 0.25);
 }
 
 .selected2 {
