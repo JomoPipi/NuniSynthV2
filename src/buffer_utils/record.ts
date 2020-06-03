@@ -5,7 +5,6 @@
 
 
 
-import { G } from '../nunigraph/init.js'
 import { bufferController } from './internal.js'
 import { audioCtx } from '../webaudio2/webaudio2.js'
 
@@ -32,18 +31,16 @@ export function recordTo(index : number) {
             .getUserMedia({ audio: true })
             .then(handleStream)
             .catch(errStuff)
+
     } else {
         const mediaStreamDestination = 
             audioCtx.createMediaStreamDestination()
 
-        const masterGain = 
-            G.nodes.find(node=>node.id === 0)!.audioNode
-        
-        masterGain.connect(mediaStreamDestination)
+        audioCtx.volume.connect(mediaStreamDestination)
 
         handleStream(
             mediaStreamDestination.stream,
-            () => masterGain.disconnect(mediaStreamDestination))
+            () => audioCtx.volume.disconnect(mediaStreamDestination))
     }
 
     function handleStream(stream : MediaStream, f? : Function) {
@@ -67,7 +64,11 @@ export function recordTo(index : number) {
                     const rate =  audioCtx.sampleRate
 
                     // This new buffer ensures that the length is exact
-                    const buffer = audioCtx.createBuffer(1, bufferController.nextBufferDuration * rate, rate)
+                    const buffer = 
+                        audioCtx.createBuffer(
+                        1, 
+                        bufferController.nextBufferDuration * rate,
+                        rate)
                     buffer.copyToChannel(audiobuffer.getChannelData(0), 0)
 
                     bufferController.buffers[index] = buffer

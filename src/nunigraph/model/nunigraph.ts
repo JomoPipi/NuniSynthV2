@@ -44,7 +44,7 @@ export class NuniGraph {
 
         this.createNewNode(NodeTypes.GAIN, masterGainSettings)
             .audioNode
-            .connect(audioCtx.destination)
+            .connect(audioCtx.volume)
     }
 
     createNewNode(type : NodeTypes, settings? : NodeSettings) {
@@ -191,7 +191,7 @@ export class NuniGraph {
     private connect_audioNode_to_destination(node1 : NuniGraphNode, destination : Destination) {
         
         if (destination instanceof SubgraphSequencer) {
-            destination.addInput(node1)
+            destination.addInput(node1.id, node1.audioNode)
         }
         else if (destination instanceof NuniSourceAudioParam) {
             node1.audioNode.connect(destination.src.offset)
@@ -219,7 +219,7 @@ export class NuniGraph {
 
     private disconnect_audioNode_from_destination(node1 : NuniGraphNode, destination : Destination) {
         if (destination instanceof SubgraphSequencer) {
-            destination.removeInput(node1)
+            destination.removeInput(node1.id)
 
         } else if (destination instanceof NuniSourceAudioParam) {
             node1.audioNode.disconnect(destination.src.offset)
@@ -293,7 +293,7 @@ export class NuniGraph {
         this.nodes[0].y = nodes[0].y
         this.nodes[0].setValueOfParam('gain', nodes[0].audioParamValues.gain)
         this.nodes[0].audioNode.disconnect()
-        this.nodes[0].audioNode.connect(audioCtx.destination)
+        this.nodes[0].audioNode.connect(audioCtx.volume)
 
         // recreate the nodes
         for (const { 

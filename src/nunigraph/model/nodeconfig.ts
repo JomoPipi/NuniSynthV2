@@ -5,7 +5,8 @@
 
 
 
-enum NodeTypes {
+enum NodeTypes 
+{
     GAIN    = 'gain',
     OSC     = 'oscillator',
     FILTER  = 'filter',
@@ -15,8 +16,14 @@ enum NodeTypes {
     SGS     = 'subgraph-sequencer'
 }
 
-type AudioParams = 
-    'gain' | 'frequency' | 'detune' | 'pan' | 'Q' | 'delayTime' | 'playbackRate'
+type AudioParams 
+    = 'gain' 
+    | 'frequency' 
+    | 'detune' 
+    | 'pan' 
+    | 'Q' 
+    | 'delayTime' 
+    | 'playbackRate'
 
 type ConnectionType = 
     AudioParams | 'channel'
@@ -24,11 +31,12 @@ type ConnectionType =
 type ConnecteeDatum = 
     { id : number, connectionType : ConnectionType }
     
-type ConnecteeData = 
-    ConnecteeDatum[]
+type ConnecteeData = ConnecteeDatum[]
 
 
-const createAudioNode = {
+
+const createAudioNode =
+{
     [NodeTypes.GAIN]:   'createGain',
     [NodeTypes.OSC]:    'createOscillator2',
     [NodeTypes.FILTER]: 'createBiquadFilter',
@@ -136,6 +144,16 @@ const sliderFactor : { readonly [key in AudioParams] : number } =
     pan:          .005,
     delayTime:    .005,
     playbackRate: 2**-6
+}
+
+type CustomAudioNodeProperties =
+{
+    kbMode?      : string;
+    type?        : string;
+    subdiv?      : number;
+    isInSync?    : boolean;
+    bufferIndex? : number;
+    nSteps?      : number;
 }
 
 const isTransferable =

@@ -5,24 +5,34 @@
 
 
 
-import { audioCtx } from '../../webaudio2/webaudio2.js'
+import { audioCtx, AudioContext2 } from '../../webaudio2/webaudio2.js'
+
+// const createAudioNode 
+// : { [key in NodeTypes] : keyof AudioContext2 } =
+// {
+//     [NodeTypes.GAIN]:   'createGain',
+//     [NodeTypes.OSC]:    'createOscillator2',
+//     [NodeTypes.FILTER]: 'createBiquadFilter',
+//     [NodeTypes.PANNER]: 'createStereoPanner',
+//     [NodeTypes.DELAY]:  'createDelay',
+//     [NodeTypes.BUFFER]: 'createBuffer2',
+//     [NodeTypes.SGS]:    'createSubgraphSequencer'
+// }
 
 export type NodeSettings = { 
     display : { x : number, y : number }, 
-    audioParamValues : Indexed,
-    audioNodeProperties : Indexed
+    audioParamValues : Indexable<number>,   // Uses draggable number inputs
+    audioNodeProperties : CustomAudioNodeProperties 
 }
 
 export class NuniGraphNode {
-    /**
-     * Each NuniGraphNode holds and updates a Web Audio Api AudioNode.
-     */
+
     id : number
     type : NodeTypes
     audioNode : Indexed
     x : number
     y : number
-    audioParamValues : Indexed
+    audioParamValues : Indexable<number>
     
     constructor(id : number, type : NodeTypes, settings : NodeSettings) {
 
@@ -41,11 +51,7 @@ export class NuniGraphNode {
         this.y = y
 
         this.audioNode = (<Indexed>audioCtx)[createAudioNode[type]]()
-        for (const prop in audioNodeProperties) {
-            this.audioNode[prop] 
-                =  audioNodeProperties[prop]
-                ?? this.audioNode[prop]
-        }
+        Object.assign(this.audioNode, audioNodeProperties)
 
         this.audioParamValues = audioParamValues
 
@@ -60,6 +66,6 @@ export class NuniGraphNode {
     setValueOfParam(param : string, value: number) {
         
         this.audioParamValues[param] = value
-        ;(<Indexed>this.audioNode)[param].setValueAtTime(value, 0)
+        this.audioNode[param].setValueAtTime(value, 0)
     }
 }

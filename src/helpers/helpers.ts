@@ -16,8 +16,6 @@ interface Indexable<T> { [param : string] : T }
 
 const log = console.log
 
-const id = <T>(x : T) => x
-
 const trace = <T>(x : T) => (log(x), x)
 
 const D = (x:string) => 

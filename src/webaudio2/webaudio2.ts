@@ -18,6 +18,15 @@ export class AudioContext2 extends AudioContext {
      *      fully understood and assessed."
      */
 
+    volume : GainNode
+
+    constructor() {
+        super()
+        this.volume = this.createGain()
+        this.volume.connect(this.destination)
+    }
+
+
     createBuffer2() {
         return new BufferNode2(this)
     }

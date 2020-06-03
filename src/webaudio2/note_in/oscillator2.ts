@@ -6,7 +6,6 @@
 
 
 import { NuniSourceNode, NuniSourceAudioParam } from './nuni_source_node.js'
-import { KB } from './keyboard.js'
 
 export class OscillatorNode2 extends NuniSourceNode {
     /**

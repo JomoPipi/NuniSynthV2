@@ -5,12 +5,10 @@
 
 
 
-import { NuniGraphNode } from "../../nunigraph/model/nunigraph_node.js"
 import { Adsr, ADSR_Controller } from '../adsr.js'
 import AdsrSplitter from "../adsr-splitter.js"
 import { AudioContext2 } from '../webaudio2.js' 
 import MasterClock from './master-clock.js'
-import SequencerControls, { sequencerControls } from "../../nunigraph/view/sequencer-controls.js"
 
 
 
@@ -56,19 +54,19 @@ export class SubgraphSequencer extends AdsrSplitter {
         // this.controls = new SequencerControls(this)
     }
 
-    addInput(node : NuniGraphNode) {
-        const adsr = this.ADSRs[node.id] = new Adsr(this.ctx)
+    addInput(id : number, audioNode : Indexed) {
+        const adsr = this.ADSRs[id] = new Adsr(this.ctx)
         adsr.gain.value = 0
-        node.audioNode.connect(adsr)
+        audioNode.connect(adsr)
         adsr.connect(this.volumeNode)
-        this.stepMatrix[node.id] = Array(this.nSteps).fill(0)
+        this.stepMatrix[id] = Array(this.nSteps).fill(0)
         this.refresh()
     }
 
-    removeInput(node : NuniGraphNode) {
-        this.ADSRs[node.id].disconnect()
-        delete this.ADSRs[node.id]
-        delete this.stepMatrix[node.id]
+    removeInput(id : number) {
+        this.ADSRs[id].disconnect()
+        delete this.ADSRs[id]
+        delete this.stepMatrix[id]
         this.refresh()
     }
 

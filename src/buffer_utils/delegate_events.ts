@@ -39,7 +39,7 @@ function invertBuffer(index : number) {
             D('new-buffer-length-text')!.innerText = value
             bufferController.nextBufferDuration = +value
         }
-    })[btn.id] || id)()
+    })[btn.id] || ((x:any) => x))()
 }
 
 // BUFFER EXPS

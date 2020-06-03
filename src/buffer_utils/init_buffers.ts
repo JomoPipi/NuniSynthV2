@@ -39,7 +39,7 @@ class BufferController {
         this.buffers = []
         this.currentIndex = 0
         this.lastRecorderRequestId = 0
-        this.stopLastRecorder = id
+        this.stopLastRecorder = () => void 0
         this.nextBufferDuration = +(D('new-buffer-length') as HTMLSelectElement).value
         this.nBuffers = 5
         this.refreshFunc = (x : never) => x
