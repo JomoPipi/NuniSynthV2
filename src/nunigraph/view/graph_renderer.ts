@@ -413,7 +413,7 @@ export class NuniGraphRenderer {
         }
     }
 
-    getGraphMouseTarget({ offsetX: x, offsetY: y } : MouseEvent) {
+    getGraphMouseTarget({ offsetX: x, offsetY: y } : { offsetX : number, offsetY : number }) {
         
         const { canvas, g, innerEdgeBoundary, outerEdgeBoundary,
             connectionsCache, triangleRadius 

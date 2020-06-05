@@ -56,10 +56,10 @@ function createDraggableWindow({
     bar.appendChild(exitBtn)
     exitBtn.innerText = 'x'
 
-    let coords : any = null
+    let coords = [] as number[]
 
     const mouseup = (e : MouseEvent) => {
-        coords = null
+        coords = []
         window.removeEventListener('mousemove',mousemove)
         window.removeEventListener('mouseup',mouseup)
     }
@@ -68,7 +68,7 @@ function createDraggableWindow({
         if (e.target === bar) {
             coords = [
                 e.clientX, 
-                e.clientY, 
+                e.clientY,
                 box.offsetLeft + box.offsetWidth/2, 
                 box.offsetTop + box.offsetHeight/2
                 ]
@@ -82,7 +82,7 @@ function createDraggableWindow({
 
     const mousemove = function(e : MouseEvent) {
 
-        if (coords) {
+        if (coords.length) {
             const [x, y, bx, by] = coords
             UI_clamp(
                 e.clientX + bx - x,

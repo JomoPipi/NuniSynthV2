@@ -13,7 +13,7 @@ import MasterClock from './master-clock.js'
 
 
 
-export class SubgraphSequencer extends AdsrSplitter {
+export default class SubgraphSequencer extends AdsrSplitter {
     /**
      * This creates an N-step sequencer out of
      * whatever inputs are connected to it.
@@ -54,7 +54,7 @@ export class SubgraphSequencer extends AdsrSplitter {
         // this.controls = new SequencerControls(this)
     }
 
-    addInput(id : number, audioNode : Indexed) {
+    addInput({ id, audioNode } : { id : number, audioNode : Indexed }) {
         const adsr = this.ADSRs[id] = new Adsr(this.ctx)
         adsr.gain.value = 0
         audioNode.connect(adsr)
@@ -63,7 +63,7 @@ export class SubgraphSequencer extends AdsrSplitter {
         this.refresh()
     }
 
-    removeInput(id : number) {
+    removeInput({ id } : { id: number }) {
         this.ADSRs[id].disconnect()
         delete this.ADSRs[id]
         delete this.stepMatrix[id]
@@ -124,16 +124,17 @@ export class SubgraphSequencer extends AdsrSplitter {
     }
 
     playStepsAtTime(time : number, updateBox : boolean) {
+        const boxIsVisible = this.HTMLGrid.offsetParent != null
+
         for (const key in this.ADSRs) {
             const adsr = this.ADSRs[key]
             const stepIsActive = this.stepMatrix[key][this.currentStep]
             if (!this.mutedChannel[key] && (!this.soloChannel || this.soloChannel === key)) {
 
-                if (this.HTMLGrid.offsetParent != null && updateBox) {
+                if (boxIsVisible && updateBox) {
                     // Highlight box+
-                    log('going here')
                     this.HTMLBoxes[key][this.currentStep]?.classList.add('highlighted')
-                    const lastStep = (this.currentStep === 0 ? this.nSteps : this.currentStep) - 1
+                    const lastStep = (this.currentStep + this.nSteps - 1) % this.nSteps
                     this.HTMLBoxes[key][lastStep]?.classList.remove('highlighted')
                 }
 

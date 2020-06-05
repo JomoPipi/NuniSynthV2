@@ -28,7 +28,7 @@ export class Adsr extends GainNode {
 }
 
 export const ADSR_Controller = {
-    canvas: D('adsr-canvas'),
+    canvas: D('adsr-canvas')! as HTMLCanvasElement,
 
     attack: 0.010416984558105469, 
     decay: 0.17708349227905273, 
@@ -83,75 +83,65 @@ export const ADSR_Controller = {
         // call enough time to get the volume down by ~99.995%, according to
         // https://developer.mozilla.org/en-US/docs/Web/API/AudioParam/setTargetAtTime#Choosing_a_good_timeConstant
     },
-    render: () => void 0
+    render: () => {}
 }
 
-// const aux_ADSR = {
-//     attack: 0.010416984558105469, 
-//     decay: 0.17708349227905273, 
-//     sustain: 0.2166603088378906, 
-//     release: 0.4812504768371582,
-// }
 {
-    // Attach render function to ADSR_Controller
+    const adsr = ADSR_Controller
+    const isAux = false // s === 'aux-'        
+    const ctx = adsr.canvas.getContext('2d')!
+    
+    adsr.render = function () {
+        const H = this.canvas.height, W = this.canvas.width
+        ctx.lineWidth = 5
 
-    ;[/*['aux-',aux_ADSR],*/['',ADSR_Controller]].forEach(([s,adsr] : any) => { 
+        const sum = this.attack + this.decay + 0.25 + this.release
+        const adsrWidths = [
+            this.attack  / sum,
+            this.decay   / sum,
+            0.25         / sum,
+            // Release is done by default
+        ]
+        const [aw,dw,sw] = adsrWidths
 
-        const isAux = s === 'aux-'        
-        const ctx = adsr.canvas.getContext('2d')
-        
-        adsr.render = function () {
-            const H = this.canvas.height, W = this.canvas.width
-            ctx.lineWidth = 5
+        const t1 = aw
+        const t2 = t1 + dw
+        const t3 = t2 + sw
+        const t4 = 1
+        const margin = 5
 
-            const sum = this.attack + this.decay + 0.25 + this.release
-            const adsrWidths = [
-                this.attack  / sum,
-                this.decay   / sum,
-                0.25         / sum,
-                // Release is done by default
-            ]
-            const [aw,dw,sw] = adsrWidths
+        const arr = [
+            [t1, 0],
+            [t2, 1 - this.sustain],
+            [t3, 1 - this.sustain],
+            [t4, 1]
+        ]
 
-            const t1 = aw
-            const t2 = t1 + dw
-            const t3 = t2 + sw
-            const t4 = 1
-            const margin = 5
-
-            const arr = [
-                [t1, 0],
-                [t2, 1 - this.sustain],
-                [t3, 1 - this.sustain],
-                [t4, 1]
-            ]
-
-            if (isAux) {
-                // The only difference between ADSR and AD.
-                // I know it's not currently being used, 
-                // but I don't want to delete this.
-                arr[1][1] = 1
-                arr[2] = arr[3]
-            }
-
-            ctx.clearRect(0,0,W,H)
-            let lastX = margin, lastY = H - margin
-            arr.forEach(([x,y],i) => {
-                ctx.beginPath()
-                ctx.moveTo(lastX, lastY)
-                ctx.strokeStyle = '#8a8,#a88,#88a,#a8a'.split(',')[i]
-                ctx.lineTo(
-                    lastX = x * (W - margin * 2) + margin, 
-                    lastY = y * (H - margin * 2) + margin 
-                )
-                ctx.stroke() 
-                ctx.closePath()
-            })
-            ctx.closePath()
+        if (isAux) {
+            // The only difference between ADSR and AD.
+            // I know it's not currently being used, 
+            // but I don't want to delete this.
+            arr[1][1] = 1
+            arr[2] = arr[3]
         }
 
-        adsr.render()
-    })
+        ctx.clearRect(0,0,W,H)
+        let lastX = margin, lastY = H - margin
+        arr.forEach(([x,y],i) => {
+            ctx.beginPath()
+            ctx.moveTo(lastX, lastY)
+            ctx.strokeStyle = '#8a8,#a88,#88a,#a8a'.split(',')[i]
+            ctx.lineTo(
+                lastX = x * (W - margin * 2) + margin, 
+                lastY = y * (H - margin * 2) + margin 
+            )
+            ctx.stroke() 
+            ctx.closePath()
+        })
+        ctx.closePath()
+    }
+
+    adsr.render()
 }
  
 {

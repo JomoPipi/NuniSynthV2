@@ -152,12 +152,12 @@ type CustomAudioNodeProperties =
     type?        : string;
     subdiv?      : number;
     isInSync?    : boolean;
-    bufferIndex? : number;
+    bufferKey? : number;
     nSteps?      : number;
 }
 
 const isTransferable =
-    'kbMode,type,subdiv,isInSync,bufferIndex,nSteps'
+    'kbMode,type,subdiv,isInSync,bufferKey,nSteps'
     .split(',')
     .reduce((acc,prop) => 
         ({ ...acc, [prop]: true })

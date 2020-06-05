@@ -7,7 +7,7 @@
 
 import { BufferNode2 } from './note_in/buffer2.js'
 import { OscillatorNode2 } from './note_in/oscillator2.js'
-import { SubgraphSequencer } from './sequencers/subgraph-sequencer.js'
+import SubgraphSequencer from './sequencers/subgraph-sequencer.js'
 
 
 export class AudioContext2 extends AudioContext {

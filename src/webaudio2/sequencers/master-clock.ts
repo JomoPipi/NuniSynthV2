@@ -24,10 +24,10 @@ function startScheduling(scheduleNotes : (tempo : number) => void) {
 
     const goAgain = startScheduling.bind(null, scheduleNotes)
 
-    window.setTimeout(goAgain)
+    // window.setTimeout(goAgain)
 
     // More efficient, but sequencer stops when tabs are switched.
-    // window.requestAnimationFrame(goAgain)
+    window.requestAnimationFrame(goAgain)
 }
 
 export default MasterClock

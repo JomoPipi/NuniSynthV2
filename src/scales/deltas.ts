@@ -5,7 +5,7 @@
 
 
 
-import { KB } from '../webaudio2/note_in/keyboard.js'
+import KB from '../webaudio2/note_in/keyboard.js'
 import { refreshKeys, previewScale } from './scales.js'
 
 export const setDeltaExpressionScale = (_ => {

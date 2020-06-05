@@ -9,8 +9,8 @@ import { NuniSourceNode } from '../../webaudio2/note_in/nuni_source_node.js'
 import { GraphUndoRedoModule } from '../controller/graph_undo_redo.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { BufferNode2 } from '../../webaudio2/note_in/buffer2.js'
-import { KB } from '../../webaudio2/note_in/keyboard.js'
-import { SubgraphSequencer } from '../../webaudio2/sequencers/subgraph-sequencer.js'
+import KB from '../../webaudio2/note_in/keyboard.js'
+import SubgraphSequencer from '../../webaudio2/sequencers/subgraph-sequencer.js'
 import { sequencerControls } from './sequencer-controls.js'
 import { bufferController } from '../../buffer_utils/internal.js'
 
@@ -114,18 +114,18 @@ function samplerControls(audioNode : BufferNode2) {
     const box = E('span')
     box.innerHTML = '<span> buffer </span>'
     box.classList.add('buffer-row')
-    const value = E('span'); value.innerText = String.fromCharCode(65 + audioNode.bufferIndex)
+    const value = E('span'); value.innerText = String.fromCharCode(65 + audioNode.bufferKey)
     box.appendChild(value)
 
     ;['-','+'].forEach((op,i) => { // change the buffer index
         const btn = E('button'); btn.innerText = op
         btn.onclick = () => {
             const v = clamp(0, 
-                audioNode.bufferIndex + Math.sign(i - .5), 
+                audioNode.bufferKey + Math.sign(i - .5), 
                 bufferController.nBuffers-1)
 
             value.innerText = String.fromCharCode(65 + v)
-            audioNode.bufferIndex = v
+            audioNode.bufferKey = v
             audioNode.refresh()
         }
         box.appendChild(btn)
@@ -136,8 +136,8 @@ function samplerControls(audioNode : BufferNode2) {
         const an = audioNode as Indexed
         btn.classList.toggle('selected', an[text])
         btn.onclick = () => {
-            const on = an[text] ^= 1
-            btn.classList.toggle('selected', <any>on)
+            const on = (an[text] ^= 1) ? true : false
+            btn.classList.toggle('selected', on)
             audioNode.refresh()
         }
         box.appendChild(btn)

@@ -7,14 +7,14 @@
 
 import { NuniGraphRenderer } from './view/graph_renderer.js'
 import { NuniGraph } from './model/nunigraph.js'
-import { KB } from '../webaudio2/note_in/keyboard.js'
+import KB from '../webaudio2/note_in/keyboard.js'
 import MasterClock from '../webaudio2/sequencers/master-clock.js'
 import { bufferController } from '../buffer_utils/internal.js'
 import { audioCtx } from '../webaudio2/webaudio2.js'
 import { NuniGraphController } from './controller/graph_controller.js'
 import { NuniSourceNode } from '../webaudio2/note_in/nuni_source_node.js'
 import { BufferNode2 } from '../webaudio2/note_in/buffer2.js'
-import { SubgraphSequencer } from '../webaudio2/sequencers/subgraph-sequencer.js'
+import SubgraphSequencer from '../webaudio2/sequencers/subgraph-sequencer.js'
 
 export const G = new NuniGraph()
 
@@ -38,7 +38,7 @@ MasterClock.setSchedule((tempo : number) => {
 bufferController.initBuffers(audioCtx)
 bufferController.setRefreshBufferFunc((index : number) => {
     for (const { audioNode: an } of G.nodes) {
-        if (an instanceof BufferNode2 && an.bufferIndex === index) {
+        if (an instanceof BufferNode2 && an.bufferKey === index) {
             an.refresh()
         }
     }

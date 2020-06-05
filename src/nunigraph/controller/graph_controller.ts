@@ -23,7 +23,7 @@ export class NuniGraphController {
     renderer : NuniGraphRenderer
     private mouseIsDown : boolean
     private selectedNodes : NuniGraphNode[]
-    private lastMouseDownMsg : any
+    private lastMouseDownMsg : { type : HOVER } & Indexed
     private selectionStart? : [number,number]
     openWindow : Indexable<HTMLElement> // [node.id]:nodeValuesWindow
     private copiedNodes? : string
@@ -38,6 +38,7 @@ export class NuniGraphController {
         this.renderer = renderer
         this.mouseIsDown = false
         this.selectedNodes = []
+        this.lastMouseDownMsg = renderer.getGraphMouseTarget({ offsetX: -Infinity, offsetY: -Infinity})
         this.openWindow = {}
         
         const mouse_move = (e : MouseEvent) => {
@@ -229,10 +230,13 @@ export class NuniGraphController {
 
                 GraphUndoRedoModule.save()
                 this.unselectNode()
+
                 this.renderer.fromNode = 
                     this.g.nodes.find(node => node.id === fromId)!
+
                 const to = 
                     this.g.nodes.find(node => node.id === toId)!
+                    
                 delete cache[id!]
 
                 this.g.disconnect(this.renderer.fromNode, to, connectionType)

@@ -9,7 +9,7 @@ import { audioCtx } from '../../webaudio2/webaudio2.js'
     
 import { NuniGraphNode, NodeSettings } from './nunigraph_node.js'
 import { LZW_compress, LZW_decompress } from '../../helpers/lzw_compression.js'
-import { SubgraphSequencer } from '../../webaudio2/sequencers/subgraph-sequencer.js'
+import SubgraphSequencer from '../../webaudio2/sequencers/subgraph-sequencer.js'
 import { NuniSourceAudioParam, Destination } from '../../webaudio2/note_in/nuni_source_node.js'
 
 const defaultSettings = () => ({
@@ -191,7 +191,7 @@ export class NuniGraph {
     private connect_audioNode_to_destination(node1 : NuniGraphNode, destination : Destination) {
         
         if (destination instanceof SubgraphSequencer) {
-            destination.addInput(node1.id, node1.audioNode)
+            destination.addInput(node1)
         }
         else if (destination instanceof NuniSourceAudioParam) {
             node1.audioNode.connect(destination.src.offset)
@@ -219,7 +219,7 @@ export class NuniGraph {
 
     private disconnect_audioNode_from_destination(node1 : NuniGraphNode, destination : Destination) {
         if (destination instanceof SubgraphSequencer) {
-            destination.removeInput(node1.id)
+            destination.removeInput(node1)
 
         } else if (destination instanceof NuniSourceAudioParam) {
             node1.audioNode.disconnect(destination.src.offset)

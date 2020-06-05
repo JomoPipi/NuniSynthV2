@@ -16,7 +16,7 @@ function resizeHandler() {
 }
 
 function resizeKeyboardImage () {
-    const keyboard = D('keyboard-image') as any
+    const keyboard = D('keyboard-image') as HTMLElement & { parentNode : HTMLElement }
     const size = keyboard.parentNode.clientWidth / 60
     keyboard.style.fontSize = size + 'px'
 }

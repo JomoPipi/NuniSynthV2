@@ -41,7 +41,7 @@ export default class AdsrSplitter {
     }
 
     protected connection(on : boolean, d : Destination) {
-        const dest = d instanceof NuniSourceAudioParam ? d.src.offset : d as any
+        const dest = d instanceof NuniSourceAudioParam ? d.src.offset : d as AudioParam
         if (on) {
             this.volumeNode.connect(dest) 
         } else {

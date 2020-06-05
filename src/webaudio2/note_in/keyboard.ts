@@ -5,107 +5,96 @@
 
 
 
-export type NodeKbMode = 'none' | 'mono' | 'poly'
-export type KbMode              = 'mono' | 'poly'
-
-
-export const KB = (() => {
-    
-    const keyCodes = ([] as number[]).concat(...[
-        '1234567890',
-        'qwertyuiop',
-        'asdfghjkl',
-        'zxcvbnm'
-        ].map((s,i) => 
-            [...s.toUpperCase()].map(c => c.charCodeAt(0))
-                .concat([ // add the [];',./ (aka {}:"<>?) keyCodes
-                    [189,187],
-                    [219,221],
-                    [186,222],
-                    [188,190,191]
-                ][i]) // some of these keyCodes might not work in browsers such as FireFox
-            ))
-            
-    const keymap = keyCodes.reduce((map,key,i) => {
-        map[key] = i
-        return map
+const keyCodes = ([] as number[]).concat(...[
+    '1234567890',
+    'qwertyuiop',
+    'asdfghjkl',
+    'zxcvbnm'
+    ].map((s,i) => 
+        [...s.toUpperCase()].map(c => c.charCodeAt(0))
+            .concat([ // add the [];',./ (aka {}:"<>?) keyCodes
+                [189,187],
+                [219,221],
+                [186,222],
+                [188,190,191]
+            ][i]) // some of these keyCodes might not work in browsers such as FireFox
+        ))
+        
+const keymap = keyCodes.reduce((map,key,i) => {
+    map[key] = i
+    return map
     }, {} as Indexable<number>)
 
-    const held = [] as number[]
+const held = [] as number[]
 
-    const scale = keyCodes.map((_,i) => i * 100)
-    
-    const kb = { 
-        keyCodes, 
-        keymap, 
-        held, 
-        scale,
-        attachToGraph, 
-        mode: 'poly' as KbMode,
-        connectedNodes: <any>0,
-        ADSRs: {} as { [key : number] : ConstantSourceNode }
-        }
+const scale = keyCodes.map((_,i) => i * 100)
 
-
-    const monoBtn = D('keyboard-mono-radio')
-    const polyBtn = D('keyboard-poly-radio')
-
-    function attachToGraph(getNodes :  () => Generator) {
-
-        kb.connectedNodes = getNodes
-
-        D('mono-poly-select')!.onclick = function (e : MouseEvent) {
-            const t = e.target
-            const isMono = t === monoBtn
-            
-            if (isMono || t === polyBtn) {
-                kb.mode = isMono ? 'mono' : 'poly'
-                for (const an of kb.connectedNodes()) {
-                    an.kbMode = kb.mode
-                }
-            }
-        }
-
-        document.onkeydown = updateKeys(true)
-        document.onkeyup = updateKeys(false)
-
-        function updateKeys(keydown : boolean) {
-            return ({ keyCode: key } : KeyboardEvent) => {
-                if (key in keymap){ 
-
-                    // Maybe only do this when the keyboard image is visible?
-                    // TODO: make it match what it actually plays
-                    updateKBImage(key, keydown)
-
-                    // UPDATE HELD-KEY ARRAY 
-                    // Sets up last-note priority, and prevents event spamming when keys are held.
-                    const idx = held.indexOf(key)
-                    if (keydown) {
-                        if (idx >= 0) return;
-                        held.push(key)
-                    } else {
-                        held.splice(idx,1)
-                        if (idx !== held.length && kb.mode === 'mono') {
-                            // We are lifting a note that wasnt the last, 
-                            // and we're in last node priority.
-                            return;
-                        }
-                    }
-
-                    // MAKE THE SOUND HAPPEN
-                    for (const an of kb.connectedNodes()) {
-                        an.update(keydown, key)
-                    }
-                } else {
-                    // TODO: implement key-hold, or something.
-                    log('keyCode =', key)
-                }
-            }
-        }
+const KB = { 
+    keyCodes, 
+    keymap, 
+    held, 
+    scale,
+    mode: 'poly' as 'mono' | 'poly',
+    attachToGraph, 
+    connectedNodes: function*(){ yield* [] as Indexed[] }
     }
 
-    return kb
-})()
+function attachToGraph(getNodes : () => Generator<Indexed, void, unknown>) {
+    KB.connectedNodes = getNodes
+
+    document.onkeydown = updateKeys(true)
+    document.onkeyup = updateKeys(false)
+}
+
+function updateKeys(keydown : boolean) {
+    return ({ keyCode: key } : KeyboardEvent) => {
+        if (key in keymap){ 
+
+            // Maybe only do this when the keyboard image is visible?
+            // TODO: make it match what it actually plays
+            updateKBImage(key, keydown)
+
+            // UPDATE HELD-KEY ARRAY 
+            // Sets up last-note priority, and prevents event spamming when keys are held.
+            const idx = held.indexOf(key)
+            if (keydown) {
+                if (idx >= 0) return;
+                held.push(key)
+            } else {
+                held.splice(idx,1)
+                if (idx !== held.length && KB.mode === 'mono') {
+                    // We are lifting a note that wasnt the last, 
+                    // and we're in last node priority.
+                    return;
+                }
+            }
+
+            // MAKE THE SOUND HAPPEN
+            for (const an of KB.connectedNodes()) {
+                an.update(keydown, key)
+            }
+
+        } else {
+            // TODO: implement key-hold, or something.
+            log('keyCode =', key)
+        }
+    }
+}
+
+const monoBtn = D('keyboard-mono-radio')
+const polyBtn = D('keyboard-poly-radio')
+
+D('mono-poly-select')!.onclick = function (e : MouseEvent) {
+    const t = e.target
+    const isMono = t === monoBtn
+    
+    if (isMono || t === polyBtn) {
+        KB.mode = isMono ? 'mono' : 'poly'
+        for (const an of KB.connectedNodes()) {
+            an.kbMode = KB.mode
+        }
+    }
+}
 
 function updateKBImage(code : number, keydown : boolean) {
     // Updates the keyboard defined in UI/init_kb_image.ts
@@ -118,3 +107,8 @@ function updateKBImage(code : number, keydown : boolean) {
         .classList
         .toggle('key-pressed', keydown)
 }
+
+
+
+
+export default KB

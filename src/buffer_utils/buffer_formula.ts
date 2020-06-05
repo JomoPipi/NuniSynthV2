@@ -5,7 +5,7 @@
 
 
 
-import { bufferController } from './internal.js'
+import { bufferController } from './init_buffers.js'
 import { audioCtx } from '../webaudio2/webaudio2.js'
 
 export function formulateBuffer(index : number) {

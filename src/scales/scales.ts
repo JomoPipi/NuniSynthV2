@@ -5,13 +5,11 @@
 
 
 
-import { KB } from '../webaudio2/note_in/keyboard.js'
+import KB from '../webaudio2/note_in/keyboard.js'
 import { setScaleFromCSV } from './scale-csv.js'
 import { setEqualTemperamentScale } from './equal.js'
 import { setDeltaExpressionScale } from './deltas.js'
 import { NuniSourceNode } from '../webaudio2/note_in/nuni_source_node.js'
-import { OscillatorNode2 } from '../webaudio2/note_in/oscillator2.js'
-import { audioCtx } from '../webaudio2/webaudio2.js'
 
 export function refreshKeys() {
     for (const an of KB.connectedNodes()) {

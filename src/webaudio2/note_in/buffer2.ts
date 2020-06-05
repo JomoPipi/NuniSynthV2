@@ -15,7 +15,7 @@ export class BufferNode2 extends NuniSourceNode {
      */
 
     loop : boolean
-    bufferIndex : number
+    bufferKey : number
     detune : NuniSourceAudioParam
     playbackRate : NuniSourceAudioParam
     
@@ -23,7 +23,7 @@ export class BufferNode2 extends NuniSourceNode {
         super(ctx)
 
         this.loop = true
-        this.bufferIndex = 0
+        this.bufferKey = 0
         this.detune = new NuniSourceAudioParam(ctx)
         this.playbackRate = new NuniSourceAudioParam(ctx)
 
@@ -36,7 +36,7 @@ export class BufferNode2 extends NuniSourceNode {
         src.playbackRate.setValueAtTime(0, this.ctx.currentTime)
         this.detune.src.connect(src.detune)
         this.playbackRate.src.connect(src.playbackRate)
-        src.buffer = bufferController.buffers[this.bufferIndex]
+        src.buffer = bufferController.buffers[this.bufferKey]
         src.loop = this.loop
 
         return src

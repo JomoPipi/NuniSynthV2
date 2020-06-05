@@ -1,0 +1,254 @@
+
+
+
+
+
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+</style>
+<body>
+
+    <canvas id="canvas"></canvas>
+    
+</body>
+<script>
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+
+    const W = canvas.width = window.innerWidth
+    const H = canvas.height = window.innerHeight
+
+    function drawDirectedGraph(json) {
+
+        const names = [...new Set(Object.keys(json))]
+            .filter(name => !name.includes('UI'))
+
+
+        const N = names.length
+        const displays = names.reduce((acc, name, i) => ({
+            ...acc, ...{ [name] : 
+                { 
+                    x: (i * 29 * W / N | 0) % (W * .75) + W * 0.05, 
+                    y: (i * 19 * H / N | 0) % (H * .85) + H * 0.1,
+                    color: '#' + (Math.random() * 999 | 0) 
+                }   }
+        }), {})
+
+        const radius = 20
+        for (const name in displays) {
+            const { x, y, color } = displays[name]
+            ctx.strokeStyle = 'gray'
+            for (const othername of json[name]) {
+                const { x: X, y: Y } = displays[othername]
+                console.log(x,y,X,Y)
+                ctx.beginPath() 
+                ctx.moveTo(x,y)
+                ctx.lineTo(X,Y)
+                ctx.closePath()
+                ctx.stroke()
+            }
+        }
+
+        for (const name in displays) {
+            const { x, y, color } = displays[name]
+
+            ctx.fillStyle = color
+            circle(x,y,radius)
+        }
+
+        for (const name in displays) {
+            const { x, y } = displays[name]
+            ctx.fillStyle = 'black'
+            ctx.font = 'bold 15px serif'
+            ctx.fillText(name, x - 50, y - 20)
+        }
+    }
+    function circle(x,y,r) {
+        ctx.beginPath()
+        ctx.arc(x,y,r,0,7)
+        ctx.stroke()
+        ctx.fill()
+        ctx.closePath()
+    }
+
+    drawDirectedGraph({
+  "src/UI/draggable-window.ts": [],
+  "src/UI/functions/apply_style.ts": [],
+  "src/UI/functions/colorContrast.ts": [],
+  "src/UI/functions/page-groupify.ts": [],
+  "src/UI/functions/ui_clamp.ts": [],
+  "src/UI/jsdials.ts": [],
+  "src/UI/number-input.ts": [],
+  "src/UI/setup.ts": [],
+  "src/buffer_utils/buffer-formula.ts": [
+    "src/buffer_utils/internal.ts",
+    "src/webaudio2/webaudio2.ts"
+  ],
+  "src/buffer_utils/delegate_events.ts": [
+    "src/buffer_utils/internal.ts"
+  ],
+  "src/buffer_utils/draw_buffer.ts": [],
+  "src/buffer_utils/init_buffers.ts": [
+    "src/buffer_utils/internal.ts"
+  ],
+  "src/buffer_utils/internal.ts": [
+    "src/buffer_utils/buffer-formula.ts",
+    "src/buffer_utils/delegate_events.ts",
+    "src/buffer_utils/draw_buffer.ts",
+    "src/buffer_utils/init_buffers.ts",
+    "src/buffer_utils/record.ts"
+  ],
+  "src/buffer_utils/record.ts": [
+    "src/buffer_utils/internal.ts",
+    "src/webaudio2/webaudio2.ts"
+  ],
+  "src/command/command.ts": [],
+  "src/helpers/helpers.ts": [],
+  "src/helpers/lzw_compression.ts": [],
+  "src/main.ts": [
+    "src/buffer_utils/internal.ts",
+    "src/main/resize.ts",
+    "src/nunigraph/controller/presets.ts",
+    "src/scales/presets.ts"
+  ],
+  "src/main/resize.ts": [
+    "src/nunigraph/init.ts"
+  ],
+  "src/nunigraph/controller/graph_controller.ts": [
+    "src/nunigraph/controller/graph_handlers.ts",
+    "src/nunigraph/controller/graph_undo_redo.ts",
+    "src/nunigraph/model/nunigraph.ts",
+    "src/nunigraph/model/nunigraph_node.ts",
+    "src/nunigraph/view/display_nodedata.ts",
+    "src/nunigraph/view/graph_renderer.ts"
+  ],
+  "src/nunigraph/controller/graph_handlers.ts": [
+    "src/nunigraph/controller/graph_undo_redo.ts",
+    "src/nunigraph/init.ts",
+    "src/webaudio2/sequencers/master-clock.ts"
+  ],
+  "src/nunigraph/controller/graph_undo_redo.ts": [
+    "src/nunigraph/init.ts"
+  ],
+  "src/nunigraph/controller/internal.ts": [],
+  "src/nunigraph/controller/presets.ts": [
+    "src/nunigraph/controller/graph_undo_redo.ts",
+    "src/nunigraph/init.ts"
+  ],
+  "src/nunigraph/init.ts": [
+    "src/buffer_utils/internal.ts",
+    "src/nunigraph/controller/graph_controller.ts",
+    "src/nunigraph/model/nunigraph.ts",
+    "src/nunigraph/view/graph_renderer.ts",
+    "src/webaudio2/note_in/buffer2.ts",
+    "src/webaudio2/note_in/keyboard.ts",
+    "src/webaudio2/note_in/nuni_source_node.ts",
+    "src/webaudio2/sequencers/master-clock.ts",
+    "src/webaudio2/sequencers/subgraph-sequencer.ts",
+    "src/webaudio2/webaudio2.ts"
+  ],
+  "src/nunigraph/model/nodeconfig.ts": [],
+  "src/nunigraph/model/nunigraph.ts": [
+    "src/helpers/lzw_compression.ts",
+    "src/nunigraph/model/nunigraph_node.ts",
+    "src/webaudio2/note_in/nuni_source_node.ts",
+    "src/webaudio2/sequencers/subgraph-sequencer.ts",
+    "src/webaudio2/webaudio2.ts"
+  ],
+  "src/nunigraph/model/nunigraph_node.ts": [
+    "src/webaudio2/webaudio2.ts"
+  ],
+  "src/nunigraph/view/display_nodedata.ts": [
+    "src/buffer_utils/internal.ts",
+    "src/nunigraph/controller/graph_undo_redo.ts",
+    "src/nunigraph/model/nunigraph_node.ts",
+    "src/nunigraph/view/sequencer-controls.ts",
+    "src/webaudio2/note_in/buffer2.ts",
+    "src/webaudio2/note_in/keyboard.ts",
+    "src/webaudio2/note_in/nuni_source_node.ts",
+    "src/webaudio2/sequencers/subgraph-sequencer.ts"
+  ],
+  "src/nunigraph/view/graph_renderer.ts": [
+    "src/nunigraph/model/nunigraph.ts",
+    "src/nunigraph/model/nunigraph_node.ts"
+  ],
+  "src/nunigraph/view/sequencer-controls.ts": [
+    "src/webaudio2/sequencers/subgraph-sequencer.ts"
+  ],
+  "src/scales/deltas.ts": [
+    "src/scales/scales.ts",
+    "src/webaudio2/note_in/keyboard.ts"
+  ],
+  "src/scales/equal.ts": [
+    "src/scales/scales.ts",
+    "src/webaudio2/note_in/keyboard.ts"
+  ],
+  "src/scales/presets.ts": [
+    "src/scales/equal.ts",
+    "src/scales/scale-csv.ts"
+  ],
+  "src/scales/scale-csv.ts": [
+    "src/scales/scales.ts",
+    "src/webaudio2/note_in/keyboard.ts"
+  ],
+  "src/scales/scales.ts": [
+    "src/scales/deltas.ts",
+    "src/scales/equal.ts",
+    "src/scales/scale-csv.ts",
+    "src/webaudio2/note_in/keyboard.ts",
+    "src/webaudio2/note_in/nuni_source_node.ts"
+  ],
+  "src/snippets/sequencer.ts": [],
+  "src/waveform_utils/custom_waveform.ts": [
+    "src/webaudio2/webaudio2.ts"
+  ],
+  "src/webaudio2/adsr-splitter.ts": [
+    "src/webaudio2/adsr.ts",
+    "src/webaudio2/note_in/nuni_source_node.ts"
+  ],
+  "src/webaudio2/adsr.ts": [
+    "src/webaudio2/note_in/nuni_source_node.ts"
+  ],
+  "src/webaudio2/note_in/buffer2.ts": [
+    "src/buffer_utils/internal.ts",
+    "src/webaudio2/note_in/nuni_source_node.ts"
+  ],
+  "src/webaudio2/note_in/kbtest.ts": [],
+  "src/webaudio2/note_in/keyboard.ts": [],
+  "src/webaudio2/note_in/nuni_source_node.ts": [
+    "src/webaudio2/adsr-splitter.ts",
+    "src/webaudio2/adsr.ts",
+    "src/webaudio2/note_in/keyboard.ts",
+    "src/webaudio2/sequencers/subgraph-sequencer.ts"
+  ],
+  "src/webaudio2/note_in/oscillator2.ts": [
+    "src/webaudio2/note_in/nuni_source_node.ts"
+  ],
+  "src/webaudio2/sequencers/master-clock.ts": [],
+  "src/webaudio2/sequencers/sequencer.ts": [],
+  "src/webaudio2/sequencers/subgraph-sequencer.ts": [
+    "src/webaudio2/adsr-splitter.ts",
+    "src/webaudio2/adsr.ts",
+    "src/webaudio2/sequencers/master-clock.ts",
+    "src/webaudio2/webaudio2.ts"
+  ],
+  "src/webaudio2/webaudio2.ts": [
+    "src/webaudio2/note_in/buffer2.ts",
+    "src/webaudio2/note_in/oscillator2.ts",
+    "src/webaudio2/sequencers/subgraph-sequencer.ts"
+  ]
+})
+
+</script>
+</html>

@@ -5,7 +5,7 @@
 
 
 
-import { drawBuffer } from './internal.js'
+import { drawBuffer } from './draw_buffer.js'
 
 
 

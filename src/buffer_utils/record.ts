@@ -5,7 +5,7 @@
 
 
 
-import { bufferController } from './internal.js'
+import { bufferController } from './init_buffers.js'
 import { audioCtx } from '../webaudio2/webaudio2.js'
 
 export function recordTo(index : number) {
@@ -25,7 +25,7 @@ export function recordTo(index : number) {
 
     log('recording...')
 
-    if ((<any>D('record-mic')).checked) {
+    if ((<HTMLInputElement>D('record-mic')).checked) {
         navigator
             .mediaDevices
             .getUserMedia({ audio: true })
@@ -49,7 +49,8 @@ export function recordTo(index : number) {
 
         const audioChunks : Blob[] = []
         
-        mediaRecorder.addEventListener('dataavailable', (event : any) => {
+        mediaRecorder.addEventListener('dataavailable', (event : Indexed) => {
+            log('event.prototype',event.data)
             log('event.data =',event.data.arrayBuffer()) 
             audioChunks.push(event.data)
         })
@@ -74,6 +75,7 @@ export function recordTo(index : number) {
                     bufferController.buffers[index] = buffer
                     bufferController.refreshAffectedBuffers()
                     recordButton.classList.remove('recording')
+                    bufferController.updateBufferUI()
                     f && f()
                 })
                 .catch(errStuff)

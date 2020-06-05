@@ -5,9 +5,9 @@
 
 
 
-import { bufferController } from "./internal.js"
-import { recordTo } from "./internal.js"
-import { formulateBuffer } from "./internal.js"
+import { bufferController } from "./init_buffers.js"
+import { recordTo } from "./record.js"
+import { formulateBuffer } from "./buffer_formula.js"
 
 
 
@@ -39,7 +39,7 @@ function invertBuffer(index : number) {
             D('new-buffer-length-text')!.innerText = value
             bufferController.nextBufferDuration = +value
         }
-    })[btn.id] || ((x:any) => x))()
+    })[btn.id] || ((x:unknown) => x))()
 }
 
 // BUFFER EXPS

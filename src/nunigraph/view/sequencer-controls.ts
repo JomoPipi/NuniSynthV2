@@ -5,7 +5,7 @@
 
 
 
-import { SubgraphSequencer } from '../../webaudio2/sequencers/subgraph-sequencer.js'
+import SubgraphSequencer from '../../webaudio2/sequencers/subgraph-sequencer.js'
 
 export function sequencerControls(an : SubgraphSequencer) {
 
