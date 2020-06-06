@@ -7,7 +7,6 @@
 
 import { Adsr, ADSR_Controller } from '../adsr.js'
 import AdsrSplitter from "../adsr-splitter.js"
-import { AudioContext2 } from '../webaudio2.js' 
 import MasterClock from './master-clock.js'
 
 
@@ -18,7 +17,7 @@ export default class SubgraphSequencer extends AdsrSplitter {
      * This creates an N-step sequencer out of
      * whatever inputs are connected to it.
      */
-    readonly ctx : AudioContext2
+    readonly ctx : AudioContext
     nSteps : number
     currentStep : number
     startTime : number
@@ -35,7 +34,7 @@ export default class SubgraphSequencer extends AdsrSplitter {
     isInSync : boolean
     // controls : SequencerControls
 
-    constructor(ctx : AudioContext2) {
+    constructor(ctx : AudioContext) {
         super(ctx)
         this.ctx = ctx
         this.nSteps = 8

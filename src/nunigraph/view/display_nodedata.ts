@@ -12,7 +12,7 @@ import { BufferNode2 } from '../../webaudio2/note_in/buffer2.js'
 import KB from '../../webaudio2/note_in/keyboard.js'
 import SubgraphSequencer from '../../webaudio2/sequencers/subgraph-sequencer.js'
 import { sequencerControls } from './sequencer-controls.js'
-import { bufferController } from '../../buffer_utils/internal.js'
+import { BufferUtils } from '../../buffer_utils/internal.js'
 
 
 
@@ -117,12 +117,15 @@ function samplerControls(audioNode : BufferNode2) {
     const value = E('span'); value.innerText = String.fromCharCode(65 + audioNode.bufferKey)
     box.appendChild(value)
 
+    // TODO: change this to a select box, 
+    // and don't depend on BufferUtils, 
+    // depend on BufferStorage, instead.
     ;['-','+'].forEach((op,i) => { // change the buffer index
         const btn = E('button'); btn.innerText = op
         btn.onclick = () => {
             const v = clamp(0, 
                 audioNode.bufferKey + Math.sign(i - .5), 
-                bufferController.nBuffers-1)
+                BufferUtils.nBuffers-1)
 
             value.innerText = String.fromCharCode(65 + v)
             audioNode.bufferKey = v

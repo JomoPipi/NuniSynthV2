@@ -5,7 +5,7 @@
 
 
 
-import { audioCtx, AudioContext2 } from '../../webaudio2/webaudio2.js'
+import { audioCtx } from '../../webaudio2/webaudio2.js'
 
 // const createAudioNode 
 // : { [key in NodeTypes] : keyof AudioContext2 } =

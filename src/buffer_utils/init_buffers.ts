@@ -6,6 +6,7 @@
 
 
 import { drawBuffer } from './draw_buffer.js'
+import BufferStorage from '../storage/general/buffer_storage.js'
 
 
 
@@ -25,9 +26,8 @@ const presets = (i:number, channel : number) => ([
     [...Array(90)].reduce((a,_,n) => a + Math.abs(Math.sin(i/(n * 10))) / 90, 0)
 ])
 
-class BufferController {
+class BufferUtily {
     
-    buffers : AudioBuffer[];
     currentIndex : number;
     lastRecorderRequestId : number;
     stopLastRecorder : Function;
@@ -36,7 +36,6 @@ class BufferController {
     private refreshFunc : Function;
 
     constructor() {
-        this.buffers = []
         this.currentIndex = 0
         this.lastRecorderRequestId = 0
         this.stopLastRecorder = () => void 0
@@ -47,15 +46,17 @@ class BufferController {
 
     updateBufferUI() {
         const n = this.currentIndex
+        const buff = BufferStorage.get(n)
+
         D('buffer-info')!.innerText =
         `${
             String.fromCharCode(65 + n)
         } -- ${
-            this.buffers[n].duration
+            buff.duration
         } seconds`
     
         drawBuffer(
-            this.buffers[n], 
+            buff, 
             D('buffer-canvas') as HTMLCanvasElement)
     }
 
@@ -67,9 +68,9 @@ class BufferController {
         this.refreshFunc = f
     }
     
-    initBuffers(ctx : AudioContext) {
+    initBufferPresets(ctx : AudioContext) {
         const _seconds = 0.1
-        this.buffers.length = 0
+        
         const div = D('buffer-container')!
 
         for (let n = 0; n < this.nBuffers; n++) {
@@ -87,7 +88,7 @@ class BufferController {
                     nowBuffering[i] = presets(i,channel)[n] || (i % 2) / 2.0
                 }
             }
-            this.buffers.push(buffer)
+            BufferStorage.set(n, buffer)
         }
         
         D('buff-0')!.classList.add('selected2')
@@ -103,4 +104,4 @@ class BufferController {
     }
 }
 
-export const bufferController = new BufferController()
+export const BufferUtils = new BufferUtily()

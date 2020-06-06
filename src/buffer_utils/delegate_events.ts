@@ -5,24 +5,25 @@
 
 
 
-import { bufferController } from "./init_buffers.js"
+import { BufferUtils } from "./init_buffers.js"
 import { recordTo } from "./record.js"
 import { formulateBuffer } from "./buffer_formula.js"
+import BufferStorage from "../storage/general/buffer_storage.js"
 
 
 
 
 function reverseBuffer(index : number) {
-    bufferController.buffers[index].getChannelData(0).reverse()
-    bufferController.refreshAffectedBuffers()
+    BufferStorage.get(index).getChannelData(0).reverse()
+    BufferUtils.refreshAffectedBuffers()
 }
 
 function invertBuffer(index : number) {
-    const arr = bufferController.buffers[index].getChannelData(0)
+    const arr = BufferStorage.get(index).getChannelData(0)
     for (let i =0; i < arr.length; i++)
         arr[i] *= -1
 
-    bufferController.refreshAffectedBuffers()
+    BufferUtils.refreshAffectedBuffers()
 }
 
 ;(<HTMLElement>D('buffer-functions')).onclick = (e : MouseEvent) => {
@@ -30,14 +31,14 @@ function invertBuffer(index : number) {
     
     if (!btn) return;
     ;((<Indexed> {
-        record:                 () => recordTo(bufferController.currentIndex),
-        'reverse-buffer':       () => reverseBuffer(bufferController.currentIndex),
-        'invert-buffer':        () => invertBuffer(bufferController.currentIndex),
-        'apply-buffer-formula': () => formulateBuffer(bufferController.currentIndex),
+        record:                 () => recordTo(BufferUtils.currentIndex),
+        'reverse-buffer':       () => reverseBuffer(BufferUtils.currentIndex),
+        'invert-buffer':        () => invertBuffer(BufferUtils.currentIndex),
+        'apply-buffer-formula': () => formulateBuffer(BufferUtils.currentIndex),
         'new-buffer-length':() => {
             const value = (D('new-buffer-length') as HTMLSelectElement).value
             D('new-buffer-length-text')!.innerText = value
-            bufferController.nextBufferDuration = +value
+            BufferUtils.nextBufferDuration = +value
         }
     })[btn.id] || ((x:unknown) => x))()
 }

@@ -5,8 +5,9 @@
 
 
 
-import { bufferController } from './init_buffers.js'
+import { BufferUtils } from './init_buffers.js'
 import { audioCtx } from '../webaudio2/webaudio2.js'
+import BufferStorage from '../storage/general/buffer_storage.js'
 
 export function recordTo(index : number) {
     const recordButton = D('record')!
@@ -18,8 +19,8 @@ export function recordTo(index : number) {
 
     const isRecording = recordButton.classList.toggle('recording')
     if (!isRecording) {
-        clearTimeout(bufferController.lastRecorderRequestId)
-        bufferController.stopLastRecorder()
+        clearTimeout(BufferUtils.lastRecorderRequestId)
+        BufferUtils.stopLastRecorder()
         return;
     }
 
@@ -68,14 +69,14 @@ export function recordTo(index : number) {
                     const buffer = 
                         audioCtx.createBuffer(
                         1, 
-                        bufferController.nextBufferDuration * rate,
+                        BufferUtils.nextBufferDuration * rate,
                         rate)
                     buffer.copyToChannel(audiobuffer.getChannelData(0), 0)
 
-                    bufferController.buffers[index] = buffer
-                    bufferController.refreshAffectedBuffers()
+                    BufferStorage.set(index, buffer)
+                    BufferUtils.refreshAffectedBuffers()
                     recordButton.classList.remove('recording')
-                    bufferController.updateBufferUI()
+                    BufferUtils.updateBufferUI()
                     f && f()
                 })
                 .catch(errStuff)
@@ -83,10 +84,10 @@ export function recordTo(index : number) {
             .catch(errStuff)
         })
 
-        bufferController.stopLastRecorder = () => mediaRecorder.stop()
-        bufferController.lastRecorderRequestId = 
+        BufferUtils.stopLastRecorder = () => mediaRecorder.stop()
+        BufferUtils.lastRecorderRequestId = 
             setTimeout(
-                bufferController.stopLastRecorder, 
-                bufferController.nextBufferDuration * 1000)
+                BufferUtils.stopLastRecorder, 
+                BufferUtils.nextBufferDuration * 1000)
     }
 }

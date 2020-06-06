@@ -12,6 +12,8 @@ import AdsrSplitter from '../adsr-splitter.js'
 
 type NodeKbMode = 'mono' | 'poly' | 'none'
 
+
+// Should be in a different file
 export type Destination = AudioNode | AudioParam | NuniSourceAudioParam | SubgraphSequencer
 
 

@@ -5,8 +5,8 @@
 
 
 
-import { bufferController } from '../../buffer_utils/internal.js'
 import { NuniSourceNode, NuniSourceAudioParam } from './nuni_source_node.js'
+import BufferStorage from '../../storage/general/buffer_storage.js'
 
 export class BufferNode2 extends NuniSourceNode {
     /**
@@ -36,7 +36,7 @@ export class BufferNode2 extends NuniSourceNode {
         src.playbackRate.setValueAtTime(0, this.ctx.currentTime)
         this.detune.src.connect(src.detune)
         this.playbackRate.src.connect(src.playbackRate)
-        src.buffer = bufferController.buffers[this.bufferKey]
+        src.buffer = BufferStorage.get(this.bufferKey)
         src.loop = this.loop
 
         return src
