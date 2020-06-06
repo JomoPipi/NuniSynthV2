@@ -5,6 +5,7 @@
 
 
 
+// TODO: remove import
 import { NuniSourceNode } from './note_in/nuni_source_node.js'
 
 interface SourceNode {
@@ -64,6 +65,8 @@ export const ADSR_Controller = {
         gain.setTargetAtTime(0, time, release)
     },
 
+
+    // TODO: delete this function, with the refactor of NuniSourceNode
     untrigger: function(sourceNode : NuniSourceNode, key : number) {
         const { release } = this
         const t = sourceNode.ctx.currentTime

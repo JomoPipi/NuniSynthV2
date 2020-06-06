@@ -5,13 +5,15 @@
 
 
 
-import { GraphUndoRedoModule } from './graph_undo_redo.js'
+import UndoRedoModule from '../../helpers/simple_undo_redo.js'
 import { NuniGraph } from '../model/nunigraph.js'
-import { NuniGraphRenderer } from '../view/graph_renderer.js'
-import { HOVER } from '../view/graph_renderer.js'
+import { NuniGraphRenderer, HOVER } from '../view/graph_renderer.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
-import { hideGraphContextmenu } from './graph_handlers.js'
-import createValuesWindow from '../view/display_nodedata.js'
+
+type CreateValuesWindow = 
+    (node : NuniGraphNode, 
+    saveCallback : Function, 
+    deleteCallBack : Function) => HTMLElement
 
 export class NuniGraphController {
 /**
@@ -26,20 +28,34 @@ export class NuniGraphController {
     private lastMouseDownMsg : { type : HOVER } & Indexed
     private selectionStart? : [number,number]
     openWindow : Indexable<HTMLElement> // [node.id]:nodeValuesWindow
+    private undoRedoModule : UndoRedoModule
+    private createValuesWindow : CreateValuesWindow
     private copiedNodes? : string
 
     constructor (
         g : NuniGraph, 
         prompt : HTMLElement, 
-        renderer : NuniGraphRenderer ) {
+        renderer : NuniGraphRenderer,
+        createValuesWindow : CreateValuesWindow) {
 
         this.g = g
         this.connectionTypePrompt = prompt
         this.renderer = renderer
+        this.createValuesWindow = createValuesWindow
+
         this.mouseIsDown = false
         this.selectedNodes = []
         this.lastMouseDownMsg = renderer.getGraphMouseTarget({ offsetX: -Infinity, offsetY: -Infinity})
         this.openWindow = {}
+
+        const getState = () => g.toRawString()
+        const setState = (state : string) => {
+            g.fromRawString(state)
+            this.renderer.render()
+            this.unselectNode()
+            D('connection-type-prompt')!.classList.remove('show')
+        }
+        this.undoRedoModule = new UndoRedoModule(getState, setState)
         
         const mouse_move = (e : MouseEvent) => {
             const { x: offsetX, y: offsetY } = this.getMousePos(e)
@@ -53,6 +69,27 @@ export class NuniGraphController {
         window.addEventListener('mousemove', e => mouse_move(e))
         window.addEventListener('mouseup', e => this.mouseup(e))
         window.addEventListener('keydown', e => this.keydown(e))
+    }
+
+    save() {
+        this.undoRedoModule.save()
+    }
+    undo() {
+        this.undoRedoModule.undo()
+    }
+    redo() {
+        this.undoRedoModule.redo()
+    }
+
+    showContextMenu(x : number, y : number) {
+        const menu = D('graph-contextmenu') as HTMLDivElement
+    
+        menu.style.display = 'grid'
+        UI_clamp(x, y, menu, document.body)
+    }
+
+    hideContextMenu() {
+        D('graph-contextmenu')!.style.display = 'none'
     }
 
     private getMousePos(e : MouseEvent) {
@@ -127,7 +164,7 @@ export class NuniGraphController {
         }
 
         const deleteCallBack = () => {  
-            GraphUndoRedoModule.save()
+            this.save()
             this.deleteNode(node)
         }
 
@@ -144,8 +181,9 @@ export class NuniGraphController {
         this.openWindow[node.id] = container
 
         container.appendChild(
-            createValuesWindow(
+            this.createValuesWindow(
                 node, 
+                () => this.save(),
                 deleteCallBack))
         
         D('nunigraph-stuff')!.appendChild(container)
@@ -181,7 +219,7 @@ export class NuniGraphController {
 
     private mousedown(e : MouseEvent) {
         
-        hideGraphContextmenu()
+        this.hideContextMenu()
         this.mouseIsDown = true
         
         const { type, id, node } = 
@@ -209,7 +247,7 @@ export class NuniGraphController {
 
         ;({
             [HOVER.SELECT]: () => {
-                GraphUndoRedoModule.save() // A node will probably be moved, here.
+                this.save() // A node will probably be moved, here.
                 if (this.selectedNodes.includes(node!)) return;
                 this.selectNode(node!)
                 this.renderer.render({ selectedNodes: [node] })
@@ -228,7 +266,7 @@ export class NuniGraphController {
                 const cache = this.renderer.connectionsCache
                 const { fromId, toId, connectionType } = cache[id!]
 
-                GraphUndoRedoModule.save()
+                this.save()
                 this.unselectNode()
 
                 this.renderer.fromNode = 
@@ -342,7 +380,7 @@ export class NuniGraphController {
     }
 
     private keydown(e : KeyboardEvent) {
-        if (GraphUndoRedoModule.tryInput(e)) {
+        if (this.undoRedoModule.tryInput(e)) {
 
             // SGS doesn't support window staying open throughout undo/redo
             this.closeAllWindows()
@@ -359,7 +397,7 @@ export class NuniGraphController {
         
         if (e.keyCode === 46) {
             if (this.selectedNodes.length) {
-                GraphUndoRedoModule.save()
+                this.save()
                 for (const node of this.selectedNodes) {
                     if (node.id !== 0) {
                         this.deleteNode(node)
@@ -369,7 +407,7 @@ export class NuniGraphController {
         }
 
         if (e.ctrlKey && e.keyCode === 86) { // ctrl + V
-            GraphUndoRedoModule.save()
+            this.save()
 
             this.selectedNodes = 
                 this.g.copyNodes(this.selectedNodes)
@@ -387,7 +425,7 @@ export class NuniGraphController {
             // No prompt needed in this case. 
             // Only allow channel connections to the master gain node.
             // Allowing connections to someGain.gain can prevent it from being muted.
-            GraphUndoRedoModule.save()
+            this.save()
             this.g.connect(node1, node2, 'channel')
             return;
         }
@@ -403,7 +441,7 @@ export class NuniGraphController {
             btn.innerText = param
             btn.onclick = () =>
             {
-                GraphUndoRedoModule.save()
+                this.save()
                 this.g.connect(node1, node2, param)
                 prompt.classList.remove('show')
                 renderer.render()

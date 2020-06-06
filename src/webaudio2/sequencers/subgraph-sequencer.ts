@@ -6,7 +6,7 @@
 
 
 import { Adsr, ADSR_Controller } from '../adsr.js'
-import AdsrSplitter from "../adsr-splitter.js"
+import AdsrSplitter from "../adsr_splitter.js"
 import MasterClock from './master-clock.js'
 
 

@@ -5,7 +5,8 @@
 
 
 
-import { NuniSourceNode, NuniSourceAudioParam } from './nuni_source_node.js'
+import { NuniSourceNode } from './nuni_source_node.js'
+import NuniAudioParam from '../nuni_audioparam.js'
 
 export class OscillatorNode2 extends NuniSourceNode {
     /**
@@ -14,15 +15,15 @@ export class OscillatorNode2 extends NuniSourceNode {
      */
 
     _type : OscillatorType
-    detune : NuniSourceAudioParam
-    frequency : NuniSourceAudioParam
+    detune : NuniAudioParam
+    frequency : NuniAudioParam
 
     constructor(ctx : AudioContext) {
         super(ctx)
 
         this._type = 'sine'
-        this.detune = new NuniSourceAudioParam(ctx)
-        this.frequency = new NuniSourceAudioParam(ctx)
+        this.detune = new NuniAudioParam(ctx)
+        this.frequency = new NuniAudioParam(ctx)
         
         this.kbMode = 'none'
     }
@@ -39,8 +40,8 @@ export class OscillatorNode2 extends NuniSourceNode {
         const src = this.ctx.createOscillator()
 
         src.frequency.setValueAtTime(0, this.ctx.currentTime)
-        this.detune.src.connect(src.detune)
-        this.frequency.src.connect(src.frequency)
+        this.detune.connect(src.detune)
+        this.frequency.connect(src.frequency)
         src.type = this._type
 
         return src

@@ -15,6 +15,8 @@ import { NuniGraphController } from './controller/graph_controller.js'
 import { NuniSourceNode } from '../webaudio2/note_in/nuni_source_node.js'
 import { BufferNode2 } from '../webaudio2/note_in/buffer2.js'
 import SubgraphSequencer from '../webaudio2/sequencers/subgraph-sequencer.js'
+import createValuesWindow from './view/display_nodedata.js'
+import './controller/graph_handlers.js'
 
 export const G = new NuniGraph()
 
@@ -51,6 +53,7 @@ export const GraphController = new NuniGraphController(
     new NuniGraphRenderer(
         G, 
         D('nunigraph-canvas') as HTMLCanvasElement,
-        D('snap-to-grid-btn') as HTMLButtonElement
-        )
+        D('snap-to-grid-btn') as HTMLButtonElement,
+        ),
+    createValuesWindow
     )

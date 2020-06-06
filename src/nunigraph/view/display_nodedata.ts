@@ -6,12 +6,12 @@
 
 
 import { NuniSourceNode } from '../../webaudio2/note_in/nuni_source_node.js'
-import { GraphUndoRedoModule } from '../controller/graph_undo_redo.js'
+// import { GraphController } from '../init.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { BufferNode2 } from '../../webaudio2/note_in/buffer2.js'
 import KB from '../../webaudio2/note_in/keyboard.js'
 import SubgraphSequencer from '../../webaudio2/sequencers/subgraph-sequencer.js'
-import { sequencerControls } from './sequencer-controls.js'
+import { sequencerControls } from './sequencer_controls.js'
 import { BufferUtils } from '../../buffer_utils/internal.js'
 
 
@@ -21,10 +21,14 @@ import { BufferUtils } from '../../buffer_utils/internal.js'
 
 
 
-export default function createValuesWindow(node : NuniGraphNode, deleteCallback : Function) {
+export default function createValuesWindow(
+    node : NuniGraphNode, 
+    saveCallback : Function,
+    deleteCallback : Function) {
+
     const controls = E('div')
 
-    controls.appendChild(showSubtypes(node))
+    controls.appendChild(showSubtypes(node, saveCallback))
 
     if (node.audioNode instanceof SubgraphSequencer) {
         controls.appendChild(sequencerControls(node.audioNode))
@@ -39,7 +43,7 @@ export default function createValuesWindow(node : NuniGraphNode, deleteCallback 
         controls.appendChild(activateKeyboardButton(node.audioNode))
     }
 
-    controls.appendChild(exposeAudioParams(node))
+    controls.appendChild(exposeAudioParams(node, saveCallback))
 
     // Add delete button, but not if id is 0, because that's the master gain.
     if (node.id !== 0) {
@@ -82,7 +86,7 @@ function activateKeyboardButton(an : NuniSourceNode) {
 
 
 
-function showSubtypes(node : NuniGraphNode) : Node {
+function showSubtypes(node : NuniGraphNode, saveCallback: Function) : Node {
     const subtypes = AudioNodeSubTypes[node.type] as string[]
     const box = E('span')
     if (subtypes.length > 0) { // Show subtypes selector
@@ -91,7 +95,7 @@ function showSubtypes(node : NuniGraphNode) : Node {
         insertOptions(select, subtypes)
         select.value = node.audioNode.type
         select.oninput = function() {
-            GraphUndoRedoModule.save()
+            saveCallback()
             node.audioNode.type = select.value
         } 
         box.appendChild(select)
@@ -152,7 +156,7 @@ function samplerControls(audioNode : BufferNode2) {
 
 
 
-function exposeAudioParams(node : NuniGraphNode) : Node {
+function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node {
     const allParams = E('div')
     for (const param of AudioNodeParams[node.type as NodeTypes]) {
         const box = E('div')
@@ -166,11 +170,11 @@ function exposeAudioParams(node : NuniGraphNode) : Node {
             createUpdateParamFunc(node,param)
 
         const mousedownFunc = () => {
-            GraphUndoRedoModule.save()
+            saveCallback()
             return node.audioParamValues[param]
         }
         const manualUpdater = (x:number) => {
-            GraphUndoRedoModule.save()
+            saveCallback()
             node.setValueOfParam(param, x)
         }
         

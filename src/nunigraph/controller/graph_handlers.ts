@@ -6,13 +6,12 @@
 
 
 import { G, GraphController } from '../init.js'
-import { GraphUndoRedoModule } from  './graph_undo_redo.js'
 import MasterClock from '../../webaudio2/sequencers/master-clock.js';
 
 // Create Nodes
 Object.values(NodeTypes).forEach(type => {
     const create = () => {
-        GraphUndoRedoModule.save()
+        GraphController.save()
         const node = G.createNewNode(type)
         const menu = D('graph-contextmenu')!
         
@@ -22,7 +21,7 @@ Object.values(NodeTypes).forEach(type => {
                 GraphController.renderer.canvas
             node.x = clamp(0, (menu.offsetLeft - offsetLeft + menu.offsetWidth / 2.0) / offsetWidth, 1)
             node.y = clamp(0, (menu.offsetTop - offsetTop + menu.offsetHeight / 2.0) / offsetHeight, 1)
-            hideGraphContextmenu()
+            GraphController.hideContextMenu()
         }
         
         GraphController.renderer.render()
@@ -40,12 +39,10 @@ Object.values(NodeTypes).forEach(type => {
 ;(D('from-string-button') as HTMLButtonElement).onclick = function() {
     const input = D('graph-copy-input') as HTMLInputElement
     try { 
-        GraphUndoRedoModule.save()
-        G.fromString(input.value)
-        GraphController.renderer.render()
+        GraphController.save()
         input.value = ''
     } catch (e) {
-        GraphUndoRedoModule.undos.pop()
+        GraphController.undo()
         input.value = 'Invalid code'
     }
 }
@@ -57,17 +54,17 @@ Object.values(NodeTypes).forEach(type => {
     const id = (<HTMLElement>e.target).id
     
     if (id === undoBtnId) {
-        GraphUndoRedoModule.undo()
+        GraphController.undo()
         GraphController.renderer.render()
     } else if (id === redoBtnId) {
-        GraphUndoRedoModule.redo()
+        GraphController.redo()
         GraphController.renderer.render()
     }
 }
 
 // Clear the graph
 ;(D('clear-graph-button') as HTMLButtonElement).onclick = function() {
-    GraphUndoRedoModule.save()
+    GraphController.save()
     G.clear()
     GraphController.renderer.render()
 }
@@ -75,7 +72,7 @@ Object.values(NodeTypes).forEach(type => {
 // Right-click options
 D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
     e.preventDefault()
-    showGraphContextMenu(e.clientX, e.clientY)
+    GraphController.showContextMenu(e.clientX, e.clientY)
 }
 
 // Create Graph-legend
@@ -115,13 +112,13 @@ D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
 }
 
 
-export function showGraphContextMenu(x : number, y : number) {
-    const menu = D('graph-contextmenu') as HTMLDivElement
+// export function showGraphContextMenu(x : number, y : number) {
+//     const menu = D('graph-contextmenu') as HTMLDivElement
 
-    menu.style.display = 'grid'
-    UI_clamp(x, y, menu, document.body)
-}
+//     menu.style.display = 'grid'
+//     UI_clamp(x, y, menu, document.body)
+// }
 
-export function hideGraphContextmenu() {
-    D('graph-contextmenu')!.style.display = 'none'
-}
+// export function hideGraphContextmenu() {
+//     D('graph-contextmenu')!.style.display = 'none'
+// }

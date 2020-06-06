@@ -6,9 +6,6 @@
 
 
 import KB from '../webaudio2/note_in/keyboard.js'
-import { setScaleFromCSV } from './scale-csv.js'
-import { setEqualTemperamentScale } from './equal.js'
-import { setDeltaExpressionScale } from './deltas.js'
 import { NuniSourceNode } from '../webaudio2/note_in/nuni_source_node.js'
 
 export function refreshKeys() {
@@ -48,30 +45,4 @@ export function previewScale() {
     }
     // * prevents bug that may happen when user switches 
     // modes while the scale is being previewed.
-}
-
-{
-    const [deltaBtnId, equalBtnId, csvBtnId] = 
-        'apply-cent-delta,apply-equal-temperament,apply-scale-csv'
-        .split(',')
-
-    D('scale-builder')!.onclick = function(e : MouseEvent) {
-        const btnId = (e.target as HTMLElement).id
-        
-        // ;((<Indexed>{
-        //     [deltaBtnId]: setDeltaExpressionScale,
-        //     [equalBtnId]: setEqualTemperamentScale,
-        //     [csvBtnId]:   setScaleFromCSV
-        // })[btnId] || id)()
-
-        if (btnId === deltaBtnId) {
-            setDeltaExpressionScale()
-
-        } else if (btnId === equalBtnId) {
-            setEqualTemperamentScale()
-
-        } else if (btnId === csvBtnId) {
-            setScaleFromCSV()
-        }
-    }
 }

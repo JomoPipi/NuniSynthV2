@@ -7,37 +7,12 @@
 
 import { Adsr, ADSR_Controller } from '../adsr.js'
 import KB from './keyboard.js'
-import SubgraphSequencer from '../sequencers/subgraph-sequencer.js'
-import AdsrSplitter from '../adsr-splitter.js'
+import AdsrSplitter, { Destination } from '../adsr_splitter.js'
+
+
+
 
 type NodeKbMode = 'mono' | 'poly' | 'none'
-
-
-// Should be in a different file
-export type Destination = AudioNode | AudioParam | NuniSourceAudioParam | SubgraphSequencer
-
-
-
-
-export class NuniSourceAudioParam {
-    /** AudioParams that are compatible with NuniSourceNodes
-     */
-    src: ConstantSourceNode
-
-    constructor(ctx : AudioContext) {
-        this.src = ctx.createConstantSource()
-        this.src.offset.value = 0
-        this.src.start(ctx.currentTime)
-    }
-    
-    setValueAtTime(value : number, time : never) {
-        this.src.offset.value = value
-    }
-    // implement the rest of the value changing methods if aux-AD or glide is desired
-}
-
-
-
 
 export class NuniSourceNode extends AdsrSplitter {
     /** Parent interface for Sampler and Oscillator nodes

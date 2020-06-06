@@ -5,8 +5,8 @@
 
 
 
-import { setScaleFromCSV } from './scale-csv.js'
-import { setEqualTemperamentScale } from './equal.js'
+import { setScaleFromCSV } from './formulas/csv_list.js'
+import { setEqualTemperamentScale } from './formulas/equal.js'
 
 {
     const presets = {

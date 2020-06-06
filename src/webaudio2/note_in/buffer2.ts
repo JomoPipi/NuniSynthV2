@@ -5,7 +5,8 @@
 
 
 
-import { NuniSourceNode, NuniSourceAudioParam } from './nuni_source_node.js'
+import { NuniSourceNode } from './nuni_source_node.js'
+import NuniAudioParam from '../nuni_audioparam.js'
 import BufferStorage from '../../storage/general/buffer_storage.js'
 
 export class BufferNode2 extends NuniSourceNode {
@@ -16,16 +17,16 @@ export class BufferNode2 extends NuniSourceNode {
 
     loop : boolean
     bufferKey : number
-    detune : NuniSourceAudioParam
-    playbackRate : NuniSourceAudioParam
+    detune : NuniAudioParam
+    playbackRate : NuniAudioParam
     
     constructor(ctx : AudioContext) {
         super(ctx)
 
         this.loop = true
         this.bufferKey = 0
-        this.detune = new NuniSourceAudioParam(ctx)
-        this.playbackRate = new NuniSourceAudioParam(ctx)
+        this.detune = new NuniAudioParam(ctx)
+        this.playbackRate = new NuniAudioParam(ctx)
 
         this.kbMode = 'none'
     }
@@ -34,8 +35,8 @@ export class BufferNode2 extends NuniSourceNode {
         const src = this.ctx.createBufferSource()
 
         src.playbackRate.setValueAtTime(0, this.ctx.currentTime)
-        this.detune.src.connect(src.detune)
-        this.playbackRate.src.connect(src.playbackRate)
+        this.detune.connect(src.detune)
+        this.playbackRate.connect(src.playbackRate)
         src.buffer = BufferStorage.get(this.bufferKey)
         src.loop = this.loop
 

@@ -5,8 +5,8 @@
 
 
 
-import KB from '../webaudio2/note_in/keyboard.js'
-import { refreshKeys, previewScale } from './preview_scale.js'
+import KB from '../../webaudio2/note_in/keyboard.js'
+import { refreshKeys, previewScale } from '../preview_scale.js'
 
 export const setDeltaExpressionScale = (_ => {
     const deltaExp = D('delta-expression') as HTMLInputElement

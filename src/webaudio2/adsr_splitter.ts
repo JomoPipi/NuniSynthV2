@@ -1,11 +1,20 @@
+
+
+
+
+
+
+
 import { Adsr } from "./adsr.js"
-import { Destination, NuniSourceAudioParam } from "./note_in/nuni_source_node.js"
+import NuniAudioParam from "./nuni_audioparam.js"
 
 
 
 
 
 
+
+export type Destination = AudioNode | AudioParam | NuniAudioParam | AdsrSplitter
 
 export default class AdsrSplitter {
     
@@ -41,7 +50,7 @@ export default class AdsrSplitter {
     }
 
     protected connection(on : boolean, d : Destination) {
-        const dest = d instanceof NuniSourceAudioParam ? d.src.offset : d as AudioParam
+        const dest = d instanceof NuniAudioParam ? d.offset : d as AudioParam
         if (on) {
             this.volumeNode.connect(dest) 
         } else {
