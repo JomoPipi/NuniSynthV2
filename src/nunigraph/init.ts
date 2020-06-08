@@ -16,7 +16,6 @@ import { NuniSourceNode } from '../webaudio2/note_in/nuni_source_node.js'
 import { BufferNode2 } from '../webaudio2/note_in/buffer2.js'
 import SubgraphSequencer from '../webaudio2/sequencers/subgraph-sequencer.js'
 import createValuesWindow from './view/display_nodedata.js'
-import './controller/graph_handlers.js'
 
 export const G = new NuniGraph()
 

@@ -28,6 +28,11 @@ export class Adsr extends GainNode {
     }
 }
 
+// Why 10 ? It gives the `gain.setTargetAtTime(0, t, release)`
+// call enough time to get the volume down by ~99.995%, according to
+// https://developer.mozilla.org/en-US/docs/Web/API/AudioParam/setTargetAtTime#Choosing_a_good_timeConstant
+const releaseTimeConstant = 10
+
 export const ADSR_Controller = {
     canvas: D('adsr-canvas')! as HTMLCanvasElement,
 
@@ -56,7 +61,7 @@ export const ADSR_Controller = {
         const { release } = this
         gain.cancelScheduledValues(time)
         gain.setTargetAtTime(0, time, release)
-        source.stop(time + release * 10)
+        source.stop(time + release * releaseTimeConstant)
     },
 
     untriggerAdsr: function(gain : AudioParam, time : number) {
@@ -65,6 +70,12 @@ export const ADSR_Controller = {
         gain.setTargetAtTime(0, time, release)
     },
 
+    untriggerAndGetStopTime: function(gain : AudioParam, time : number) {
+        const { release } = this
+        gain.cancelScheduledValues(time)
+        gain.setTargetAtTime(0, time, release)
+        return time + release * releaseTimeConstant
+    },
 
     // TODO: delete this function, with the refactor of NuniSourceNode
     untrigger: function(sourceNode : NuniSourceNode, key : number) {
@@ -81,11 +92,9 @@ export const ADSR_Controller = {
             adsr.releaseId = -1
             sourceNode.prepareSource(key)
 
-        }, 10 * release * 1000)
-        // Why 10 * relase ? It gives the `gain.setTargetAtTime(0, t, release)`
-        // call enough time to get the volume down by ~99.995%, according to
-        // https://developer.mozilla.org/en-US/docs/Web/API/AudioParam/setTargetAtTime#Choosing_a_good_timeConstant
+        }, releaseTimeConstant * release * 1000)
     },
+
     render: () => {}
 }
 
