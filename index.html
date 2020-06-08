@@ -189,20 +189,22 @@
                 <div class="keyboard" id="keyboard-image"></div>
 
                 <div id="mono-poly-select" class="center">
-                  <input id="keyboard-mono-radio" 
+                  VOICES: <input id="n-poly-slider" type="range" min=1 max=20>
+                  <span id="n-poly-text"> 10 </span>
+                  <!-- <input id="keyboard-mono-radio" 
                     type="radio"
                     name="radio">
                   <label for="keyboard-mono-radio" class="radio"> 
                     MONO
-                  </label>
+                  </label> -->
   
-                  <input id="keyboard-poly-radio"
+                  <!-- <input id="keyboard-poly-radio"
                     type="radio"
                     name="radio"
                     checked="true">
                   <label for="keyboard-poly-radio" class="radio"> 
                     POLY
-                  </label>
+                  </label> -->
                 </div>
 
               </span>  
@@ -330,7 +332,7 @@
 
           <div id="buffer-functions">
             
-            <div id="buffer-edit" class="_tab_ show">
+            <div id="buffer-edit" class="_tab_">
 
               <button id="reverse-buffer" class="neumorph"> 
                 reverse </button>
@@ -350,7 +352,7 @@
             </div>
 
             
-            <div id="buffer-create" class="_tab_">
+            <div id="buffer-create" class="_tab_ show">
 
               <span>
                 NEW BUFFER LENGTH:

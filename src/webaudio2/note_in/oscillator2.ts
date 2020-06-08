@@ -17,6 +17,7 @@ export class OscillatorNode2 extends NuniSourceNode {
     _type : OscillatorType
     detune : NuniAudioParam
     frequency : NuniAudioParam
+    soloSource? : OscillatorNode
 
     constructor(ctx : AudioContext) {
         super(ctx)
@@ -25,13 +26,12 @@ export class OscillatorNode2 extends NuniSourceNode {
         this.detune = new NuniAudioParam(ctx)
         this.frequency = new NuniAudioParam(ctx)
         
-        this.kbMode = 'none'
+        this.kbMode = false
     }
 
     set type(t : OscillatorType) {
-        for (const key in this.sources) {
-            this.sources[key].type = t
-        } 
+        if (this.soloSource)
+            this.soloSource.type = t
         this._type = t 
     }
     get type() { return this._type }

@@ -74,10 +74,10 @@ function activateKeyboardButton(an : NuniSourceNode) {
     const btn = E('button')
     btn.innerText = '🎹'
     btn.classList.add('kb-button')
-    btn.classList.toggle('selected', an.kbMode !== 'none')
+    btn.classList.toggle('selected', an.kbMode === true)
     btn.onclick = () => {
-        const enable = an.kbMode === 'none'
-        an.kbMode = enable ? KB.mode : 'none'
+        const enable = an.kbMode === false
+        an.kbMode = enable
         btn.classList.toggle('selected', enable)
     }
     return btn

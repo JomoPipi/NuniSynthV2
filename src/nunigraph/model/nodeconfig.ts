@@ -148,7 +148,7 @@ const sliderFactor : { readonly [key in AudioParams] : number } =
 
 type CustomAudioNodeProperties =
 {
-    kbMode?      : string;
+    kbMode?      : boolean;
     type?        : string;
     subdiv?      : number;
     isInSync?    : boolean;

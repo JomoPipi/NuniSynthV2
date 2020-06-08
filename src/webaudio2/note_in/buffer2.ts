@@ -28,7 +28,7 @@ export class BufferNode2 extends NuniSourceNode {
         this.detune = new NuniAudioParam(ctx)
         this.playbackRate = new NuniAudioParam(ctx)
 
-        this.kbMode = 'none'
+        this.kbMode = false
     }
 
     createSource() {

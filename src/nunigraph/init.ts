@@ -22,7 +22,7 @@ export const G = new NuniGraph()
 
 KB.attachToGraph(function*() {
     for (const { audioNode: an } of G.nodes) {
-        if (an instanceof NuniSourceNode && an.kbMode !== 'none') {
+        if (an instanceof NuniSourceNode) { // && an.kbMode !== 'none') {
             yield an
         }
     }

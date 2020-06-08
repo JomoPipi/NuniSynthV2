@@ -35,6 +35,7 @@ const KB = {
     held, 
     scale,
     mode: 'poly' as 'mono' | 'poly',
+    nVoices: 10,
     attachToGraph, 
     connectedNodes: function*(){ yield* [] as Indexed[] }
     }
@@ -81,20 +82,11 @@ function updateKeys(keydown : boolean) {
     }
 }
 
-const monoBtn = D('keyboard-mono-radio')
-const polyBtn = D('keyboard-poly-radio')
-
-D('mono-poly-select')!.onclick = function (e : MouseEvent) {
-    const t = e.target
-    const isMono = t === monoBtn
-    
-    if (isMono || t === polyBtn) {
-        KB.mode = isMono ? 'mono' : 'poly'
-        for (const an of KB.connectedNodes()) {
-            an.kbMode = KB.mode
-        }
-    }
-}
+const slider = D('n-poly-slider') as HTMLInputElement
+slider.oninput = function () {
+    D('n-poly-text')!.innerText = slider.value 
+    KB.nVoices = +slider.value
+} 
 
 function updateKBImage(code : number, keydown : boolean) {
     // Updates the keyboard defined in UI/init_kb_image.ts

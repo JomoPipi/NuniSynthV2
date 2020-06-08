@@ -5,9 +5,6 @@
 
 
 
-// TODO: remove import
-import { NuniSourceNode } from './note_in/nuni_source_node.js'
-
 interface SourceNode {
     start : (when : number) => void;
     stop : (when : number) => void;
@@ -57,13 +54,6 @@ export const ADSR_Controller = {
         source.start(time)
     },
 
-    untriggerSource: function(source : SourceNode, gain : AudioParam, time : number) {
-        const { release } = this
-        gain.cancelScheduledValues(time)
-        gain.setTargetAtTime(0, time, release)
-        source.stop(time + release * releaseTimeConstant)
-    },
-
     untriggerAdsr: function(gain : AudioParam, time : number) {
         const { release } = this
         gain.cancelScheduledValues(time)
@@ -75,24 +65,6 @@ export const ADSR_Controller = {
         gain.cancelScheduledValues(time)
         gain.setTargetAtTime(0, time, release)
         return time + release * releaseTimeConstant
-    },
-
-    // TODO: delete this function, with the refactor of NuniSourceNode
-    untrigger: function(sourceNode : NuniSourceNode, key : number) {
-        const { release } = this
-        const t = sourceNode.ctx.currentTime
-        const adsr = sourceNode.ADSRs[key]
-        const gain = adsr.gain
-
-        gain.cancelScheduledValues(t)
-        gain.setTargetAtTime(0, t, release)
-        
-        adsr.releaseId = window.setTimeout(() => {
-
-            adsr.releaseId = -1
-            sourceNode.prepareSource(key)
-
-        }, releaseTimeConstant * release * 1000)
     },
 
     render: () => {}
