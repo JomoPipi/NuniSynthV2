@@ -117,7 +117,7 @@ export class NuniGraphController {
     private closeValuesWindow(id : number) {
         const window = this.openWindow[id]
         if (window) {
-            D('nunigraph-stuff')!.removeChild(window)
+            D('node-windows')!.removeChild(window)
             delete this.openWindow[id]
         }
     }
@@ -186,7 +186,7 @@ export class NuniGraphController {
                 () => this.save(),
                 deleteCallBack))
         
-        D('nunigraph-stuff')!.appendChild(container)
+        D('node-windows')!.appendChild(container)
         moveContainerToTop(container)
         UI_clamp(0, 0, container, document.body)
     }

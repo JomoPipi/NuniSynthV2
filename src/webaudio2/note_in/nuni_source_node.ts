@@ -7,7 +7,7 @@
 
 import { ADSR_Controller } from '../adsr.js'
 import KB from './keyboard.js'
-import AdsrSplitter from '../adsr_splitter.js'
+import VolumeNodeContainer from '../volumenode_container.js'
 
 
 
@@ -19,7 +19,7 @@ type StopFunc = {
     stopImmediately: () => void
 }
 
-export class NuniSourceNode extends AdsrSplitter {
+export class NuniSourceNode extends VolumeNodeContainer {
     /** Parent interface for Sampler and Oscillator nodes
      *  Allows for 3 keyboard modes - none | mono | poly
      */
@@ -96,7 +96,7 @@ export class NuniSourceNode extends AdsrSplitter {
             }
             
         } else {
-            this.playingKeys[key].stop(time)
+            this.playingKeys[key]?.stop(time)
             delete this.playingKeys[key]
         }
     }

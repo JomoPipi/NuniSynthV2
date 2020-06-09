@@ -7,7 +7,8 @@
 
 import { BufferNode2 } from './note_in/buffer2.js'
 import { OscillatorNode2 } from './note_in/oscillator2.js'
-import SubgraphSequencer from './sequencers/subgraph-sequencer.js'
+import SubgraphSequencer from './sequencers/subgraph_sequencer.js'
+import BufferSequencer from './sequencers/buffer_sequencer.js'
 
 
 export class AudioContext2 extends AudioContext {
@@ -37,6 +38,10 @@ export class AudioContext2 extends AudioContext {
 
     createSubgraphSequencer() {
         return new SubgraphSequencer(this)
+    }
+
+    createBufferSequencer() {
+        return new BufferSequencer(this)
     }
 }
 

@@ -14,8 +14,8 @@ import { audioCtx } from '../webaudio2/webaudio2.js'
 import { NuniGraphController } from './controller/graph_controller.js'
 import { NuniSourceNode } from '../webaudio2/note_in/nuni_source_node.js'
 import { BufferNode2 } from '../webaudio2/note_in/buffer2.js'
-import SubgraphSequencer from '../webaudio2/sequencers/subgraph-sequencer.js'
 import createValuesWindow from './view/display_nodedata.js'
+import Sequencer from '../webaudio2/sequencers/sequencer.js'
 
 export const G = new NuniGraph()
 
@@ -30,7 +30,7 @@ KB.attachToGraph(function*() {
 
 MasterClock.setSchedule((tempo : number) => {
     for (const { audioNode: an } of G.nodes) {
-        if (an instanceof SubgraphSequencer) {
+        if (an instanceof Sequencer) {
             an.scheduleNotes(tempo)
         }
     }

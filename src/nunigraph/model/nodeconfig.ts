@@ -13,7 +13,8 @@ enum NodeTypes
     PANNER  = 'panner',
     DELAY   = 'delay',
     BUFFER  = 'buffer',
-    SGS     = 'subgraph-sequencer'
+    SGS     = 'subgraph-sequencer',
+    B_SEQ   = 'buffer-sequencer'
 }
 
 type AudioParams 
@@ -43,7 +44,8 @@ const createAudioNode =
     [NodeTypes.PANNER]: 'createStereoPanner',
     [NodeTypes.DELAY]:  'createDelay',
     [NodeTypes.BUFFER]: 'createBuffer2',
-    [NodeTypes.SGS]:    'createSubgraphSequencer'
+    [NodeTypes.SGS]:    'createSubgraphSequencer',
+    [NodeTypes.B_SEQ]:  'createBufferSequencer'
 }
 
 const SupportsInputChannels = {
@@ -53,7 +55,8 @@ const SupportsInputChannels = {
     [NodeTypes.PANNER]: true,
     [NodeTypes.DELAY]:  true,
     [NodeTypes.BUFFER]: false,
-    [NodeTypes.SGS]:    true
+    [NodeTypes.SGS]:    true,
+    [NodeTypes.B_SEQ]:  false
 }
 
 const AudioNodeParams = {
@@ -63,7 +66,8 @@ const AudioNodeParams = {
     [NodeTypes.PANNER]: ['pan']                           as AudioParams[],
     [NodeTypes.DELAY]:  ['delayTime']                     as AudioParams[],
     [NodeTypes.BUFFER]: ['playbackRate','detune']         as AudioParams[],
-    [NodeTypes.SGS]:    []
+    [NodeTypes.SGS]:    [],
+    [NodeTypes.B_SEQ]:  []
 }
 
 const AudioNodeSubTypes = {
@@ -75,7 +79,8 @@ const AudioNodeSubTypes = {
     [NodeTypes.PANNER]: [],
     [NodeTypes.DELAY]:  [],
     [NodeTypes.BUFFER]: [],
-    [NodeTypes.SGS]:    []
+    [NodeTypes.SGS]:    [],
+    [NodeTypes.B_SEQ]:  []
 }
 
 const MasterGainColor = '#555'
@@ -87,7 +92,8 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     [NodeTypes.PANNER]: 'rgba(255,128,0,0.5)',
     [NodeTypes.DELAY]:  'rgba(255,255,0,0.5)',
     [NodeTypes.BUFFER]: 'rgba(0,255,255,0.5)',
-    [NodeTypes.SGS]:    'rgba(255,0,255,0.5)'
+    [NodeTypes.SGS]:    'rgba(255,0,255,0.5)',
+    [NodeTypes.B_SEQ]:  'rgba(0,255,195,0.5)'
 }
 
 const ConnectionTypeColors : { readonly [key in ConnectionType] : string } =

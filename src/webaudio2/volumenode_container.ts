@@ -5,7 +5,6 @@
 
 
 
-import { Adsr } from "./adsr.js"
 import NuniAudioParam from "./nuni_audioparam.js"
 
 
@@ -14,21 +13,19 @@ import NuniAudioParam from "./nuni_audioparam.js"
 
 
 
-export type Destination = AudioNode | AudioParam | NuniAudioParam | AdsrSplitter
+export type Destination = AudioNode | AudioParam | NuniAudioParam | VolumeNodeContainer
 
-export default class AdsrSplitter {
+export default class VolumeNodeContainer {
     
     /**
      * Methods that NuniSourceNode and SubgraphSequencer need.
      */
 
     ctx : AudioContext
-    ADSRs : Indexable<Adsr>
     volumeNode : GainNode
 
     constructor(ctx : AudioContext) {
         this.ctx = ctx
-        this.ADSRs = {}
         this.volumeNode = ctx.createGain()
     }
     
@@ -40,9 +37,7 @@ export default class AdsrSplitter {
     disconnect(destination? : Destination) {
         if (!destination) {
             this.volumeNode.disconnect()
-            for (const key in this.ADSRs) {
-                this.ADSRs[key].connect(this.volumeNode)
-            }
+            this.refresh()
             return;
         }
         this.connection(false, destination)

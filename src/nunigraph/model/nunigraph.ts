@@ -9,8 +9,8 @@ import { audioCtx } from '../../webaudio2/webaudio2.js'
     
 import { NuniGraphNode, NodeSettings } from './nunigraph_node.js'
 import { LZW_compress, LZW_decompress } from '../../helpers/lzw_compression.js'
-import SubgraphSequencer from '../../webaudio2/sequencers/subgraph-sequencer.js'
-import { Destination } from '../../webaudio2/adsr_splitter.js'
+import SubgraphSequencer from '../../webaudio2/sequencers/subgraph_sequencer.js'
+import { Destination } from '../../webaudio2/volumenode_container.js'
 import NuniAudioParam from '../../webaudio2/nuni_audioparam.js'
 
 const defaultSettings = () => ({

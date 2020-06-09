@@ -10,20 +10,20 @@ interface SourceNode {
     stop : (when : number) => void;
 }
 
-export class Adsr extends GainNode {
-    /**
-     * The only purpose of this class right now is 
-     * to add the property lastReleastId to GainNodes.
-     * 
-     * releaseId is -1 when the adsr is not in the release stage,
-     * and some other number, otherwise.
-     */
-    releaseId : number
-    constructor(ctx : AudioContext) {
-        super(ctx)
-        this.releaseId = -1
-    }
-}
+// export class Adsr extends GainNode {
+//     /**
+//      * The only purpose of this class right now is 
+//      * to add the property lastReleastId to GainNodes.
+//      * 
+//      * releaseId is -1 when the adsr is not in the release stage,
+//      * and some other number, otherwise.
+//      */
+//     releaseId : number
+//     constructor(ctx : AudioContext) {
+//         super(ctx)
+//         this.releaseId = -1
+//     }
+// }
 
 // Why 10 ? It gives the `gain.setTargetAtTime(0, t, release)`
 // call enough time to get the volume down by ~99.995%, according to

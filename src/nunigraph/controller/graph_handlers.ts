@@ -40,6 +40,8 @@ Object.values(NodeTypes).forEach(type => {
     const input = D('graph-copy-input') as HTMLInputElement
     try { 
         GraphController.save()
+        G.fromString(input.value)
+        GraphController.renderer.render()
         input.value = ''
     } catch (e) {
         GraphController.undo()

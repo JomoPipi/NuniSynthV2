@@ -9,10 +9,9 @@ import { NuniSourceNode } from '../../webaudio2/note_in/nuni_source_node.js'
 // import { GraphController } from '../init.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { BufferNode2 } from '../../webaudio2/note_in/buffer2.js'
-import KB from '../../webaudio2/note_in/keyboard.js'
-import SubgraphSequencer from '../../webaudio2/sequencers/subgraph-sequencer.js'
 import { sequencerControls } from './sequencer_controls.js'
 import { BufferUtils } from '../../buffer_utils/internal.js'
+import Sequencer from '../../webaudio2/sequencers/sequencer.js'
 
 
 
@@ -30,7 +29,7 @@ export default function createValuesWindow(
 
     controls.appendChild(showSubtypes(node, saveCallback))
 
-    if (node.audioNode instanceof SubgraphSequencer) {
+    if (node.audioNode instanceof Sequencer) {
         controls.appendChild(sequencerControls(node.audioNode))
         // controls.appendChild(node.audioNode.controls.view)
     }

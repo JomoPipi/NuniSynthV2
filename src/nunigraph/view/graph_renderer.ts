@@ -282,7 +282,9 @@ export class NuniGraphRenderer {
 
     private getNodeColor(node : NuniGraphNode, H : number, W : number, highlight : boolean) {
         const { nodeRadius, ctx } = this
-        if (node.type === NodeTypes.SGS) {
+        if ([NodeTypes.SGS, NodeTypes.B_SEQ]
+            .includes(node.type)) {
+
             const c2 = highlight ? 'pink' : 'black'
             const {x,y} = node, r = nodeRadius
             const gradient = ctx.createRadialGradient(x*W, y*H, r/27.0, x*W, y*H, r)
