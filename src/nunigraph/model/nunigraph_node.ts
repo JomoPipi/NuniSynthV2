@@ -6,18 +6,32 @@
 
 
 import { audioCtx } from '../../webaudio2/webaudio2.js'
+import { OscillatorNode2 } from '../../webaudio2/note_in/oscillator2.js'
+import { BufferNode2 } from '../../webaudio2/note_in/buffer2.js'
+import SubgraphSequencer from '../../webaudio2/sequencers/subgraph_sequencer.js'
+import BufferSequencer from '../../webaudio2/sequencers/buffer_sequencer.js'
 
-// const createAudioNode 
-// : { [key in NodeTypes] : keyof AudioContext2 } =
-// {
-//     [NodeTypes.GAIN]:   'createGain',
-//     [NodeTypes.OSC]:    'createOscillator2',
-//     [NodeTypes.FILTER]: 'createBiquadFilter',
-//     [NodeTypes.PANNER]: 'createStereoPanner',
-//     [NodeTypes.DELAY]:  'createDelay',
-//     [NodeTypes.BUFFER]: 'createBuffer2',
-//     [NodeTypes.SGS]:    'createSubgraphSequencer'
-// }
+
+interface AudioNodeTypeMap {
+    [NodeTypes.GAIN]:   GainNode,
+    [NodeTypes.OSC]:    OscillatorNode2,
+    [NodeTypes.FILTER]: BiquadFilterNode,
+    [NodeTypes.PANNER]: StereoPannerNode,
+    [NodeTypes.DELAY]:  DelayNode,
+    [NodeTypes.BUFFER]: BufferNode2,
+    [NodeTypes.SGS]:    SubgraphSequencer,
+    [NodeTypes.B_SEQ]:  BufferSequencer
+}
+
+type AudioNodeType<T extends keyof AudioNodeTypeMap> = 
+    AudioNodeTypeMap[T] 
+    & {
+        [key in AudioParams] : any
+    }
+
+class AudioNode2<T extends NodeTypes> {
+
+}
 
 export type NodeSettings = { 
     display : { x : number, y : number }, 
@@ -29,7 +43,7 @@ export class NuniGraphNode {
 
     id : number
     type : NodeTypes
-    audioNode : Indexed
+    audioNode : Indexed // GainNode | OscillatorNode2 | BiquadFilterNode | StereoPannerNode | DelayNode | BufferNode2 | SubgraphSequencer | BufferSequencer
     x : number
     y : number
     audioParamValues : Indexable<number>
@@ -50,7 +64,8 @@ export class NuniGraphNode {
         this.x = x
         this.y = y
 
-        this.audioNode = (<Indexed>audioCtx)[createAudioNode[type]]()
+        this.audioNode = (<any>audioCtx)[createAudioNode[type]]()
+        
         Object.assign(this.audioNode, audioNodeProperties)
 
         this.audioParamValues = audioParamValues
@@ -63,7 +78,7 @@ export class NuniGraphNode {
         }
     }
 
-    setValueOfParam(param : string, value: number) {
+    setValueOfParam(param : AudioParams, value: number) {
         
         this.audioParamValues[param] = value
         this.audioNode[param].setValueAtTime(value, 0)

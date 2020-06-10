@@ -5,12 +5,13 @@
 
 
 
-function createDraggableWindow({ 
+function createDraggableWindow({
     text, 
     clickCallback, 
     closeCallback,
     color
 } : {
+
     text : string, 
     clickCallback : (box : HTMLElement) => void,
     closeCallback : (box : HTMLElement) => void
@@ -56,6 +57,20 @@ function createDraggableWindow({
     bar.appendChild(exitBtn)
     exitBtn.innerText = 'x'
 
+    const closeBox = () => closeCallback(box)
+    exitBtn.onclick = closeBox
+
+    addDragFunction(bar, box, clickCallback)
+
+    box.appendChild(E('div')) // content box
+
+    // box.appendChild(windowResizer())
+
+    return box
+}
+
+function addDragFunction(bar : HTMLElement, box : HTMLElement, clickCallback : Function) {
+    
     let coords = [] as number[]
 
     const mouseup = (e : MouseEvent) => {
@@ -92,11 +107,68 @@ function createDraggableWindow({
         }
     }
 
-    const closeBox = () => closeCallback(box)
-    
-    exitBtn.onclick = closeBox
     box.onmousedown = mousedown
-    bar.onmousemove = mousemove
-
-    return box
 }
+
+
+
+
+// function windowResizer() {
+    
+//     const bar = E('div')
+//     const resizeHandle = E('span')
+
+//     applyStyle(bar, {
+//         height: '15px',
+//         width: '100%',
+//         background: '#333',
+//         // color: rgbaColorContrast('#555'),
+//         cursor: 'move',
+//         paddingLeft: '5px',
+//         boxSizing: 'border-box',
+//         position: 'absolute',
+//         bottom: '0'
+//         })
+
+//     applyStyle(resizeHandle, {
+//         cursor: 'nwse-resize',
+//         border: '0.2px solid #444',
+//         boxSizing: 'border-box',
+//         backgroundColor: 'inherit',
+//         color: 'inherit',
+//         height: '15px',
+//         width: '15px',
+//         float: 'right',
+//         textAlign: 'center',
+//         lineHeight: '15px'
+//         })
+
+//     bar.appendChild(resizeHandle)
+//     resizeHandle.innerText = '//'
+
+//     addResizeFunction(resizeHandle)
+
+//     return bar
+// }
+
+
+// function addResizeFunction(resizeHandle : HTMLElement) {
+
+//     const mouseup = (e : MouseEvent) => {
+//         window.removeEventListener('mousemove',mousemove)
+//         window.removeEventListener('mouseup',mouseup)
+//     }
+
+//     const mousedown = function(e : MouseEvent) {
+//         window.addEventListener('mousemove',mousemove)
+//         window.addEventListener('mouseup',mouseup)
+//     }
+
+//     const mousemove = function(e : MouseEvent) {
+//         const box = resizeHandle.parentElement!.parentElement!
+//         box.style.right = (window.innerWidth - e.clientX) + 'px'
+//         box.style.bottom = (window.innerHeight - e.clientY) + 'px'
+//     }
+
+//     resizeHandle.onmousedown = mousedown
+// }

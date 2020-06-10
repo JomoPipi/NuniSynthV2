@@ -134,16 +134,17 @@ export class NuniGraph {
          * stop using it all together.
          *  */ 
         for (const { type, audioNode } of this.nodes) {
-            if (type === NodeTypes.SGS && audioNode.ADSRs[node.id]) 
+            if (type === NodeTypes.SGS && audioNode.channelData[node.id])
             {
                 audioNode.removeInput(node)
-            }
+            } 
         }
     }
 
     deleteNode(node : NuniGraphNode) {
         // Without this, the setTimeout could keep looping forever:
-        if (node.type === NodeTypes.SGS) {
+        // if (node.type === NodeTypes.SGS) {
+        if (node.audioNode instanceof SubgraphSequencer) {
             node.audioNode.stop()
         }
 
@@ -258,7 +259,7 @@ export class NuniGraph {
         for (const prop in isTransferable) {
             if (prop in node.audioNode) {
                 settings.audioNodeProperties[prop] = 
-                    node.audioNode[prop]
+                    node.audioNode[prop as AudioParams]
             }
         }
         return settings

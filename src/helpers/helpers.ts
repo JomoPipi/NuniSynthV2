@@ -37,3 +37,9 @@ const PHI = (Math.sqrt(5) + 1) / 2.0
 const TR2 = 2 ** (1.0 / 12.0)
 const TAU = 2 * Math.PI
 const twoThirdsPi = TAU / 3.0
+
+const dBToVolume = (dB : number) =>
+    10 ** (0.05 * dB)
+
+const volumeTodB = (volume : number) =>
+    20 * Math.log10(volume)

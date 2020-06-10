@@ -244,8 +244,6 @@ button {
   color: #9a97a3;
   border: 1px solid #444044;
   z-index: 2;
-  max-width: 500px;
-  max-height: 500px;
 }
 
 .buffer-row {
@@ -442,8 +440,6 @@ code {
   background: -webkit-gradient(linear, left top, left bottom, from(#9a97a3), to(#444044));
   background: linear-gradient(#9a97a3, #444044);
   border: 2px solid #201e20;
-  width: 70px;
-  height: 70px;
 }
 
 .apply-btn {

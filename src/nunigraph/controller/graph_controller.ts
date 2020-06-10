@@ -180,7 +180,7 @@ export class NuniGraphController {
 
         this.openWindow[node.id] = container
 
-        container.appendChild(
+        container.children[1].appendChild(
             this.createValuesWindow(
                 node, 
                 () => this.save(),

@@ -22,7 +22,8 @@ export default class SubgraphSequencer extends Sequencer {
     }
 
     addInput({ id, audioNode } : { id : number, audioNode : Indexed }) {
-        const adsr = this.ADSRs[id] = new GainNode(this.ctx)
+        this.channelData[id] = {}
+        const adsr = this.channelData[id].adsr = new GainNode(this.ctx)
         adsr.gain.value = 0
         audioNode.connect(adsr)
         adsr.connect(this.volumeNode)
@@ -31,14 +32,14 @@ export default class SubgraphSequencer extends Sequencer {
     }
 
     removeInput({ id } : { id: number }) {
-        this.ADSRs[id].disconnect()
-        delete this.ADSRs[id]
+        this.channelData[id].adsr!.disconnect()
+        delete this.channelData[id]
         delete this.stepMatrix[id]
         this.refresh()
     }
 
     playStepAtTime(id : string, time : number) {    
-        const gain = this.ADSRs[id].gain    
+        const gain = this.channelData[id].adsr!.gain    
         const duration = this.tick
         ADSR_Controller.trigger(gain, time)
         ADSR_Controller.untriggerAdsr(gain, time + duration)

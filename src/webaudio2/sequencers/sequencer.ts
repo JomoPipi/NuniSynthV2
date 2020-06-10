@@ -9,7 +9,10 @@ import MasterClock from './master-clock.js'
 import VolumeNodeContainer from '../volumenode_container.js'
 
 
-
+type ChannelData = {
+    adsr? : GainNode
+    bufferKey? : number
+    }
 
 export default class Sequencer extends VolumeNodeContainer {
     /**
@@ -31,7 +34,7 @@ export default class Sequencer extends VolumeNodeContainer {
     HTMLGrid : HTMLElement
     protected HTMLBoxes : Indexable<Indexable<HTMLElement>>
     isInSync : boolean
-    ADSRs : Indexable<GainNode>
+    channelData : Indexable<ChannelData>
     // controls : SequencerControls
 
     constructor(ctx : AudioContext) {
@@ -47,10 +50,10 @@ export default class Sequencer extends VolumeNodeContainer {
         this.isPlaying = false
         this.tick = (60*4 / MasterClock.tempo) / this.subdiv
         this.windowIsOpen = false
-        this.HTMLGrid = E('div')
+        this.HTMLGrid = createBeatGrid()
         this.HTMLBoxes = {}
         this.isInSync = true
-        this.ADSRs = {}
+        this.channelData = {}
         // this.controls = new SequencerControls(this)
     }
 
@@ -110,7 +113,7 @@ export default class Sequencer extends VolumeNodeContainer {
     playStepsAtTime(time : number, updateBox : boolean) {
         const boxIsVisible = this.HTMLGrid.offsetParent != null
 
-        for (const key in this.ADSRs) {
+        for (const key in this.channelData) {
             const stepIsActive = this.stepMatrix[key][this.currentStep]
             if (!this.mutedChannel[key] && (!this.soloChannel || this.soloChannel === key)) {
 
@@ -124,7 +127,6 @@ export default class Sequencer extends VolumeNodeContainer {
                 // if (this.controls.offsetParent != null && updateBox) {
                 //     this.controls.highlight(key,this.currentStep)
                 // }
-                log('step is being played woo')
 
                 if (stepIsActive && (this.soloChannel == undefined || this.soloChannel === key)) {
                     this.playStepAtTime(key, time)
@@ -150,8 +152,8 @@ export default class Sequencer extends VolumeNodeContainer {
     }
 
     refresh() {
-        for (const key in this.ADSRs) {
-            this.ADSRs[key].connect(this.volumeNode)
+        for (const key in this.channelData) {
+            this.channelData[key].adsr?.connect(this.volumeNode)
         }
         this.isPlaying = false
         this.currentStep = 0
@@ -162,16 +164,23 @@ export default class Sequencer extends VolumeNodeContainer {
         this.HTMLGrid.innerHTML = ''
         this.HTMLBoxes = {}
         const grid = this.HTMLGrid
-        const { nSteps, ADSRs, mutedChannel } = this
-        for (const key in ADSRs) {
-            const row = E('span')
+        const { nSteps, channelData, mutedChannel } = this
+        for (const key in channelData) {
+            const row = E('div')
             row.classList.add('flex-center')
-            row.appendChild(rowOptions(key))
+
+            row.appendChild(rowOptions(this.additionalRowItems(key), key))
+
             this.HTMLBoxes[key] = {}
             for (let i = 0; i < nSteps; i++) {
                 const box = E('span')
                 this.HTMLBoxes[key][i] = box
                 box.classList.add('note-box')
+                const boxSize = clamp(10, 750 / nSteps, 60)
+                applyStyle(box, {
+                    width: `${boxSize}px`,
+                    height: `${boxSize}px`
+                    })
                 box.classList.toggle('selected', this.stepMatrix[key][i])
                 box.dataset.sequencerKey = `${key}:${i}`
                 row.appendChild(box)
@@ -199,24 +208,39 @@ export default class Sequencer extends VolumeNodeContainer {
                 }
             }
         }
-        
-        function rowOptions(key : string) {
-            const muteSoloBox = E('div')
+
+        function rowOptions(items : HTMLElement, key : string) {
+            const muteSoloBox = E('span')
             const mute = E('button')
             const solo = E('button')
-            const optionsBtn = E('button')
+            // const optionsBtn = E('button')
             mute.classList.add('top-bar-btn')
             solo.classList.add('top-bar-btn')
             mute.innerText = 'M'
             solo.innerText = 'S'
-            optionsBtn.innerText = '⚙️'
+            // optionsBtn.innerText = '⚙️'
             mute.dataset.sequencerRowKey = key
             solo.dataset.sequencerRowKey = key
             mute.classList.toggle('selected', mutedChannel[key] === true)
-            muteSoloBox.append(mute, optionsBtn)//, solo)
+            muteSoloBox.append(items, mute)//, solo)
             return muteSoloBox
         }
+    }
+
+    additionalRowItems(key : string) {
+        return E('span')
     }
 }
 
 // {"connectiăs":Ā2Č[ĀidČ31,āăąćĉnTypeČāhaĄel"},ĒĔ:32ĘĂħĜăğġģcĥħĩ}]Ę10ĐĭĕėęĴĈĶĠĢ:ĤĦąĽĬ"ēĕıŇěŉĞŋĹĻŐĪĿ"14ŃœĮĖĲĚĆřķŌŎļĪŒŔįŖĳŘĝŬŜŏĨşĘ21ŤŲŧŗŪŷśōĺźőńųŨňƅĸƇŝŻľĘĖƀĮ0ƍŶŊƐŮŞƔ"İƗČƙƃĵŚƝƈůľī"nodeċ:đťƤĘtƆ"gain"ƸitlŭƼƾǀ"xƤ.36Ęyǋ1138069ž6757741ŖaudĉNưŌ{ƭǢǤoParamValuƲČĀǆƿ:0.25}īƋŖƹƝoscillatorǈĈǃŭȇȉȋȍȏǈǊǼ.443946303Ȟž015Ǐǋ8471Ȯ27İǕ2983ĘǫǥǧǸātțĀtempoČǓ7ǾŁ93ǛƭADSRƳĀ6ɘ42łč"rĨeaseIĮ-1ȁĘvoǵmeǦƱǸƭMONOČɘ6ɚƥkbMȾōƯąǈsourcǷɝɹɻȿĥsStǯɄĮtrǶɩ"ʆtputƳ[Š_ȅŭsƾĢĘƱtuʃɝsʈɲƭfɟqǶncǐʮʰčȁǪǣȽƱŸōʦʃȻʿǭǯǱǳǵʊĀʳeʵeʷʹ616Ǿȴ8ȱ35ȩ48ʩeʫʭ0ɩƋŁƸƺȕȊȌȎȐǁȓģ˫ȗˮȚǋ2ȹȡȣȥȧŁȪȬȜȮȰȲȴ˸0ȷȹˆǬɰǨɀɂ"ɄɆɈ:ɊɌ0ɎɐĘɒɔɖ"ʌɛȿɟǄɢɤɦɨƭɫɭɯʀǩĘɴɶɸəɛĘɽɿɱʁăʨ"ʅʇʉ̝̟ɜĀʏʑʓeʕʗeʙʛʝʟĐʢʤģ˄̺ʪʬ̍ʯcʱĘˏˑ˓ȿ͗ʱʾ̋ǧ˂̻ʧǈȼˈǰǲǴǶ̝͛ʶʸČ4ȩ.5ǔȳȯ7ǖ82Ⱥ"͔ˤ˦ƶ̔4˩ȆȈˬȘ˯̐ǂǄ˲Έ˴șĘțǽ6ȥ˺ȤȦɚŁ̗̀ǽ̂ȱɚ̅ȶȸ;ͨ̌ȿć̏̑ɇɉɏ̖̘Ȁ̚ɓɕȿ̡̀ɠ̤ɥČɧʙ̩uɮΨʼ̮ɵɷ:̴̀ɾʀƮ̹ʄʆʈˍ̞̲́"̓ʒrʔČʖʘƭ͋ʞʠ͏ƺ͒ǈ΀͖ʻǩʲʴͰʹĀ͟ʼʙΧͣϢͦ̊ĉǮͪˋͭȿͯ˒ͱ:ȡ5.Ȯ˕199ȩǗɘˡˣŌ˥Ȃ΃žΆȔΐ˭ΒΌ˱ō˳Е΋Δ.ǠȠȢΙ˽˞7ΞЂȯΡȳȵ̇ΥϵoςĀΪȿά̓̕Ȩαɑδ̿ϓθ̣ɣλ:ν̨ɬπ̷̫̭"̯φψ"̵ϋʂ̺̼ϐлɺ̠ɝϖ͇ͅϜĘϞ͍ƴϡƝϣЋ͕͞ϧʙϼ͝ʺ͘ϯ͡ˀeͤѢ"ͨϷˊͬϑѨϾ2˕.6ǿ56Ͷ005ȸХͿˢѤǼ΂Ɓņ͐˃ubgǰph-ɣ͜ʉ΋ȒΎҏґғҕҗͰeМ˷7ІҧҨҩ҆ʹǽ4552ȳ68ǚȥ̗ҀЮа̎гɅέ̔ίзɏβ"̛εɝďɝ̢ɡп̦ƭŁнӋ̥μɨŀţӉιӌӓƭžӐκӍу̪аƭnʑepƳǠĘsɄpMȍrȉӈ[fǴɣ,ϛe,ƙӼӸ͈ӻӾǶ,ӵlӷԄӷƙӹŠӏƴƙԇӺӹԀԑԏԃӶӺԉӿԘԂ0ԋӖ[ԑԎԖԀԔԚԗԀԡԅԗŠӜԍԧԁԦӽԤԯԧ]ƭmʞ͆CƒĩσόɄTiɮČǿɋ8ȴŢΖɏЅǘӪϗtՀՂį3ǌ;cʇɟntӥpĕĘisPȌyƾgϚӿΌckǑҮ7Ζ9ǞǝҀȱˠ"wƾdowIsOġǻԔ"HTMLGӰĮшւքBoxϑ2ǼɲŽ̔֒"֐ӈш֐3֕֐Ӗ֙:5֜χ֢7֢8֢9֢Ԍ֟ǒ֕Ł֑Խ֯ſֱ0:֘ӎִֵ֛:ֵָ֮֞֠6׀:ֻֻֻ֥֧֩֫־ֱ֭4ְшŢ֔׎ֶ֮׏ֺב׏ֽӕֿהׂהׅי:ׇע׉ע׋ל׍֙1אӛ׬ֳ׫וԽžį֜׬כ֖׬֡׳׬ןױס׮ף׶Ͽ؃ר׹̔װʽЮѴͫˌɖҋŦȄϢҐҒaҔҖːҢҚ΍ʥؔҟؘҘң˶ȜȞЦҮҰҲҴͺȤ9ҸѲˇҺвɝдήɋӁ̙ӄкȿ֘ɞӘӒсӔšϔӊӞӚӕӝәـ׮وؿтɪфρ̬ӣ՛Ƴǎ̻ӬӮʖӱػĐԔԠԮԊŀɜ[ԨӷٟԓԖԝĐٟԲԤԫֳ٤٠ԙӻԵĘԷʔԺƉ֕ƯԿՁŌѻžح̗ͳ˕ɏխՍʓՐŌұ9.ҧ3ڐڑڒĲ՗˒՚ӬƷœՠբդզԂըժȜȷȪځ49үΙڇյշչջս˒Čր֊օև֕ڳ֌֎̝֐́ӛדַ֟֓טڽ׸֐׻בֵڼ٢ھ־ۀق׵ֻ׸֯ۆӎ׏ۉš׏؉לۍגۂלۑ׏ۓŽ׬ۖ״ۙ؇ۍ״۝؇ۄ׺͠؋ˉ؍ϺϯԵ
+function createBeatGrid() {
+    const grid = E('div')
+
+    // applyStyle(grid, {
+    //     overflow: 'scroll',
+    //     'max-width': '500px',
+    //     'max-height': '500px'
+    // })
+
+    return grid
+}
