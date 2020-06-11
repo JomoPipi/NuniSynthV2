@@ -88,14 +88,15 @@ function activateKeyboardButton(an : NuniSourceNode) {
 function showSubtypes(node : NuniGraphNode, saveCallback: Function) : Node {
     const subtypes = AudioNodeSubTypes[node.type] as string[]
     const box = E('span')
+    const an = node.audioNode as { type : any }
     if (subtypes.length > 0) { // Show subtypes selector
-        const select = E('select') as HTMLSelectElement
+        const select = E('select')
         
         insertOptions(select, subtypes)
-        select.value = node.audioNode.type
+        select.value = an.type
         select.oninput = function() {
             saveCallback()
-            node.audioNode.type = select.value
+            an.type = select.value
         } 
         box.appendChild(select)
     }

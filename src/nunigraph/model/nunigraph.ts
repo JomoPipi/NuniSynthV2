@@ -109,7 +109,7 @@ export class NuniGraph {
 
     private copyThingsThatCanOnlyBeCopiedAfterConnectionsAreMade(
         nodes : NuniGraphNode[], 
-        mapToNewNode : Indexable<NuniGraphNode>) {
+        mapToNewNode : Indexable<{ audioNode : Indexed }>) {
 
         for (const node of nodes) {
             if (node.audioNode instanceof SubgraphSequencer) {
@@ -134,7 +134,7 @@ export class NuniGraph {
          * stop using it all together.
          *  */ 
         for (const { type, audioNode } of this.nodes) {
-            if (type === NodeTypes.SGS && audioNode.channelData[node.id])
+            if (audioNode instanceof SubgraphSequencer && audioNode.channelData[node.id])
             {
                 audioNode.removeInput(node)
             } 
@@ -199,7 +199,7 @@ export class NuniGraph {
             node1.audioNode.connect(destination.offset)
             
         } else {
-            node1.audioNode.connect(destination)
+            node1.audioNode.connect(destination as AudioNode)
         }
     }
 
@@ -337,7 +337,7 @@ export class NuniGraph {
             if (node.type === NodeTypes.SGS) {
                 const thisNode = this.nodes.find(n => n.id === node.id)!
 
-                thisNode.audioNode.stepMatrix = node.audioNode.stepMatrix
+                ;(<any>thisNode.audioNode).stepMatrix = node.audioNode.stepMatrix
             }
         }
 

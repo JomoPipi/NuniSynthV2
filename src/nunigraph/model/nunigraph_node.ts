@@ -12,26 +12,9 @@ import SubgraphSequencer from '../../webaudio2/sequencers/subgraph_sequencer.js'
 import BufferSequencer from '../../webaudio2/sequencers/buffer_sequencer.js'
 
 
-interface AudioNodeTypeMap {
-    [NodeTypes.GAIN]:   GainNode,
-    [NodeTypes.OSC]:    OscillatorNode2,
-    [NodeTypes.FILTER]: BiquadFilterNode,
-    [NodeTypes.PANNER]: StereoPannerNode,
-    [NodeTypes.DELAY]:  DelayNode,
-    [NodeTypes.BUFFER]: BufferNode2,
-    [NodeTypes.SGS]:    SubgraphSequencer,
-    [NodeTypes.B_SEQ]:  BufferSequencer
-}
-
-type AudioNodeType<T extends keyof AudioNodeTypeMap> = 
-    AudioNodeTypeMap[T] 
-    & {
-        [key in AudioParams] : any
-    }
-
-class AudioNode2<T extends NodeTypes> {
-
-}
+type AudioNode2 = 
+    (GainNode | OscillatorNode2 | BiquadFilterNode | StereoPannerNode | DelayNode | BufferNode2 | SubgraphSequencer | BufferSequencer)
+    & { [key in AudioParams] : AudioParam }
 
 export type NodeSettings = { 
     display : { x : number, y : number }, 
@@ -43,7 +26,7 @@ export class NuniGraphNode {
 
     id : number
     type : NodeTypes
-    audioNode : Indexed // GainNode | OscillatorNode2 | BiquadFilterNode | StereoPannerNode | DelayNode | BufferNode2 | SubgraphSequencer | BufferSequencer
+    audioNode : AudioNode2
     x : number
     y : number
     audioParamValues : Indexable<number>

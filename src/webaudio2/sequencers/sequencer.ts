@@ -11,6 +11,7 @@ import VolumeNodeContainer from '../volumenode_container.js'
 
 type ChannelData = {
     adsr? : GainNode
+    volume? : number
     bufferKey? : number
     }
 

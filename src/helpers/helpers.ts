@@ -21,8 +21,21 @@ const trace = <T>(x : T) => (log(x), x)
 const D = (x:string) => 
     document.getElementById(x)
 
-const E = (x : string, options? : ElementCreationOptions) => 
-    document.createElement(x, options)
+type AllElements = {
+    a      : HTMLAnchorElement,
+    div    : HTMLDivElement,
+    video  : HTMLVideoElement,
+    input  : HTMLInputElement,
+    select : HTMLSelectElement
+}
+
+type CreatedElement<T extends string> = 
+    T extends keyof AllElements 
+        ? AllElements[T] 
+        : HTMLElement
+
+const E = <T extends string>(x : T, options? : ElementCreationOptions) => 
+    document.createElement(x, options) as CreatedElement<T>
 
 const distance = (x : number, y : number, x2 : number, y2 : number) => 
     ((x-x2)**2 + (y-y2)**2)**0.5

@@ -12,7 +12,7 @@ export function sequencerControls(an : Sequencer) {
 
     const controls = E('div')
 
-    const syncCheckBox = E('input') as HTMLInputElement
+    const syncCheckBox = E('input')
 
     addPlayButton: {
         const btn = E('button')
@@ -76,7 +76,7 @@ export function sequencerControls(an : Sequencer) {
         text.innerText = 'Subdivision'
         text.style.marginLeft = '30px'
         text.style.marginRight = '5px'
-        const input = E('input') as HTMLInputElement
+        const input = E('input')
         input.type = 'number' 
         input.min = '1'
         input.max = '128'

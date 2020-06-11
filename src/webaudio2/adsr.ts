@@ -46,11 +46,11 @@ export const ADSR_Controller = {
     },
 
     
-    triggerSource: function(source : SourceNode, gain : AudioParam, time : number) {
+    triggerSource: function(source : SourceNode, gain : AudioParam, time : number, volume = 1) {
         const { attack, decay, sustain } = this
-        gain.cancelScheduledValues(time)                          // Cancel existing triggers
-        gain.setTargetAtTime(1, time, attack)                     // Attack phase
-        gain.setTargetAtTime(sustain ** 2, time + attack, decay)  // Decay phase
+        gain.cancelScheduledValues(time)                                  // Cancel existing triggers
+        gain.setTargetAtTime(volume, time, attack)                        // Attack phase
+        gain.setTargetAtTime(volume * sustain ** 2, time + attack, decay) // Decay phase
         source.start(time)
     },
 
