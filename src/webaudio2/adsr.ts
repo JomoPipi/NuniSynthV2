@@ -33,35 +33,52 @@ const releaseTimeConstant = 10
 export const ADSR_Controller = {
     canvas: D('adsr-canvas')! as HTMLCanvasElement,
 
-    attack: 0.010416984558105469, 
-    decay: 0.17708349227905273, 
-    sustain: 0.2166603088378906, 
-    release: 0.3812504768371582,
+    index: 0,
 
-    trigger: function(gain : AudioParam, time : number) {
-        const { attack, decay, sustain } = this
-        gain.cancelScheduledValues(time)                          // Cancel existing triggers
-        gain.setTargetAtTime(1, time, attack)                     // Attack phase
-        gain.setTargetAtTime(sustain ** 2, time + attack, decay)  // Decay phase
+    values: [{
+        attack: 0.010416984558105469, 
+        decay: 0.17708349227905273, 
+        sustain: 0.2166603088378906, 
+        release: 0.3812504768371582
+        },
+        {
+        attack: 0.110416984558105469, 
+        decay: 0.17708349227905273, 
+        sustain: 0.4166603088378906, 
+        release: 0.1812504768371582
+        },
+        {
+        attack: 0.010416984558105469, 
+        decay: 0.00708349227905273, 
+        sustain: 0.8166603088378906, 
+        release: 0.0012504768371582
+        },
+    ],
+
+    trigger: function(gain : AudioParam, time : number, volume : number, adsrIndex : number) {
+        const { attack, decay, sustain } = this.values[adsrIndex]
+        gain.cancelScheduledValues(time)                                  // Cancel existing triggers
+        gain.setTargetAtTime(volume, time, attack)                        // Attack phase
+        gain.setTargetAtTime(volume * sustain ** 2, time + attack, decay) // Decay phase
     },
 
     
-    triggerSource: function(source : SourceNode, gain : AudioParam, time : number, volume = 1) {
-        const { attack, decay, sustain } = this
+    triggerSource: function(source : SourceNode, gain : AudioParam, time : number, volume : number, index? : number) {
+        const { attack, decay, sustain } = this.values[index ?? this.index]
         gain.cancelScheduledValues(time)                                  // Cancel existing triggers
         gain.setTargetAtTime(volume, time, attack)                        // Attack phase
         gain.setTargetAtTime(volume * sustain ** 2, time + attack, decay) // Decay phase
         source.start(time)
     },
 
-    untriggerAdsr: function(gain : AudioParam, time : number) {
-        const { release } = this
+    untriggerAdsr: function(gain : AudioParam, time : number, index? : number) {
+        const { release } = this.values[index ?? this.index]
         gain.cancelScheduledValues(time)
         gain.setTargetAtTime(0, time, release)
     },
 
-    untriggerAndGetStopTime: function(gain : AudioParam, time : number) {
-        const { release } = this
+    untriggerAndGetStopTime: function(gain : AudioParam, time : number, index? : number) {
+        const { release } = this.values[index ?? this.index]
         gain.cancelScheduledValues(time)
         gain.setTargetAtTime(0, time, release)
         return time + release * releaseTimeConstant
@@ -79,10 +96,12 @@ export const ADSR_Controller = {
         const H = this.canvas.height, W = this.canvas.width
         ctx.lineWidth = 5
 
-        const sum = this.attack + this.decay + 0.25 + this.release
+        const { attack, decay, sustain, release } = this.values[this.index]
+
+        const sum = attack + decay + 0.25 + release
         const adsrWidths = [
-            this.attack  / sum,
-            this.decay   / sum,
+            attack  / sum,
+            decay   / sum,
             0.25         / sum,
             // Release is done by default
         ]
@@ -96,8 +115,8 @@ export const ADSR_Controller = {
 
         const arr = [
             [t1, 0],
-            [t2, 1 - this.sustain],
-            [t3, 1 - this.sustain],
+            [t2, 1 - sustain],
+            [t3, 1 - sustain],
             [t4, 1]
         ]
 
@@ -134,12 +153,24 @@ export const ADSR_Controller = {
         const dial = new JsDial()
         const adsr = ADSR_Controller as Indexed
         
-        dial.value = adsr[s]
+        dial.value = adsr.values[adsr.index][s]
         dial.render()
         dial.attach((value : number) => {
-            adsr[s] = value * value
+            adsr.values[adsr.index][s] = value * value
             ADSR_Controller.render()
         })
         knobs.appendChild(dial.html)
     })
+}
+
+{
+    const box = D('select-adsr')!
+    box.onclick = function(e : MouseEvent) {
+        const btn = e.target
+        if (btn instanceof HTMLElement && btn.id.startsWith('adsr-')) {
+            const which = btn.id.split('-')[1].charCodeAt(0) - 65
+            ADSR_Controller.index = which
+            ADSR_Controller.render()
+        }
+    }
 }

@@ -9,11 +9,6 @@ a {
     color: rgb(121, 157, 146);
 }
 
-.scale-builder-container {
-    background-color: $color1;
-    width: 100%;
-}
-
 .scale-builder-inner { 
     display: grid;
     grid-template-columns: 1fr 1fr;

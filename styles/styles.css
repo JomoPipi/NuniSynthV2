@@ -105,19 +105,9 @@ button {
 #graph-contextmenu {
   display: none;
   position: absolute;
-  background-color: white;
-  color: #999;
+  background-color: #444044;
+  color: #9a97a3;
   z-index: 3;
-}
-
-#graph-contextmenu .contextmenu-button {
-  text-align: left;
-  margin: 0px;
-  padding: 0 10px;
-}
-
-#graph-contextmenu .contextmenu-button:hover {
-  background-color: rgba(255, 0, 0, 0.204);
 }
 
 .prompt {
@@ -465,8 +455,16 @@ code {
   border: none;
 }
 
+.list-btn:hover {
+  background: rgba(0, 255, 255, 0.0204);
+}
+
 .list-btn:nth-child(odd) {
   background: #3a393a;
+}
+
+.list-btn:nth-child(odd):hover {
+  background: rgba(0, 255, 255, 0.0204);
 }
 
 ::-webkit-scrollbar {
@@ -552,8 +550,8 @@ code {
 .number-grab {
   font: 1em Roboto;
   letter-spacing: 0.2em;
-  background: -webkit-gradient(linear, left top, left bottom, from(#302f30), to(black));
-  background: linear-gradient(#302f30, black);
+  background: -webkit-gradient(linear, left top, left bottom, from(#3a393a), to(#111));
+  background: linear-gradient(#3a393a, #111);
   color: #9a97a3;
   border: 1px solid #444044;
   padding: 10px;
@@ -613,11 +611,6 @@ code {
 
 a {
   color: #799d92;
-}
-
-.scale-builder-container {
-  background-color: #302f30;
-  width: 100%;
 }
 
 .scale-builder-inner {

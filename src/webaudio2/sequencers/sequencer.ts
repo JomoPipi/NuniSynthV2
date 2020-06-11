@@ -11,7 +11,7 @@ import VolumeNodeContainer from '../volumenode_container.js'
 
 type ChannelData = {
     adsr? : GainNode
-    volume? : number
+    volume : number
     bufferKey? : number
     }
 
@@ -35,6 +35,7 @@ export default class Sequencer extends VolumeNodeContainer {
     HTMLGrid : HTMLElement
     protected HTMLBoxes : Indexable<Indexable<HTMLElement>>
     isInSync : boolean
+    adsrIndex : number
     channelData : Indexable<ChannelData>
     // controls : SequencerControls
 
@@ -54,6 +55,7 @@ export default class Sequencer extends VolumeNodeContainer {
         this.HTMLGrid = createBeatGrid()
         this.HTMLBoxes = {}
         this.isInSync = true
+        this.adsrIndex = 0
         this.channelData = {}
         // this.controls = new SequencerControls(this)
     }
@@ -156,8 +158,6 @@ export default class Sequencer extends VolumeNodeContainer {
         for (const key in this.channelData) {
             this.channelData[key].adsr?.connect(this.volumeNode)
         }
-        this.isPlaying = false
-        this.currentStep = 0
         this.setupGrid()
     }
 
@@ -211,24 +211,63 @@ export default class Sequencer extends VolumeNodeContainer {
         }
 
         function rowOptions(items : HTMLElement, key : string) {
-            const muteSoloBox = E('span')
-            const mute = E('button')
-            const solo = E('button')
-            // const optionsBtn = E('button')
-            mute.classList.add('top-bar-btn')
-            solo.classList.add('top-bar-btn')
-            mute.innerText = 'M'
-            solo.innerText = 'S'
-            // optionsBtn.innerText = '⚙️'
-            mute.dataset.sequencerRowKey = key
-            solo.dataset.sequencerRowKey = key
-            mute.classList.toggle('selected', mutedChannel[key] === true)
-            muteSoloBox.append(items, mute)//, solo)
-            return muteSoloBox
+            const box = E('span')
+            mute_solo_box: {
+                const muteSoloBox = E('span')
+                const mute = E('button')
+                const solo = E('button')
+                // const optionsBtn = E('button')
+                mute.classList.add('top-bar-btn')
+                solo.classList.add('top-bar-btn')
+                mute.innerText = 'M'
+                solo.innerText = 'S'
+                // optionsBtn.innerText = '⚙️'
+                mute.dataset.sequencerRowKey = key
+                solo.dataset.sequencerRowKey = key
+                mute.classList.toggle('selected', mutedChannel[key] === true)
+                muteSoloBox.append(items, mute)//, solo)
+
+                box.appendChild(muteSoloBox)
+            }
+            
+
+            add_volume_slider: {
+                const value = channelData[key].volume||0.0
+
+                const slider = E('input')
+                    slider.type = 'range'
+                    slider.min = '0.1'
+                    slider.value = value.toString()
+                    slider.step = '0.0000001'
+                    slider.max = Math.SQRT2.toString()
+                    slider.style.width = '50px'
+                    slider.style.transform = 'rotate(-90deg)'
+
+                const valueText = E('span')
+                    valueText.innerText = 
+                        volumeTodB(value).toFixed(1) + 'dB'
+
+                    applyStyle(valueText, {
+                        display: 'inline-block',
+                        width: '70px'
+                        })
+                    
+                slider.oninput = () => {
+                    const v = (+slider.value) ** 4
+                    channelData[key].volume = v
+                    valueText.innerText = 
+                        volumeTodB(v).toFixed(1) + 'dB'
+                }
+
+                box.append(E('br'), valueText,slider)
+            }
+
+            return box
         }
     }
 
     additionalRowItems(key : string) {
+        // Override this function in a child class.
         return E('span')
     }
 }

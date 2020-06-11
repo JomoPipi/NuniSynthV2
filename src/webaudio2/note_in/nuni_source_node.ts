@@ -79,7 +79,7 @@ export class NuniSourceNode extends VolumeNodeContainer {
         adsr.connect(this.volumeNode)
         
         src.connect(adsr)
-        ADSR_Controller.triggerSource(src, adsr.gain, time)
+        ADSR_Controller.triggerSource(src, adsr.gain, time, 1)
         const stopTime = ADSR_Controller.untriggerAndGetStopTime(adsr.gain, time + duration)
         src.stop(stopTime)
     }
@@ -116,7 +116,7 @@ export class NuniSourceNode extends VolumeNodeContainer {
         
         src.connect(adsr)
         
-        ADSR_Controller.triggerSource(src, adsr.gain, time)
+        ADSR_Controller.triggerSource(src, adsr.gain, time, 1)
         
         this.playingKeys[key] = {
             stop: (time : number) =>

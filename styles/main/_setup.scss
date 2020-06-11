@@ -127,19 +127,9 @@ button {
 #graph-contextmenu {
     display: none;
     position: absolute;
-    background-color: white;
-    color: #999;
+    background-color: $color3;
+    color: $color5;
     z-index: 3;
-    
-    .contextmenu-button {
-        text-align: left;
-        margin: 0px;
-        padding: 0 10px;
-
-        &:hover {
-            background-color: rgba(255, 0, 0, 0.204);
-        }
-    }
 }
 
 .prompt {

@@ -88,8 +88,8 @@ export default class BufferSequencer extends Sequencer {
         adsr.connect(this.volumeNode)
         
         src.connect(adsr)
-        ADSR_Controller.triggerSource(src, adsr.gain, time, volume)
-        const stopTime = ADSR_Controller.untriggerAndGetStopTime(adsr.gain, time + duration)
+        ADSR_Controller.triggerSource(src, adsr.gain, time, volume, this.adsrIndex)
+        const stopTime = ADSR_Controller.untriggerAndGetStopTime(adsr.gain, time + duration, this.adsrIndex)
         src.stop(stopTime)
     }
 
@@ -115,37 +115,6 @@ export default class BufferSequencer extends Sequencer {
                 box.appendChild(btn)
             })
             box.appendChild(valueText)
-        }
-
-        add_volume_slider: {
-            const value = this.channelData[key].volume||0.0
-
-            const slider = E('input')
-                slider.type = 'range'
-                slider.min = '0.1'
-                slider.value = value.toString()
-                slider.step = '0.0000001'
-                slider.max = Math.SQRT2.toString()
-                slider.style.width = '50px'
-                slider.style.transform = 'rotate(-90deg)'
-
-            const valueText = E('span')
-                valueText.innerText = 
-                    volumeTodB(value).toFixed(1) + 'dB'
-
-                applyStyle(valueText, {
-                    display: 'inline-block',
-                    width: '70px'
-                    })
-                
-            slider.oninput = () => {
-                const v = (+slider.value) ** 4
-                this.channelData[key].volume = v
-                valueText.innerText = 
-                    volumeTodB(v).toFixed(1) + 'dB'
-            }
-
-            box.append(E('br'), valueText,slider)
         }
 
         return box

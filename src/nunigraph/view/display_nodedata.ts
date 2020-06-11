@@ -31,7 +31,6 @@ export default function createValuesWindow(
 
     if (node.audioNode instanceof Sequencer) {
         controls.appendChild(sequencerControls(node.audioNode))
-        // controls.appendChild(node.audioNode.controls.view)
     }
 
     if (node.audioNode instanceof BufferNode2) {

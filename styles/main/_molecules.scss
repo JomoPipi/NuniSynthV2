@@ -24,9 +24,17 @@
     text-align: left;
     font-size: 1em;
     border: none; 
+
+    &:hover {
+        background: rgba(0, 255, 255, 0.0204);
+    }
 }
 .list-btn:nth-child(odd) { 
     background: $color2;
+    
+    &:hover {
+        background: rgba(0, 255, 255, 0.0204);
+    }
 }
 
 ::-webkit-scrollbar {

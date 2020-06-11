@@ -31,17 +31,14 @@ export default class VolumeNodeContainer {
     
     connect(destination : Destination) {
         this.connection(true, destination)
-        this.refresh()
     }
 
     disconnect(destination? : Destination) {
         if (!destination) {
             this.volumeNode.disconnect()
-            this.refresh()
             return;
         }
         this.connection(false, destination)
-        this.refresh()
     }
 
     protected connection(on : boolean, d : Destination) {

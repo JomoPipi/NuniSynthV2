@@ -7,6 +7,7 @@
 
 import Sequencer from '../../webaudio2/sequencers/sequencer.js'
 import BufferSequencer from '../../webaudio2/sequencers/buffer_sequencer.js'
+import { BufferNode2 } from '../../webaudio2/note_in/buffer2.js'
 
 export function sequencerControls(an : Sequencer) {
 
@@ -86,6 +87,32 @@ export function sequencerControls(an : Sequencer) {
             syncCheckBox.checked = an.isInSync = false
         }
         controls.append(text, input)
+    }
+
+    chooseADSR: {
+        const box = E('span')
+        box.style.marginLeft = '30px'
+        box.style.marginRight = '5px'
+        const abc = [0,1,2].map(n => {
+            const btn = E('button')
+                btn.dataset.key = n.toString()
+                btn.classList.add('top-bar-btn')
+                btn.innerText = String.fromCharCode(n + 65)
+            box.appendChild(btn)
+            return btn
+        })
+        abc[an.adsrIndex].classList.add('selected')
+        box.onclick = (e : MouseEvent) => {
+            const btn = e.target
+            if (btn instanceof HTMLElement && btn.dataset.key) {
+                an.adsrIndex = +btn.dataset.key
+
+                for (const _btn of abc) {
+                    _btn.classList.toggle('selected', _btn === btn)
+                }
+            }
+        }
+        controls.appendChild(box)
     }
     
     an.setupGrid()

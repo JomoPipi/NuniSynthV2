@@ -14,7 +14,8 @@ enum NodeTypes
     DELAY   = 'delay',
     BUFFER  = 'buffer',
     SGS     = 'subgraph-sequencer',
-    B_SEQ   = 'buffer-sequencer'
+    B_SEQ   = 'buffer-sequencer',
+    CSN     = 'constant-source'
 }
 
 type AudioParams 
@@ -25,6 +26,7 @@ type AudioParams
     | 'Q' 
     | 'delayTime' 
     | 'playbackRate'
+    | 'offset'
 
 type ConnectionType = 
     AudioParams | 'channel'
@@ -45,7 +47,8 @@ const createAudioNode =
     [NodeTypes.DELAY]:  'createDelay',
     [NodeTypes.BUFFER]: 'createBuffer2',
     [NodeTypes.SGS]:    'createSubgraphSequencer',
-    [NodeTypes.B_SEQ]:  'createBufferSequencer'
+    [NodeTypes.B_SEQ]:  'createBufferSequencer',
+    [NodeTypes.CSN]:    'createConstantSource'
 }
 
 const SupportsInputChannels = {
@@ -56,18 +59,32 @@ const SupportsInputChannels = {
     [NodeTypes.DELAY]:  true,
     [NodeTypes.BUFFER]: false,
     [NodeTypes.SGS]:    true,
-    [NodeTypes.B_SEQ]:  false
+    [NodeTypes.B_SEQ]:  false,
+    [NodeTypes.CSN]:    false
 }
 
-const AudioNodeParams = {
-    [NodeTypes.GAIN]:   ['gain']                          as AudioParams[],
-    [NodeTypes.OSC]:    ['frequency','detune']            as AudioParams[],
-    [NodeTypes.FILTER]: ['frequency','Q','gain','detune'] as AudioParams[],
-    [NodeTypes.PANNER]: ['pan']                           as AudioParams[],
-    [NodeTypes.DELAY]:  ['delayTime']                     as AudioParams[],
-    [NodeTypes.BUFFER]: ['playbackRate','detune']         as AudioParams[],
+const MustBeStarted = {
+    [NodeTypes.GAIN]:   false,
+    [NodeTypes.OSC]:    false,
+    [NodeTypes.FILTER]: false,
+    [NodeTypes.PANNER]: false,
+    [NodeTypes.DELAY]:  false,
+    [NodeTypes.BUFFER]: false,
+    [NodeTypes.SGS]:    false,
+    [NodeTypes.B_SEQ]:  false,
+    [NodeTypes.CSN]:    true,
+}
+
+const AudioNodeParams : Indexable<AudioParams[]> = {
+    [NodeTypes.GAIN]:   ['gain'],
+    [NodeTypes.OSC]:    ['frequency','detune'],
+    [NodeTypes.FILTER]: ['frequency','Q','gain','detune'],
+    [NodeTypes.PANNER]: ['pan'],
+    [NodeTypes.DELAY]:  ['delayTime'],
+    [NodeTypes.BUFFER]: ['playbackRate','detune'],
     [NodeTypes.SGS]:    [],
-    [NodeTypes.B_SEQ]:  []
+    [NodeTypes.B_SEQ]:  [],
+    [NodeTypes.CSN]:    ['offset']
 }
 
 const AudioNodeSubTypes = {
@@ -80,7 +97,8 @@ const AudioNodeSubTypes = {
     [NodeTypes.DELAY]:  [],
     [NodeTypes.BUFFER]: [],
     [NodeTypes.SGS]:    [],
-    [NodeTypes.B_SEQ]:  []
+    [NodeTypes.B_SEQ]:  [],
+    [NodeTypes.CSN]:    []
 }
 
 const MasterGainColor = '#555'
@@ -93,7 +111,8 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     [NodeTypes.DELAY]:  'rgba(255,255,0,0.5)',
     [NodeTypes.BUFFER]: 'rgba(0,255,255,0.5)',
     [NodeTypes.SGS]:    'rgba(255,0,255,0.5)',
-    [NodeTypes.B_SEQ]:  'rgba(0,255,195,0.5)'
+    [NodeTypes.B_SEQ]:  'rgba(0,255,195,0.5)',
+    [NodeTypes.CSN]:    'rgba(255,200,200,0.5)'
 }
 
 const ConnectionTypeColors : { readonly [key in ConnectionType] : string } =
@@ -105,7 +124,8 @@ const ConnectionTypeColors : { readonly [key in ConnectionType] : string } =
     Q:            'violet',
     pan:          'orange',
     delayTime:    'yellow',
-    playbackRate: 'cyan'
+    playbackRate: 'cyan',
+    offset:       'rgb(255,200,200)'
 }
 
 const DefaultParamValues : { readonly [key in AudioParams] : number } = 
@@ -116,7 +136,8 @@ const DefaultParamValues : { readonly [key in AudioParams] : number } =
     Q:            1,
     pan:          0,
     delayTime:    0.5,
-    playbackRate: 1
+    playbackRate: 1,
+    offset:       0,
 }
 
 const AudioParamRanges : { readonly [key in AudioParams] : [number,number] } = 
@@ -128,6 +149,7 @@ const AudioParamRanges : { readonly [key in AudioParams] : [number,number] } =
     pan:          [-1.0, 1.0],
     delayTime:    [0, 1],
     playbackRate: [0, 32],
+    offset:       [-1e5, 1e5]
 }
 
 const hasLinearSlider : { readonly [key in AudioParams] : boolean } = 
@@ -138,7 +160,8 @@ const hasLinearSlider : { readonly [key in AudioParams] : boolean } =
     Q:            true,
     pan:          true,
     delayTime:    false,
-    playbackRate: false
+    playbackRate: false,
+    offset:       true
 }
 
 const sliderFactor : { readonly [key in AudioParams] : number } = 
@@ -149,7 +172,8 @@ const sliderFactor : { readonly [key in AudioParams] : number } =
     Q:            .05,
     pan:          .005,
     delayTime:    .005,
-    playbackRate: 2**-6
+    playbackRate: 2**-6,
+    offset:       2.0
 }
 
 type CustomAudioNodeProperties =
@@ -158,12 +182,12 @@ type CustomAudioNodeProperties =
     type?        : string;
     subdiv?      : number;
     isInSync?    : boolean;
-    bufferKey? : number;
+    bufferKey?   : number;
     nSteps?      : number;
 }
 
 const isTransferable =
-    'kbMode,type,subdiv,isInSync,bufferKey,nSteps'
+    'kbMode,type,subdiv,isInSync,bufferKey,nSteps,adsrIndex'
     .split(',')
     .reduce((acc,prop) => 
         ({ ...acc, [prop]: true })

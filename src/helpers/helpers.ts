@@ -22,10 +22,10 @@ const D = (x:string) =>
     document.getElementById(x)
 
 type AllElements = {
-    a      : HTMLAnchorElement,
-    div    : HTMLDivElement,
-    video  : HTMLVideoElement,
-    input  : HTMLInputElement,
+    a      : HTMLAnchorElement
+    div    : HTMLDivElement
+    video  : HTMLVideoElement
+    input  : HTMLInputElement
     select : HTMLSelectElement
 }
 

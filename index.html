@@ -50,23 +50,25 @@
 </div>
 
 <div id="graph-contextmenu">
-  <span style="color:rgba(0,0,0,0.65)"> Create.. </span>
-  <button id="create-gain2" class="contextmenu-button">       
+  <span> Create.. </span>
+  <button id="create-gain2" class="list-btn">
       new gain         </button>
-  <button id="create-oscillator2" class="contextmenu-button"> 
+  <button id="create-oscillator2" class="list-btn"> 
       new oscillator   </button>
-  <button id="create-filter2" class="contextmenu-button">     
+  <button id="create-filter2" class="list-btn">     
       new filter       </button>
-  <button id="create-panner2" class="contextmenu-button">     
+  <button id="create-panner2" class="list-btn">     
       new panner       </button>
-  <button id="create-delay2" class="contextmenu-button">      
+  <button id="create-delay2" class="list-btn">      
       new delay        </button>    
-  <button id="create-buffer2" class="contextmenu-button">    
+  <button id="create-buffer2" class="list-btn">    
       new buffer       </button>    
-  <button id="create-subgraph-sequencer2" class="contextmenu-button">    
+  <button id="create-subgraph-sequencer2" class="list-btn">    
       subgraph sequencer </button>    
-  <button id="create-buffer-sequencer2" class="contextmenu-button">    
+  <button id="create-buffer-sequencer2" class="list-btn">    
       buffer sequencer </button>
+  <button id="create-constant-source2" class="list-btn">    
+      constant source </button>
 </div>
 
 <div id="connection-type-prompt" class="prompt"></div>
@@ -163,7 +165,33 @@
             <!-- ADSR -->
             <span class="adsr-box">
 
-              <div class="center"> ADSR </div>
+              <div id="select-adsr" class="center"> 
+                ADSR | 
+
+                <input id="adsr-A" 
+                  type="radio"
+                  name="radio"
+                  checked="true">
+                <label for="adsr-A" class="radio"> 
+                  A
+                </label>
+
+                <input id="adsr-B"
+                  type="radio"
+                  name="radio">
+                <label for="adsr-B" class="radio"> 
+                  B
+                </label>
+
+                <input id="adsr-C"
+                  type="radio"
+                  name="radio">
+                <label for="adsr-C" class="radio"> 
+                  C
+                </label>
+                
+              </div>
+
               <canvas id="adsr-canvas"></canvas>
               
               <div id="adsr-knobs" class="adsr-knobs"> 
@@ -194,20 +222,6 @@
                 <div id="mono-poly-select" class="center">
                   VOICES: <input id="n-poly-slider" type="range" min=1 max=20>
                   <span id="n-poly-text"> 10 </span>
-                  <!-- <input id="keyboard-mono-radio" 
-                    type="radio"
-                    name="radio">
-                  <label for="keyboard-mono-radio" class="radio"> 
-                    MONO
-                  </label> -->
-  
-                  <!-- <input id="keyboard-poly-radio"
-                    type="radio"
-                    name="radio"
-                    checked="true">
-                  <label for="keyboard-poly-radio" class="radio"> 
-                    POLY
-                  </label> -->
                 </div>
 
               </span>  
@@ -218,7 +232,7 @@
 
           <br>
           
-          <div id="scale-builder-container" class="scale-builder-container">
+          <div id="scale-builder-container">
 
             <div class="center">
               <span id="scale-kinds" class="flat-grid swapper">

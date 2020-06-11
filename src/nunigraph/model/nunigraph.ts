@@ -12,6 +12,7 @@ import { LZW_compress, LZW_decompress } from '../../helpers/lzw_compression.js'
 import SubgraphSequencer from '../../webaudio2/sequencers/subgraph_sequencer.js'
 import { Destination } from '../../webaudio2/volumenode_container.js'
 import NuniAudioParam from '../../webaudio2/nuni_audioparam.js'
+import Sequencer from '../../webaudio2/sequencers/sequencer.js'
 
 const defaultSettings = () => ({
     display: { x: 0.5, y: 0.5 },
@@ -112,11 +113,14 @@ export class NuniGraph {
         mapToNewNode : Indexable<{ audioNode : Indexed }>) {
 
         for (const node of nodes) {
-            if (node.audioNode instanceof SubgraphSequencer) {
+            if (node.audioNode instanceof Sequencer) {
                 
                 const matrix = node.audioNode.stepMatrix
                 for (const key in matrix) {
-                    mapToNewNode[node.id].audioNode.stepMatrix[key] = matrix[key].slice()
+                    mapToNewNode[node.id]
+                        .audioNode
+                        .stepMatrix[key] 
+                        = matrix[key].slice()
                 }
             }
         }
@@ -133,7 +137,7 @@ export class NuniGraph {
          * A better solution may be to wrap disconnect(), or 
          * stop using it all together.
          *  */ 
-        for (const { type, audioNode } of this.nodes) {
+        for (const { audioNode } of this.nodes) {
             if (audioNode instanceof SubgraphSequencer && audioNode.channelData[node.id])
             {
                 audioNode.removeInput(node)
@@ -144,7 +148,7 @@ export class NuniGraph {
     deleteNode(node : NuniGraphNode) {
         // Without this, the setTimeout could keep looping forever:
         // if (node.type === NodeTypes.SGS) {
-        if (node.audioNode instanceof SubgraphSequencer) {
+        if (node.audioNode instanceof Sequencer) {
             node.audioNode.stop()
         }
 
@@ -334,7 +338,7 @@ export class NuniGraph {
         for (const node of nodes) {
             // Can't use instanceof to check if audioNode is a SubgraphSequencer
             // because those nodes were parsed with JSON.parse
-            if (node.type === NodeTypes.SGS) {
+            if (node.type === NodeTypes.SGS || node.type === NodeTypes.B_SEQ) {
                 const thisNode = this.nodes.find(n => n.id === node.id)!
 
                 ;(<any>thisNode.audioNode).stepMatrix = node.audioNode.stepMatrix

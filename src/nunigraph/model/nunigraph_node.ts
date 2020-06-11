@@ -12,8 +12,22 @@ import SubgraphSequencer from '../../webaudio2/sequencers/subgraph_sequencer.js'
 import BufferSequencer from '../../webaudio2/sequencers/buffer_sequencer.js'
 
 
-type AudioNode2 = 
-    (GainNode | OscillatorNode2 | BiquadFilterNode | StereoPannerNode | DelayNode | BufferNode2 | SubgraphSequencer | BufferSequencer)
+
+
+type AudioNodeMap = {
+    [NodeTypes.GAIN]:   GainNode
+    [NodeTypes.OSC]:    OscillatorNode2
+    [NodeTypes.FILTER]: BiquadFilterNode
+    [NodeTypes.PANNER]: StereoPannerNode
+    [NodeTypes.DELAY]:  DelayNode
+    [NodeTypes.BUFFER]: BufferNode2
+    [NodeTypes.SGS]:    SubgraphSequencer
+    [NodeTypes.B_SEQ]:  BufferSequencer
+    [NodeTypes.CSN]:    ConstantSourceNode
+}
+
+type AudioNode2<T extends NodeTypes> 
+    = AudioNodeMap[T] 
     & { [key in AudioParams] : AudioParam }
 
 export type NodeSettings = { 
@@ -22,23 +36,23 @@ export type NodeSettings = {
     audioNodeProperties : CustomAudioNodeProperties 
 }
 
-export class NuniGraphNode {
+export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
     id : number
-    type : NodeTypes
-    audioNode : AudioNode2
+    type : T
+    audioNode : AudioNode2<T>
     x : number
     y : number
     audioParamValues : Indexable<number>
     
-    constructor(id : number, type : NodeTypes, settings : NodeSettings) {
+    constructor(id : number, type : T, settings : NodeSettings) {
 
         // Change display: {x,y} to just x,y later to save space on the string conversions
         // (will require changing/throwing away all currently saved graphs :/)
         const { 
             display: {x,y}, 
             audioParamValues, 
-            audioNodeProperties,
+            audioNodeProperties
             
             } = settings
 
@@ -49,6 +63,8 @@ export class NuniGraphNode {
 
         this.audioNode = (<any>audioCtx)[createAudioNode[type]]()
         
+        if (MustBeStarted[type]) (<ConstantSourceNode>this.audioNode).start(0)
+
         Object.assign(this.audioNode, audioNodeProperties)
 
         this.audioParamValues = audioParamValues
