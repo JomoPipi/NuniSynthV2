@@ -110,18 +110,25 @@ export class NuniGraph {
 
     private copyThingsThatCanOnlyBeCopiedAfterConnectionsAreMade(
         nodes : NuniGraphNode[], 
-        mapToNewNode : Indexable<{ audioNode : Indexed }>) {
-
+        mapToNewNode : Indexable<{ audioNode : Indexed, id : number }>) {
+            log('went here')
         for (const node of nodes) {
             if (node.audioNode instanceof Sequencer) {
+                log('went here, too')
                 
                 const matrix = node.audioNode.stepMatrix
-                for (const key in matrix) {
+                log('stepMatrix to copy =',matrix)
+                for (const id in matrix) {
+                    const newId = mapToNewNode[id]?.id ?? id
                     mapToNewNode[node.id]
                         .audioNode
-                        .stepMatrix[key] 
-                        = matrix[key].slice()
+                        .stepMatrix[newId]
+                        = matrix[id].slice()
                 }
+                log('stepMatrix on the new node =',
+                mapToNewNode[node.id]
+                    .audioNode
+                    .stepMatrix)
             }
         }
     }

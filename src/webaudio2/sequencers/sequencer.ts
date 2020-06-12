@@ -232,16 +232,16 @@ export default class Sequencer extends VolumeNodeContainer {
             
 
             add_volume_slider: {
-                const value = channelData[key].volume||0.0
-
+                const value = channelData[key].volume
+                
                 const slider = E('input')
                     slider.type = 'range'
                     slider.min = '0.1'
-                    slider.value = value.toString()
                     slider.step = '0.0000001'
                     slider.max = Math.SQRT2.toString()
-                    slider.style.width = '50px'
+                    slider.value = (value**(1/4.0)).toString()
                     slider.style.transform = 'rotate(-90deg)'
+                    slider.style.width = '50px'
 
                 const valueText = E('span')
                     valueText.innerText = 
@@ -253,7 +253,8 @@ export default class Sequencer extends VolumeNodeContainer {
                         })
                     
                 slider.oninput = () => {
-                    const v = (+slider.value) ** 4
+                    
+                    const v = (+slider.value) ** 4.0
                     channelData[key].volume = v
                     valueText.innerText = 
                         volumeTodB(v).toFixed(1) + 'dB'

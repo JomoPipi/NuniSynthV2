@@ -38,7 +38,7 @@ const AudioNodeTypeMap = {
     [NodeTypes.CSN]:    ConstantSourceNode,
 }
 
-type AudioNode2<T extends NodeTypes> 
+export type AudioNode2<T extends NodeTypes> 
     = AudioNodeMap[T] 
     & { [key in AudioParams] : AudioParam }
     

@@ -76,7 +76,7 @@ D('buffer-formula-templates-button')!.onclick = () =>
 const container = D('formula-template-container')!
 function showBufferFormulaTemplates() {
     const list = E('span')
-    list.classList.add('window')
+    list.classList.add('window') // background color causes highlight color to be weird
     list.classList.add('show')
     list.classList.add('preset-list')
     for (const name in presets) {

@@ -55,7 +55,7 @@ import { G, GraphController } from '../init.js'
 
     Apply_The_Default_Preset: {
 
-        G.fromString(presets['Sequencer 3'])
+        G.fromString(presets['Keyboard 1'])
         GraphController.renderer.render()
     }
 }

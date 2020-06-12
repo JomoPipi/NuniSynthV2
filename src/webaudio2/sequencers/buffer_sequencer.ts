@@ -30,8 +30,16 @@ export default class BufferSequencer extends Sequencer {
         this.detune = new NuniAudioParam(ctx)
         this.playbackRate = new NuniAudioParam(ctx)
         this.addInput()
-
     }
+
+    // setPattern(matrix : Indexable<boolean[]>) {
+    //     this.stepMatrix = {}
+    //     this.nextId = 0
+    //     for (const key in matrix) {
+    //         this.addInput(matrix[key])
+    //     }
+    //     this.refresh()
+    // }
 
     addInput() {
         this.channelData[this.nextId] = {
@@ -58,7 +66,7 @@ export default class BufferSequencer extends Sequencer {
 
         const src = this.ctx.createBufferSource()
 
-        // src.playbackRate.setValueAtTime(0, this.ctx.currentTime)
+        src.playbackRate.setValueAtTime(0, this.ctx.currentTime)
         this.detune.connect(src.detune)
         this.playbackRate.connect(src.playbackRate)
         src.buffer = BufferStorage.get(bufferKey!)

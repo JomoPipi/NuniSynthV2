@@ -83,7 +83,7 @@ const AudioNodeParams : Indexable<AudioParams[]> = {
     [NodeTypes.DELAY]:  ['delayTime'],
     [NodeTypes.BUFFER]: ['playbackRate','detune'],
     [NodeTypes.SGS]:    [],
-    [NodeTypes.B_SEQ]:  [],
+    [NodeTypes.B_SEQ]:  ['playbackRate','detune'],
     [NodeTypes.CSN]:    ['offset']
 }
 
@@ -178,12 +178,13 @@ const sliderFactor : { readonly [key in AudioParams] : number } =
 
 type CustomAudioNodeProperties =
 {
-    kbMode?      : boolean;
-    type?        : string;
-    subdiv?      : number;
-    isInSync?    : boolean;
-    bufferKey?   : number;
-    nSteps?      : number;
+    kbMode?      : boolean
+    type?        : string
+    subdiv?      : number
+    isInSync?    : boolean
+    bufferKey?   : number
+    nSteps?      : number
+    adsrIndex?   : number
 }
 
 const isTransferable =
@@ -191,4 +192,4 @@ const isTransferable =
     .split(',')
     .reduce((acc,prop) => 
         ({ ...acc, [prop]: true })
-    , {} as Indexed)
+    , {} as { [key in keyof CustomAudioNodeProperties]: true })

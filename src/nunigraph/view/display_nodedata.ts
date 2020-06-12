@@ -41,7 +41,9 @@ export default function createValuesWindow(
         controls.appendChild(activateKeyboardButton(node.audioNode))
     }
 
-    controls.appendChild(exposeAudioParams(node, saveCallback))
+    if (node.type !== NodeTypes.B_SEQ) {
+        controls.appendChild(exposeAudioParams(node, saveCallback))
+    }
 
     // Add delete button, but not if id is 0, because that's the master gain.
     if (node.id !== 0) {
