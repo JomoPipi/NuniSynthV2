@@ -34,13 +34,14 @@ function invertBuffer(index : number) {
         record:                 () => recordTo(BufferUtils.currentIndex),
         'reverse-buffer':       () => reverseBuffer(BufferUtils.currentIndex),
         'invert-buffer':        () => invertBuffer(BufferUtils.currentIndex),
-        'apply-buffer-formula': () => formulateBuffer(BufferUtils.currentIndex),
-        'new-buffer-length':() => {
-            const value = (D('new-buffer-length') as HTMLSelectElement).value
-            D('new-buffer-length-text')!.innerText = value
-            BufferUtils.nextBufferDuration = +value
-        }
+        'apply-buffer-formula': () => formulateBuffer(BufferUtils.currentIndex)
     })[btn.id] || ((x:unknown) => x))()
+}
+
+D('new-buffer-length')!.oninput = () => {
+    const value = (D('new-buffer-length') as HTMLSelectElement).value
+    D('new-buffer-length-text')!.innerText = value
+    BufferUtils.nextBufferDuration = +value
 }
 
 // BUFFER EXPS

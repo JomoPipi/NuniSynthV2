@@ -157,7 +157,7 @@ function samplerControls(audioNode : BufferNode2) {
 
 function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node {
     const allParams = E('div')
-    for (const param of AudioNodeParams[node.type as NodeTypes]) {
+    for (const param of AudioNodeParams[node.type]) {
         const box = E('div')
         box.classList.add('box')
 

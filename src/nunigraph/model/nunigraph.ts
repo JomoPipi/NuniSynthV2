@@ -147,7 +147,6 @@ export class NuniGraph {
 
     deleteNode(node : NuniGraphNode) {
         // Without this, the setTimeout could keep looping forever:
-        // if (node.type === NodeTypes.SGS) {
         if (node.audioNode instanceof Sequencer) {
             node.audioNode.stop()
         }

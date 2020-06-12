@@ -30,7 +30,7 @@
     }
 }
 .list-btn:nth-child(odd) { 
-    background: $color2;
+    background: lighten($color:  $color1, $amount: 1%);
     
     &:hover {
         background: rgba(0, 255, 255, 0.0204);

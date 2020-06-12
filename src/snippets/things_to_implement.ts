@@ -17,3 +17,6 @@
 
 // similar program
 // https://eternal.robcheung.com/
+
+// Value curve module/function/node:
+// https://developer.mozilla.org/en-US/docs/Web/API/AudioParam/setValueCurveAtTime

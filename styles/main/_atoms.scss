@@ -36,7 +36,14 @@ code {
 }
 .text-input-wide {
     @extend .text-input;
+    width: 350px;
+    height: 40px;
+}
+
+.text-input-medium {
+    @extend .text-input;
     width: 200px;
+    height: 30px;
 }
 
 .center {
@@ -58,7 +65,7 @@ code {
     grid-template-columns: 1fr;
     overflow-y: scroll;
     text-align: left;
-    width: 100px;
+    width: 150px;
 }
 
 .buffer-box {
@@ -128,4 +135,8 @@ code {
     background: 
         linear-gradient($color5, $color3);
     border: 2px solid $color0;
+}
+
+.smaller-text {
+    font-size: .75em;
 }

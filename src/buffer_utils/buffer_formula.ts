@@ -30,18 +30,19 @@ export function formulateBuffer(index : number) {
     else {
         BufferStorage.set(index, buffer)
         BufferUtils.refreshAffectedBuffers()
+        BufferUtils.updateBufferUI()
         log('buffer formulation complete')
     }
     
 
     function validateExp(expression : string) {
         const {
-            sin, cos, tan, log, log2, exp
+            sin, cos, tan, log, log2, exp, sqrt
             } = Math
         try {
             eval(`for (let channel = 0; channel < buffer.numberOfChannels; channel++) {  
                 const nowBuffering = buffer.getChannelData(channel)
-                for (let n = 0; n < buffer.length; n++) {
+                for (let n = 1; n < buffer.length; n++) {
                     nowBuffering[n] = clamp(-1, ${expression}, 1)
                 }
             }`)
@@ -52,4 +53,50 @@ export function formulateBuffer(index : number) {
         
         return undefined
     }
+}
+
+const presets = {
+
+      'Hard Wave': 'sin(n / 32.0) + sin(n / 512.0)'
+    , 'Kick-1A': '0.5 * sin(n / sqrt(n/3.0))' 
+    , 'Bass-1A': '0.5 * sin(n / sqrt(n/3.0)) - cos(n ** 0.3) * 0.25'
+    , 'Bass-1B': '0.5 * sin(n / sqrt(n/3.0)) - cos(n ** 0.5) * 0.25'
+    , 'Bass-1C': '0.5 * sin(n / sqrt(n/3.0)) - cos(n ** 0.57) * 0.25'
+    , 'Bass-1D': '0.5 * sin(n / sqrt(n/3.0)) - cos(n ** 0.58) * 0.25'
+    , 'Bass-1E': '0.5 * sin(n / sqrt(n/3.0)) - cos(n ** 0.59) * 0.25'
+    , 'Bass-1F': '0.5 * sin(n / sqrt(n/3.0)) - cos(n ** 0.6) * 0.25'
+    , 'Bass-2A': '0.5 * sin(n / sqrt(n/3.0)) + sin(n/70) * cos(n ** 0.5) * 0.25'
+    , 'Warble Laser': '0.5 * sin(n / 10 / sqrt(n/5.0)) * cos(n /  sqrt(n/50.0))'
+    }
+
+
+D('buffer-formula-templates-button')!.onclick = () =>
+    showBufferFormulaTemplates()
+
+const container = D('formula-template-container')!
+function showBufferFormulaTemplates() {
+    const list = E('span')
+    list.classList.add('window')
+    list.classList.add('show')
+    list.classList.add('preset-list')
+    for (const name in presets) {
+        const btn = E('div')
+            btn.classList.add('list-btn')
+            btn.innerText = name
+            
+        list.appendChild(btn)
+    }
+    container.appendChild(list)
+
+    window.addEventListener('mousedown', clickBufferTemplateOrNot)
+}
+
+function clickBufferTemplateOrNot(e : MouseEvent) {
+    if (e.target instanceof HTMLElement && e.target.innerText in presets) {
+        ;(D('buffer-formula') as HTMLInputElement).value = 
+            (<Indexed>presets)[e.target.innerText]
+    }
+
+    window.removeEventListener('mousedown', clickBufferTemplateOrNot)
+    container.innerHTML = ''
 }

@@ -311,14 +311,20 @@ code {
   width: 40px;
 }
 
-.text-input, .text-input-wide {
+.text-input, .text-input-wide, .text-input-medium {
   background-color: rgba(0, 0, 0, 0.1);
   border: 1px solid #444044;
   color: white;
 }
 
 .text-input-wide {
+  width: 350px;
+  height: 40px;
+}
+
+.text-input-medium {
   width: 200px;
+  height: 30px;
 }
 
 .center, .loading-text {
@@ -344,7 +350,7 @@ code {
       grid-template-columns: 1fr;
   overflow-y: scroll;
   text-align: left;
-  width: 100px;
+  width: 150px;
 }
 
 .buffer-box {
@@ -432,6 +438,10 @@ code {
   border: 2px solid #201e20;
 }
 
+.smaller-text {
+  font-size: .75em;
+}
+
 .apply-btn {
   margin: 5px;
   padding: 0px 5px;
@@ -460,7 +470,7 @@ code {
 }
 
 .list-btn:nth-child(odd) {
-  background: #3a393a;
+  background: #333233;
 }
 
 .list-btn:nth-child(odd):hover {

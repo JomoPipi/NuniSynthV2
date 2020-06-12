@@ -26,9 +26,22 @@ type AudioNodeMap = {
     [NodeTypes.CSN]:    ConstantSourceNode
 }
 
+const AudioNodeTypeMap = {
+    [NodeTypes.GAIN]:   GainNode,
+    [NodeTypes.OSC]:    OscillatorNode2,
+    [NodeTypes.FILTER]: BiquadFilterNode,
+    [NodeTypes.PANNER]: StereoPannerNode,
+    [NodeTypes.DELAY]:  DelayNode,
+    [NodeTypes.BUFFER]: BufferNode2,
+    [NodeTypes.SGS]:    SubgraphSequencer,
+    [NodeTypes.B_SEQ]:  BufferSequencer,
+    [NodeTypes.CSN]:    ConstantSourceNode,
+}
+
 type AudioNode2<T extends NodeTypes> 
     = AudioNodeMap[T] 
     & { [key in AudioParams] : AudioParam }
+    
 
 export type NodeSettings = { 
     display : { x : number, y : number }, 

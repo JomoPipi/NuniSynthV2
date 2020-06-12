@@ -8,6 +8,9 @@
 import { G, GraphController } from '../init.js'
 import MasterClock from '../../webaudio2/sequencers/master-clock.js';
 
+
+
+
 // Create Nodes
 Object.values(NodeTypes).forEach(type => {
     const create = () => {
@@ -26,8 +29,13 @@ Object.values(NodeTypes).forEach(type => {
         
         GraphController.renderer.render()
     }
-    // D(`create-${type}`)!.onclick = create 
-    D(`create-${type}2`)!.onclick = create
+    
+    const btn = E('button')
+        btn.classList.add('list-btn')
+        btn.innerText = type
+        btn.onclick = create
+
+    D('graph-contextmenu')!.appendChild(btn)
 })
 
 // Copy the graph
