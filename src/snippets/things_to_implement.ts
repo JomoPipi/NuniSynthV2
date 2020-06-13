@@ -20,3 +20,7 @@
 
 // Value curve module/function/node:
 // https://developer.mozilla.org/en-US/docs/Web/API/AudioParam/setValueCurveAtTime
+
+// equalizer
+// https://stackoverflow.com/questions/30065093/web-audio-api-equalizer
+// https://stackoverflow.com/questions/12738056/creating-a-10-band-equalizer-using-web-audio-api

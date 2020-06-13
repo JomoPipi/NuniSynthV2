@@ -13,10 +13,6 @@ import { BufferUtils } from "../../buffer_utils/internal.js"
 
 
 
-type NoteOptions = { 
-    bufferKey : number,
-    loop? : boolean
-    }
 
 export default class BufferSequencer extends Sequencer {
 

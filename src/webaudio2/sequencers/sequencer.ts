@@ -61,6 +61,7 @@ export default class Sequencer extends VolumeNodeContainer {
     }
 
     updateTempo(tempo : number) {
+        tempo = clamp(1, tempo, Infinity)
         const newTick = (60 * 4 / tempo) / this.subdiv
         if (this.tick !== newTick) {
             this.tick = newTick

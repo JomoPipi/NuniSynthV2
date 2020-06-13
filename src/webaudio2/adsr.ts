@@ -10,36 +10,22 @@ interface SourceNode {
     stop : (when : number) => void;
 }
 
-// export class Adsr extends GainNode {
-//     /**
-//      * The only purpose of this class right now is 
-//      * to add the property lastReleastId to GainNodes.
-//      * 
-//      * releaseId is -1 when the adsr is not in the release stage,
-//      * and some other number, otherwise.
-//      */
-//     releaseId : number
-//     constructor(ctx : AudioContext) {
-//         super(ctx)
-//         this.releaseId = -1
-//     }
-// }
 
 // Why 10 ? It gives the `gain.setTargetAtTime(0, t, release)`
 // call enough time to get the volume down by ~99.995%, according to
 // https://developer.mozilla.org/en-US/docs/Web/API/AudioParam/setTargetAtTime#Choosing_a_good_timeConstant
 const releaseTimeConstant = 10
 
-const waveArray = new Float32Array(9);
-waveArray[0] = 0.5;
-waveArray[1] = 1;
-waveArray[2] = 0.5;
-waveArray[3] = 0;
-waveArray[4] = 0.5;
-waveArray[5] = 5;
-waveArray[6] = 0.5;
-waveArray[7] = 0;
-waveArray[8] = 0.5;
+// const waveArray = new Float32Array(9);
+// waveArray[0] = 0.5;
+// waveArray[1] = 1;
+// waveArray[2] = 0.5;
+// waveArray[3] = 0;
+// waveArray[4] = 0.5;
+// waveArray[5] = 5;
+// waveArray[6] = 0.5;
+// waveArray[7] = 0;
+// waveArray[8] = 0.5;
 
 export const ADSR_Controller = {
     canvas: D('adsr-canvas')! as HTMLCanvasElement,
@@ -70,8 +56,8 @@ export const ADSR_Controller = {
         const { attack, decay, sustain } = this.values[adsrIndex]
         gain.cancelScheduledValues(time)                                  // Cancel existing triggers
         gain.setTargetAtTime(volume, time, attack)                        // Attack phase
-        // gain.setTargetAtTime(volume * sustain ** 2, time + attack, decay) // Decay phase
-        gain.setValueCurveAtTime(waveArray, time, 1)
+        gain.setTargetAtTime(volume * sustain ** 2, time + attack, decay) // Decay phase
+        // gain.setValueCurveAtTime(waveArray, time, 1)
     },
 
     

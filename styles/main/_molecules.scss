@@ -26,14 +26,22 @@
     border: none; 
 
     &:hover {
-        background: rgba(0, 255, 255, 0.0204);
+        background: 
+            mix(
+            $color1,
+            rgb(255, 0, 255),
+            98%);
     }
 }
 .list-btn:nth-child(odd) { 
     background: lighten($color:  $color1, $amount: 1%);
     
     &:hover {
-        background: rgba(0, 255, 255, 0.0204);
+        background:
+            mix(
+            $color1,
+            rgb(255, 0, 255),
+            98%);
     }
 }
 
