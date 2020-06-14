@@ -111,11 +111,12 @@
 
 
 .lcd-display {
-    background: #2F3034;
+    background: rgb(122, 149, 189);
     padding: 10px;
     margin: 10px 0px;
-    color: #10DDEA;
-    padding: 20px;
+    color: rgb(206, 252, 255);
+    box-shadow: 0 0 20px 0px rgb(122, 149, 189);
+    padding: 18x;
     font-family: monospace;
     letter-spacing: 0.15em;
 }

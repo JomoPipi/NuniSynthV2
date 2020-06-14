@@ -7,115 +7,15 @@
 
 import Sequencer from '../../webaudio2/sequencers/sequencer.js'
 import BufferSequencer from '../../webaudio2/sequencers/buffer_sequencer.js'
-import { BufferNode2 } from '../../webaudio2/note_in/buffer2.js'
 
 export function sequencerControls(an : Sequencer) {
 
     const controls = E('div')
 
-    const syncCheckBox = E('input')
-
-    addPlayButton: {
-        const btn = E('button')
-        btn.innerText = 'play'
-        btn.classList.add('kb-button')
-        btn.classList.toggle('selected', an.isPlaying)
-        btn.onclick = () => {
-            const play = btn.classList.toggle('selected')
-            if (play) 
-                an.play()
-            else 
-                an.stop()
-        }
-        controls.appendChild(btn)
-    }
-
-    changeStepLength: {
-        const text = E('span')
-        text.innerText = an.nSteps.toString()
-        ;['-','+'].forEach((op,i) => {
-            const btn = E('button'); btn.innerText = op
-            btn.classList.add('top-bar-btn')
-            btn.onclick = () => {
-                const v = clamp(0, 
-                    an.nSteps + Math.sign(i - .5), 64)
-    
-                text.innerText = v.toString()
-                an.updateSteps(v)
-                an.setupGrid()
-
-                // We go out of sync because of this
-                syncCheckBox.checked = an.isInSync = false
-            }
-            controls.appendChild(btn)
-        })
-        controls.appendChild(text)
-    }
-
-    toggleSyncPlay: {
-        const text = E('span')
-        text.style.marginLeft = '30px'
-        text.style.marginRight = '5px'
-        text.innerText = 'sync'
-        syncCheckBox.type = 'checkbox'
-        syncCheckBox.checked = an.isInSync
-
-        syncCheckBox.onclick = function() { 
-            an.isInSync = syncCheckBox.checked
-            if (an.isInSync) {
-                an.noteTime = an.startTime = an.currentStep = 0
-            }
-            else {
-                an.noteTime = an.ctx.currentTime
-            }
-        }
-        controls.append(text, syncCheckBox)
-    }
-
-    changeSubdivision: {
-        const text = E('span')
-        text.innerText = 'Subdivision'
-        text.style.marginLeft = '30px'
-        text.style.marginRight = '5px'
-        const input = E('input')
-        input.type = 'number' 
-        input.min = '1'
-        input.max = '128'
-        input.value = an.subdiv.toString()
-        input.oninput = function() { 
-            an.subdiv = clamp(2**-8, +input.value, 1e6)
-            syncCheckBox.checked = an.isInSync = false
-        }
-        controls.append(text, input)
-    }
-
-    chooseADSR: {
-        const box = E('span')
-        box.style.marginLeft = '30px'
-        box.style.marginRight = '5px'
-        const abc = [0,1,2].map(n => {
-            const btn = E('button')
-                btn.dataset.key = n.toString()
-                btn.classList.add('top-bar-btn')
-                btn.innerText = String.fromCharCode(n + 65)
-            box.appendChild(btn)
-            return btn
-        })
-        abc[an.adsrIndex].classList.add('selected')
-        box.onclick = (e : MouseEvent) => {
-            const btn = e.target
-            if (btn instanceof HTMLElement && btn.dataset.key) {
-                an.adsrIndex = +btn.dataset.key
-
-                for (const _btn of abc) {
-                    _btn.classList.toggle('selected', _btn === btn)
-                }
-            }
-        }
-        controls.appendChild(box)
-    }
+    controls.appendChild(createTopRowControls(an))
     
     an.setupGrid()
+
     controls.appendChild(an.HTMLGrid)
 
     add_or_remove_inputs: {
@@ -142,9 +42,144 @@ export function sequencerControls(an : Sequencer) {
 
     }
 
+    return controls
+}
+
+
+
+
+function createTopRowControls(an : Sequencer) {
+
+    const controls = E('div')
+    const syncCheckBox = E('input')
+
+    controls.classList.add('flat-grid')
+
+    addPlayButton: {
+        const btn = E('button')
+        btn.innerText = '▷'
+        btn.classList.add('kb-button')
+        btn.classList.toggle('selected', an.isPlaying)
+        btn.onclick = () => {
+            const play = btn.classList.toggle('selected')
+            if (play) 
+                an.play()
+            else 
+                an.stop()
+        }
+        controls.appendChild(btn)
+    }
+
+    changeStepLength: {
+        const box = E('span')
+        const text = E('span')
+        box.innerText = 'steps '
+        text.innerText = an.nSteps.toString()
+        ;['-','+'].forEach((op,i) => {
+            const btn = E('button'); btn.innerText = op
+            btn.classList.add('top-bar-btn')
+            btn.onclick = () => {
+                const v = clamp(0, 
+                    an.nSteps + Math.sign(i - .5), 64)
+    
+                text.innerText = v.toString()
+                an.updateSteps(v)
+                an.setupGrid()
+
+                // We go out of sync because of this
+                syncCheckBox.checked = an.isInSync = false
+            }
+            box.appendChild(btn)
+        })
+        box.appendChild(text)
+        controls.appendChild(box)
+    }
+
+    toggleSyncPlay: {
+        const box = E('span')
+        const text = E('span')
+        
+        text.innerText = 'sync '
+        syncCheckBox.type = 'checkbox'
+        syncCheckBox.checked = an.isInSync
+
+        syncCheckBox.onclick = function() { 
+            an.isInSync = syncCheckBox.checked
+            if (an.isInSync) {
+                an.noteTime = an.startTime = an.currentStep = 0
+            }
+            else {
+                an.noteTime = an.ctx.currentTime
+            }
+        }
+        box.append(text, syncCheckBox)
+        controls.append(box)
+    }
+
+    changeSubdivision: {
+        const box = E('span')
+        const text = E('span')
+        text.innerText = 'subdivision '
+        
+        const input = E('input')
+        input.type = 'number' 
+        input.min = '1'
+        input.max = '128'
+        input.value = an.subdiv.toString()
+        input.oninput = function() { 
+            an.subdiv = clamp(2**-8, +input.value, 1e6)
+            syncCheckBox.checked = an.isInSync = false
+        }
+        box.append(text, input)
+        controls.append(box)
+    }
+
+    chooseADSR: {
+        const box = E('span')
+        box.innerText = 'ADSR '
+        
+        const abc = [0,1,2].map(n => {
+            const btn = E('button')
+                btn.dataset.key = n.toString()
+                btn.classList.add('top-bar-btn')
+                btn.innerText = String.fromCharCode(n + 65)
+            box.appendChild(btn)
+            return btn
+        })
+        abc[an.adsrIndex].classList.add('selected')
+        box.onclick = (e : MouseEvent) => {
+            const btn = e.target
+            if (btn instanceof HTMLElement && btn.dataset.key) {
+                an.adsrIndex = +btn.dataset.key
+
+                for (const _btn of abc) {
+                    _btn.classList.toggle('selected', _btn === btn)
+                }
+            }
+        }
+        controls.appendChild(box)
+    }
+
 
     return controls
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // {"connectiăs":Ā2Č[ĀidČ31,āăąćĉnTypeČāhaĄel"},ĒĔ:32ĘĂħĜăğġģcĥħĩ}]Ę10ĐĭĕėęĴĈĶĠĢ:ĤĦąĽĬ"ēĕıŇěŉĞŋĹĻŐĪĿ"14ŃœĮĖĲĚĆřķŌŎļĪŒŔįŖĳŘĝŬŜŏĨşĘ21ŤŲŧŗŪŷśōĺźőńųŨňƅĸƇŝŻľĘĖƀŦ9ƍŶŊƐŮŞƔ"İƗĕ7ƚƄƜŭƈůƠ33ƣ:0ƦĵŚƝƪƟŠ3ţ:đťĕ3ƲūƆ"frequencyżơ6ƯƹǀƏƩƒƊƽįƥƃƳŸōpĦǍ37ǐƿǚǁƵǕǠ8Ư4ƱǥǓŹƫƸ9ǐ8ǒƨģǄǆǈǊǌƠǬƯǭŵƧƴǔƉǍ4ſƻƋ3ǵǮǷōǹǇǉǋȇďȊǗȈǶȄǰƷī"nodeċȗŲǭtǂgain"ĘĈtlŭȪȬȮ"xČ0.0ȍǌư.1707ŁȌ2513661ŖaudĉNȡŌ{ȞɏɑoParamValǈȤĀȴȭȿ0998046875}īƋŖȨƝoscillatorȶȰȲģɹɻɽɿʁȶȸȿ3ɪʐʑʒ9ǙȾȺ79ɋ484Ɉ73ɭ18ƙ"ɘɒɔČĀćʍĀtempoČɍ0ȞADSRɤ"ɋ642łč"ǅȲaseIĮ-1ɳĘvoɢmeɓȢʩȞMONOČʽʿǭkbMʨōȠąȶsourcȣʩʼʚˀˮĥsStɜʮĮtrǈˍ"˩tputȤ[Š_ɷŭsȬĢĘȢtu˦˂s˫˖ȞȑǻȔ̒̔čɳɗɐʧȢǜ"̊˦Ęʦɚɜɞɠɢ˭˂̗ȓȾɌ6.2ʟ8ʢ350Ţȍ̎̐ŌʵɴǗŁȯǂʇɼɾʀʂȯiȱŭ͇ʉ͊ʌȹ̴4Ęʖ.ʘʚʜʞʠȈʣ̦̟o˔ɕātʬ"ʮʰʲ:ʴʶʸʺˮ˝˱˂˄eˆˈˊˌȞˏˑ˓ˣɖĘ˘˚˜˰˟ˡˣȟặ̌˩˫̭ĀͳˁĀ˳˵˷e˹˻e˽˿́̃Đ̆̈ģ̤Ό̾̑Ā̓c̕Ę̯ǼˮΩ̞̕ə̢ͤΤȶ̧ɛɝɟɡɣˮέ̙Ǭ1.5Ɇ747ɂɯ2ǤΦ̀ˍƋŢͅɸɺ͈ʊ͍͋ͩʅō͉͐ʋĘʍȺ55ʓϤʤ͚͘ʾ͜Ɂ͞ʢʤ̧ͤˮʫˮͪʱʳˀͯʹʻΒˮͶ͸ˉČˋ˽ͽu˒ϰ̜΂˙˛:ΒĘˠˢ˕ˤ΋˧ΎˬϺΆ˲ˆΖr˸Č˺˼ȞΝ̂̄Ρǂζ̍ȅΧ̛̣ɖ̖ǅȒή̚Ϊ̜˽ϯɔε̋η͢ι̪μΐǃЯ̘Ⱦ9ʝ.ʜɌ1ɪ̻6ʙ6ЧЩώ͂Ųžϒ͏ϔ͑ϞϘ͎ʆїϝϗϠȻȽ͔Ϩʛʝϫʡ͠ʥ͢ІʪͧϳʯϵͭϷĘʷϹͲЗ͵ĨͷˇϿ:ЁͼːЄͿА΁"΃ЊЌ"ЎΉ˥Ό˨˪ЕѷʾʹΔЙ˶ЛΘНΚΜ̂ΞУĘ̇Хйя̿ίЬ˽οȾΨҧеѫзҢ̥Ѫəмλ̬ʻҩČ2Ɍ.6ɇ56τ00ϣɰҤ̑́űŦņ΢ōsubgɝph-ˇаˬϗʄ̉ӏӑaӓӕǺȓeџ͔2͖"͘ҿ90ƹ6ȼǡ8ɰɃ͡γ΀ͦͨϴͬͮѴͰʻȖĀϽѼͺȞŁϼѺϾԃŀƺԀԇԂЀˌŽȉԌ˅ԎѾͻˎҁЅ΀Ȟn˵epȤӧsʮpMɿriͨȖ[fɡˇ,ƱОe԰ŠԅƻԱΚ,ԭlԯ0ԵƺԬԮԳԲ԰ԴԑĐՄԻԽԴȞm̂ΘCǨ˂ȖՊԳšˁՕԊČՕԜoʮTi˒ʳ7ьσĘԣ˷ՠբưĲ˪ǅntԞpҹĘisPɾyȬgҚǈ͌ckӥ5ĘwȬdowIsOġɧՙ"HTMLGԨĮ֑҅֓Boxп2ư˖Žͭ֡"֟ӿȞ֟ƮЇ՗֠֫Ł֣֮0:֧ŀֲ֪҅Ţָ֭4ְֳַֹֻ֤֨1ֺ׃ֽ׆ִׂ֥ׄȞնIԝyǊսՖӎbɑvČ8βĉҴ̫νдӉŕѕΣӜӒӔӖ̘ӣʃϙӛӐצӠӗתϟ͔ʏϥʓʕ͔ӪӬɮӯ7ӱɂǙж҄ӷѯͫ϶ʵӼѶՓԆԔ͹ԏԄΓ˃ԍ؎ԖԄԋؒ؍ѽЁՇѹؙԃҀ;ѬԜղȤю̣ԤԦ˺ԩˮԫՉՂՅƱرԵˁՁԼՃԹՙرԺՂԿĐع,خضػقՕŠžĐƱؿفԯمՍՏdՑȆ֫Ƞ՟աŌɁեƭٚٛʏӦէҗtժ̀խrկձԤմœշչջדտցȿ1ʽٳٴٳքֆֈ֊֌ǉ՛د֐֖֤֒֔֙L֛֝Ӿׅ֢Ԓֿ֤֨֫֩֟ԋڌ5׀ֲΓֵׇؐڍֶָڕ:ڒښڔּ֮ڗԊڙšּ׉ׁ׀ּڠڨ:ڢ҅žډ׊ڧڳ׉ڳׂԑڟڐׄڱ˽׎אג:Մ̣ӏח϶כ̨κמΐϏǗƭףȐɼʮә׬Ǹ۔ײȷ׹Ŗ͘ɁɃɅ8ɇɉɋɍӴ̠ɕۊδǂlֈǞsċۧۋнҶξс̰Čʟ9ҼτİӬɍփ"QʳĘɦ׹ӆёסįӧӌ"܆͌ћō܏ۛȿ6ʘ׶ʑ͔͗۟ɄӬۢɈɊɌɎҮ҄ۊםоʻ܆ЋӂۏƁئ܍Ϝϖ׫ܑ˾ѝܲ׳ܕܗܘɪܚʎɫİʿɇ8Ӏˀфӧ؂ͥϲ˂ӹ؇ϸͱ˂ϻ؝ѻؔѿԘءԛЈ΄ЋΆЍΈАΊұҏΏЖғؑΕ٠ҙۄқРҝТΠҠ܍Ц"ύҦгЭά۷бҫݶ̝۲۫Ɲݲθ̩ҵןĀҸǘ.9ȌɪҺ1ϣ̵ʿ܈ȹܭŦǙ܍ǞħܴۖޘąӤȿ5۝״ܿӦ2݂݄ɩ4݇ܤ۩۲ܧ۵˂ޘޓђŦȍܰܶ͒ܐϚܵʈў͓ɨѢʎȈ˞դ̵̺İٞҲۨϱѮ݋ѰӺѳ"ѵݏΑѸԓݓؚԗ"ЃԚܥݙ҈ݜҊݞŭҍГҐпݑҕ˴ݨΙПĘСΟƻФƝتĦgʅޒвΫрӡݺЫݼҭӵ̡ǂߴn߶Όނیܨ۶߼̙ǭݴưޔĕʤ܍ܓӚģܓѠȼܽϡь׻Ӯ8ӰӲ؁ޫ֤ࠈ۴ޅ܎ȫɧ̺ӈƋǬےࠩȵ޹ȳࠪ޾Ⱥ̵ܻʐ׸߁Ţˀ߄0߆ޥުࠁެ߉۳ބпܪȺך޳Čșͩȩ࠵࠳ࠗࡒܔȺщ࠹ɪ߀Ⱥʝޠ̵ɯܖӬɩӀݾݘࡆޮࠨܪɪࠑڟɶ͆޷љࠖϛࡰޞȺɊࠛ.࡝ޥդ݃ɂʠʙ܁݈ߋӸߎݍ؉ߓ˯ݥ،ߗ؟ݖ҂آߞ΅ݥݝЏߣВէДߧߕ"ݧΗ߬Λݬ̀ݮ߱ݰҰΥШҥ߹נ߻ӗҪ߾αࡥࠂހңࡧރۍҷݹࠍȻɇ߸́]}
 

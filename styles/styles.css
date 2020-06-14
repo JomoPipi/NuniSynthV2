@@ -580,11 +580,13 @@ code {
 }
 
 .lcd-display {
-  background: #2F3034;
+  background: #7a95bd;
   padding: 10px;
   margin: 10px 0px;
-  color: #10DDEA;
-  padding: 20px;
+  color: #cefcff;
+  -webkit-box-shadow: 0 0 20px 0px #7a95bd;
+          box-shadow: 0 0 20px 0px #7a95bd;
+  padding: 18x;
   font-family: monospace;
   letter-spacing: 0.15em;
 }

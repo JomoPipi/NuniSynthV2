@@ -84,7 +84,7 @@ class BufferUtily {
             const buffer = ctx.createBuffer(2, ctx.sampleRate * seconds, ctx.sampleRate)
             for (let channel = 0; channel < buffer.numberOfChannels; channel++) {  
                 const nowBuffering = buffer.getChannelData(channel)
-                for (let i = 0; i < buffer.length; i++) {
+                for (let i = 1; i < buffer.length; i++) {
                     nowBuffering[i] = presets(i,channel)[n] || (i % 2) / 2.0
                 }
             }
