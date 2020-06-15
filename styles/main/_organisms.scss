@@ -111,11 +111,11 @@
 
 
 .lcd-display {
-    background: rgb(122, 149, 189);
+    background: rgb(85, 98, 116);
     padding: 10px;
     margin: 10px 0px;
     color: rgb(206, 252, 255);
-    box-shadow: 0 0 20px 0px rgb(122, 149, 189);
+    box-shadow: 0 0 20px 0px rgb(85, 98, 116);
     padding: 18x;
     font-family: monospace;
     letter-spacing: 0.15em;
@@ -140,4 +140,9 @@
     height: 20px;
     border: none;
     background-color: transparent;
+}
+
+.analyser-canvas { 
+    @extend .full;
+    height: 70px;
 }

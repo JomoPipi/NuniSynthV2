@@ -9,6 +9,7 @@ import { BufferNode2 } from './note_in/buffer2.js'
 import { OscillatorNode2 } from './note_in/oscillator2.js'
 import SubgraphSequencer from './sequencers/subgraph_sequencer.js'
 import BufferSequencer from './sequencers/buffer_sequencer.js'
+import graphVisualEqualizer from './equalizer/global_visualizer.js'
 
 
 export class AudioContext2 extends AudioContext {
@@ -20,11 +21,17 @@ export class AudioContext2 extends AudioContext {
      */
 
     volume : GainNode
+    analyser : AnalyserNode
 
     constructor() {
         super()
+        this.analyser = this.createAnalyser()
+        this.analyser.connect(this.destination)
+
         this.volume = this.createGain()
-        this.volume.connect(this.destination)
+        this.volume.connect(this.analyser)
+
+        graphVisualEqualizer(this.analyser)
     }
 
 

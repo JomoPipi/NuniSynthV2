@@ -97,13 +97,6 @@ import MasterClock from '../../webaudio2/sequencers/master-clock.js';
     }
 }
 
-// Clear the graph
-;(D('clear-graph-button') as HTMLButtonElement).onclick = function() {
-    GraphController.save()
-    G.clear()
-    GraphController.renderer.render()
-}
-
 // Right-click options
 D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
     e.preventDefault()

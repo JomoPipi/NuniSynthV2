@@ -374,8 +374,8 @@ code {
 .vert-split {
   display: -ms-grid;
   display: grid;
-  -ms-grid-rows: 1fr 1fr;
-      grid-template-rows: 1fr 1fr;
+  -ms-grid-rows: 1fr;
+      grid-template-rows: 1fr;
 }
 
 .flat-grid {
@@ -398,7 +398,7 @@ code {
   width: 100%;
 }
 
-.full {
+.full, .analyser-canvas {
   width: 100%;
   height: 100%;
 }
@@ -580,12 +580,12 @@ code {
 }
 
 .lcd-display {
-  background: #7a95bd;
+  background: #556274;
   padding: 10px;
   margin: 10px 0px;
   color: #cefcff;
-  -webkit-box-shadow: 0 0 20px 0px #7a95bd;
-          box-shadow: 0 0 20px 0px #7a95bd;
+  -webkit-box-shadow: 0 0 20px 0px #556274;
+          box-shadow: 0 0 20px 0px #556274;
   padding: 18x;
   font-family: monospace;
   letter-spacing: 0.15em;
@@ -607,6 +607,10 @@ code {
   height: 20px;
   border: none;
   background-color: transparent;
+}
+
+.analyser-canvas {
+  height: 70px;
 }
 
 .adsr-and-kb {

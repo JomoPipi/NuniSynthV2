@@ -37,7 +37,11 @@ export function formulateBuffer(index : number) {
 
     function validateExp(expression : string) {
         const {
-            sin, cos, tan, log, log2, exp, sqrt
+            sin, cos, tan, log, log2, exp, sqrt, random, 
+            atan, atan2, atanh, abs, acos, acosh, asin, asinh,
+            cbrt, ceil, cosh, expm1, floor, hypot, log10, LN2, 
+            LN10, LOG2E, max, min, pow, round, sign, SQRT1_2, SQRT2,
+            tanh, trunc
             } = Math
         try {
             eval(`for (let channel = 0; channel < buffer.numberOfChannels; channel++) {  
@@ -69,6 +73,8 @@ const presets = {
     , 'Bass-1F': '0.5 * sin(n / sqrt(n/3.0)) - cos(n ** 0.6) * 0.25'
     , 'Bass-2A': '0.5 * sin(n / sqrt(n/3.0)) + sin(n/70) * cos(n ** 0.5) * 0.25'
     , 'Warble Laser': '0.5 * sin(n / 10 / sqrt(n/5.0)) * cos(n /  sqrt(n/50.0))'
+    , 'Noise 1': 'random() * .5 - .25'
+    , 'Noise 2': 'sin(n/(2- sin(n/11))) * sin(n/23) * 0.5'
     }
 
 
