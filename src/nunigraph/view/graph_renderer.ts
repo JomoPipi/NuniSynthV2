@@ -354,7 +354,6 @@ export class NuniGraphRenderer {
                 : node.id === 0 ? MasterGainColor : NodeTypeColors[node.type]
 
             ctx.lineWidth = nodeLineWidth
-            ctx.shadowBlur = 0
             ctx.shadowColor = ''
             ctx.fillStyle = 
                 this.getNodeColor(
@@ -362,14 +361,13 @@ export class NuniGraphRenderer {
                     H, 
                     W, 
                     highlightCenter)
-
-            
-            if (highlightCenter) {
-                ctx.shadowBlur = nodeRadius * 2.0
-                ctx.shadowColor = 'rgba(255, 255, 255, .2)'
-            }
             
             this.circle(X, Y, nodeRadius)
+
+            if (node.id === 0) {
+                ctx.fillStyle = '#BAA'
+                ctx.fillText('MASTER GAIN', X - 50, Y - nodeRadius * 1.5)
+            }
         }
     }
 
@@ -427,7 +425,7 @@ export class NuniGraphRenderer {
          *  Why the outer loop? To prioritize being able
          *  to drag nodes over making connection arrows.
          *  */ 
-        for (const checkNodeClicked of [true,false]) {
+        for (const checkNodeClicked of [true, false]) {
             for (const node of nodes) {
                 const [X,Y] = [node.x*W, node.y*H]
                 const d = distance(x,y,X,Y)

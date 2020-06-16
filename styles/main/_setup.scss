@@ -260,6 +260,7 @@ button {
     color: $color5;
     border: 1px solid $color3;
     z-index: 2;
+    box-shadow: 0px 5px 10px rgba(0,0,0,0.4);
 }
 
 
@@ -281,7 +282,7 @@ button {
 
 #buffer-canvas {
     width: 100%;
-    border: 1px solid cyan;
+    border: 1px solid $color1;
 }
 
 .length-indicator {

@@ -26,7 +26,7 @@ export class NuniGraph {
      * It has a list of nodes and a connection map.*
      */
     
-    nextId : number
+    private nextId : number
     nodes : NuniGraphNode[]
     oneWayConnections : Indexable<ConnecteeData>
 
@@ -133,7 +133,7 @@ export class NuniGraph {
         }
     }
 
-    disconnectFromSpecialNodes(node : NuniGraphNode) { 
+    private disconnectFromSpecialNodes(node : NuniGraphNode) { 
         /** Motivation:
          * Since some nodes get 
          * disconnected in a custom way,

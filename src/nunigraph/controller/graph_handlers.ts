@@ -6,7 +6,7 @@
 
 
 import { G, GraphController } from '../init.js'
-import MasterClock from '../../webaudio2/sequencers/master-clock.js';
+import MasterClock from '../../webaudio2/sequencers/master_clock.js';
 
 
 

@@ -66,6 +66,9 @@ class JsDial {
     render() {
         const imgDegreeOffset = 195
         this.dial.style.transform = 
-            `rotate(${this.value * 320 + imgDegreeOffset}deg)`
+            `rotate(${
+                320 * 
+                ((this.value-this.min)/(this.max-this.min)) +
+                imgDegreeOffset}deg)`
     }
 }

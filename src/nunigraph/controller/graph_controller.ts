@@ -66,6 +66,7 @@ export class NuniGraphController {
         }
 
         renderer.canvas.onmousedown = e => this.mousedown(e)
+        renderer.canvas.ondblclick = e => this.doubleClick(e)
         window.addEventListener('mousemove', e => mouse_move(e))
         window.addEventListener('mouseup', e => this.mouseup(e))
         window.addEventListener('keydown', e => this.keydown(e))
@@ -103,8 +104,8 @@ export class NuniGraphController {
     selectNode (node : NuniGraphNode) {
         this.unselectNode()
         this.selectedNodes = [node]
-        this.openValuesWindow(node)
-        this.openWindow[node.id].classList.add('selected2')
+        // this.openValuesWindow(node)
+        this.openWindow[node.id]?.classList.add('selected2')
     }
 
     unselectNode() {
@@ -188,7 +189,7 @@ export class NuniGraphController {
         
         D('node-windows')!.appendChild(container)
         moveContainerToTop(container)
-        UI_clamp(0, 0, container, document.body)
+        UI_clamp(0, 0, container, D('nunigraph-stuff')!)
     }
 
 
@@ -202,19 +203,32 @@ export class NuniGraphController {
             const [X,Y] = this.selectionStart
             return this.selectedNodes = 
             this.g.nodes.filter(node => {
-                const [ax, bx] = [x!, X].sort((a,b)=>a-b)
-                const [ay, by] = [y!, Y].sort((a,b)=>a-b)
+                const [startX, endX] = [x!, X].sort((a,b)=>a-b)
+                const [startY, endY] = [y!, Y].sort((a,b)=>a-b)
                 const isInside = (nx : number, ny : number) => 
-                    ax < nx && nx < bx && 
-                    ay < ny && ny < by
+                    startX < nx && nx < endX && 
+                    startY < ny && ny < endY
 
                 return isInside(node.x*W, node.y*H)
             })
         }
-        if (this.selectedNodes.length) {
-            return this.selectedNodes
+        return this.selectedNodes
+    }
+
+    private doubleClick(e : MouseEvent) {
+        const { type, id, node } = 
+            this.lastMouseDownMsg = 
+            this.renderer.getGraphMouseTarget(e)
+
+        if (!node) return;
+
+        if (!this.openWindow[node.id]) {
+            this.openValuesWindow(node)
+            this.openWindow[node.id].classList.add('selected2')
         }
-        return []
+        else {
+            this.closeValuesWindow(node.id)
+        }
     }
 
     private mousedown(e : MouseEvent) {
@@ -226,15 +240,18 @@ export class NuniGraphController {
             this.lastMouseDownMsg = 
             this.renderer.getGraphMouseTarget(e)
 
-        if (this.selectedNodes && node) {
+        if (node && 
+            this.selectedNodes.length &&
+            this.selectedNodes.includes(node)) {
+
             const nodes = this.selectedNodes
             // this is all about keeping those nodes in the canvas
             // while being dragged.
             const o = {
-                top:    nodes.reduce((a,node) => Math.max(a,node.y), -Infinity),
-                bottom: nodes.reduce((a,node) => Math.min(a,node.y), Infinity),
-                left:   nodes.reduce((a,node) => Math.min(a,node.x), Infinity),
-                right:  nodes.reduce((a,node) => Math.max(a,node.x), -Infinity),
+                top:    nodes.reduce((a,node) => Math.max(a,node.y), 0),
+                bottom: nodes.reduce((a,node) => Math.min(a,node.y), 1),
+                left:   nodes.reduce((a,node) => Math.min(a,node.x), 1),
+                right:  nodes.reduce((a,node) => Math.max(a,node.x), 0),
                 }
 
             this.lastMouseDownMsg.bounds = {
@@ -246,6 +263,7 @@ export class NuniGraphController {
         }
 
         ;({
+            
             [HOVER.SELECT]: () => {
                 this.save() // A node will probably be moved, here.
                 if (this.selectedNodes.includes(node!)) return;
@@ -288,6 +306,7 @@ export class NuniGraphController {
                 this.selectionStart = [x, y]
                 this.renderer.render()
             }
+
         })[type as HOVER]()
     }
 
@@ -301,14 +320,13 @@ export class NuniGraphController {
         const { width: W, height: H } = this.renderer.canvas
         const { selectedNodes } = this
 
-        if (!this.selectionStart && // A selection is not currently being made
-            selectedNodes.length && // A group of nodes is selected
-            isPressing) {           // The user is pressing
+        if (!this.selectionStart &&          // A selection is not currently being made
+            selectedNodes.length &&          // A group of nodes is selected
+            isPressing) {                    // The user is pressing
                 
-            const { 
-                node, 
-                bounds: { U, D, L, R } 
-                } = this.lastMouseDownMsg
+            const { node, bounds } = this.lastMouseDownMsg
+
+            const { U, D, L, R } = bounds || { U: 0, D: 0, L: 0, R: 0 }
             
             // Don't let any node in the 
             // group of selected nodes
@@ -413,6 +431,10 @@ export class NuniGraphController {
                 this.g.copyNodes(this.selectedNodes)
 
             this.renderer.render({ selectedNodes: this.selectedNodes })
+
+            if (this.selectedNodes.length === 1) {
+                this.openValuesWindow(this.selectedNodes[0])
+            }
         }
     }
 

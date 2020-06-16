@@ -5,7 +5,7 @@
 
 
 
-import MasterClock from './master-clock.js'
+import MasterClock from './master_clock.js'
 import VolumeNodeContainer from '../volumenode_container.js'
 
 
@@ -95,14 +95,17 @@ export default class Sequencer extends VolumeNodeContainer {
     scheduleNotes(tempo : number) {
         if (!this.isPlaying) return;
         this.updateTempo(tempo)
-        const currentTime = this.ctx.currentTime - this.startTime
+        const time = this.ctx.currentTime
+        const currentTime = time - this.startTime
         
         let updateBox = true && this.noteTime > 0
         while (this.noteTime < currentTime + 0.200) {
             
             const patternTime = this.noteTime + this.startTime
+            if (patternTime > time) { 
+                this.playStepsAtTime(patternTime, updateBox)
+            }
 
-            this.playStepsAtTime(patternTime, updateBox)
             updateBox = false
             this.nextNote()
         }
@@ -213,6 +216,7 @@ export default class Sequencer extends VolumeNodeContainer {
 
         function rowOptions(items : HTMLElement, key : string) {
             const box = E('span')
+
             mute_solo_box: {
                 const muteSoloBox = E('span')
                 const mute = E('button')
@@ -231,18 +235,15 @@ export default class Sequencer extends VolumeNodeContainer {
                 box.appendChild(muteSoloBox)
             }
             
-
-            add_volume_slider: {
+            add_volume_knob: {
                 const value = channelData[key].volume
                 
-                const slider = E('input')
-                    slider.type = 'range'
-                    slider.min = '0.1'
-                    slider.step = '0.0000001'
-                    slider.max = Math.SQRT2.toString()
-                    slider.value = (value**(1/4.0)).toString()
-                    slider.style.transform = 'rotate(-90deg)'
-                    slider.style.width = '50px'
+                const dial = new JsDial()
+                dial.min = 0.1
+                dial.max = Math.SQRT2
+                dial.value = value**(1/4.0)
+                dial.sensitivity = 2**-9
+                dial.render()
 
                 const valueText = E('span')
                     valueText.innerText = 
@@ -253,15 +254,15 @@ export default class Sequencer extends VolumeNodeContainer {
                         width: '70px'
                         })
                     
-                slider.oninput = () => {
-                    
-                    const v = (+slider.value) ** 4.0
+                
+                dial.attach((value : number) => {
+                    const v = value ** 4.0
                     channelData[key].volume = v
                     valueText.innerText = 
                         volumeTodB(v).toFixed(1) + 'dB'
-                }
+                })
 
-                box.append(E('br'), valueText,slider)
+                box.append(E('br'), valueText, dial.html)
             }
 
             return box

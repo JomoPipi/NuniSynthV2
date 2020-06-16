@@ -8,7 +8,7 @@
 import { NuniGraphRenderer } from './view/graph_renderer.js'
 import { NuniGraph } from './model/nunigraph.js'
 import KB from '../webaudio2/note_in/keyboard.js'
-import MasterClock from '../webaudio2/sequencers/master-clock.js'
+import MasterClock from '../webaudio2/sequencers/master_clock.js'
 import { BufferUtils } from '../buffer_utils/internal.js'
 import { audioCtx } from '../webaudio2/webaudio2.js'
 import { NuniGraphController } from './controller/graph_controller.js'
