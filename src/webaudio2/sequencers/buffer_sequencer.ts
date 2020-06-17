@@ -9,7 +9,7 @@ import { ADSR_Controller } from "../adsr.js"
 import Sequencer from "./sequencer.js"
 import NuniAudioParam from "../nuni_audioparam.js"
 import BufferStorage from "../../storage/general/buffer_storage.js"
-import { BufferUtils } from "../../buffer_utils/internal.js"
+import { BufferUtils } from "../../buffer_utils/init_buffers.js"
 
 
 
@@ -84,8 +84,6 @@ export default class BufferSequencer extends Sequencer {
         const { 
             volume
             } = this.channelData[id]
-
-        log('volume =', volume)
 
         const adsr = new GainNode(this.ctx)
         adsr.gain.setValueAtTime(0, 0)

@@ -104,7 +104,6 @@ export class NuniGraphController {
     selectNode (node : NuniGraphNode) {
         this.unselectNode()
         this.selectedNodes = [node]
-        // this.openValuesWindow(node)
         this.openWindow[node.id]?.classList.add('selected2')
     }
 
@@ -140,22 +139,22 @@ export class NuniGraphController {
 
     private openValuesWindow(node : NuniGraphNode) {
 
-        const moveContainerToTop = (box : HTMLElement) => {
-            let max = -Infinity
-            for (const key in this.openWindow) {
-                const zi = +this.openWindow[key].style.zIndex
-                max = Math.max(max, zi)
-            }
+        const moveTheWindowToTheTop = (box : HTMLElement) => {
+            const max = 
+                Object.values(this.openWindow)
+                .reduce((max, { style: { zIndex: zi } }) => 
+                    Math.max(max, +zi), -Infinity)
+
             box.style.zIndex = (max+1).toString()
         }
 
         if (this.openWindow[node.id]) {
-            moveContainerToTop(this.openWindow[node.id])
+            moveTheWindowToTheTop(this.openWindow[node.id])
             return;
         }
 
         const clickCallback = (box : HTMLElement) => {
-            moveContainerToTop(box)
+            moveTheWindowToTheTop(box)
             this.selectNode(node)
             this.renderer.render({ selectedNodes: [node] })
         }
@@ -179,6 +178,7 @@ export class NuniGraphController {
                     : NodeTypeColors[node.type]
                 })
 
+
         this.openWindow[node.id] = container
 
         container.children[1].appendChild(
@@ -188,7 +188,7 @@ export class NuniGraphController {
                 deleteCallBack))
         
         D('node-windows')!.appendChild(container)
-        moveContainerToTop(container)
+        moveTheWindowToTheTop(container)
         UI_clamp(0, 0, container, D('nunigraph-stuff')!)
     }
 
@@ -216,7 +216,7 @@ export class NuniGraphController {
     }
 
     private doubleClick(e : MouseEvent) {
-        const { type, id, node } = 
+        const { node } = 
             this.lastMouseDownMsg = 
             this.renderer.getGraphMouseTarget(e)
 
@@ -245,7 +245,8 @@ export class NuniGraphController {
             this.selectedNodes.includes(node)) {
 
             const nodes = this.selectedNodes
-            // this is all about keeping those nodes in the canvas
+            // this is all about keeping those 
+            // selected nodes inside the canvas
             // while being dragged.
             const o = {
                 top:    nodes.reduce((a,node) => Math.max(a,node.y), 0),
@@ -272,7 +273,6 @@ export class NuniGraphController {
             },
 
             [HOVER.EDGE]: () => {
-                // if (this.selectedNodes.includes(node!)) return;
                 this.selectedNodes = []
                 this.unselectNode()
                 this.renderer.fromNode = node!

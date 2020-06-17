@@ -286,7 +286,7 @@ export class NuniGraphRenderer {
             .includes(node.type)) {
 
             const c2 = highlight ? 'pink' : 'black'
-            const {x,y} = node, r = nodeRadius
+            const { x, y } = node, r = nodeRadius
             const gradient = ctx.createRadialGradient(x*W, y*H, r/27.0, x*W, y*H, r)
                 gradient.addColorStop(0, 'gray')
                 gradient.addColorStop(0.9, c2) 

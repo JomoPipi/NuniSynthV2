@@ -26,7 +26,7 @@ function startScheduling(scheduleNotes : (tempo : number) => void) {
 
     // window.setTimeout(goAgain)
 
-    // More efficient, but sequencer stops when tabs are switched.
+    // More efficient, but sequencer stops when tabs are switched:
     window.requestAnimationFrame(goAgain)
 }
 

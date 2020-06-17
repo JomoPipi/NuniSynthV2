@@ -13,6 +13,10 @@ import MasterClock from '../../webaudio2/sequencers/master_clock.js';
 
 // Create Nodes
 {
+    D('nuni-logo')!.onclick = (e : MouseEvent) =>
+        GraphController.showContextMenu(e.clientX, e.clientY)
+        
+
     const append = (type : NodeTypes, color : string) => {
 
         const create = () => {

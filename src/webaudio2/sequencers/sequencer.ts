@@ -63,12 +63,14 @@ export default class Sequencer extends VolumeNodeContainer {
     updateTempo(tempo : number) {
         tempo = clamp(1, tempo, Infinity)
         const newTick = (60 * 4 / tempo) / this.subdiv
+        
         if (this.tick !== newTick) {
             this.tick = newTick
-            this.isInSync = false
-            // this.declareOutOfSync() 
-            // What this method should do, when it exists,
-            // is uncheck the `sync` checkbox.
+
+            if (this.isInSync) {
+                this.stop()
+                this.play()
+            }
         }
     }
 
@@ -262,7 +264,7 @@ export default class Sequencer extends VolumeNodeContainer {
                         volumeTodB(v).toFixed(1) + 'dB'
                 })
 
-                box.append(E('br'), valueText, dial.html)
+                box.append(E('br'), dial.html, valueText)
             }
 
             return box

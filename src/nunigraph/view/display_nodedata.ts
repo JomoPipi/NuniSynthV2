@@ -41,7 +41,10 @@ export default function createValuesWindow(
         controls.appendChild(activateKeyboardButton(node.audioNode))
     }
 
-    if (node.type !== NodeTypes.B_SEQ) {
+    if (node.id === 0) {
+        controls.appendChild(masterGainControls(node))
+    }
+    else if (node.type !== NodeTypes.B_SEQ) {
         controls.appendChild(exposeAudioParams(node, saveCallback))
     }
 
@@ -63,8 +66,36 @@ export default function createValuesWindow(
 }
 
 
+function masterGainControls(node : NuniGraphNode) {
+    const box = E('div')
+    const value = node.audioNode.gain.value
+    
+    const dial = new JsDial()
+    dial.min = 0.1
+    dial.max = Math.SQRT2
+    dial.value = value**(1/4.0)
+    dial.sensitivity = 2**-9
+    dial.render()
 
+    const valueText = E('span')
+        valueText.innerText = 
+            volumeTodB(value).toFixed(1) + 'dB'
 
+        applyStyle(valueText, {
+            display: 'inline-block',
+            width: '70px'
+            })
+    
+    dial.attach((value : number) => {
+        const v = value ** 4.0
+        node.audioNode.gain.value = v
+        valueText.innerText = 
+            volumeTodB(v).toFixed(1) + 'dB'
+    })
+
+    box.append(dial.html, valueText)
+    return box
+}
 
 
 
