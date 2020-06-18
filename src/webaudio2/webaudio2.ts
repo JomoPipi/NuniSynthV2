@@ -10,6 +10,7 @@ import { OscillatorNode2 } from './note_in/oscillator2.js'
 import SubgraphSequencer from './sequencers/subgraph_sequencer.js'
 import BufferSequencer from './sequencers/buffer_sequencer.js'
 import graphVisualEqualizer from './equalizer/global_visualizer.js'
+import AudioBufferCaptureNode from './record/buffer_capture_node.js'
 
 
 export class AudioContext2 extends AudioContext {
@@ -49,6 +50,10 @@ export class AudioContext2 extends AudioContext {
 
     createBufferSequencer() {
         return new BufferSequencer(this)
+    }
+
+    createAudioBufferCaptureNode() {
+        return new AudioBufferCaptureNode(this)
     }
 }
 

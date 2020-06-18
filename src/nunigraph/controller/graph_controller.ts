@@ -275,6 +275,7 @@ export class NuniGraphController {
             [HOVER.EDGE]: () => {
                 this.selectedNodes = []
                 this.unselectNode()
+                if (HasNoOutput[node!.type]) return;
                 this.renderer.fromNode = node!
             },
 
@@ -443,7 +444,7 @@ export class NuniGraphController {
         
         const { renderer } = this
 
-        if (node2.id === 0 || node2.type === NodeTypes.SGS) {
+        if (node2.id === 0 || AudioNodeParams[node2.type].length === 0) {
             // No prompt needed in this case. 
             // Only allow channel connections to the master gain node.
             // Allowing connections to someGain.gain can prevent it from being muted.

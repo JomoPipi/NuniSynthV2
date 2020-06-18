@@ -10,6 +10,7 @@ import { OscillatorNode2 } from '../../webaudio2/note_in/oscillator2.js'
 import { BufferNode2 } from '../../webaudio2/note_in/buffer2.js'
 import SubgraphSequencer from '../../webaudio2/sequencers/subgraph_sequencer.js'
 import BufferSequencer from '../../webaudio2/sequencers/buffer_sequencer.js'
+import AudioBufferCaptureNode from '../../webaudio2/record/buffer_capture_node.js'
 
 
 
@@ -24,18 +25,7 @@ type AudioNodeMap = {
     [NodeTypes.SGS]:    SubgraphSequencer
     [NodeTypes.B_SEQ]:  BufferSequencer
     [NodeTypes.CSN]:    ConstantSourceNode
-}
-
-const AudioNodeTypeMap = {
-    [NodeTypes.GAIN]:   GainNode,
-    [NodeTypes.OSC]:    OscillatorNode2,
-    [NodeTypes.FILTER]: BiquadFilterNode,
-    [NodeTypes.PANNER]: StereoPannerNode,
-    [NodeTypes.DELAY]:  DelayNode,
-    [NodeTypes.BUFFER]: BufferNode2,
-    [NodeTypes.SGS]:    SubgraphSequencer,
-    [NodeTypes.B_SEQ]:  BufferSequencer,
-    [NodeTypes.CSN]:    ConstantSourceNode,
+    [NodeTypes.RECORD]: AudioBufferCaptureNode
 }
 
 export type AudioNode2<T extends NodeTypes> 

@@ -12,6 +12,8 @@ import { BufferNode2 } from '../../webaudio2/note_in/buffer2.js'
 import { sequencerControls } from './sequencer_controls.js'
 import { BufferUtils } from '../../buffer_utils/internal.js'
 import Sequencer from '../../webaudio2/sequencers/sequencer.js'
+import audioCaptureNodeControls from './audio_capture_controls.js'
+import AudioBufferCaptureNode from '../../webaudio2/record/buffer_capture_node.js'
 
 
 
@@ -28,6 +30,10 @@ export default function createValuesWindow(
     const controls = E('div')
 
     controls.appendChild(showSubtypes(node, saveCallback))
+
+    if (node.audioNode instanceof AudioBufferCaptureNode) {
+        controls.appendChild(audioCaptureNodeControls(node.audioNode))
+    }
 
     if (node.audioNode instanceof Sequencer) {
         controls.appendChild(sequencerControls(node.audioNode))

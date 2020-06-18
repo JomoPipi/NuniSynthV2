@@ -51,8 +51,6 @@ export function recordTo(index : number) {
         const audioChunks : Blob[] = []
         
         mediaRecorder.addEventListener('dataavailable', (event : Indexed) => {
-            log('event.prototype',event.data)
-            log('event.data =',event.data.arrayBuffer()) 
             audioChunks.push(event.data)
         })
 
