@@ -47,3 +47,55 @@ export default function renderVisualiserCanvas(canvas : HTMLCanvasElement, analy
         requestAnimationFrame(render)
     }
 }
+
+
+
+
+
+
+// export default function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : AnalyserNode) {
+
+//     analyser.fftSize = 2048
+//     const bufferLength = analyser.fftSize
+//     const ctx = canvas.getContext('2d')!
+//     const W = canvas.width = canvas.offsetWidth
+//     const H = canvas.height = canvas.offsetHeight
+
+//     const gradient = ctx.createLinearGradient(0, 0, 0, H)
+//     'purple,white,purple'.split(',').forEach((color,i,arr) =>
+//         gradient.addColorStop(i/(arr.length-1), color))
+
+//     return function render() {
+
+//         const dataArray = new Uint8Array(bufferLength)
+//         analyser.getByteTimeDomainData(dataArray)
+
+//             ctx.fillStyle = 'rgb(200, 200, 200)'
+//             ctx.clearRect(0, 0, W, H)
+        
+//             ctx.strokeStyle = gradient
+        
+//             const sliceWidth = W * 1.0 / bufferLength
+//             let x = 0, max = -Infinity
+        
+//             ctx.beginPath()
+//             for(var i = 0; i < bufferLength; i++) {
+//                 const v = dataArray[i]/128.0
+//                 const y = v * H/2
+
+//                 if(i === 0)
+//                     ctx.moveTo(x, y)
+//                 else
+//                     ctx.lineTo(x, y)
+            
+//                 x += sliceWidth
+//                 max = Math.max(max, dataArray[i])
+//             }
+//             if (max === 255) ctx.strokeStyle = 'red'
+        
+//             ctx.lineTo(W, H/2)
+//             ctx.stroke()
+        
+//         requestAnimationFrame(render)
+//     }
+// }

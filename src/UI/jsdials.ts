@@ -17,6 +17,7 @@ class JsDial {
     min : number
     dial : HTMLElement
     html : HTMLElement
+    imgDegreeOffset : number
 
     constructor() {
         this.dial = E('div')
@@ -27,21 +28,27 @@ class JsDial {
         this.isActive = false
         this.lastY = this.lastX = 0
         this.max = 1
-        this.value = this.min = this.sensitivity = 2**-7
+        this.value = this.min = this.sensitivity = 2**-8
+        this.imgDegreeOffset = 195
     }
     
     attach(func : Function, startFunc? : Function, endFunc? : Function) {
-
         const start = (x:number, y:number) => { 
             this.lastX = x
             this.lastY = y
             this.isActive = true
             startFunc && startFunc()
             this.render()
+
+            window.addEventListener('mousemove', mouseMove)
+            window.addEventListener('mouseup', end)
         }
         const end = () => { 
             this.isActive = false
             endFunc && endFunc()
+            
+            window.removeEventListener('mousemove', mouseMove)
+            window.removeEventListener('mouseup', end)
         }
         const mouseStart = (e : MouseEvent) => start(e.clientX,e.clientY)
         const mouseMove  = (e : MouseEvent) => move (e.clientX,e.clientY)
@@ -59,16 +66,20 @@ class JsDial {
         }
 
         this.dial.addEventListener('mousedown', mouseStart as EventListener)
-        window.addEventListener('mousemove', mouseMove)
-        window.addEventListener('mouseup', end)
+    }
+
+    attachDoubleClick(func : Function) {
+        this.dial.ondblclick = () => {
+            func(this.value)
+            this.render()
+        }
     }
 
     render() {
-        const imgDegreeOffset = 195
         this.dial.style.transform = 
             `rotate(${
                 320 * 
                 ((this.value-this.min)/(this.max-this.min)) +
-                imgDegreeOffset}deg)`
+                this.imgDegreeOffset}deg)`
     }
 }

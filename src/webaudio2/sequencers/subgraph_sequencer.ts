@@ -23,7 +23,7 @@ export default class SubgraphSequencer extends Sequencer {
 
     addInput({ id, audioNode } : { id : number, audioNode : Indexed }) {
         this.channelData[id] = {
-            volume: 0.0001
+            volume: 1
             }
         const adsr = this.channelData[id].adsr = new GainNode(this.ctx)
         adsr.gain.value = 0

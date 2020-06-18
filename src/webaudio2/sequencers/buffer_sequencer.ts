@@ -39,7 +39,7 @@ export default class BufferSequencer extends Sequencer {
 
     addInput() {
         this.channelData[this.nextId] = {
-            volume: 0.0001,
+            volume: 1,
             bufferKey: 0
             }
         this.stepMatrix[this.nextId] = Array(this.nSteps).fill(0)

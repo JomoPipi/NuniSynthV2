@@ -70,7 +70,7 @@ code {
 
 .buffer-box {
     display: flex;
-    height: 120px;
+    height: 140px;
 }
 
 .rect-0 {
@@ -85,8 +85,10 @@ code {
 }
 
 .vert-split {
-    display: grid;
-    grid-template-rows: 1fr;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-evenly;
 }
 
 .flat-grid {

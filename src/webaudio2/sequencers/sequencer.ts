@@ -245,6 +245,7 @@ export default class Sequencer extends VolumeNodeContainer {
                 dial.max = Math.SQRT2
                 dial.value = value**(1/4.0)
                 dial.sensitivity = 2**-9
+                dial.imgDegreeOffset = 142
                 dial.render()
 
                 const valueText = E('span')
@@ -262,6 +263,13 @@ export default class Sequencer extends VolumeNodeContainer {
                     channelData[key].volume = v
                     valueText.innerText = 
                         volumeTodB(v).toFixed(1) + 'dB'
+                })
+
+                dial.attachDoubleClick(() => {
+                    log('hello?')
+                    dial.value = 1
+                    channelData[key].volume = 1
+                    valueText.innerText = '0.0dB'
                 })
 
                 box.append(E('br'), dial.html, valueText)

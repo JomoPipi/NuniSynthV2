@@ -152,6 +152,7 @@ export const ADSR_Controller = {
         const adsr = ADSR_Controller as Indexed
         
         dial.value = adsr.values[adsr.index][s]
+        dial.sensitivity = 2 ** -10
         dial.render()
         dial.attach((value : number) => {
             adsr.values[adsr.index][s] = value * value
