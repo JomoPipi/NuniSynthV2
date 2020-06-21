@@ -34,8 +34,33 @@ type CreatedElement<T extends string> =
         ? AllElements[T] 
         : HTMLElement
 
-const E = <T extends string>(x : T, options? : ElementCreationOptions) => 
-    document.createElement(x, options) as CreatedElement<T>
+type ElementSettings = {
+    text? : string
+    className? : string
+    children? : HTMLElement[]
+    props? : Indexed
+    }
+
+const E = <T extends string>(x : T, settings : ElementSettings = {}) => {
+    const element = document.createElement(x) as CreatedElement<T>
+    
+    const { text, className, children, props } = settings
+
+    if (text) element.innerText = text
+
+    if (className)
+        for (const name of className.split(' ')) 
+            element.classList.add(name)
+    
+    for (const child of children || [])
+        element.appendChild(child)
+    
+    for (const prop in props || {}) {
+        (<Indexed>element)[prop] = props![prop]
+    }
+
+    return element
+}
 
 const distance = (x : number, y : number, x2 : number, y2 : number) => 
     ((x-x2)**2 + (y-y2)**2)**0.5

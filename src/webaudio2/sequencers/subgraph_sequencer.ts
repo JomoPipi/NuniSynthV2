@@ -29,7 +29,7 @@ export default class SubgraphSequencer extends Sequencer {
         adsr.gain.value = 0
         audioNode.connect(adsr)
         adsr.connect(this.volumeNode)
-        this.stepMatrix[id] = Array(this.nSteps).fill(0)
+        this.stepMatrix[id] = this.createStepRow()
         this.refresh()
     }
 

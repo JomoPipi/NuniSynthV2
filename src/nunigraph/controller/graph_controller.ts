@@ -25,7 +25,8 @@ export class NuniGraphController {
     renderer : NuniGraphRenderer
     private mouseIsDown : boolean
     private selectedNodes : NuniGraphNode[]
-    private lastMouseDownMsg : { type : HOVER } & Indexed
+    private lastMouse_DownMsg : { type : HOVER } & Indexed
+    private lastMouse_MoveMsg : { type : HOVER } & Indexed
     private selectionStart? : [number,number]
     openWindow : Indexable<HTMLElement> // [node.id]:nodeValuesWindow
     private undoRedoModule : UndoRedoModule
@@ -45,7 +46,9 @@ export class NuniGraphController {
 
         this.mouseIsDown = false
         this.selectedNodes = []
-        this.lastMouseDownMsg = renderer.getGraphMouseTarget({ offsetX: -Infinity, offsetY: -Infinity})
+        this.lastMouse_MoveMsg = 
+            this.lastMouse_DownMsg = 
+            renderer.getGraphMouseTarget({ offsetX: -Infinity, offsetY: -Infinity})
         this.openWindow = {}
 
         const getState = () => g.toRawString()
@@ -73,13 +76,13 @@ export class NuniGraphController {
     }
 
     save() {
-        this.undoRedoModule.save()
+        // this.undoRedoModule.save()
     }
     undo() {
-        this.undoRedoModule.undo()
+        // this.undoRedoModule.undo()
     }
     redo() {
-        this.undoRedoModule.redo()
+        // this.undoRedoModule.redo()
     }
 
     showContextMenu(x : number, y : number) {
@@ -217,7 +220,7 @@ export class NuniGraphController {
 
     private doubleClick(e : MouseEvent) {
         const { node } = 
-            this.lastMouseDownMsg = 
+            this.lastMouse_DownMsg = 
             this.renderer.getGraphMouseTarget(e)
 
         if (!node) return;
@@ -237,7 +240,7 @@ export class NuniGraphController {
         this.mouseIsDown = true
         
         const { type, id, node } = 
-            this.lastMouseDownMsg = 
+            this.lastMouse_DownMsg = 
             this.renderer.getGraphMouseTarget(e)
 
         if (node && 
@@ -255,7 +258,7 @@ export class NuniGraphController {
                 right:  nodes.reduce((a,node) => Math.max(a,node.x), 0),
                 }
 
-            this.lastMouseDownMsg.bounds = {
+            this.lastMouse_DownMsg.bounds = {
                 U: o.top - node!.y,
                 D: node!.y - o.bottom,
                 L: node!.x - o.left,
@@ -325,7 +328,7 @@ export class NuniGraphController {
             selectedNodes.length &&          // A group of nodes is selected
             isPressing) {                    // The user is pressing
                 
-            const { node, bounds } = this.lastMouseDownMsg
+            const { node, bounds } = this.lastMouse_DownMsg
 
             const { U, D, L, R } = bounds || { U: 0, D: 0, L: 0, R: 0 }
             
@@ -347,6 +350,18 @@ export class NuniGraphController {
                 n.y += dy
             }
         }
+        
+        // Avoid re-rendering when it's not necessary
+        const { type: lastType } = this.lastMouse_MoveMsg
+        if (!node 
+            && lastType === type 
+            && !this.renderer.fromNode 
+            && !isPressing
+            && !this.selectionStart) {
+            
+            return; 
+        }
+        this.lastMouse_MoveMsg = { type, id, node }
 
         const options = {
             x: e.offsetX, 
@@ -399,20 +414,21 @@ export class NuniGraphController {
     }
 
     private keydown(e : KeyboardEvent) {
-        if (this.undoRedoModule.tryInput(e)) {
+        // undo/redo with keyboard disabled, for now
+        // if (this.undoRedoModule.tryInput(e)) {
 
-            // SGS doesn't support window staying open throughout undo/redo
-            this.closeAllWindows()
+        //     // SGS doesn't support window staying open throughout undo/redo
+        //     this.closeAllWindows()
 
-            // Close the ones that shouldn't be there anymore
-            // const IDs = new Set(this.g.nodes.map(node => node.id))
-            // for (const nodeId in this.openWindow) {
-            //     if (!IDs.has(+nodeId)) {
-            //         this.closeValuesWindow(+nodeId)
-            //     }
-            // }
-            this.renderer.render()
-        }
+        //     // Close the ones that shouldn't be there anymore
+        //     // const IDs = new Set(this.g.nodes.map(node => node.id))
+        //     // for (const nodeId in this.openWindow) {
+        //     //     if (!IDs.has(+nodeId)) {
+        //     //         this.closeValuesWindow(+nodeId)
+        //     //     }
+        //     // }
+        //     this.renderer.render()
+        // }
         
         if (e.keyCode === 46) {
             if (this.selectedNodes.length) {
@@ -460,8 +476,7 @@ export class NuniGraphController {
         prompt.classList.add('show')
         prompt.innerHTML= ''
         for (const param of types as ConnectionType[]) {
-            const btn = E('button')
-            btn.innerText = param
+            const btn = E('button', { text: param })
             btn.onclick = () =>
             {
                 this.save()
@@ -469,11 +484,13 @@ export class NuniGraphController {
                 prompt.classList.remove('show')
                 renderer.render()
             }
+
             prompt.appendChild(btn)
         }
-        const cancel = E('button')
-        cancel.innerText = 'cancel'
-        cancel.classList.add('connection-button')
+        const cancel = E('button', {
+            text: 'cancel',
+            className: 'connection-btn'
+            })
         cancel.onclick = () => prompt.classList.remove('show')
         prompt.appendChild(cancel)
 

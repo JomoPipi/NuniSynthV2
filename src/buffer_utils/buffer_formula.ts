@@ -81,19 +81,22 @@ const presets = {
 D('buffer-formula-templates-button')!.onclick = () =>
     showBufferFormulaTemplates()
 
+
 const container = D('formula-template-container')!
 function showBufferFormulaTemplates() {
-    const list = E('span')
-    list.classList.add('window') // background color causes highlight color to be weird
-    list.classList.add('show')
-    list.classList.add('preset-list')
-    for (const name in presets) {
-        const btn = E('div')
-            btn.classList.add('list-btn')
-            btn.innerText = name
-            
-        list.appendChild(btn)
-    }
+
+    const buttons =
+        Object.keys(presets).map(name => 
+            E('div',{
+                className: 'list-btn',
+                text: name
+                }))
+
+    const list = E('span', {
+        className: 'window show preset-list',
+        children: buttons
+        })
+    
     container.appendChild(list)
 
     window.addEventListener('mousedown', clickBufferTemplateOrNot)

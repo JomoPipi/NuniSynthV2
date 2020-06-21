@@ -24,6 +24,10 @@ export default function renderVisualiserCanvas(canvas : HTMLCanvasElement, analy
     '#C88,#AA8,#898,#9AB,#A8F,#EBE'.split(',').forEach((color,i,arr) =>
         gradient.addColorStop(i/(arr.length-1), color))
 
+    // const markedFrequencies = (function go([first,...rest] : number[]) : number[] {
+    //     return first * 4 > 24000 ? [first, ...rest] : go([first*4, first, ...rest])
+    //     })([30])
+
     return function render() {
 
         const fbc_array = new Uint8Array(bufferLength);

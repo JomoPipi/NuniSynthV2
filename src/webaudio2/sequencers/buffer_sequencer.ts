@@ -42,7 +42,7 @@ export default class BufferSequencer extends Sequencer {
             volume: 1,
             bufferKey: 0
             }
-        this.stepMatrix[this.nextId] = Array(this.nSteps).fill(0)
+        this.stepMatrix[this.nextId] = this.createStepRow()
         this.nextId++
         this.refresh()
     }
@@ -98,14 +98,17 @@ export default class BufferSequencer extends Sequencer {
     additionalRowItems(key : string) { 
         
         const box = E('span')
-        const valueText = E('span')
-            valueText.innerText = 
-                String.fromCharCode(65 + this.channelData[key].bufferKey!)
+        const valueText = E('span', {
+            text: String.fromCharCode(65 + this.channelData[key].bufferKey!)
+            })
 
         add_buffer_select: {
             ;['-','+'].forEach((op,i) => { // change the buffer index
-                const btn = E('button'); btn.innerText = op
-                btn.classList.add('top-bar-btn')
+                const btn = E('button', { 
+                    text: op,
+                    className: 'top-bar-btn'
+                    })
+
                 btn.onclick = () => {
                     const v = clamp(0, 
                         this.channelData[key].bufferKey! + Math.sign(i - .5), 
@@ -116,6 +119,7 @@ export default class BufferSequencer extends Sequencer {
                 }
                 box.appendChild(btn)
             })
+
             box.appendChild(valueText)
         }
 

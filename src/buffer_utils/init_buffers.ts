@@ -75,10 +75,12 @@ class BufferUtily {
 
         for (let n = 0; n < this.nBuffers; n++) {
             const seconds = n === 0 ? 4 : _seconds
-            const btn = E('button')
-            btn.innerText = String.fromCharCode(65+n)
-            btn.id = `buff-${n}`
-            btn.classList.add('list-btn')
+
+            const btn = E('button', {
+                text: String.fromCharCode(65+n),
+                className: 'list-btn',
+                props: { id: `buff-${n}` }
+                })
             div.appendChild(btn)
 
             const buffer = ctx.createBuffer(2, ctx.sampleRate * seconds, ctx.sampleRate)

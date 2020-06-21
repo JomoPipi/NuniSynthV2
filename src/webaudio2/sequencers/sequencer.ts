@@ -49,7 +49,7 @@ export default class Sequencer extends VolumeNodeContainer {
         this.subdiv = 8
         this.stepMatrix = {}
         this.mutedChannel = {}
-        this.isPlaying = false
+        this.isPlaying = true
         this.tick = (60*4 / MasterClock.tempo) / this.subdiv
         this.windowIsOpen = false
         this.HTMLGrid = createBeatGrid()
@@ -72,6 +72,12 @@ export default class Sequencer extends VolumeNodeContainer {
                 this.play()
             }
         }
+    }
+
+    createStepRow() {
+        const row = Array(this.nSteps).fill(0)
+        row[0] = 1
+        return row
     }
 
     updateSteps(nSteps : number) {
@@ -173,19 +179,21 @@ export default class Sequencer extends VolumeNodeContainer {
         const grid = this.HTMLGrid
         const { nSteps, channelData, mutedChannel } = this
         for (const key in channelData) {
-            const row = E('div')
-            row.classList.add('flex-center')
+            const row = E('div', {
+                className: 'flex-center'
+                })
 
+            row.style.marginRight = '2%'
             row.appendChild(rowOptions(this.additionalRowItems(key), key))
 
             this.HTMLBoxes[key] = {}
             for (let i = 0; i < nSteps; i++) {
                 const box = E('span')
                 this.HTMLBoxes[key][i] = box
-                box.classList.add('note-box')
+                box.classList.add('note-box' + (i === 0 || i === nSteps/2 ? '-halfway' : ''))
                 const boxSize = clamp(10, 750 / nSteps, 60)
                 applyStyle(box, {
-                    width: `${boxSize}px`,
+                    width: `${boxSize/PHI}px`,
                     height: `${boxSize}px`
                     })
                 box.classList.toggle('selected', this.stepMatrix[key][i])
@@ -221,16 +229,18 @@ export default class Sequencer extends VolumeNodeContainer {
 
             mute_solo_box: {
                 const muteSoloBox = E('span')
-                const mute = E('button')
-                const solo = E('button')
-                // const optionsBtn = E('button')
-                mute.classList.add('top-bar-btn')
-                solo.classList.add('top-bar-btn')
-                mute.innerText = 'M'
-                solo.innerText = 'S'
+                const mute = E('button', { 
+                    className: 'top-bar-btn',
+                    text: 'M'
+                    })
+                // const solo = E('button', { 
+                //     className: 'top-bar-btn',
+                //     text: 'S'
+                //     })
+                    
                 // optionsBtn.innerText = '⚙️'
                 mute.dataset.sequencerRowKey = key
-                solo.dataset.sequencerRowKey = key
+                // solo.dataset.sequencerRowKey = key
                 mute.classList.toggle('selected', mutedChannel[key] === true)
                 muteSoloBox.append(items, mute)//, solo)
 
@@ -245,12 +255,10 @@ export default class Sequencer extends VolumeNodeContainer {
                 dial.max = Math.SQRT2
                 dial.value = value**(1/4.0)
                 dial.sensitivity = 2**-9
-                dial.imgDegreeOffset = 142
+                dial.imgDegreeOffset = 200
                 dial.render()
 
-                const valueText = E('span')
-                    valueText.innerText = 
-                        volumeTodB(value).toFixed(1) + 'dB'
+                const valueText = E('span', { text: volumeTodB(value).toFixed(1) + 'dB' })
 
                     applyStyle(valueText, {
                         display: 'inline-block',

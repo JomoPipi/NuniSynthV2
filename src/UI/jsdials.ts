@@ -18,18 +18,25 @@ class JsDial {
     dial : HTMLElement
     html : HTMLElement
     imgDegreeOffset : number
+    arcLength : number
 
     constructor() {
-        this.dial = E('div')
-        this.dial.classList.add('js-dial')
-        this.html = E('div') 
-        this.html.classList.add('shadow-knob')
-        this.html.appendChild(this.dial)
+        
+        this.dial = E('div', {
+            className: 'js-dial'
+            })
+        
+        this.html = E('div', {
+            className: 'shadow-knob',
+            children: [this.dial]
+            }) 
+            
         this.isActive = false
         this.lastY = this.lastX = 0
         this.max = 1
         this.value = this.min = this.sensitivity = 2**-8
         this.imgDegreeOffset = 195
+        this.arcLength = 320
     }
     
     attach(func : Function, startFunc? : Function, endFunc? : Function) {
@@ -78,7 +85,7 @@ class JsDial {
     render() {
         this.dial.style.transform = 
             `rotate(${
-                320 * 
+                this.arcLength * 
                 ((this.value-this.min)/(this.max-this.min)) +
                 this.imgDegreeOffset}deg)`
     }

@@ -36,11 +36,6 @@ import MasterClock from '../../webaudio2/sequencers/master_clock.js';
             GraphController.renderer.render()
         }
 
-
-        const btn = E('button')
-            btn.classList.add('list-btn')
-            btn.onclick = create
-
         const colorbox = E('span')
         applyStyle(colorbox, {
             display: 'inline-block',
@@ -53,10 +48,14 @@ import MasterClock from '../../webaudio2/sequencers/master_clock.js';
             background: color
             })
     
-        const textbox = E('span')
-        textbox.innerText = type
+        const textbox = E('span', { text: type })
 
-        btn.append(textbox, colorbox)
+        const btn = E('button', { 
+            className: 'list-btn', 
+            children: [textbox, colorbox],
+            props: { onclick: create }
+            })
+
         D('graph-contextmenu')!.appendChild(btn)
     }
 
@@ -106,51 +105,3 @@ D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
     e.preventDefault()
     GraphController.showContextMenu(e.clientX, e.clientY)
 }
-
-// Create Graph-legend
-// {
-//     const legend = D('nunigraph-legend')!
-//     const append = (text : string, color : string) => {
-//         const colorbox = E('span')
-//         const textbox = E('span')
-//         colorbox.style.background = color
-//         textbox.innerText = text
-//         legend.appendChild(colorbox)
-//         legend.appendChild(textbox)
-//     }
-//     append('master-gain', MasterGainColor)
-//     for (const key in NodeTypes) {
-//         const type = (<Indexed>NodeTypes)[key] as NodeTypes
-//         append(type, NodeTypeColors[type])
-//     }
-// }
-
-// Add tempo input
-{
-
-    const input = createDraggableNumberInput(
-        120,
-        
-        () => MasterClock.tempo,
-
-        (delta : number, value : number) =>
-            (MasterClock.tempo = clamp(20, value + delta, 999)).toFixed(0),
-
-        (value : number) => 
-            MasterClock.tempo = value 
-    )
-    input.style.width = '100px'
-    D('tempo-input-container')!.appendChild(input)
-}
-
-
-// export function showGraphContextMenu(x : number, y : number) {
-//     const menu = D('graph-contextmenu') as HTMLDivElement
-
-//     menu.style.display = 'grid'
-//     UI_clamp(x, y, menu, document.body)
-// }
-
-// export function hideGraphContextmenu() {
-//     D('graph-contextmenu')!.style.display = 'none'
-// }

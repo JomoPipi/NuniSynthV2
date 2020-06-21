@@ -31,9 +31,10 @@ import { setEqualTemperamentScale } from './formulas/equal.js'
     const div = D('scale-preset-list') as HTMLDivElement
 
     for (const name in presets) {
-        const item = E('button')
-        item.classList.add('list-btn')
-        item.innerText = name
+        const item = E('button', {
+            text: name,
+            className: 'list-btn'
+            })
         div.appendChild(item)
     }
 

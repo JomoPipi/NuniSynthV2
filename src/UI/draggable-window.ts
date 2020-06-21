@@ -18,18 +18,16 @@ function createDraggableWindow({
     color? : string
     }) {
 
-    const box = E('div')
-    
-    box.classList.add('window')
-    box.classList.add('show')
+    const box = E('div',{
+        className: 'window show'
+        })
     box.style.left = '50vw'
     box.style.top = '50vh'
 
-    const bar = E('div')
-    const exitBtn = E('button')
+    const bar = E('div', { text })
+    const exitBtn = E('button', { text: 'x' })
 
     box.appendChild(bar)
-    bar.innerText = text
 
     applyStyle(bar, {
         height: '30px',
@@ -55,7 +53,6 @@ function createDraggableWindow({
         })
 
     bar.appendChild(exitBtn)
-    exitBtn.innerText = 'x'
 
     const closeBox = () => closeCallback(box)
     exitBtn.onclick = closeBox

@@ -5,7 +5,7 @@
 
 
 
-import { BufferUtils } from '../../buffer_utils/internal.js'
+import { BufferUtils } from '../../buffer_utils/init_buffers.js'
 import BufferStorage from '../../storage/general/buffer_storage.js'
 
 export default class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {

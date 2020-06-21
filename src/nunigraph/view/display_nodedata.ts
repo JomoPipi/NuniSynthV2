@@ -56,8 +56,7 @@ export default function createValuesWindow(
 
     // Add delete button, but not if id is 0, because that's the master gain.
     if (node.id !== 0) {
-        const deleteNodeBtn = E('button')
-        deleteNodeBtn.innerText = '🗑️'
+        const deleteNodeBtn = E('button', { text: '🗑️' })
         applyStyle(deleteNodeBtn, {
             float: 'right',
             backgroundColor: 'transparent',
@@ -73,7 +72,6 @@ export default function createValuesWindow(
 
 
 function masterGainControls(node : NuniGraphNode) {
-    const box = E('div')
     const value = node.audioNode.gain.value
     
     const dial = new JsDial()
@@ -83,9 +81,9 @@ function masterGainControls(node : NuniGraphNode) {
     dial.sensitivity = 2**-9
     dial.render()
 
-    const valueText = E('span')
-        valueText.innerText = 
-            volumeTodB(value).toFixed(1) + 'dB'
+    const valueText = E('span', { 
+        text: volumeTodB(value).toFixed(1) + 'dB' 
+        })
 
         applyStyle(valueText, {
             display: 'inline-block',
@@ -94,12 +92,12 @@ function masterGainControls(node : NuniGraphNode) {
     
     dial.attach((value : number) => {
         const v = value ** 4.0
-        node.audioNode.gain.value = v
+        node.setValueOfParam('gain', v)
         valueText.innerText = 
             volumeTodB(v).toFixed(1) + 'dB'
     })
 
-    box.append(dial.html, valueText)
+    const box = E('div', { children: [dial.html, valueText] })
     return box
 }
 
@@ -108,9 +106,11 @@ function masterGainControls(node : NuniGraphNode) {
 
 function activateKeyboardButton(an : NuniSourceNode) {
     // (dis?)connects the node from the keyboard.
-    const btn = E('button')
-    btn.innerText = '🎹'
-    btn.classList.add('kb-button')
+    const btn = E('button', {
+        text: '🎹',
+        className: 'kb-button',
+        })
+
     btn.classList.toggle('selected', an.kbMode === true)
     btn.onclick = () => {
         const enable = an.kbMode === false
@@ -153,17 +153,19 @@ function insertOptions(select : HTMLSelectElement, options : string[]) {
 
 
 function samplerControls(audioNode : BufferNode2) {
-    const box = E('span')
-    box.innerHTML = '<span> buffer </span>'
-    box.classList.add('buffer-row')
-    const value = E('span'); value.innerText = String.fromCharCode(65 + audioNode.bufferKey)
+    const box = E('span', {
+        className: 'buffer-row',
+        children: [E('span', { text: 'buffer' })]
+        })
+        
+    const value = E('span', { text: String.fromCharCode(65 + audioNode.bufferKey) })
     box.appendChild(value)
 
     // TODO: change this to a select box, 
     // and don't depend on BufferUtils, 
     // depend on BufferStorage, instead.
     ;['-','+'].forEach((op,i) => { // change the buffer index
-        const btn = E('button'); btn.innerText = op
+        const btn = E('button', { text :'op' })
         btn.onclick = () => {
             const v = clamp(0, 
                 audioNode.bufferKey + Math.sign(i - .5), 
@@ -177,7 +179,7 @@ function samplerControls(audioNode : BufferNode2) {
     })
  
     ;['loop'].forEach(text => { // toggleable buttons
-        const btn = E('button'); btn.innerText = text
+        const btn = E('button', { text })
         const an = audioNode as Indexed
         btn.classList.toggle('selected', an[text])
         btn.onclick = () => {
@@ -197,10 +199,11 @@ function samplerControls(audioNode : BufferNode2) {
 function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node {
     const allParams = E('div')
     for (const param of AudioNodeParams[node.type]) {
-        const box = E('div')
-        box.classList.add('box')
-
-        box.innerHTML = `<span>${param}</span>`
+        
+        const box = E('div', { 
+            className: 'box',
+            text: param
+            })
 
         const initialValue = node.audioParamValues[param]
 

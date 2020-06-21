@@ -178,7 +178,7 @@ const AudioParamRanges : { readonly [key in AudioParams] : [number,number] } =
     gain:         [0, 24000],
     frequency:    [0, 24000],
     detune:       [-153600, 153600],
-    Q:            [0 ,1000],
+    Q:            [0 ,20],
     pan:          [-1.0, 1.0],
     delayTime:    [0, 1],
     playbackRate: [0, 32],

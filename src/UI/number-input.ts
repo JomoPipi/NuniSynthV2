@@ -11,10 +11,13 @@ function createDraggableNumberInput(
     updateFunc : (delta : number, startValue : number) => string, 
     manualUpdater : (value : number) => void ) {
 
-    const valueInput = E('input')
-    valueInput.type = 'number'
-    valueInput.classList.add('number-grab')
-    valueInput.value = initialValue.toString()
+    const valueInput = E('input', {
+        className: 'number-grab',
+        props: {
+            type: 'number',
+            value: initialValue
+            }
+        })
 
     let startX : number,
         startY : number, 
