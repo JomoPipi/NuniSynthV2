@@ -48,7 +48,7 @@ export default function createValuesWindow(
     }
 
     if (node.id === 0) {
-        controls.appendChild(masterGainControls(node))
+        controls.appendChild(gainControls(node))
     }
     else if (node.type !== NodeTypes.B_SEQ) {
         controls.appendChild(exposeAudioParams(node, saveCallback))
@@ -71,7 +71,7 @@ export default function createValuesWindow(
 }
 
 
-function masterGainControls(node : NuniGraphNode) {
+function gainControls(node : NuniGraphNode) {
     const value = node.audioNode.gain.value
     
     const dial = new JsDial()
@@ -82,7 +82,7 @@ function masterGainControls(node : NuniGraphNode) {
     dial.render()
 
     const valueText = E('span', { 
-        text: volumeTodB(value).toFixed(1) + 'dB' 
+        text: `${volumeTodB(value).toFixed(1)}dB` // (${(value*100).toFixed(2)}%)`
         })
 
         applyStyle(valueText, {
@@ -90,11 +90,11 @@ function masterGainControls(node : NuniGraphNode) {
             width: '70px'
             })
     
-    dial.attach((value : number) => {
-        const v = value ** 4.0
-        node.setValueOfParam('gain', v)
-        valueText.innerText = 
-            volumeTodB(v).toFixed(1) + 'dB'
+    dial.attach((v : number) => {
+        const value = v ** 4.0
+        node.setValueOfParam('gain', value)
+        valueText.innerText =
+            `${volumeTodB(value).toFixed(1)}dB` //(${(value*100).toFixed(2)}%)`
     })
 
     const box = E('div', { children: [dial.html, valueText] })

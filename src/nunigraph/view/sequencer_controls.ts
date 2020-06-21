@@ -49,11 +49,19 @@ export function sequencerControls(an : Sequencer) {
 }
 
 
-
+const subdivisionList = [
+    1, 2, 4, 8, 16, 32, 64, 128,
+    3, 6, 12, 24, 48, 96,
+    ]
+for (let i = 5; i < 64; i++) {
+    if (!subdivisionList.includes(i)) {
+        subdivisionList.push(i)
+    }
+}
 
 function createTopRowControls(an : Sequencer) {
 
-    const controls = E('div', { className: 'flat-grid' })
+    const controls = E('div', { className: 'flat-grid flex-center' })
     const syncCheckBox = E('input')
     
     addPlayButton: {
@@ -100,49 +108,28 @@ function createTopRowControls(an : Sequencer) {
         controls.appendChild(box)
     }
 
-    toggleSyncPlay: {
-        const box = E('span')
-        const text = E('span', { text: 'sync ' })
-
-        syncCheckBox.type = 'checkbox'
-        syncCheckBox.checked = an.isInSync
-
-        syncCheckBox.onclick = function() { 
-            an.isInSync = syncCheckBox.checked
-            if (an.isInSync) {
-                an.noteTime = an.startTime = an.currentStep = 0
-            }
-            else {
-                an.noteTime = an.ctx.currentTime
-            }
-        }
-        box.append(text, syncCheckBox)
-        controls.append(box)
-    }
-
     changeSubdivision: {
         const box = E('span')
-        const text = E('span', { text: 'subdivision ' })
+
+        const select = E('select', {
+            children: subdivisionList
+                .map(n => E('option', { 
+                    text: '1/' + n,
+                    className: 'list-btn' 
+                }))
+        })
         
-        const input = E('input', {
-            props: {
-                type: 'number',
-                min: 1,
-                max: 128,
-                value: an.subdiv,
-                }
-            })
-        input.oninput = function() { 
-            an.subdiv = clamp(2**-8, +input.value, 1e6)
-            syncCheckBox.checked = an.isInSync = false
+        select.onchange = function() {
+            const n = select.value.split('/')[1]
+            an.subdiv = +n
         }
 
-        box.append(text, input)
-        controls.append(box)
+        box.appendChild(select)
+        controls.appendChild(box)
     }
 
     chooseADSR: {
-        const box = E('span', { text: 'ADSR ' })
+        const box = E('span', { text: 'ADSR', children: [E('br')] })
         
         const abc = [0,1,2].map(n => {
             const btn = E('button', {
@@ -165,6 +152,26 @@ function createTopRowControls(an : Sequencer) {
             }
         }
         controls.appendChild(box)
+    }
+
+    toggleSyncPlay: {
+        const box = E('span')
+        const text = E('span', { text: 'sync ' })
+
+        syncCheckBox.type = 'checkbox'
+        syncCheckBox.checked = an.isInSync
+
+        syncCheckBox.onclick = function() { 
+            an.isInSync = syncCheckBox.checked
+            if (an.isInSync) {
+                an.noteTime = an.startTime = an.currentStep = 0
+            }
+            else {
+                an.noteTime = an.ctx.currentTime
+            }
+        }
+        box.append(text, syncCheckBox)
+        controls.append(box)
     }
 
 
