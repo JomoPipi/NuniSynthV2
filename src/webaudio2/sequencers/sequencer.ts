@@ -183,7 +183,6 @@ export default class Sequencer extends VolumeNodeContainer {
                 className: 'flex-center'
                 })
 
-            row.style.marginRight = '2%'
             row.appendChild(rowOptions(this.additionalRowItems(key), key))
 
             this.HTMLBoxes[key] = {}
@@ -274,13 +273,12 @@ export default class Sequencer extends VolumeNodeContainer {
                 })
 
                 dial.attachDoubleClick(() => {
-                    log('hello?')
                     dial.value = 1
                     channelData[key].volume = 1
                     valueText.innerText = '0.0dB'
                 })
 
-                box.append(E('br'), dial.html, valueText)
+                box.append(dial.html, valueText)
             }
 
             return box

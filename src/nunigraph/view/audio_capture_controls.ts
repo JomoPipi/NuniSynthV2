@@ -30,6 +30,7 @@ export default function audioCaptureNodeControls(audioNode : AudioBufferCaptureN
                 className: 'top-bar-btn'
                 })
 
+            value.innerText = String.fromCharCode(65 + audioNode.bufferKey)
             btn.onclick = () => {
                 const v = clamp(0, 
                     audioNode.bufferKey + Math.sign(i - .5), 
@@ -49,6 +50,8 @@ export default function audioCaptureNodeControls(audioNode : AudioBufferCaptureN
     choose_recording_length: {
         const lengthText = E('span', { text: '2s' })
 
+        const value = audioNode.recordingLength
+        lengthText.innerText = value + 's'
         const lengthSlider = E('input', {
             props: {
                 type: 'range',

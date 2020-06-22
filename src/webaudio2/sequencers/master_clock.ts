@@ -5,7 +5,7 @@
 
 
 
-let activated = false
+let activated = false, isPaused = false
 
 const MasterClock = {
     tempo: 120,
@@ -20,7 +20,7 @@ const MasterClock = {
 
 function startScheduling(scheduleNotes : (tempo : number) => void) {
 
-    scheduleNotes(MasterClock.tempo)
+    if (!isPaused) scheduleNotes(MasterClock.tempo)
 
     const goAgain = startScheduling.bind(null, scheduleNotes)
 
@@ -85,3 +85,9 @@ function count() {
     }, 2000)
 }
 tapBtn.addEventListener('click', count)
+
+
+// Add hold button
+const holdBtn = D('beat-hold-button')!
+holdBtn.onmousedown = () => isPaused = true
+holdBtn.onmouseup = () => isPaused = false

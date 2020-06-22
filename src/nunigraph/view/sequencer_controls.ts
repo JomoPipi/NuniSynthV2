@@ -35,7 +35,6 @@ export function sequencerControls(an : Sequencer) {
                     else {
                         an.removeInput()
                     }
-                    
                     an.setupGrid()
                 }
                 controls.appendChild(btn)
@@ -51,7 +50,8 @@ export function sequencerControls(an : Sequencer) {
 
 const subdivisionList = [
     1, 2, 4, 8, 16, 32, 64, 128,
-    3, 6, 12, 24, 48, 96,
+    3, 6, 12, 24, 48, 96, 
+    0.5, 0.25
     ]
 for (let i = 5; i < 64; i++) {
     if (!subdivisionList.includes(i)) {
@@ -62,7 +62,7 @@ for (let i = 5; i < 64; i++) {
 function createTopRowControls(an : Sequencer) {
 
     const controls = E('div', { className: 'flat-grid flex-center' })
-    const syncCheckBox = E('input')
+    // const syncCheckBox = E('input')
     
     addPlayButton: {
         const btn = E('button', { 
@@ -99,8 +99,10 @@ function createTopRowControls(an : Sequencer) {
                 an.updateSteps(v)
                 an.setupGrid()
 
-                // We go out of sync because of this
-                syncCheckBox.checked = an.isInSync = false
+                if (an.isPlaying && an.isInSync) {
+                    an.stop()
+                    an.play()
+                }
             }
             box.appendChild(btn)
         })
@@ -119,6 +121,7 @@ function createTopRowControls(an : Sequencer) {
                 }))
         })
         
+        select.value = '1/' + an.subdiv
         select.onchange = function() {
             const n = select.value.split('/')[1]
             an.subdiv = +n
@@ -155,23 +158,16 @@ function createTopRowControls(an : Sequencer) {
     }
 
     toggleSyncPlay: {
-        const box = E('span')
-        const text = E('span', { text: 'sync ' })
-
-        syncCheckBox.type = 'checkbox'
-        syncCheckBox.checked = an.isInSync
-
-        syncCheckBox.onclick = function() { 
-            an.isInSync = syncCheckBox.checked
-            if (an.isInSync) {
-                an.noteTime = an.startTime = an.currentStep = 0
+        controls.append(createToggleButton(
+            an,
+            'isInSync',
+            {   text: 'sync', 
+                update: (on : boolean) =>
+                    an.noteTime = on
+                        ? (an.startTime = an.currentStep = 0)
+                        : an.ctx.currentTime
             }
-            else {
-                an.noteTime = an.ctx.currentTime
-            }
-        }
-        box.append(text, syncCheckBox)
-        controls.append(box)
+        ))
     }
 
 

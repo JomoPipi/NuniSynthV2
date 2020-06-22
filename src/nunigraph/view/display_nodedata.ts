@@ -6,7 +6,6 @@
 
 
 import { NuniSourceNode } from '../../webaudio2/note_in/nuni_source_node.js'
-// import { GraphController } from '../init.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { BufferNode2 } from '../../webaudio2/note_in/buffer2.js'
 import { sequencerControls } from './sequencer_controls.js'
@@ -28,6 +27,7 @@ export default function createValuesWindow(
     deleteCallback : Function) {
 
     const controls = E('div')
+        controls.style.margin = '0 2%'
 
     controls.appendChild(showSubtypes(node, saveCallback))
 
@@ -105,19 +105,13 @@ function gainControls(node : NuniGraphNode) {
 
 
 function activateKeyboardButton(an : NuniSourceNode) {
-    // (dis?)connects the node from the keyboard.
-    const btn = E('button', {
-        text: '🎹',
-        className: 'kb-button',
-        })
 
-    btn.classList.toggle('selected', an.kbMode === true)
-    btn.onclick = () => {
-        const enable = an.kbMode === false
-        an.kbMode = enable
-        btn.classList.toggle('selected', enable)
-    }
-    return btn
+    return createToggleButton(
+        an,
+        'kbMode',
+        {   text: '🎹', 
+            className: 'kb-button' }
+        )
 }
 
 
@@ -165,7 +159,7 @@ function samplerControls(audioNode : BufferNode2) {
     // and don't depend on BufferUtils, 
     // depend on BufferStorage, instead.
     ;['-','+'].forEach((op,i) => { // change the buffer index
-        const btn = E('button', { text :'op' })
+        const btn = E('button', { text: op })
         btn.onclick = () => {
             const v = clamp(0, 
                 audioNode.bufferKey + Math.sign(i - .5), 
@@ -178,17 +172,11 @@ function samplerControls(audioNode : BufferNode2) {
         box.appendChild(btn)
     })
  
-    ;['loop'].forEach(text => { // toggleable buttons
-        const btn = E('button', { text })
-        const an = audioNode as Indexed
-        btn.classList.toggle('selected', an[text])
-        btn.onclick = () => {
-            const on = (an[text] ^= 1) ? true : false
-            btn.classList.toggle('selected', on)
-            audioNode.refresh()
-        }
-        box.appendChild(btn)
-    })
+    box.appendChild(createToggleButton(
+        audioNode, 
+        'loop', 
+        { update: (on : boolean) => audioNode.refresh()}
+        ))
 
     return box
 }
