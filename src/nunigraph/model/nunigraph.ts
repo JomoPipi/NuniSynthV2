@@ -45,8 +45,6 @@ export class NuniGraph {
             })
 
         this.createNewNode(NodeTypes.GAIN, masterGainSettings)
-            .audioNode
-            .connect(audioCtx.volume)
     }
 
     createNewNode(type : NodeTypes, settings? : NodeSettings) {

@@ -8,10 +8,8 @@ import NuniGraphAudioNode from "../../webaudio2/nunigraph_audionode";
 
 export default function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
     const box = E('div')
-
-    const canvas = E('canvas', {
-        className: 'nunigraph-canvas--custom',
-        })
+    
+    const { canvas } = audioNode
 
     const bottomRow = E('div', { className: 'full' })
     const dragCorner = E('span',{
@@ -39,6 +37,8 @@ export default function createResizeableGraphEditor(audioNode : NuniGraphAudioNo
         
         canvas.width = Math.max(0, w + x - X)
         canvas.height = trace(Math.max(0, h + y - Y) )
+
+        audioNode.controller.renderer.render()
     }
     function mouseup(e : MouseEvent) {
         
@@ -49,5 +49,9 @@ export default function createResizeableGraphEditor(audioNode : NuniGraphAudioNo
     dragCorner.onmousedown = mousedown
 
     box.append(canvas,bottomRow)
+
+    // It needs to render after the HTML is appended to the document
+    setTimeout(() => audioNode.controller.renderer.render(), 5)
+
     return box
 }

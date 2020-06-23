@@ -17,15 +17,64 @@ import { BufferNode2 } from '../webaudio2/note_in/buffer2.js'
 import createValuesWindow from './view/display_nodedata.js'
 import Sequencer from '../webaudio2/sequencers/sequencer.js'
 import NuniGraphAudioNode from '../webaudio2/nunigraph_audionode.js'
+import { AudioNode2 } from './model/nunigraph_node.js'
+import { Destination } from '../webaudio2/volumenode_container.js'
 
 
 
 
-function createGraphController(canvas : HTMLCanvasElement) {
-    const G = new NuniGraph()
+class Nuni extends NuniGraphController {
 
+    constructor(canvas : HTMLCanvasElement) {
+        const G = new NuniGraph()
+
+        super(
+            G, 
+            D('connection-type-prompt')!,
+            new NuniGraphRenderer(
+                G, 
+                canvas,
+                D('snap-to-grid-btn') as HTMLButtonElement,
+                ),
+            createValuesWindow
+            )
+    }
+}
+
+NuniGraphAudioNode.createController = // Nuni
+    (canvas : HTMLCanvasElement) => new Nuni(canvas)
+
+const GraphController 
+    = new Nuni(D('nunigraph-canvas') as HTMLCanvasElement)
+
+GraphController.activateEventHandlers()
+GraphController
+    .g
+    .nodes
+    .find(({ id }) => id === 0)!
+    .audioNode
+    .connect(audioCtx.volume)
+
+export default GraphController
+
+
+
+
+Graph_Attachments: {
+    const g = GraphController.g
+
+    function* yeildNodes(g : NuniGraph) : AudioNode2<any> {
+        for (const { audioNode: an } of g.nodes) {
+            if (an instanceof NuniGraphAudioNode) {
+                yield* yeildNodes(an.controller.g)
+            } else {
+                yield an
+            }
+        }
+    }
+    
     KB.attachToGraph(function*() {
-        for (const { audioNode: an } of G.nodes) {
+        for (const an of yeildNodes(g)) {
             if (an instanceof NuniSourceNode) { // && an.kbMode !== 'none') {
                 yield an
             }
@@ -33,7 +82,7 @@ function createGraphController(canvas : HTMLCanvasElement) {
     })
 
     MasterClock.setSchedule((tempo : number) => {
-        for (const { audioNode: an } of G.nodes) {
+        for (const an of yeildNodes(g)) {
             if (an instanceof Sequencer) {
                 an.scheduleNotes(tempo)
             }
@@ -42,32 +91,10 @@ function createGraphController(canvas : HTMLCanvasElement) {
 
     BufferUtils.initBufferPresets(audioCtx)
     BufferUtils.setRefreshBufferFunc((index : number) => {
-        for (const { audioNode: an } of G.nodes) {
+        for (const an of yeildNodes(g)) {
             if (an instanceof BufferNode2 && an.bufferKey === index) {
                 an.refresh()
             }
         }
     })
-
-
-    const controller = new NuniGraphController(
-        G, 
-        D('connection-type-prompt')!,
-        new NuniGraphRenderer(
-            G, 
-            canvas,
-            D('snap-to-grid-btn') as HTMLButtonElement,
-            ),
-        createValuesWindow
-        )
-
-    return controller
 }
-
-NuniGraphAudioNode.createController = createGraphController
-
-const GraphController 
-    = createGraphController(
-    D('nunigraph-canvas') as HTMLCanvasElement)
-
-export default GraphController

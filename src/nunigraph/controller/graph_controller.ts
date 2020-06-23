@@ -9,6 +9,7 @@ import UndoRedoModule from '../../helpers/simple_undo_redo.js'
 import { NuniGraph } from '../model/nunigraph.js'
 import { NuniGraphRenderer, HOVER } from '../view/graph_renderer.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
+import NuniGraphAudioNode from '../../webaudio2/nunigraph_audionode.js'
 
 type CreateValuesWindow = 
     (node : NuniGraphNode, 
@@ -33,6 +34,10 @@ export class NuniGraphController {
     private createValuesWindow : CreateValuesWindow
     // private copiedNodes? : string
 
+    private _keydown : (e : KeyboardEvent) => void
+    private _mouseup : (e : MouseEvent) => void
+    private _mouse_move : (e : MouseEvent) => void
+
     constructor (
         g : NuniGraph, 
         prompt : HTMLElement, 
@@ -51,6 +56,17 @@ export class NuniGraphController {
             renderer.getGraphMouseTarget({ offsetX: -Infinity, offsetY: -Infinity})
         this.openWindow = {}
 
+            
+        this._mouse_move = (e : MouseEvent) => {
+            const { x: offsetX, y: offsetY } = this.getMousePos(e)
+            const msg = { 
+                buttons: e.buttons, offsetX, offsetY 
+                } as MouseEvent
+            this.mousemove(msg) 
+        }
+        this._mouseup = (e : MouseEvent) => this.mouseup(e)
+        this._keydown = (e : KeyboardEvent) => this.keydown(e)
+
         // const getState = () => g.toRawString()
         // const setState = (state : string) => {
         //     g.fromRawString(state)
@@ -59,20 +75,22 @@ export class NuniGraphController {
         //     D('connection-type-prompt')!.classList.remove('show')
         // }
         // this.undoRedoModule = new UndoRedoModule(getState, setState)
-        
-        const mouse_move = (e : MouseEvent) => {
-            const { x: offsetX, y: offsetY } = this.getMousePos(e)
-            const msg = { 
-                buttons: e.buttons, offsetX, offsetY 
-                } as MouseEvent
-            this.mousemove(msg) 
-        }
+    }
 
-        renderer.canvas.onmousedown = e => this.mousedown(e)
-        renderer.canvas.ondblclick = e => this.doubleClick(e)
-        window.addEventListener('mousemove', e => mouse_move(e))
-        window.addEventListener('mouseup', e => this.mouseup(e))
-        window.addEventListener('keydown', e => this.keydown(e))
+    activateEventHandlers() {
+        this.renderer.canvas.onmousedown = e => this.mousedown(e)
+        this.renderer.canvas.ondblclick = e => this.doubleClick(e)
+        window.addEventListener('mousemove', this._mouse_move)
+        window.addEventListener('mouseup', this._mouseup)
+        window.addEventListener('keydown', this._keydown)
+    }
+
+    deactivateEventHandlers() {
+        this.renderer.canvas.onmousedown = null
+        this.renderer.canvas.ondblclick = null
+        window.removeEventListener('mousemove', this._mouse_move)
+        window.removeEventListener('mouseup', this._mouseup)
+        window.removeEventListener('keydown', this._keydown)
     }
 
     save() {
@@ -118,6 +136,13 @@ export class NuniGraphController {
     }
 
     private closeValuesWindow(id : number) {
+
+        const node = this.g.nodes.find(({ id: _id }) => _id === id)!
+        if (!node) throw 'figure out what to do from here'
+        if (node.audioNode instanceof NuniGraphAudioNode) {
+            node.audioNode.deactivateWindow()
+        }
+
         const window = this.openWindow[id]
         if (window) {
             D('node-windows')!.removeChild(window)
@@ -141,6 +166,10 @@ export class NuniGraphController {
     }
 
     private openValuesWindow(node : NuniGraphNode) {
+
+        if (node.audioNode instanceof NuniGraphAudioNode) {
+            node.audioNode.activateWindow()
+        }
 
         const moveTheWindowToTheTop = (box : HTMLElement) => {
             const max = 
