@@ -60,3 +60,10 @@
         cursor: pointer;
     }
 }
+
+.corner-drag-box {
+    float: right;
+    width: 10px;
+    height: 10px;
+    cursor: nwse-resize;
+}

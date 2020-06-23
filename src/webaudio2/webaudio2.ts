@@ -11,6 +11,7 @@ import SubgraphSequencer from './sequencers/subgraph_sequencer.js'
 import BufferSequencer from './sequencers/buffer_sequencer.js'
 import graphVisualEqualizer from './equalizer/global_visualizer.js'
 import AudioBufferCaptureNode from './record/buffer_capture_node.js'
+import NuniGraphAudioNode from './nunigraph_audionode.js'
 
 
 export class AudioContext2 extends AudioContext {
@@ -54,6 +55,9 @@ export class AudioContext2 extends AudioContext {
 
     createAudioBufferCaptureNode() {
         return new AudioBufferCaptureNode(this)
+    }
+    createCustomNode(){
+        return new NuniGraphAudioNode(this)
     }
 }
 

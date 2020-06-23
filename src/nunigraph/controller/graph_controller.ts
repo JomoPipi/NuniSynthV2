@@ -20,7 +20,7 @@ export class NuniGraphController {
  *  Manipulates the graph and its' view
  */
 
-    private g : NuniGraph
+    g : NuniGraph
     private connectionTypePrompt : HTMLElement // belongs in view
     renderer : NuniGraphRenderer
     private mouseIsDown : boolean
@@ -29,9 +29,9 @@ export class NuniGraphController {
     private lastMouse_MoveMsg : { type : HOVER } & Indexed
     private selectionStart? : [number,number]
     openWindow : Indexable<HTMLElement> // [node.id]:nodeValuesWindow
-    private undoRedoModule : UndoRedoModule
+    // private undoRedoModule : UndoRedoModule
     private createValuesWindow : CreateValuesWindow
-    private copiedNodes? : string
+    // private copiedNodes? : string
 
     constructor (
         g : NuniGraph, 
@@ -51,14 +51,14 @@ export class NuniGraphController {
             renderer.getGraphMouseTarget({ offsetX: -Infinity, offsetY: -Infinity})
         this.openWindow = {}
 
-        const getState = () => g.toRawString()
-        const setState = (state : string) => {
-            g.fromRawString(state)
-            this.renderer.render()
-            this.unselectNode()
-            D('connection-type-prompt')!.classList.remove('show')
-        }
-        this.undoRedoModule = new UndoRedoModule(getState, setState)
+        // const getState = () => g.toRawString()
+        // const setState = (state : string) => {
+        //     g.fromRawString(state)
+        //     this.renderer.render()
+        //     this.unselectNode()
+        //     D('connection-type-prompt')!.classList.remove('show')
+        // }
+        // this.undoRedoModule = new UndoRedoModule(getState, setState)
         
         const mouse_move = (e : MouseEvent) => {
             const { x: offsetX, y: offsetY } = this.getMousePos(e)

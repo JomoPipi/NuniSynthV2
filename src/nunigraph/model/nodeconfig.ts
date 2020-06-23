@@ -17,6 +17,7 @@ enum NodeTypes
     B_SEQ   = 'buffer-sequencer',
     CSN     = 'constant-source',
     RECORD  = 'audiobuffer-capture',
+    CUSTOM  = 'custom-node'
 }
 
 type AudioParams 
@@ -50,7 +51,8 @@ const createAudioNode =
     [NodeTypes.SGS]:    'createSubgraphSequencer',
     [NodeTypes.B_SEQ]:  'createBufferSequencer',
     [NodeTypes.CSN]:    'createConstantSource',
-    [NodeTypes.RECORD]: 'createAudioBufferCaptureNode'
+    [NodeTypes.RECORD]: 'createAudioBufferCaptureNode',
+    [NodeTypes.CUSTOM]: 'createCustomNode'
 }
 
 const SupportsInputChannels = {
@@ -63,7 +65,8 @@ const SupportsInputChannels = {
     [NodeTypes.SGS]:    true,
     [NodeTypes.B_SEQ]:  false,
     [NodeTypes.CSN]:    false,
-    [NodeTypes.RECORD]: true
+    [NodeTypes.RECORD]: true,
+    [NodeTypes.CUSTOM]: false
 }
 
 const MustBeStarted = {
@@ -76,7 +79,8 @@ const MustBeStarted = {
     [NodeTypes.SGS]:    false,
     [NodeTypes.B_SEQ]:  false,
     [NodeTypes.CSN]:    true,
-    [NodeTypes.RECORD]: false
+    [NodeTypes.RECORD]: false,
+    [NodeTypes.CUSTOM]: false,
 }
 
 const HasNoAudioParams = { 
@@ -89,7 +93,8 @@ const HasNoAudioParams = {
     [NodeTypes.SGS]:    true,
     [NodeTypes.B_SEQ]:  true,
     [NodeTypes.CSN]:    false,
-    [NodeTypes.RECORD]: true
+    [NodeTypes.RECORD]: true,
+    [NodeTypes.CUSTOM]: true
 }
 
 const HasNoOutput = { 
@@ -102,7 +107,8 @@ const HasNoOutput = {
     [NodeTypes.SGS]:    false,
     [NodeTypes.B_SEQ]:  false,
     [NodeTypes.CSN]:    false,
-    [NodeTypes.RECORD]: true
+    [NodeTypes.RECORD]: true,
+    [NodeTypes.CUSTOM]: false,
 }
 
 const AudioNodeParams : Indexable<AudioParams[]> = {
@@ -115,7 +121,8 @@ const AudioNodeParams : Indexable<AudioParams[]> = {
     [NodeTypes.SGS]:    [],
     [NodeTypes.B_SEQ]:  ['playbackRate','detune'],
     [NodeTypes.CSN]:    ['offset'],
-    [NodeTypes.RECORD]: []
+    [NodeTypes.RECORD]: [],
+    [NodeTypes.CUSTOM]: [],
 }
 
 const AudioNodeSubTypes = {
@@ -130,12 +137,12 @@ const AudioNodeSubTypes = {
     [NodeTypes.SGS]:    [],
     [NodeTypes.B_SEQ]:  [],
     [NodeTypes.CSN]:    [],
-    [NodeTypes.RECORD]: []
+    [NodeTypes.RECORD]: [],
+    [NodeTypes.CUSTOM]: [],
 }
 
 const MasterGainColor = '#555'
-const NodeTypeColors : { readonly [key in NodeTypes] : string } =
-{   // MUST BE IN rgba(r,g,b,a) FORMAT!!
+const NodeTypeColors : { readonly [key in NodeTypes] : string } = {
     [NodeTypes.GAIN]:   'rgba(255,0,0,0.5)',
     [NodeTypes.OSC]:    'rgba(0,0,255,0.5)',
     [NodeTypes.FILTER]: 'rgba(0,255,0,0.5)',
@@ -145,7 +152,8 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     [NodeTypes.SGS]:    'rgba(255,0,255,0.5)',
     [NodeTypes.B_SEQ]:  'rgba(0,255,195,0.5)',
     [NodeTypes.CSN]:    'rgba(255,200,200,0.5)',
-    [NodeTypes.RECORD]: 'rgba(255,255,255,1)'
+    [NodeTypes.RECORD]: 'rgba(255,255,255,1)',
+    [NodeTypes.CUSTOM]: 'rgba(255,200,255,1)'
 }
 
 const ConnectionTypeColors : { readonly [key in ConnectionType] : string } =

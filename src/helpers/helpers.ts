@@ -27,6 +27,7 @@ type AllElements = {
     video  : HTMLVideoElement
     input  : HTMLInputElement
     select : HTMLSelectElement
+    canvas : HTMLCanvasElement
 }
 
 type CreatedElement<T extends string> = 

@@ -5,7 +5,7 @@
 
 
 
-import { GraphController } from '../nunigraph/init.js'
+import GraphController from '../nunigraph/init.js'
 
 window.addEventListener('resize', resizeHandler)
 

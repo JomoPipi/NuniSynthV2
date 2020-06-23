@@ -5,13 +5,13 @@
 
 
 
-import { G, GraphController } from '../init.js'
-import MasterClock from '../../webaudio2/sequencers/master_clock.js';
+import GraphController from '../init.js'
 
 
 
+const contextmenu = D('graph-contextmenu')!
 
-// Create Nodes
+// Set-up the graph contextmenu
 {
     D('nuni-logo')!.onclick = (e : MouseEvent) =>
         GraphController.showContextMenu(e.clientX, e.clientY)
@@ -21,8 +21,8 @@ import MasterClock from '../../webaudio2/sequencers/master_clock.js';
 
         const create = () => {
             GraphController.save()
-            const node = G.createNewNode(type)
-            const menu = D('graph-contextmenu')!
+            const node = GraphController.g.createNewNode(type)
+            const menu = contextmenu
             
             if (menu.style.display !== 'none') {
                 // Place the newly created node where the contextmenu was.
@@ -56,7 +56,7 @@ import MasterClock from '../../webaudio2/sequencers/master_clock.js';
             props: { onclick: create }
             })
 
-        D('graph-contextmenu')!.appendChild(btn)
+        contextmenu.appendChild(btn)
     }
 
     for (const key in NodeTypes) {
@@ -66,9 +66,15 @@ import MasterClock from '../../webaudio2/sequencers/master_clock.js';
 
 }
 
+// Right-click options
+D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
+    e.preventDefault()
+    GraphController.showContextMenu(e.clientX, e.clientY)
+}
+
 // Copy the graph
 ;(D('copy-graph-button') as HTMLButtonElement).onclick = function() {
-    (D('graph-copy-output') as HTMLInputElement).value = G.toString()
+    (D('graph-copy-output') as HTMLInputElement).value = GraphController.g.toString()
 }
 
 // Create graph from string
@@ -76,7 +82,7 @@ import MasterClock from '../../webaudio2/sequencers/master_clock.js';
     const input = D('graph-copy-input') as HTMLInputElement
     try { 
         GraphController.save()
-        G.fromString(input.value)
+        GraphController.g.fromString(input.value)
         GraphController.renderer.render()
         input.value = ''
     } catch (e) {
@@ -98,10 +104,4 @@ import MasterClock from '../../webaudio2/sequencers/master_clock.js';
         GraphController.redo()
         GraphController.renderer.render()
     }
-}
-
-// Right-click options
-D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
-    e.preventDefault()
-    GraphController.showContextMenu(e.clientX, e.clientY)
 }

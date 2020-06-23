@@ -75,6 +75,18 @@ const presets = {
     , 'Warble Laser': '0.5 * sin(n / 10 / sqrt(n/5.0)) * cos(n /  sqrt(n/50.0))'
     , 'Noise 1': 'random() * .5 - .25'
     , 'Noise 2': 'sin(n/(2- sin(n/11))) * sin(n/23) * 0.5'
+    , 'Water Drum': '0.5 * sin(n / sqrt(n/(10.0 + 2*(0.5 * sin(n / sqrt(n/3.0))))))'
+    , 'Space Drum 1': '0.5 * sin(n / cbrt(n/(15.0 + 1*(0.5 * sin(n / sqrt(n/3.0))))))'
+    , 'Space Laser 1': '0.5 * sin(n / sqrt(n/(15.0 + 1*(0.5 * sin(n / cbrt(n/3.0))))))'
+    , 'Space Laser 2': '0.5 * sin(n / cbrt(n/(15.0 + 1*(0.5 * sin(n / cbrt(n/3.0))))))'
+    , 'Descending Laser': '0.5 * sin(n / cbrt(n/(1500.0 + 1*(0.5 * sin(n / cbrt(n/30.0))))))'
+    , 'Space Laser 3': '0.5 * sin(n / cbrt(n/(150.0 + 1*(0.5 ** sin((n+1) / sqrt(n/30.0))))))'
+    , 'JI Pulse 1': '0.8 * ((n**1.4) % (2*n**1.1) > (n - (n % 2)) ? sin(n/64) : sin(n/25))'
+    , 'Pulse 1': '0.8 * ((n**1.4) % (2*n**1.1) > (n - (n % 2)) ? sin(n/32) : sin(n/64))'
+    , 'Pulse 2': '0.8 * ((n**1.35) % (2*n**1.1) > (n - (n % 40)) ? sin(n/32) : sin(n/64))'
+    , 'Space Pulse 1': '0.8 * ((n**(1+0.7*sin(n/15000))) % (4*n**1.1) > (3*n - (n /2)) ? sin(n/32) : sin(n/48))'
+    , 'Space Laser 4': '0.8 * ((n**(1+0.55*sin(n/81))) % (2*n**1.1) > (3*n - (n /2)) ? sin(n/32) : sin(n/32)*cos(n/12))'
+    , 'Water Wave': '0.5 * sin(n / (sqrt(n/90)-sqrt(n/4)+sqrt(n/705)**2.3))'
     }
 
 

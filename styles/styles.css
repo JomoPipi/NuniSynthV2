@@ -106,7 +106,7 @@ button {
   height: 100%;
 }
 
-#graph-contextmenu {
+.graph-contextmenu {
   display: none;
   position: absolute;
   background-color: #444044;
@@ -209,9 +209,14 @@ button {
       grid-template-columns: 1fr 1fr;
 }
 
-#nunigraph-canvas {
+.nunigraph-canvas {
   background-color: #201e20;
   height: 100%;
+  width: 100%;
+}
+
+.nunigraph-canvas--custom {
+  background-color: #201e20;
   width: 100%;
 }
 
@@ -234,7 +239,7 @@ button {
 .window {
   display: none;
   position: absolute;
-  background: #201e20;
+  background: #171717;
   color: #9a97a3;
   border: 1px solid #444044;
   z-index: 2;
@@ -514,6 +519,13 @@ code {
 
 .swapper span {
   cursor: pointer;
+}
+
+.corner-drag-box {
+  float: right;
+  width: 10px;
+  height: 10px;
+  cursor: nwse-resize;
 }
 
 .info-button {

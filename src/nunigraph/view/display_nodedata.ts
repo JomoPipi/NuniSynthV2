@@ -13,6 +13,8 @@ import { BufferUtils } from '../../buffer_utils/internal.js'
 import Sequencer from '../../webaudio2/sequencers/sequencer.js'
 import audioCaptureNodeControls from './audio_capture_controls.js'
 import AudioBufferCaptureNode from '../../webaudio2/record/buffer_capture_node.js'
+import createResizeableGraphEditor from './resizeable_graph_editor.js'
+import NuniGraphAudioNode from '../../webaudio2/nunigraph_audionode.js'
 
 
 
@@ -30,6 +32,11 @@ export default function createValuesWindow(
         controls.style.margin = '0 2%'
 
     controls.appendChild(showSubtypes(node, saveCallback))
+
+    if (node.audioNode instanceof NuniGraphAudioNode) {
+        controls.style.margin = '0 0'
+        controls.append(createResizeableGraphEditor(node.audioNode))
+    }
 
     if (node.audioNode instanceof AudioBufferCaptureNode) {
         controls.appendChild(audioCaptureNodeControls(node.audioNode))
@@ -54,18 +61,18 @@ export default function createValuesWindow(
         controls.appendChild(exposeAudioParams(node, saveCallback))
     }
 
-    // Add delete button, but not if id is 0, because that's the master gain.
-    if (node.id !== 0) {
-        const deleteNodeBtn = E('button', { text: '🗑️' })
-        applyStyle(deleteNodeBtn, {
-            float: 'right',
-            backgroundColor: 'transparent',
-            border: 'none',
-            fontSize: '1.25em'
-        })
-        deleteNodeBtn.onclick = () => deleteCallback()
-        controls.append(deleteNodeBtn)
-    }
+    // // Add delete button, but not if id is 0, because that's the master gain.
+    // if (node.id !== 0) {
+    //     const deleteNodeBtn = E('button', { text: '🗑️' })
+    //     applyStyle(deleteNodeBtn, {
+    //         textAlign: 'center',
+    //         backgroundColor: 'transparent',
+    //         border: 'none',
+    //         fontSize: '1.25em'
+    //     })
+    //     deleteNodeBtn.onclick = () => deleteCallback()
+    //     controls.append(deleteNodeBtn)
+    // }
     
     return controls
 }
