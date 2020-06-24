@@ -7,7 +7,6 @@
 
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { NuniGraph } from '../model/nunigraph.js'
-// import { ActiveControllers } from '../controller/graph_controller.js' <- CAUSES CIRCULARITY
 
 export enum HOVER { EDGE, SELECT, CONNECTION, EMPTY }
 
@@ -37,7 +36,6 @@ const snapToGridBtn = D('snap-to-grid-btn') as HTMLButtonElement
 let snapToGrid = false
 snapToGridBtn.onclick = () => {
     snapToGrid = snapToGridBtn.classList.toggle('selected')
-    // ActiveControllers.forEach(controller => controller.renderer.render())
 }
 
 export class NuniGraphRenderer {

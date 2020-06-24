@@ -159,9 +159,10 @@ export class NuniGraphController {
         if (node.audioNode instanceof NuniGraphAudioNode) {
             const controller = node.audioNode.controller
             const index = ActiveControllers.indexOf(controller)
-            if (index < 0) throw 'This shouldn\'t have happened'
-            ActiveControllers.splice(index, 1)
-            node.audioNode.deactivateWindow()
+            if (index >= 0) {
+                ActiveControllers.splice(index, 1)
+                node.audioNode.deactivateWindow()
+            }
         }
 
         const window = this.openWindow[id]
