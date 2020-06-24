@@ -1,20 +1,19 @@
-import { NuniGraphController } from "../nunigraph/controller/graph_controller" // <- A CIRCULAR REFERENCE POINT
+import { NuniGraphController } from "../nunigraph/controller/graph_controller.js" // <- A CIRCULAR REFERENCE POINT
+import VolumeNodeContainer from "./volumenode_container.js"
+// type NuniGraphController = Indexed // <- turn this one on when using npx madge --circular --extensions ts ./
 
 
 
 
 
-
-export default class NuniGraphAudioNode {
+export default class NuniGraphAudioNode extends VolumeNodeContainer {
     static createController? : (canvas : HTMLCanvasElement) => NuniGraphController
-
-    ctx : AudioContext
 
     canvas : HTMLCanvasElement
     controller : NuniGraphController
 
     constructor(ctx : AudioContext) {
-        this.ctx = ctx
+        super(ctx)
         this.canvas = E('canvas', {
             className: 'nunigraph-canvas--custom',
             })
@@ -24,11 +23,19 @@ export default class NuniGraphAudioNode {
         else 
             throw 'Why is create controller undefined'
 
+        this.controller
+            .g.nodes.find(node => node.id === 0)!
+            .audioNode
+            .connect(this.volumeNode)
+
+        // this.windowIsOpen = false
     }
 
-    connect(){}
+    // connect(node : Destination){
 
-    disconnect(){}
+    // }
+
+    // disconnect(){}
 
     activateWindow() {
         this.controller.activateEventHandlers()
@@ -36,5 +43,6 @@ export default class NuniGraphAudioNode {
 
     deactivateWindow() {
         this.controller.deactivateEventHandlers()
+        this.controller.closeAllWindows()
     }
 }

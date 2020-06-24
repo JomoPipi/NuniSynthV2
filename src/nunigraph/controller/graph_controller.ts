@@ -11,10 +11,14 @@ import { NuniGraphRenderer, HOVER } from '../view/graph_renderer.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import NuniGraphAudioNode from '../../webaudio2/nunigraph_audionode.js'
 
+export const ActiveControllers = [] as NuniGraphController[]
+
 type CreateValuesWindow = 
     (node : NuniGraphNode, 
     saveCallback : Function, 
     deleteCallBack : Function) => HTMLElement
+
+let openWindowGlobalIndexThatKeepsRising = 0
 
 export class NuniGraphController {
 /**
@@ -71,26 +75,34 @@ export class NuniGraphController {
         // const setState = (state : string) => {
         //     g.fromRawString(state)
         //     this.renderer.render()
-        //     this.unselectNode()
+        //     this.unselectNodes()
         //     D('connection-type-prompt')!.classList.remove('show')
         // }
         // this.undoRedoModule = new UndoRedoModule(getState, setState)
     }
 
     activateEventHandlers() {
-        this.renderer.canvas.onmousedown = e => this.mousedown(e)
-        this.renderer.canvas.ondblclick = e => this.doubleClick(e)
         window.addEventListener('mousemove', this._mouse_move)
         window.addEventListener('mouseup', this._mouseup)
         window.addEventListener('keydown', this._keydown)
+        this.renderer.canvas.onmousedown = e => this.mousedown(e)
+        this.renderer.canvas.ondblclick = e => this.doubleClick(e)
+
+        // Right-click options
+        this.renderer.canvas.oncontextmenu = (e : MouseEvent) => {
+            e.preventDefault()
+            this.showContextMenu(e.clientX, e.clientY)
+        }
+
     }
 
     deactivateEventHandlers() {
-        this.renderer.canvas.onmousedown = null
-        this.renderer.canvas.ondblclick = null
         window.removeEventListener('mousemove', this._mouse_move)
         window.removeEventListener('mouseup', this._mouseup)
         window.removeEventListener('keydown', this._keydown)
+        this.renderer.canvas.onmousedown = null
+        this.renderer.canvas.ondblclick = null
+        this.renderer.canvas.oncontextmenu = null
     }
 
     save() {
@@ -104,8 +116,12 @@ export class NuniGraphController {
     }
 
     showContextMenu(x : number, y : number) {
+
+        (<Indexed>window).lastControllerToOpenTheContextmenu = this
+
         const menu = D('graph-contextmenu') as HTMLDivElement
     
+        menu.style.zIndex = (openWindowGlobalIndexThatKeepsRising + 1).toString()
         menu.style.display = 'grid'
         UI_clamp(x, y, menu, document.body)
     }
@@ -123,12 +139,13 @@ export class NuniGraphController {
     }
 
     selectNode (node : NuniGraphNode) {
-        this.unselectNode()
+        this.unselectNodes()
+
         this.selectedNodes = [node]
         this.openWindow[node.id]?.classList.add('selected2')
     }
 
-    unselectNode() {
+    unselectNodes() {
         this.selectedNodes = []
         for (const key in this.openWindow) {
             this.openWindow[key].classList.remove('selected2')
@@ -140,6 +157,10 @@ export class NuniGraphController {
         const node = this.g.nodes.find(({ id: _id }) => _id === id)!
         if (!node) throw 'figure out what to do from here'
         if (node.audioNode instanceof NuniGraphAudioNode) {
+            const controller = node.audioNode.controller
+            const index = ActiveControllers.indexOf(controller)
+            if (index < 0) throw 'This shouldn\'t have happened'
+            ActiveControllers.splice(index, 1)
             node.audioNode.deactivateWindow()
         }
 
@@ -160,24 +181,22 @@ export class NuniGraphController {
         this.connectionTypePrompt.classList.remove('show')
         this.closeValuesWindow(node.id)
         this.g.deleteNode(node)
-        this.unselectNode()
+        this.unselectNodes()
         this.selectedNodes = []
         this.renderer.render()
     }
 
     private openValuesWindow(node : NuniGraphNode) {
 
-        if (node.audioNode instanceof NuniGraphAudioNode) {
-            node.audioNode.activateWindow()
-        }
-
         const moveTheWindowToTheTop = (box : HTMLElement) => {
-            const max = 
-                Object.values(this.openWindow)
-                .reduce((max, { style: { zIndex: zi } }) => 
-                    Math.max(max, +zi), -Infinity)
+            // const max = 
+            //     Object.values(this.openWindow)
+            //     .reduce((max, { style: { zIndex: zi } }) => 
+            //         Math.max(max, +zi), -Infinity)
 
-            box.style.zIndex = (max+1).toString()
+            // box.style.zIndex = (max+1).toString()
+
+            box.style.zIndex = (++openWindowGlobalIndexThatKeepsRising).toString()
         }
 
         if (this.openWindow[node.id]) {
@@ -185,10 +204,27 @@ export class NuniGraphController {
             return;
         }
 
+
+
+        // CUSTOM NODE STUFF
+
+        if (node.audioNode instanceof NuniGraphAudioNode) {
+            const controller = node.audioNode.controller
+            if (ActiveControllers.includes(controller)) throw 'This shouldn\'t have happened'
+            ActiveControllers.push(controller)
+            node.audioNode.activateWindow()
+        }
+
+
+
+
         const clickCallback = (box : HTMLElement) => {
             moveTheWindowToTheTop(box)
-            this.selectNode(node)
-            this.renderer.render({ selectedNodes: [node] })
+
+            if (node.type !== NodeTypes.CUSTOM) {
+                this.selectNode(node)
+                this.renderer.render({ selectedNodes: [node] })
+            }
         }
 
         const closeCallback = () => {
@@ -306,7 +342,7 @@ export class NuniGraphController {
 
             [HOVER.EDGE]: () => {
                 this.selectedNodes = []
-                this.unselectNode()
+                this.unselectNodes()
                 if (HasNoOutput[node!.type]) return;
                 this.renderer.fromNode = node!
             },
@@ -318,7 +354,7 @@ export class NuniGraphController {
                 const { fromId, toId, connectionType } = cache[id!]
 
                 this.save()
-                this.unselectNode()
+                this.unselectNodes()
 
                 this.renderer.fromNode = 
                     this.g.nodes.find(node => node.id === fromId)!
@@ -334,13 +370,24 @@ export class NuniGraphController {
             [HOVER.EMPTY]: () => {
                 this.selectedNodes = []
 
-                this.unselectNode()
+                this.unselectNodes()
                 const { x, y } = this.getMousePos(e)
                 this.selectionStart = [x, y]
                 this.renderer.render()
             }
 
         })[type as HOVER]()
+
+        
+        const deselectNodesOfOtherGraphs = () => {
+            for (const controller of ActiveControllers) {
+                if (controller !== this) {
+                    controller.unselectNodes()
+                    controller.renderer.render()
+                }
+            }
+        }
+        deselectNodesOfOtherGraphs()
     }
 
     private mousemove(e : MouseEvent) {
@@ -457,6 +504,16 @@ export class NuniGraphController {
         //     //     }
         //     // }
         //     this.renderer.render()
+        // }
+
+        // for (const { audioNode } of this.g.nodes) {
+        //     if (audioNode instanceof NuniGraphAudioNode && 
+        //         audioNode.windowIsOpen &&
+        //         audioNode.controller.selectedNodes.length > 0) {
+
+        //         // Don't do mouse events here
+        //         return; 
+        //     }
         // }
         
         if (e.keyCode === 46) {

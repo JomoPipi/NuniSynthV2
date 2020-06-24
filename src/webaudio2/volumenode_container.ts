@@ -27,6 +27,7 @@ export default class VolumeNodeContainer {
     constructor(ctx : AudioContext) {
         this.ctx = ctx
         this.volumeNode = ctx.createGain()
+        this.volumeNode.gain.value = 1
     }
     
     connect(destination : Destination) {

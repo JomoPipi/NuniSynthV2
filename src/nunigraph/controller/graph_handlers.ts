@@ -20,6 +20,10 @@ const contextmenu = D('graph-contextmenu')!
     const append = (type : NodeTypes, color : string) => {
 
         const create = () => {
+
+            const controller = (<Indexed>window).lastControllerToOpenTheContextmenu
+            const GraphController = controller
+
             GraphController.save()
             const node = GraphController.g.createNewNode(type)
             const menu = contextmenu
@@ -63,14 +67,13 @@ const contextmenu = D('graph-contextmenu')!
         const type = (<Indexed>NodeTypes)[key] as NodeTypes
         append(type, NodeTypeColors[type])
     }
-
 }
 
-// Right-click options
-D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
-    e.preventDefault()
-    GraphController.showContextMenu(e.clientX, e.clientY)
-}
+// // Right-click options
+// D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
+//     e.preventDefault()
+//     GraphController.showContextMenu(e.clientX, e.clientY)
+// }
 
 // Copy the graph
 ;(D('copy-graph-button') as HTMLButtonElement).onclick = function() {

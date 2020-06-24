@@ -11,14 +11,13 @@ import KB from '../webaudio2/note_in/keyboard.js'
 import MasterClock from '../webaudio2/sequencers/master_clock.js'
 import { BufferUtils } from '../buffer_utils/internal.js'
 import { audioCtx } from '../webaudio2/webaudio2.js'
-import { NuniGraphController } from './controller/graph_controller.js'
+import { NuniGraphController, ActiveControllers } from './controller/graph_controller.js'
 import { NuniSourceNode } from '../webaudio2/note_in/nuni_source_node.js'
 import { BufferNode2 } from '../webaudio2/note_in/buffer2.js'
 import createValuesWindow from './view/display_nodedata.js'
 import Sequencer from '../webaudio2/sequencers/sequencer.js'
 import NuniGraphAudioNode from '../webaudio2/nunigraph_audionode.js'
 import { AudioNode2 } from './model/nunigraph_node.js'
-import { Destination } from '../webaudio2/volumenode_container.js'
 
 
 
@@ -54,6 +53,8 @@ GraphController
     .find(({ id }) => id === 0)!
     .audioNode
     .connect(audioCtx.volume)
+
+ActiveControllers.push(GraphController)
 
 export default GraphController
 
