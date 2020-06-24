@@ -7,6 +7,7 @@
 
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { NuniGraph } from '../model/nunigraph.js'
+// import { ActiveControllers } from '../controller/graph_controller.js' <- CAUSES CIRCULARITY
 
 export enum HOVER { EDGE, SELECT, CONNECTION, EMPTY }
 
@@ -32,12 +33,18 @@ type ConnectionsCache = {
         } 
     }
 
+const snapToGridBtn = D('snap-to-grid-btn') as HTMLButtonElement
+let snapToGrid = false
+snapToGridBtn.onclick = () => {
+    snapToGrid = snapToGridBtn.classList.toggle('selected')
+    // ActiveControllers.forEach(controller => controller.renderer.render())
+}
+
 export class NuniGraphRenderer {
 
     fromNode : NuniGraphNode | null
     private readonly g : NuniGraph
     readonly canvas : HTMLCanvasElement
-    private snapToGrid : boolean
     private readonly ctx : CanvasRenderingContext2D
     private nodeRadius : number
     private nodeLineWidth : number
@@ -51,13 +58,11 @@ export class NuniGraphRenderer {
 
     constructor(
         g : NuniGraph, 
-        canvas : HTMLCanvasElement, 
-        snapToGridBtn : HTMLElement) {
+        canvas : HTMLCanvasElement) {
 
         this.fromNode = null
         this.g = g
         this.canvas = canvas
-        this.snapToGrid = false
         this.ctx = canvas.getContext('2d')!
         this.nodeRadius = 25
         this.nodeLineWidth = this.nodeRadius/5 + 3
@@ -77,10 +82,6 @@ export class NuniGraphRenderer {
         //     this.render()
         // }
 
-        snapToGridBtn.onclick = () => {
-            this.snapToGrid = snapToGridBtn.classList.toggle('selected')
-            this.render()
-        }
     }
 
     setNodeRadius(r : number) {
@@ -372,7 +373,7 @@ export class NuniGraphRenderer {
 
     render(options = {}) {
         
-        const { g, snapToGrid, canvas, ctx, 
+        const { g, canvas, ctx, 
             fromNode, connectionLineWidth 
             } = this
 

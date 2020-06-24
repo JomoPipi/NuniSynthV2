@@ -4,7 +4,7 @@
 
 
 
-console.log('groupify =',pageGroupify)
+
 // Group tab-swappers with their tabs
 pageGroupify(D('tab-swapper')!, [
     'graph-tab',

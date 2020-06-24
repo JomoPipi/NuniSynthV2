@@ -82,3 +82,10 @@ const dBToVolume = (dB : number) =>
 
 const volumeTodB = (volume : number) =>
     20 * Math.log10(volume)
+
+
+interface DIRTYGLOBALINTERFACE {
+    lastControllerToOpenTheContextmenu? : Indexed,
+    
+}
+const DIRTYGLOBALS : DIRTYGLOBALINTERFACE = {}

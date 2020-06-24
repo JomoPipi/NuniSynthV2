@@ -6,6 +6,7 @@
 
 
 import GraphController from '../init.js'
+import { NuniGraphController } from './graph_controller.js'
 
 
 
@@ -21,23 +22,27 @@ const contextmenu = D('graph-contextmenu')!
 
         const create = () => {
 
-            const controller = (<Indexed>window).lastControllerToOpenTheContextmenu
-            const GraphController = controller
+            const controller = DIRTYGLOBALS.lastControllerToOpenTheContextmenu || GraphController as NuniGraphController
+            
 
-            GraphController.save()
-            const node = GraphController.g.createNewNode(type)
+            controller.save()
+            const node = controller.g.createNewNode(type)
             const menu = contextmenu
             
             if (menu.style.display !== 'none') {
                 // Place the newly created node where the contextmenu was.
                 const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = 
-                    GraphController.renderer.canvas
+                    controller === GraphController 
+                    ? controller.renderer.canvas
+                    : controller.renderer.canvas.parentNode.parentNode.parentNode.parentNode
+
                 node.x = clamp(0, (menu.offsetLeft - offsetLeft + menu.offsetWidth / 2.0) / offsetWidth, 1)
                 node.y = clamp(0, (menu.offsetTop - offsetTop + menu.offsetHeight / 2.0) / offsetHeight, 1)
-                GraphController.hideContextMenu()
+                controller.hideContextMenu()
             }
             
-            GraphController.renderer.render()
+            controller.renderer.render()
+            DIRTYGLOBALS.lastControllerToOpenTheContextmenu = undefined
         }
 
         const colorbox = E('span')

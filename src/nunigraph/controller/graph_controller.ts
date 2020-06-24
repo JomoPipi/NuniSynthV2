@@ -117,7 +117,7 @@ export class NuniGraphController {
 
     showContextMenu(x : number, y : number) {
 
-        (<Indexed>window).lastControllerToOpenTheContextmenu = this
+        DIRTYGLOBALS.lastControllerToOpenTheContextmenu = this
 
         const menu = D('graph-contextmenu') as HTMLDivElement
     
@@ -207,7 +207,6 @@ export class NuniGraphController {
 
 
         // CUSTOM NODE STUFF
-
         if (node.audioNode instanceof NuniGraphAudioNode) {
             const controller = node.audioNode.controller
             if (ActiveControllers.includes(controller)) throw 'This shouldn\'t have happened'
@@ -460,7 +459,10 @@ export class NuniGraphController {
         const { renderer, selectedNodes } = this
 
         const fromNode = renderer.fromNode
-        if (!fromNode) return;
+        if (!fromNode) {
+            renderer.render({ selectedNodes })
+            return;
+        }
 
         const { type, id, node } = renderer.getGraphMouseTarget(e)
 
@@ -475,8 +477,8 @@ export class NuniGraphController {
             this.promptUserToSelectConnectionType(
                 fromNode, 
                 node!,
-                e.offsetX,
-                e.offsetY)
+                e.clientX,
+                e.clientY)
             
         ;(<Indexed>{
             [HOVER.EDGE]:       () => do_it(),
@@ -544,9 +546,12 @@ export class NuniGraphController {
     private promptUserToSelectConnectionType(
         node1 : NuniGraphNode, node2 : NuniGraphNode, x : number, y : number) {
         
-        const { renderer } = this
+        log('xy =',x,y)
 
-        if (node2.id === 0 || AudioNodeParams[node2.type].length === 0) {
+        const { renderer } = this
+        const isCustom = node2.type === NodeTypes.CUSTOM
+
+        if (!isCustom && (node2.id === 0 || AudioNodeParams[node2.type].length === 0)) {
             // No prompt needed in this case. 
             // Only allow channel connections to the master gain node.
             // Allowing connections to someGain.gain can prevent it from being muted.
@@ -554,25 +559,39 @@ export class NuniGraphController {
             this.g.connect(node1, node2, 'channel')
             return;
         }
+        
+        
         const prompt = D('connection-type-prompt')!
-        const types = 
-            (SupportsInputChannels[node2.type] ? ['channel'] : [])
-            .concat(AudioNodeParams[node2.type])
 
         prompt.classList.add('show')
         prompt.innerHTML= ''
-        for (const param of types as ConnectionType[]) {
-            const btn = E('button', { text: param })
-            btn.onclick = () =>
-            {
-                this.save()
-                this.g.connect(node1, node2, param)
-                prompt.classList.remove('show')
-                renderer.render()
-            }
+        prompt.style.zIndex = (openWindowGlobalIndexThatKeepsRising+1).toString()
 
-            prompt.appendChild(btn)
+
+        if (!isCustom) {
+            const types = (
+                SupportsInputChannels[node2.type] 
+                ? ['channel'] 
+                : []
+                ).concat(AudioNodeParams[node2.type])
+
+            for (const param of types as ConnectionType[]) {
+                const btn = E('button', { text: param })
+                btn.onclick = () =>
+                {
+                    this.save()
+                    this.g.connect(node1, node2, param)
+                    prompt.classList.remove('show')
+                    renderer.render()
+                }
+
+                prompt.appendChild(btn)
+            }
+        } else {
+            prompt.appendChild(this.customNodePrompt(node2.audioNode as NuniGraphAudioNode))
         }
+
+
         const cancel = E('button', {
             text: 'cancel',
             className: 'connection-btn'
@@ -581,6 +600,10 @@ export class NuniGraphController {
         prompt.appendChild(cancel)
 
         // Place the prompt in an accessible location
-        UI_clamp(x, y + 40, prompt, renderer.canvas)
+        UI_clamp(x, y + 40, prompt, document.body)
+    }
+
+    private customNodePrompt(audioNode : NuniGraphAudioNode) {
+        return E('span', { text: 'TODO' })
     }
 }

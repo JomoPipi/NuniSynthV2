@@ -33,7 +33,6 @@ class Nuni extends NuniGraphController {
             new NuniGraphRenderer(
                 G, 
                 canvas,
-                D('snap-to-grid-btn') as HTMLButtonElement,
                 ),
             createValuesWindow
             )
