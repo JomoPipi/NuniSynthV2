@@ -179,7 +179,6 @@ export class NuniGraphController {
     }
 
     deleteNode(node : NuniGraphNode) {
-        log ('node =',node)
         if (node.isAnInputNode) return; // This can only be deleted from its' outer scope.
         this.connectionTypePrompt.classList.remove('show')
         this.closeValuesWindow(node.id)
@@ -548,8 +547,6 @@ export class NuniGraphController {
 
     private promptUserToSelectConnectionType(
         node1 : NuniGraphNode, node2 : NuniGraphNode, x : number, y : number) {
-        
-        log('xy =',x,y)
 
         const { renderer } = this
 

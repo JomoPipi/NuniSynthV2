@@ -41,6 +41,13 @@ export default class NuniGraphAudioNode extends VolumeNodeContainer {
         this.controller.closeAllWindows()
     }
 
+    get graphCode() {
+        return this.controller.g.toRawString()
+    }
+    set graphCode(code : string) {
+        this.controller.g.fromRawString(code)
+    }
+
     
     addInput(
         { id, audioNode } : { id : number, audioNode : Indexed }) {

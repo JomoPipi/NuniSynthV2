@@ -226,10 +226,11 @@ type CustomAudioNodeProperties =
     bufferKey?   : number
     nSteps?      : number
     adsrIndex?   : number
+    graphCode?   : string
 }
 
 const isTransferable =
-    'kbMode,type,subdiv,isInSync,bufferKey,nSteps,adsrIndex'
+    'kbMode,type,subdiv,isInSync,bufferKey,nSteps,adsrIndex,graphCode'
     .split(',')
     .reduce((acc,prop) => 
         ({ ...acc, [prop]: true })

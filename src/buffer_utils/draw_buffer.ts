@@ -25,5 +25,4 @@ export function drawBuffer(buff : AudioBuffer, canvas : HTMLCanvasElement) {
         ctx.stroke()
     }
     ctx.restore()
-    console.log('Done rendering buffer')
 }

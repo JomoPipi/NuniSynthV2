@@ -31,7 +31,6 @@ export function formulateBuffer(index : number) {
         BufferStorage.set(index, buffer)
         BufferUtils.refreshAffectedBuffers()
         BufferUtils.updateBufferUI()
-        log('buffer formulation complete')
     }
     
 
