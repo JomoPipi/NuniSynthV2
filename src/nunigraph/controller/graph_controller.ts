@@ -179,6 +179,8 @@ export class NuniGraphController {
     }
 
     deleteNode(node : NuniGraphNode) {
+        log ('node =',node)
+        if (node.isAnInputNode) return; // This can only be deleted from its' outer scope.
         this.connectionTypePrompt.classList.remove('show')
         this.closeValuesWindow(node.id)
         this.g.deleteNode(node)
@@ -550,9 +552,8 @@ export class NuniGraphController {
         log('xy =',x,y)
 
         const { renderer } = this
-        const isCustom = node2.type === NodeTypes.CUSTOM
 
-        if (!isCustom && (node2.id === 0 || AudioNodeParams[node2.type].length === 0)) {
+        if (node2.id === 0 || AudioNodeParams[node2.type].length === 0) {
             // No prompt needed in this case. 
             // Only allow channel connections to the master gain node.
             // Allowing connections to someGain.gain can prevent it from being muted.
@@ -561,37 +562,30 @@ export class NuniGraphController {
             return;
         }
         
-        
         const prompt = D('connection-type-prompt')!
 
         prompt.classList.add('show')
         prompt.innerHTML= ''
         prompt.style.zIndex = (openWindowGlobalIndexThatKeepsRising+1).toString()
 
+        const types = (
+            SupportsInputChannels[node2.type] 
+            ? ['channel'] 
+            : []
+            ).concat(AudioNodeParams[node2.type])
 
-        if (!isCustom) {
-            const types = (
-                SupportsInputChannels[node2.type] 
-                ? ['channel'] 
-                : []
-                ).concat(AudioNodeParams[node2.type])
-
-            for (const param of types as ConnectionType[]) {
-                const btn = E('button', { text: param })
-                btn.onclick = () =>
-                {
-                    this.save()
-                    this.g.connect(node1, node2, param)
-                    prompt.classList.remove('show')
-                    renderer.render()
-                }
-
-                prompt.appendChild(btn)
+        for (const param of types as ConnectionType[]) {
+            const btn = E('button', { text: param })
+            btn.onclick = () =>
+            {
+                this.save()
+                this.g.connect(node1, node2, param)
+                prompt.classList.remove('show')
+                renderer.render()
             }
-        } else {
-            prompt.appendChild(this.customNodePrompt(node2.audioNode as NuniGraphAudioNode))
-        }
 
+            prompt.appendChild(btn)
+        }
 
         const cancel = E('button', {
             text: 'cancel',
@@ -604,7 +598,7 @@ export class NuniGraphController {
         UI_clamp(x, y + 40, prompt, document.body)
     }
 
-    private customNodePrompt(audioNode : NuniGraphAudioNode) {
-        return E('span', { text: 'TODO' })
-    }
+    // private customNodePrompt(audioNode : NuniGraphAudioNode) {
+    //     return E('span', { text: 'TODO' })
+    // }
 }

@@ -11,6 +11,7 @@ export default class NuniGraphAudioNode extends VolumeNodeContainer {
 
     canvas : HTMLCanvasElement
     controller : NuniGraphController
+    inputs : Indexed // NuniGraphNode<GAIN>
 
     constructor(ctx : AudioContext) {
         super(ctx)
@@ -28,14 +29,8 @@ export default class NuniGraphAudioNode extends VolumeNodeContainer {
             .audioNode
             .connect(this.volumeNode)
 
-        // this.windowIsOpen = false
+        this.inputs = {}
     }
-
-    // connect(node : Destination){
-
-    // }
-
-    // disconnect(){}
 
     activateWindow() {
         this.controller.activateEventHandlers()
@@ -44,5 +39,29 @@ export default class NuniGraphAudioNode extends VolumeNodeContainer {
     deactivateWindow() {
         this.controller.deactivateEventHandlers()
         this.controller.closeAllWindows()
+    }
+
+    
+    addInput(
+        { id, audioNode } : { id : number, audioNode : Indexed }) {
+
+        const inputNode 
+            = this.inputs[id]
+            = this.controller.g.createNewNode(NodeTypes.GAIN, {
+            display: { x: Math.random(), y: Math.random() },
+            audioParamValues: { gain: 1 },
+            audioNodeProperties: {},
+            title: `INPUT (id-${id})`,
+            isAnInputNode: true,
+            })
+        
+        audioNode.connect(inputNode.audioNode)
+    }
+
+    removeInput({ id } : { id: number }) {
+        const inputNode= this.inputs[id]
+        inputNode.audioNode.disconnect()
+        this.controller.g.deleteNode(inputNode as any) // NuniGraphNode
+        delete this.inputs[id]
     }
 }

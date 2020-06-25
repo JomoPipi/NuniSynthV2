@@ -13,6 +13,7 @@ import SubgraphSequencer from '../../webaudio2/sequencers/subgraph_sequencer.js'
 import { Destination } from '../../webaudio2/volumenode_container.js'
 import NuniAudioParam from '../../webaudio2/nuni_audioparam.js'
 import Sequencer from '../../webaudio2/sequencers/sequencer.js'
+import NuniGraphAudioNode from '../../webaudio2/nunigraph_audionode.js'
 
 const defaultSettings = () => ({
     display: { x: 0.5, y: 0.5 },
@@ -41,7 +42,8 @@ export class NuniGraph {
     private initializeMasterGain() {
         const masterGainSettings = Object.assign(defaultSettings(), { 
             audioParamValues: { [NodeTypes.GAIN]: 0.5 },
-            display: { x: 0.5, y: 0.125 }
+            display: { x: 0.5, y: 0.125 },
+            title: 'OUTPUT'
             })
 
         this.createNewNode(NodeTypes.GAIN, masterGainSettings)
@@ -200,7 +202,16 @@ export class NuniGraph {
 
     private connect_audioNode_to_destination(node1 : NuniGraphNode, destination : Destination) {
         
-        if (destination instanceof SubgraphSequencer) {
+        if (destination instanceof NuniGraphAudioNode) {
+            const deleting_An_Input_Node_Inside_A_NuniGraphAudioNode_Must_Result_In_A_Disconnection_In_The_Outer_Scope_Function = () => {
+                log('executing this function')
+                const node2 = this.nodes.find(node => node.audioNode === destination)!
+                if (!node2) throw 'Find out why'
+                this.disconnect(node1, node2, 'channel')
+            }
+            destination.addInput(node1)
+        }
+        else if (destination instanceof SubgraphSequencer) {
             destination.addInput(node1)
         }
         else if (destination instanceof NuniAudioParam) {
@@ -228,7 +239,7 @@ export class NuniGraph {
     }
 
     private disconnect_audioNode_from_destination(node1 : NuniGraphNode, destination : Destination) {
-        if (destination instanceof SubgraphSequencer) {
+        if (destination instanceof SubgraphSequencer || destination instanceof NuniGraphAudioNode) {
             destination.removeInput(node1)
 
         } else if (destination instanceof NuniAudioParam) {
@@ -304,6 +315,7 @@ export class NuniGraph {
         this.nodes[0].setValueOfParam('gain', nodes[0].audioParamValues.gain)
         this.nodes[0].audioNode.disconnect()
         this.nodes[0].audioNode.connect(audioCtx.volume)
+        this.nodes[0].title = 'OUTPUT'
 
         // recreate the nodes
         for (const { 

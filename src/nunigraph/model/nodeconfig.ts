@@ -66,7 +66,7 @@ const SupportsInputChannels = {
     [NodeTypes.B_SEQ]:  false,
     [NodeTypes.CSN]:    false,
     [NodeTypes.RECORD]: true,
-    [NodeTypes.CUSTOM]: false
+    [NodeTypes.CUSTOM]: true
 }
 
 const MustBeStarted = {

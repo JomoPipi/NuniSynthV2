@@ -362,9 +362,9 @@ export class NuniGraphRenderer {
             
             this.circle(X, Y, nodeRadius)
 
-            if (node.id === 0) {
+            if (node.title) {
                 ctx.fillStyle = '#BAA'
-                ctx.fillText('MASTER GAIN', X - 50, Y - nodeRadius * 1.5)
+                ctx.fillText(node.title, X - 30, Y - nodeRadius * 1.5)
             }
         }
     }

@@ -38,7 +38,9 @@ export type AudioNode2<T extends NodeTypes>
 export type NodeSettings = { 
     display : { x : number, y : number }, 
     audioParamValues : Indexable<number>,   // Uses draggable number inputs
-    audioNodeProperties : CustomAudioNodeProperties 
+    audioNodeProperties : CustomAudioNodeProperties,
+    title? : string
+    isAnInputNode? : boolean
 }
 
 export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
@@ -49,6 +51,8 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
     x : number
     y : number
     audioParamValues : Indexable<number>
+    title? : string
+    readonly isAnInputNode : boolean
     
     constructor(id : number, type : T, settings : NodeSettings) {
 
@@ -57,14 +61,18 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         const { 
             display: {x,y}, 
             audioParamValues, 
-            audioNodeProperties
-            
+            audioNodeProperties,
+            title,
+            isAnInputNode
             } = settings
 
         this.id = id
         this.type = type
         this.x = x
         this.y = y
+        this.title = title
+        this.isAnInputNode 
+            = isAnInputNode ?? false
 
         this.audioNode = (<any>audioCtx)[createAudioNode[type]]()
         
