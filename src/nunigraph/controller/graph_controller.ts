@@ -191,13 +191,6 @@ export class NuniGraphController {
     private openValuesWindow(node : NuniGraphNode) {
 
         const moveTheWindowToTheTop = (box : HTMLElement) => {
-            // const max = 
-            //     Object.values(this.openWindow)
-            //     .reduce((max, { style: { zIndex: zi } }) => 
-            //         Math.max(max, +zi), -Infinity)
-
-            // box.style.zIndex = (max+1).toString()
-
             box.style.zIndex = (++openWindowGlobalIndexThatKeepsRising).toString()
         }
 
@@ -520,7 +513,8 @@ export class NuniGraphController {
         //     }
         // }
         
-        if (e.keyCode === 46) {
+        // 46 for Windows, 8 for Apple
+        if (e.keyCode === 46 || e.keyCode === 8) {
             if (this.selectedNodes.length) {
                 this.save()
                 for (const node of this.selectedNodes) {
