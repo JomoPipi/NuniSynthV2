@@ -24,7 +24,9 @@ import { AudioNode2 } from './model/nunigraph_node.js'
 
 class Nuni extends NuniGraphController {
 
-    constructor(canvas : HTMLCanvasElement) {
+    volumeNode : GainNode
+
+    constructor(canvas : HTMLCanvasElement, volumeNode : GainNode) {
         const G = new NuniGraph()
 
         super(
@@ -36,22 +38,32 @@ class Nuni extends NuniGraphController {
                 ),
             createValuesWindow
             )
+        
+        
+        G.nodes
+            .find(({ id }) => id === 0)!
+            .audioNode
+            .connect(volumeNode)
+
+        this.volumeNode = volumeNode
     }
 }
 
 NuniGraphAudioNode.createController = // Nuni
-    (canvas : HTMLCanvasElement) => new Nuni(canvas)
+    (canvas : HTMLCanvasElement, volumeNode : GainNode) => new Nuni(canvas, volumeNode)
 
 const GraphController 
-    = new Nuni(D('nunigraph-canvas') as HTMLCanvasElement)
+    = new Nuni(D('nunigraph-canvas') as HTMLCanvasElement, audioCtx.volume)
 
 GraphController.activateEventHandlers()
-GraphController
-    .g
-    .nodes
-    .find(({ id }) => id === 0)!
-    .audioNode
-    .connect(audioCtx.volume)
+// GraphController
+//     .g
+//     .nodes
+//     .find(({ id }) => id === 0)!
+//     .audioNode
+//     .connect(audioCtx.volume)
+
+;(<any>window).cmap = GraphController.g.oneWayConnections
 
 ActiveControllers.push(GraphController)
 

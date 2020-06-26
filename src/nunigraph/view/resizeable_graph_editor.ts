@@ -11,14 +11,19 @@ export default function createResizeableGraphEditor(audioNode : NuniGraphAudioNo
     
     const { canvas } = audioNode
 
+    const topRow = E('div', { className: 'full' })
     const bottomRow = E('div', { className: 'full' })
     const dragCorner = E('span',{
         className: 'corner-drag-box'
         })
-        
     applyStyle(dragCorner, {
-        backgroundColor: 'black'
+        backgroundColor: '#444'
         })
+    applyStyle(topRow, {
+        height: '10px' // same as .corner-drag-box
+    })
+    
+
     bottomRow.appendChild(dragCorner)
 
     let xy = [] as number[], wh = [] as number[]
@@ -48,7 +53,7 @@ export default function createResizeableGraphEditor(audioNode : NuniGraphAudioNo
     }
     dragCorner.onmousedown = mousedown
 
-    box.append(canvas,bottomRow)
+    box.append(topRow, canvas, bottomRow)
 
     // It needs to render after the HTML is appended to the document
     setTimeout(() => audioNode.controller.renderer.render(), 5)

@@ -7,7 +7,7 @@ import VolumeNodeContainer from "./volumenode_container.js"
 
 
 export default class NuniGraphAudioNode extends VolumeNodeContainer {
-    static createController? : (canvas : HTMLCanvasElement) => NuniGraphController
+    static createController? : (canvas : HTMLCanvasElement, vol : GainNode) => NuniGraphController
 
     canvas : HTMLCanvasElement
     controller : NuniGraphController
@@ -20,14 +20,9 @@ export default class NuniGraphAudioNode extends VolumeNodeContainer {
             })
         
         if (NuniGraphAudioNode.createController) 
-            this.controller = NuniGraphAudioNode.createController(this.canvas)
+            this.controller = NuniGraphAudioNode.createController(this.canvas, this.volumeNode)
         else 
             throw 'Why is create controller undefined'
-
-        this.controller
-            .g.nodes.find(node => node.id === 0)!
-            .audioNode
-            .connect(this.volumeNode)
 
         this.inputs = {}
     }
@@ -42,10 +37,10 @@ export default class NuniGraphAudioNode extends VolumeNodeContainer {
     }
 
     get graphCode() {
-        return this.controller.g.toRawString()
+        return this.controller.g.toString()
     }
     set graphCode(code : string) {
-        this.controller.g.fromRawString(code)
+        this.controller.fromString(code)
     }
 
     
@@ -68,6 +63,7 @@ export default class NuniGraphAudioNode extends VolumeNodeContainer {
     removeInput({ id } : { id: number }) {
         const inputNode= this.inputs[id]
         inputNode.audioNode.disconnect()
+        this.controller.renderer.removeFromConnectionsCache(inputNode.id)
         this.controller.g.deleteNode(inputNode as any) // NuniGraphNode
         delete this.inputs[id]
     }

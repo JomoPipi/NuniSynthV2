@@ -309,8 +309,11 @@ export class NuniGraph {
         this.nodes[0].x = nodes[0].x
         this.nodes[0].y = nodes[0].y
         this.nodes[0].setValueOfParam('gain', nodes[0].audioParamValues.gain)
-        this.nodes[0].audioNode.disconnect()
-        this.nodes[0].audioNode.connect(audioCtx.volume)
+
+        // THESE LINES COMMENTED OUT IN HOPES THAT THEY ARE NOT NEEDED.
+        // this.nodes[0].audioNode.disconnect()
+        // this.nodes[0].audioNode.connect(this.volumeNode)
+
         this.nodes[0].title = 'OUTPUT'
 
         // recreate the nodes

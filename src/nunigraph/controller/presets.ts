@@ -49,7 +49,7 @@ import GraphController from '../init.js'
         const name = (e.target as HTMLElement).innerText
         if (name in presets) {
             GraphController.save()
-            GraphController.g.fromString((<Indexed>presets)[name])
+            GraphController.fromString((<Indexed>presets)[name])
             GraphController.closeAllWindows()
             GraphController.renderer.render()
         }
@@ -57,7 +57,7 @@ import GraphController from '../init.js'
 
     Apply_The_Default_Preset: {
 
-        GraphController.g.fromString(presets['Keyboard 1'])
+        GraphController.fromString(presets['Keyboard 1'])
         GraphController.renderer.render()
     }
 }

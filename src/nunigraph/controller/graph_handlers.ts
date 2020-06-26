@@ -90,7 +90,7 @@ const contextmenu = D('graph-contextmenu')!
     const input = D('graph-copy-input') as HTMLInputElement
     try { 
         GraphController.save()
-        GraphController.g.fromString(input.value)
+        GraphController.fromString(input.value)
         GraphController.renderer.render()
         input.value = ''
     } catch (e) {

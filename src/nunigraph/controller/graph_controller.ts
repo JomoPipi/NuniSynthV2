@@ -70,15 +70,13 @@ export class NuniGraphController {
         }
         this._mouseup = (e : MouseEvent) => this.mouseup(e)
         this._keydown = (e : KeyboardEvent) => this.keydown(e)
+    }
 
-        // const getState = () => g.toRawString()
-        // const setState = (state : string) => {
-        //     g.fromRawString(state)
-        //     this.renderer.render()
-        //     this.unselectNodes()
-        //     D('connection-type-prompt')!.classList.remove('show')
-        // }
-        // this.undoRedoModule = new UndoRedoModule(getState, setState)
+    fromString(graphCode : string) {
+        for (const id in this.renderer.connectionsCache) {
+            delete this.renderer.connectionsCache[id]
+        }
+        this.g.fromString(graphCode)
     }
 
     activateEventHandlers() {
@@ -179,9 +177,11 @@ export class NuniGraphController {
     }
 
     deleteNode(node : NuniGraphNode) {
+
         if (node.isAnInputNode) return; // This can only be deleted from its' outer scope.
         this.connectionTypePrompt.classList.remove('show')
         this.closeValuesWindow(node.id)
+        this.renderer.removeFromConnectionsCache(node.id)
         this.g.deleteNode(node)
         this.unselectNodes()
         this.selectedNodes = []

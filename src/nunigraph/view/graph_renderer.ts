@@ -82,6 +82,16 @@ export class NuniGraphRenderer {
 
     }
 
+    removeFromConnectionsCache(id : number) {
+        // Removes any cache data attributed with the node id
+        for (const connectionId in this.connectionsCache) {
+            const { fromId, toId } = this.connectionsCache[connectionId]
+            if (fromId === id || toId === id) {
+                delete this.connectionsCache[connectionId]
+            }
+        }
+    }
+
     setNodeRadius(r : number) {
         this.nodeRadius = r
         this.nodeLineWidth = this.nodeRadius/5 + 3
