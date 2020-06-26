@@ -33,10 +33,10 @@ pageGroupify(D('buffer-edit-create-select')!, [
         [...document.querySelectorAll('._info-menu-button_')] as
         HTMLButtonElement[]
 
-    D('info-button')!.onclick = () => {
-        const showMenu = container.classList.toggle('show')
-        container.onclick = showMenu ? clickInsideContainer : null
-    }
+    // D('info-button')!.onclick = () => {
+    //     const showMenu = container.classList.toggle('show')
+    //     container.onclick = showMenu ? clickInsideContainer : null
+    // }
 
     function clickInsideContainer(e : MouseEvent) {
         const clickedElement = e.target
