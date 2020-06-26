@@ -514,7 +514,7 @@ export class NuniGraphController {
         // }
         
         // 46 for Windows, 8 for Apple
-        if (e.keyCode === 46 || e.keyCode === 8) {
+        if (e.keyCode === 46 || (ISMAC && e.keyCode === 8)) {
             if (this.selectedNodes.length) {
                 this.save()
                 for (const node of this.selectedNodes) {

@@ -88,4 +88,7 @@ interface DIRTYGLOBALINTERFACE {
     lastControllerToOpenTheContextmenu? : Indexed,
     
 }
+
+const ISMAC = navigator.platform.toUpperCase().indexOf('MAC') >= 0
+
 const DIRTYGLOBALS : DIRTYGLOBALINTERFACE = {}
