@@ -69,7 +69,9 @@ export class NuniGraph {
             x, 
             y, 
             audioParamValues, 
-            audioNodeProperties
+            audioNodeProperties,
+            title,
+            INPUT_NODE_ID
             } = copiedNode
 
         const newX = clamp(0, x+0.07, 1)
@@ -77,8 +79,10 @@ export class NuniGraph {
         const settings = {
             display: { x: newX, y: newY },
             audioParamValues,
-            audioNodeProperties
+            audioNodeProperties,
+            INPUT_NODE_ID
             }
+        if (!INPUT_NODE_ID) (<any>settings).title = title
 
         return this.createNewNode(type, settings)
     }
@@ -98,6 +102,25 @@ export class NuniGraph {
                 const b = correspondenceMap[nodeB.id] || nodeB
 
                 if (a !== nodeA || b !== nodeB) {
+
+                    if (b.audioNode instanceof NuniGraphAudioNode ) {
+                        // WE NEED TO CHECK IF b HAS INPUT NODES THAT GET COPIED, AND MAKE THE IDs APPROPRIATELY
+
+                        const innerInputNode 
+                            = b.audioNode.controller.g.nodes.find(node => 
+                                node.INPUT_NODE_ID && node.INPUT_NODE_ID.id === nodeA.id)
+
+                        if (innerInputNode?.INPUT_NODE_ID) {
+                            innerInputNode.INPUT_NODE_ID.id = a.id
+                            innerInputNode.title = `INPUT (id-${a.id})`
+                            if (b !== nodeB) {
+                                b.audioNode.inputs[a.id] = innerInputNode
+                                if (a !== nodeA)
+                                    delete b.audioNode.inputs[nodeA.id]
+                            }
+                        }
+                    }
+
                     this.connect(a, b, connectionType)
                 }
             }
@@ -339,9 +362,9 @@ export class NuniGraph {
                 display: { x, y }, // <- improve this
                 audioParamValues,
                 audioNodeProperties,
-                title,
                 INPUT_NODE_ID,
                 }
+                if (!INPUT_NODE_ID) (<any>settings).title = title
 
             this.nodes.push(new NuniGraphNode(id, type, settings))
         }

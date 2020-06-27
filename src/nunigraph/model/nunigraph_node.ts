@@ -72,7 +72,6 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.x = x
         this.y = y
         this.title = title
-        log('INPUT_NODE_ID =',INPUT_NODE_ID)
         this.INPUT_NODE_ID = INPUT_NODE_ID
 
         this.audioNode = (<any>audioCtx)[createAudioNode[type]]()
