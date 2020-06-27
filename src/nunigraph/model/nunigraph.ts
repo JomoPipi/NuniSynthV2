@@ -145,6 +145,9 @@ export class NuniGraph {
             {
                 audioNode.removeInput(node)
             } 
+            else if (audioNode instanceof NuniGraphAudioNode && audioNode.inputs[node.id]) {
+                audioNode.removeInput(node)
+            }
         }
     }
 
@@ -317,22 +320,27 @@ export class NuniGraph {
         this.nodes[0].title = 'OUTPUT'
 
         // recreate the nodes
-        for (const { 
+        for (const node of nodes) {
+
+            const  { 
                 id, 
                 type, 
                 x, 
                 y, 
                 audioParamValues, 
-                audioNodeProperties
-                
-                } of nodes) {
+                audioNodeProperties,
+                title,
+                INPUT_NODE_ID
+                } = node
 
             if (id === 0) continue
             
             const settings = {
-                display: { x, y },
+                display: { x, y }, // <- improve this
                 audioParamValues,
-                audioNodeProperties
+                audioNodeProperties,
+                title,
+                INPUT_NODE_ID,
                 }
 
             this.nodes.push(new NuniGraphNode(id, type, settings))

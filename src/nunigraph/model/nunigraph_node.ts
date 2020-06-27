@@ -40,7 +40,7 @@ export type NodeSettings = {
     audioParamValues : Indexable<number>,   // Uses draggable number inputs
     audioNodeProperties : CustomAudioNodeProperties,
     title? : string
-    isAnInputNode? : boolean
+    INPUT_NODE_ID? : { id : number }
 }
 
 export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
@@ -52,7 +52,8 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
     y : number
     audioParamValues : Indexable<number>
     title? : string
-    readonly isAnInputNode : boolean
+    readonly INPUT_NODE_ID? : { id : number }
+
     
     constructor(id : number, type : T, settings : NodeSettings) {
 
@@ -63,7 +64,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
             audioParamValues, 
             audioNodeProperties,
             title,
-            isAnInputNode
+            INPUT_NODE_ID
             } = settings
 
         this.id = id
@@ -71,8 +72,8 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.x = x
         this.y = y
         this.title = title
-        this.isAnInputNode 
-            = isAnInputNode ?? false
+        log('INPUT_NODE_ID =',INPUT_NODE_ID)
+        this.INPUT_NODE_ID = INPUT_NODE_ID
 
         this.audioNode = (<any>audioCtx)[createAudioNode[type]]()
         

@@ -12,6 +12,7 @@ export default class NuniGraphAudioNode extends VolumeNodeContainer {
     canvas : HTMLCanvasElement
     controller : NuniGraphController
     inputs : Indexed // NuniGraphNode<GAIN>
+    private _windowIsOpen : boolean
 
     constructor(ctx : AudioContext) {
         super(ctx)
@@ -25,15 +26,18 @@ export default class NuniGraphAudioNode extends VolumeNodeContainer {
             throw 'Why is create controller undefined'
 
         this.inputs = {}
+        this._windowIsOpen = false
     }
 
     activateWindow() {
         this.controller.activateEventHandlers()
+        this._windowIsOpen = true
     }
 
     deactivateWindow() {
         this.controller.deactivateEventHandlers()
         this.controller.closeAllWindows()
+        this._windowIsOpen = false
     }
 
     get graphCode() {
@@ -48,23 +52,40 @@ export default class NuniGraphAudioNode extends VolumeNodeContainer {
         { id, audioNode } : { id : number, audioNode : Indexed }) {
 
         const inputNode 
-            = this.inputs[id]
-            = this.controller.g.createNewNode(NodeTypes.GAIN, {
-            display: { x: Math.random(), y: Math.random() },
-            audioParamValues: { gain: 1 },
-            audioNodeProperties: {},
-            title: `INPUT (id-${id})`,
-            isAnInputNode: true,
-            })
-        
-        audioNode.connect(inputNode.audioNode)
+            = this.controller
+                .g.nodes
+                .find(node => node.INPUT_NODE_ID && node.INPUT_NODE_ID.id === id)
+
+        if (inputNode) {
+            audioNode.connect(inputNode.audioNode)
+        }
+        else {
+            const inputNode 
+                = this.inputs[id]
+                = this.controller.g.createNewNode(NodeTypes.GAIN, {
+                display: { x: Math.random(), y: Math.random() },
+                audioParamValues: { gain: 1 },
+                audioNodeProperties: {},
+                title: `INPUT (id-${id})`,
+                INPUT_NODE_ID: { id },
+                })
+            
+            audioNode.connect(inputNode.audioNode)
+        }
+        if (this._windowIsOpen) {
+            this.controller.renderer.render()
+        }
     }
 
     removeInput({ id } : { id: number }) {
-        const inputNode= this.inputs[id]
+        const inputNode = this.inputs[id]
         inputNode.audioNode.disconnect()
         this.controller.renderer.removeFromConnectionsCache(inputNode.id)
         this.controller.g.deleteNode(inputNode as any) // NuniGraphNode
         delete this.inputs[id]
+        
+        if (this._windowIsOpen) {
+            this.controller.renderer.render()
+        }
     }
 }

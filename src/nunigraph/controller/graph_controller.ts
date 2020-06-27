@@ -178,7 +178,7 @@ export class NuniGraphController {
 
     deleteNode(node : NuniGraphNode) {
 
-        if (node.isAnInputNode) return; // This can only be deleted from its' outer scope.
+        if (node.INPUT_NODE_ID) return; // This can only be deleted from its' outer scope.
         this.connectionTypePrompt.classList.remove('show')
         this.closeValuesWindow(node.id)
         this.renderer.removeFromConnectionsCache(node.id)
