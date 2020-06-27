@@ -110,14 +110,13 @@ export class NuniGraph {
                             = b.audioNode.controller.g.nodes.find(node => 
                                 node.INPUT_NODE_ID && node.INPUT_NODE_ID.id === nodeA.id)
 
-                        if (innerInputNode?.INPUT_NODE_ID) {
+                        if (innerInputNode?.INPUT_NODE_ID && b !== nodeB) {
                             innerInputNode.INPUT_NODE_ID.id = a.id
                             innerInputNode.title = `INPUT (id-${a.id})`
-                            if (b !== nodeB) {
-                                b.audioNode.inputs[a.id] = innerInputNode
-                                if (a !== nodeA)
-                                    delete b.audioNode.inputs[nodeA.id]
-                            }
+
+                            b.audioNode.inputs[a.id] = innerInputNode
+                            if (a !== nodeA)
+                                delete b.audioNode.inputs[nodeA.id]
                         }
                     }
 
