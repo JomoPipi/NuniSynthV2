@@ -104,7 +104,7 @@ export class NuniGraph {
                 if (a !== nodeA || b !== nodeB) {
 
                     if (b.audioNode instanceof NuniGraphAudioNode ) {
-                        // WE NEED TO CHECK IF b HAS INPUT NODES THAT GET COPIED, AND MAKE THE IDs APPROPRIATELY
+                        // WE NEED TOP HANDLE THE INPUT NODES OF b
 
                         const innerInputNode 
                             = b.audioNode.controller.g.nodes.find(node => 

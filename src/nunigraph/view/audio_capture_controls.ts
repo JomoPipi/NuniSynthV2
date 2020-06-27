@@ -55,9 +55,9 @@ export default function audioCaptureNodeControls(audioNode : AudioBufferCaptureN
         const lengthSlider = E('input', {
             props: {
                 type: 'range',
-                min: '0.1',
-                max: '10',
-                step: '0.1',
+                min: 0.1,
+                max: 20,
+                step: 0.1,
                 value: audioNode.recordingLength.toString(),
                 oninput: () => {
                     const value = lengthSlider.value

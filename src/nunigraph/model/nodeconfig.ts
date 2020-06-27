@@ -17,7 +17,7 @@ enum NodeTypes
     B_SEQ   = 'buffer-sequencer',
     CSN     = 'constant-source',
     RECORD  = 'audiobuffer-capture',
-    CUSTOM  = 'custom-node'
+    CUSTOM  = 'module'
 }
 
 type AudioParams 
