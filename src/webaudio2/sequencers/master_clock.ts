@@ -80,7 +80,7 @@ function count() {
         delta = 0
         start = 0
         tempo.classList.remove('selected2')
-    }, 2000)
+    }, 500)
 }
 tapBtn.addEventListener('click', count)
 

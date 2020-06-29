@@ -294,7 +294,7 @@ export class NuniGraph {
 
     convertNodeToNodeSettings(node : NuniGraphNode) : Indexed {
         const settings = { 
-            ...JSON.parse(JSON.stringify(node)), 
+            ...JSON.parse(JSON.stringify(node)),
             audioNodeProperties: {}
             }
         for (const prop in isTransferable) {
@@ -309,8 +309,10 @@ export class NuniGraph {
     fromRawString(s : string) {
 
         try {
+            log('data =',s)
             var { connections, nodes } = JSON.parse(s)
         } catch(e) {
+            log('data failed:', s)
             throw 'Error parsing new graph'
         }
 
@@ -376,6 +378,19 @@ export class NuniGraph {
                 const nodeA = this.nodes.find(node => node.id === +id)!
                 const nodeB = this.nodes.find(node => node.id === id2)!
                 
+                if (nodeB.audioNode instanceof NuniGraphAudioNode ) {
+                    // WE NEED TOP HANDLE THE INPUT NODES OF nodeB
+
+                    const innerInputNode 
+                        = nodeB.audioNode.controller.g.nodes.find(node => 
+                            node.INPUT_NODE_ID && node.INPUT_NODE_ID.id === nodeA.id)
+
+                    if (!innerInputNode?.INPUT_NODE_ID) throw 'It should be there'
+
+                    innerInputNode.title = `INPUT (id-${nodeA.id})`
+                    nodeB.audioNode.inputs[nodeA.id] = innerInputNode
+                }
+
                 this.connect(nodeA, nodeB, connectionType)
             }
         }

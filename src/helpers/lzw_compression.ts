@@ -9,6 +9,8 @@
 
 export function LZW_compress(uncompressed : string) : string {
     
+    return uncompressed
+
     const result = []
     let word = ''
     let dictSize = 256
@@ -46,8 +48,11 @@ export function LZW_compress(uncompressed : string) : string {
 
 
 
-export function LZW_decompress(compressedStr : string) : string
+export function LZW_decompress(compressedStr : string, do_it? : boolean) : string
 {
+    if (!do_it)
+        return compressedStr
+
     const compressed = 
         compressedStr.split('').map((c : string)=>c.charCodeAt(0))
         

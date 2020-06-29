@@ -7,6 +7,7 @@
 
 import { GraphController } from '../init.js'
 import { NuniGraphController } from './graph_controller.js'
+import { LZW_decompress } from '../../helpers/lzw_compression.js'
 
 
 
@@ -90,10 +91,13 @@ const contextmenu = D('graph-contextmenu')!
     const input = D('graph-copy-input') as HTMLInputElement
     try { 
         GraphController.save()
+        GraphController.closeAllWindows()
         GraphController.fromString(input.value)
         GraphController.renderer.render()
         input.value = ''
     } catch (e) {
+        log('e =',e)
+        log('fail input =', LZW_decompress(input.value)) // <-
         GraphController.undo()
         input.value = 'Invalid code'
     }

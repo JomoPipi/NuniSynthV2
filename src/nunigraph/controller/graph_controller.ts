@@ -41,8 +41,7 @@ export class NuniGraphController {
 
     // we need this variable in order to be able to tell if
     // we should toggle the dialog box or not.
-    // if the node moved, we don't
-    private shouldToggleNodeWindowOnNextMouseUp : boolean
+    private mouseHasMovedSinceLastMouseDown : boolean
 
     private _keydown : (e : KeyboardEvent) => void
     private _mouseup : (e : MouseEvent) => void
@@ -70,7 +69,7 @@ export class NuniGraphController {
         this.openWindow = {}
         this.lastCoordsOfWindow = {}
 
-        this.shouldToggleNodeWindowOnNextMouseUp = false
+        this.mouseHasMovedSinceLastMouseDown = false
             
         this._mouse_move = (e : MouseEvent) => {
             const { x: offsetX, y: offsetY } = this.getMousePos(e)
@@ -324,16 +323,15 @@ export class NuniGraphController {
     }
 
     private mousedown(e : MouseEvent) {
-        
+
+        this.mouseHasMovedSinceLastMouseDown = false
+
         this.hideContextMenu()
         this.mouseIsDown = true
         
         const { type, id, node } = 
             this.lastMouse_DownMsg = 
             this.renderer.getGraphMouseTarget(e)
-        
-        this.shouldToggleNodeWindowOnNextMouseUp = 
-            node ? true : false
 
         if (node && 
             this.selectedNodes.length &&
@@ -419,6 +417,8 @@ export class NuniGraphController {
 
     private mousemove(e : MouseEvent) {
 
+        this.mouseHasMovedSinceLastMouseDown = true
+
         const isPressing = 
             e.buttons === 1 && 
             this.mouseIsDown
@@ -446,10 +446,6 @@ export class NuniGraphController {
             node.y = clamp(D, _y + _dy, 1-U)
             const dx = node.x - _x
             const dy = node.y - _y
-
-            if (dx || dy) {
-                this.shouldToggleNodeWindowOnNextMouseUp = false
-            }
 
             for (const n of selectedNodes) {
                 if (n === node) continue
@@ -493,7 +489,8 @@ export class NuniGraphController {
         const { type, id, node } = renderer.getGraphMouseTarget(e)
 
         if (!fromNode) {
-            if (this.shouldToggleNodeWindowOnNextMouseUp && node) {
+            if (!this.mouseHasMovedSinceLastMouseDown && node &&
+                node === this.lastMouse_DownMsg.node) {
                 this.toggleDialogBox(node)
             }
             renderer.render({ selectedNodes })

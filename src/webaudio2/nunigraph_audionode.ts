@@ -61,7 +61,7 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
         const inputNode 
             = this.controller
                 .g.nodes
-                .find(node => node.INPUT_NODE_ID && node.INPUT_NODE_ID.id === id)
+                .find(node => node.INPUT_NODE_ID?.id === id)
 
         if (inputNode) {
             audioNode.connect(inputNode.audioNode)
