@@ -156,18 +156,8 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } = {
     [NodeTypes.CUSTOM]: 'rgba(255,200,255,1)'
 }
 
-const NodeTypeWarnings : { readonly [key in NodeTypes] : string } = {
-    [NodeTypes.GAIN]:   '',
-    [NodeTypes.OSC]:    '',
-    [NodeTypes.FILTER]: `Filters may become unstable and we won't do anything about it. If this happens the program will cease to function properly and will need to be re-started.`,
-    [NodeTypes.PANNER]: '',
-    [NodeTypes.DELAY]:  '',
-    [NodeTypes.BUFFER]: '',
-    [NodeTypes.SGS]:    '',
-    [NodeTypes.B_SEQ]:  '',
-    [NodeTypes.CSN]:    '',
-    [NodeTypes.RECORD]: '',
-    [NodeTypes.CUSTOM]: ''
+const NodeTypeWarnings : { readonly [key in NodeTypes]? : string } = {
+    [NodeTypes.FILTER]: `Filters may become unstable and we won't do anything about it. If this happens the program will cease to function properly and will need to be re-started.`
 }
 
 const ConnectionTypeColors : { readonly [key in ConnectionType] : string } =

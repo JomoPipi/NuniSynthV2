@@ -9,13 +9,15 @@ function createDraggableWindow({
     text, 
     clickCallback, 
     closeCallback,
-    color
+    color,
+    content
 } : {
 
     text : string, 
     clickCallback : (box : HTMLElement) => void,
     closeCallback : (box : HTMLElement) => void
-    color? : string
+    color : string
+    content? : HTMLElement
     }) {
 
     const box = E('div',{
@@ -51,6 +53,8 @@ function createDraggableWindow({
         textAlign: 'center',
         lineHeight: '30px'
         })
+
+    if (content) bar.appendChild(content)
 
     bar.appendChild(exitBtn)
 

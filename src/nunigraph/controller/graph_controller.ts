@@ -42,7 +42,7 @@ export class NuniGraphController {
     // we need this variable in order to be able to tell if
     // we should toggle the dialog box or not.
     // if the node moved, we don't
-    private nodeMovedOnLastMouseDown : boolean
+    private shouldToggleNodeWindowOnNextMouseUp : boolean
 
     private _keydown : (e : KeyboardEvent) => void
     private _mouseup : (e : MouseEvent) => void
@@ -57,6 +57,9 @@ export class NuniGraphController {
         this.g = g
         this.connectionTypePrompt = prompt
         this.renderer = renderer
+        // this.undoRedoModule = new UndoRedoModule(
+        //     () => this.g.toRawString(),
+        //     (state : string) => this.g.fromRawString(state))
         this.createValuesWindow = createValuesWindow
 
         this.mouseIsDown = false
@@ -67,7 +70,7 @@ export class NuniGraphController {
         this.openWindow = {}
         this.lastCoordsOfWindow = {}
 
-        this.nodeMovedOnLastMouseDown = false
+        this.shouldToggleNodeWindowOnNextMouseUp = false
             
         this._mouse_move = (e : MouseEvent) => {
             const { x: offsetX, y: offsetY } = this.getMousePos(e)
@@ -239,6 +242,20 @@ export class NuniGraphController {
             this.deleteNode(node)
         }
 
+        const titleEditor = () => {
+            const input = E('input', { props: { value: node.title||'' }})
+            input.oninput = () => {
+                node.title = input.value
+                this.renderer.render()
+            }
+            applyStyle(input, {
+                backgroundColor: '#111',
+                color: '#999',
+                margin: '0 20px'
+                })
+            return input
+        }
+
         const container =
             createDraggableWindow({
                 text: `${node.type.toUpperCase()}, id: ${node.id}`,
@@ -246,7 +263,10 @@ export class NuniGraphController {
                 closeCallback,
                 color: node.id === 0 
                     ? MasterGainColor 
-                    : NodeTypeColors[node.type]
+                    : NodeTypeColors[node.type],
+                content: node.type === NodeTypes.CUSTOM
+                    ? titleEditor()
+                    : undefined
                 })
 
 
@@ -307,12 +327,13 @@ export class NuniGraphController {
         
         this.hideContextMenu()
         this.mouseIsDown = true
-
-        this.nodeMovedOnLastMouseDown = false
         
         const { type, id, node } = 
             this.lastMouse_DownMsg = 
             this.renderer.getGraphMouseTarget(e)
+        
+        this.shouldToggleNodeWindowOnNextMouseUp = 
+            node ? true : false
 
         if (node && 
             this.selectedNodes.length &&
@@ -427,7 +448,7 @@ export class NuniGraphController {
             const dy = node.y - _y
 
             if (dx || dy) {
-                this.nodeMovedOnLastMouseDown = true
+                this.shouldToggleNodeWindowOnNextMouseUp = false
             }
 
             for (const n of selectedNodes) {
@@ -471,11 +492,10 @@ export class NuniGraphController {
         const fromNode = renderer.fromNode
         const { type, id, node } = renderer.getGraphMouseTarget(e)
 
-        if (this.nodeMovedOnLastMouseDown === false && node) {
-            this.toggleDialogBox(node)
-        }
-
         if (!fromNode) {
+            if (this.shouldToggleNodeWindowOnNextMouseUp && node) {
+                this.toggleDialogBox(node)
+            }
             renderer.render({ selectedNodes })
             return;
         }
