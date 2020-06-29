@@ -8,10 +8,10 @@
 import { audioCtx } from '../../webaudio2/webaudio2.js'
 import { OscillatorNode2 } from '../../webaudio2/note_in/oscillator2.js'
 import { BufferNode2 } from '../../webaudio2/note_in/buffer2.js'
-import SubgraphSequencer from '../../webaudio2/sequencers/subgraph_sequencer.js'
-import BufferSequencer from '../../webaudio2/sequencers/buffer_sequencer.js'
-import AudioBufferCaptureNode from '../../webaudio2/record/buffer_capture_node.js'
-import NuniGraphAudioNode from '../../webaudio2/nunigraph_audionode.js'
+import { SubgraphSequencer } from '../../webaudio2/sequencers/subgraph_sequencer.js'
+import { BufferSequencer } from '../../webaudio2/sequencers/buffer_sequencer.js'
+import { AudioBufferCaptureNode } from '../../webaudio2/record/buffer_capture_node.js'
+import { NuniGraphAudioNode } from '../../webaudio2/nunigraph_audionode.js'
 
 
 
@@ -30,20 +30,11 @@ type AudioNodeMap = {
     [NodeTypes.CUSTOM]: NuniGraphAudioNode
 }
 
-export type AudioNode2<T extends NodeTypes> 
+type AudioNode2<T extends NodeTypes> 
     = AudioNodeMap[T] 
     & { [key in AudioParams] : AudioParam }
     
-
-export type NodeSettings = { 
-    display : { x : number, y : number }, 
-    audioParamValues : Indexable<number>,   // Uses draggable number inputs
-    audioNodeProperties : CustomAudioNodeProperties,
-    title? : string
-    INPUT_NODE_ID? : { id : number }
-}
-
-export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
+export  class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
     id : number
     type : T
@@ -60,7 +51,8 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         // Change display: {x,y} to just x,y later to save space on the string conversions
         // (will require changing/throwing away all currently saved graphs :/)
         const { 
-            display: {x,y}, 
+            x, 
+            y, 
             audioParamValues, 
             audioNodeProperties,
             title,
@@ -74,7 +66,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.title = title
         this.INPUT_NODE_ID = INPUT_NODE_ID
 
-        this.audioNode = (<any>audioCtx)[createAudioNode[type]]()
+        this.audioNode = (<Indexed>audioCtx)[createAudioNode[type]]()
         
         if (MustBeStarted[type]) (<ConstantSourceNode>this.audioNode).start(0)
 

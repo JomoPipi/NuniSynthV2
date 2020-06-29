@@ -10,11 +10,11 @@ import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { BufferNode2 } from '../../webaudio2/note_in/buffer2.js'
 import { sequencerControls } from './sequencer_controls.js'
 import { BufferUtils } from '../../buffer_utils/internal.js'
-import Sequencer from '../../webaudio2/sequencers/sequencer.js'
-import audioCaptureNodeControls from './audio_capture_controls.js'
-import AudioBufferCaptureNode from '../../webaudio2/record/buffer_capture_node.js'
-import createResizeableGraphEditor from './resizeable_graph_editor.js'
-import NuniGraphAudioNode from '../../webaudio2/nunigraph_audionode.js'
+import { Sequencer } from '../../webaudio2/sequencers/sequencer.js'
+import { audioCaptureNodeControls } from './audio_capture_controls.js'
+import { AudioBufferCaptureNode } from '../../webaudio2/record/buffer_capture_node.js'
+import { createResizeableGraphEditor } from './resizeable_graph_editor.js'
+import { NuniGraphAudioNode } from '../../webaudio2/nunigraph_audionode.js'
 
 
 
@@ -23,7 +23,7 @@ import NuniGraphAudioNode from '../../webaudio2/nunigraph_audionode.js'
 
 
 
-export default function createValuesWindow(
+export  function createValuesWindow(
     node : NuniGraphNode, 
     saveCallback : Function,
     deleteCallback : Function) {
@@ -33,9 +33,13 @@ export default function createValuesWindow(
 
     controls.appendChild(showSubtypes(node, saveCallback))
 
+    if (NodeTypeWarnings[node.type]) {
+        controls.appendChild(warningButton(node.type))
+    }
+
     if (node.audioNode instanceof NuniGraphAudioNode) {
         controls.style.margin = '0 0'
-        controls.append(createResizeableGraphEditor(node.audioNode))
+        controls.appendChild(createResizeableGraphEditor(node.audioNode))
     }
 
     if (node.audioNode instanceof AudioBufferCaptureNode) {
@@ -75,6 +79,25 @@ export default function createValuesWindow(
     // }
     
     return controls
+}
+
+function warningButton(type : NodeTypes) {
+    return E('span', {
+        text: '!',
+        className: 'tooltip',
+        
+        children: [E('span',{ 
+            text: NodeTypeWarnings[type],
+            className: 'tooltiptext'
+        })],
+        
+        props:{style: {
+            width: '20px',
+            height: '20px',
+            float: 'right',
+            backgroundColor:' orange'
+        }}
+    })
 }
 
 

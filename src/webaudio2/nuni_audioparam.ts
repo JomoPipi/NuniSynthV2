@@ -5,7 +5,7 @@
 
 
 
-export default class NuniAudioParam extends ConstantSourceNode {
+export  class NuniAudioParam extends ConstantSourceNode {
     /** Constructible Audio Params for custom Web Audio nodes
      */
 

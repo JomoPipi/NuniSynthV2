@@ -7,7 +7,7 @@
 
 import { BufferUtils } from './init_buffers.js'
 import { audioCtx } from '../webaudio2/webaudio2.js'
-import BufferStorage from '../storage/general/buffer_storage.js'
+import { BufferStorage } from '../storage/general/buffer_storage.js'
 
 export function formulateBuffer(index : number) {
     

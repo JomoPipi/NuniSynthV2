@@ -6,9 +6,9 @@
 
 
 import { BufferUtils } from '../../buffer_utils/init_buffers.js'
-import BufferStorage from '../../storage/general/buffer_storage.js'
+import { BufferStorage } from '../../storage/general/buffer_storage.js'
 
-export default class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
+export  class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
 
     ctx : AudioContext
     bufferKey : number

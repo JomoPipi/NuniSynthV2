@@ -6,15 +6,15 @@
 
 
 import { ADSR_Controller } from "../adsr.js"
-import Sequencer from "./sequencer.js"
-import NuniAudioParam from "../nuni_audioparam.js"
-import BufferStorage from "../../storage/general/buffer_storage.js"
+import { Sequencer } from "./sequencer.js"
+import { NuniAudioParam } from "../nuni_audioparam.js"
+import { BufferStorage } from "../../storage/general/buffer_storage.js"
 import { BufferUtils } from "../../buffer_utils/init_buffers.js"
 
 
 
 
-export default class BufferSequencer extends Sequencer {
+export  class BufferSequencer extends Sequencer {
 
     nextId : number
     detune : NuniAudioParam

@@ -5,7 +5,7 @@
 
 
 
-import GraphController from '../init.js'
+import { GraphController } from '../init.js'
 import { NuniGraphController } from './graph_controller.js'
 
 

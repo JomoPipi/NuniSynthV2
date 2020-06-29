@@ -5,8 +5,8 @@
 
 
 
-import MasterClock from './master_clock.js'
-import VolumeNodeContainer from '../volumenode_container.js'
+import { MasterClock } from './master_clock.js'
+import { VolumeNodeContainer } from '../volumenode_container.js'
 
 
 type ChannelData = {
@@ -15,7 +15,7 @@ type ChannelData = {
     bufferKey? : number
     }
 
-export default class Sequencer extends VolumeNodeContainer {
+export class Sequencer extends VolumeNodeContainer {
     /**
      * This creates an N-step sequencer out of
      * whatever inputs are connected to it.

@@ -1,12 +1,19 @@
+
+
+
+
+
+
+
 import { NuniGraphController } from "../nunigraph/controller/graph_controller.js" // <- A CIRCULAR REFERENCE POINT
-import VolumeNodeContainer from "./volumenode_container.js"
-// type NuniGraphController = Indexed // <- turn this one on when using npx madge --circular --extensions ts ./
+import { VolumeNodeContainer } from "./volumenode_container.js"
+// type NuniGraphController = any // <- turn this one on when using npx madge --circular --extensions ts ./
 
 
 
 
 
-export default class NuniGraphAudioNode extends VolumeNodeContainer {
+export class NuniGraphAudioNode extends VolumeNodeContainer {
     static createController? : (canvas : HTMLCanvasElement, vol : GainNode) => NuniGraphController
 
     canvas : HTMLCanvasElement
@@ -63,7 +70,8 @@ export default class NuniGraphAudioNode extends VolumeNodeContainer {
             const inputNode 
                 = this.inputs[id]
                 = this.controller.g.createNewNode(NodeTypes.GAIN, {
-                display: { x: Math.random(), y: Math.random() },
+                x: Math.random() * .5 + .25, 
+                y: Math.random() * .5 + .25,
                 audioParamValues: { gain: 1 },
                 audioNodeProperties: {},
                 title: `INPUT (id-${id})`,

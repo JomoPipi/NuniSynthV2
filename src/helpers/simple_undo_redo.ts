@@ -5,7 +5,7 @@
 
 
 
-export default class UndoRedoModule {
+export class UndoRedoModule {
     
     private undos : string[]
     private redos : string[]

@@ -5,11 +5,11 @@
 
 
 
-import UndoRedoModule from '../../helpers/simple_undo_redo.js'
+// import { UndoRedoModule } from '../../helpers/simple_undo_redo.js'
 import { NuniGraph } from '../model/nunigraph.js'
 import { NuniGraphRenderer, HOVER } from '../view/graph_renderer.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
-import NuniGraphAudioNode from '../../webaudio2/nunigraph_audionode.js'
+import { NuniGraphAudioNode } from '../../webaudio2/nunigraph_audionode.js'
 
 export const ActiveControllers = [] as NuniGraphController[]
 
@@ -34,9 +34,15 @@ export class NuniGraphController {
     private lastMouse_MoveMsg : { type : HOVER } & Indexed
     private selectionStart? : [number,number]
     openWindow : Indexable<HTMLElement> // [node.id]:nodeValuesWindow
+    private lastCoordsOfWindow : Indexable<[number,number]>
     // private undoRedoModule : UndoRedoModule
     private createValuesWindow : CreateValuesWindow
     // private copiedNodes? : string
+
+    // we need this variable in order to be able to tell if
+    // we should toggle the dialog box or not.
+    // if the node moved, we don't
+    private nodeMovedOnLastMouseDown : boolean
 
     private _keydown : (e : KeyboardEvent) => void
     private _mouseup : (e : MouseEvent) => void
@@ -59,7 +65,9 @@ export class NuniGraphController {
             this.lastMouse_DownMsg = 
             renderer.getGraphMouseTarget({ offsetX: -Infinity, offsetY: -Infinity})
         this.openWindow = {}
+        this.lastCoordsOfWindow = {}
 
+        this.nodeMovedOnLastMouseDown = false
             
         this._mouse_move = (e : MouseEvent) => {
             const { x: offsetX, y: offsetY } = this.getMousePos(e)
@@ -84,7 +92,7 @@ export class NuniGraphController {
         window.addEventListener('mouseup', this._mouseup)
         window.addEventListener('keydown', this._keydown)
         this.renderer.canvas.onmousedown = e => this.mousedown(e)
-        this.renderer.canvas.ondblclick = e => this.doubleClick(e)
+        // this.renderer.canvas.ondblclick = e => this.doubleClick(e)
 
         // Right-click options
         this.renderer.canvas.oncontextmenu = (e : MouseEvent) => {
@@ -163,9 +171,10 @@ export class NuniGraphController {
             }
         }
 
-        const window = this.openWindow[id]
-        if (window) {
-            D('node-windows')!.removeChild(window)
+        const nodeWindow = this.openWindow[id]
+        if (nodeWindow) {
+            this.lastCoordsOfWindow[id] = [nodeWindow.offsetLeft, nodeWindow.offsetTop]
+            D('node-windows')!.removeChild(nodeWindow)
             delete this.openWindow[id]
         }
     }
@@ -251,7 +260,14 @@ export class NuniGraphController {
         
         D('node-windows')!.appendChild(container)
         moveTheWindowToTheTop(container)
-        UI_clamp(0, 0, container, D('nunigraph-stuff')!)
+
+        if (node.id in this.lastCoordsOfWindow) {
+            const [x,y] = this.lastCoordsOfWindow[node.id]
+            container.style.left = x+'px'
+            container.style.top = y+'px'
+        } else {
+            UI_clamp(0, 0, container, D('nunigraph-stuff')!)
+        }
     }
 
 
@@ -277,13 +293,7 @@ export class NuniGraphController {
         return this.selectedNodes
     }
 
-    private doubleClick(e : MouseEvent) {
-        const { node } = 
-            this.lastMouse_DownMsg = 
-            this.renderer.getGraphMouseTarget(e)
-
-        if (!node) return;
-
+    private toggleDialogBox(node : NuniGraphNode) {
         if (!this.openWindow[node.id]) {
             this.openValuesWindow(node)
             this.openWindow[node.id].classList.add('selected2')
@@ -297,6 +307,8 @@ export class NuniGraphController {
         
         this.hideContextMenu()
         this.mouseIsDown = true
+
+        this.nodeMovedOnLastMouseDown = false
         
         const { type, id, node } = 
             this.lastMouse_DownMsg = 
@@ -414,6 +426,10 @@ export class NuniGraphController {
             const dx = node.x - _x
             const dy = node.y - _y
 
+            if (dx || dy) {
+                this.nodeMovedOnLastMouseDown = true
+            }
+
             for (const n of selectedNodes) {
                 if (n === node) continue
                 n.x += dx
@@ -452,14 +468,17 @@ export class NuniGraphController {
         this.selectionStart = undefined
 
         const { renderer, selectedNodes } = this
-
         const fromNode = renderer.fromNode
+        const { type, id, node } = renderer.getGraphMouseTarget(e)
+
+        if (this.nodeMovedOnLastMouseDown === false && node) {
+            this.toggleDialogBox(node)
+        }
+
         if (!fromNode) {
             renderer.render({ selectedNodes })
             return;
         }
-
-        const { type, id, node } = renderer.getGraphMouseTarget(e)
 
         if (node === fromNode) {
             renderer.fromNode = null

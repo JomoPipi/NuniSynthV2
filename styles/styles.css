@@ -638,6 +638,48 @@ code {
   height: 70px;
 }
 
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  background-color: #f70;
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  color: white;
+  float: right;
+  text-align: center;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 300px;
+  background-color: #3a393a;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  top: 150%;
+  left: 50%;
+  margin-left: -225px;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 75%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #3a393a transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
 .adsr-and-kb {
   display: -ms-grid;
   display: grid;
@@ -844,18 +886,19 @@ a {
   left: 0;
   background-color: #201e20;
   z-index: 5;
-  -webkit-transition: opacity 1s ease-in-out;
-  transition: opacity 1s ease-in-out;
+  -webkit-transition: opacity 2s ease-in-out;
+  transition: opacity 2s ease-in-out;
   opacity: 1;
 }
 
 .loading-text {
-  margin-top: 70vh;
+  margin-top: 50vh;
+  font-size: 1.5em;
 }
 
 .loader .l_main {
   position: absolute;
-  top: 50%;
+  top: 25%;
   left: 50%;
   width: 172px;
   height: 128px;

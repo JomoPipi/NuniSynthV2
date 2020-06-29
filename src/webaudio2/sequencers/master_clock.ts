@@ -7,7 +7,7 @@
 
 let activated = false, isPaused = false
 
-const MasterClock = {
+export const MasterClock = {
     tempo: 120,
 
     setSchedule: function (scheduleNotes : (tempo : number) => void) {
@@ -29,8 +29,6 @@ function startScheduling(scheduleNotes : (tempo : number) => void) {
     // More efficient, but sequencer stops when tabs are switched:
     window.requestAnimationFrame(goAgain)
 }
-
-export default MasterClock
 
 
 

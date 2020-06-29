@@ -5,7 +5,7 @@
 
 
 
-import NuniAudioParam from "./nuni_audioparam.js"
+import { NuniAudioParam } from "./nuni_audioparam.js"
 
 
 
@@ -15,7 +15,7 @@ export type Destination = AudioNode | AudioParam | NuniAudioParam | VolumeNodeCo
 
 
 
-export default class VolumeNodeContainer {
+export class VolumeNodeContainer {
     
     /**
      * Methods that NuniSourceNode and SubgraphSequencer need.

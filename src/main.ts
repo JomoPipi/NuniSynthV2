@@ -20,5 +20,5 @@ window.onload = () => {
 
     D('loading-screen')!.style.opacity = '0'
     setTimeout(() => 
-        D('loading-screen')!.style.display = 'none', 1000)
+        D('loading-screen')!.style.display = 'none', 2000)
 }

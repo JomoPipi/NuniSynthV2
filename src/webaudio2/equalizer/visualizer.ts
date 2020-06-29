@@ -7,7 +7,7 @@
 
 
 
-export default function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : AnalyserNode) {
+export  function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : AnalyserNode) {
 
     analyser.fftSize = 4096
     analyser.minDecibels = -90
@@ -57,7 +57,7 @@ export default function renderVisualiserCanvas(canvas : HTMLCanvasElement, analy
 
 
 
-// export default function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : AnalyserNode) {
+// export  function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : AnalyserNode) {
 
 //     analyser.fftSize = 2048
 //     const bufferLength = analyser.fftSize

@@ -6,12 +6,12 @@
 
 
 import { ADSR_Controller } from '../adsr.js'
-import Sequencer from './sequencer.js'
+import { Sequencer } from './sequencer.js'
 
 
 
 
-export default class SubgraphSequencer extends Sequencer {
+export  class SubgraphSequencer extends Sequencer {
     /**
      * This creates an N-step sequencer out of
      * whatever inputs are connected to it.

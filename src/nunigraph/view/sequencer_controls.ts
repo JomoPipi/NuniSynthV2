@@ -5,8 +5,8 @@
 
 
 
-import Sequencer from '../../webaudio2/sequencers/sequencer.js'
-import BufferSequencer from '../../webaudio2/sequencers/buffer_sequencer.js'
+import { Sequencer } from '../../webaudio2/sequencers/sequencer.js'
+import { BufferSequencer } from '../../webaudio2/sequencers/buffer_sequencer.js'
 
 export function sequencerControls(an : Sequencer) {
 

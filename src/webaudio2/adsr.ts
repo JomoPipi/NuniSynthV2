@@ -101,7 +101,7 @@ export const ADSR_Controller = {
             attack  / sum,
             decay   / sum,
             0.25         / sum,
-            // Release is done by default
+            // Release is done by  
         ]
         const [aw,dw,sw] = adsrWidths
 

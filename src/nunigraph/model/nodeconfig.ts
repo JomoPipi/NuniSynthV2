@@ -156,6 +156,20 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } = {
     [NodeTypes.CUSTOM]: 'rgba(255,200,255,1)'
 }
 
+const NodeTypeWarnings : { readonly [key in NodeTypes] : string } = {
+    [NodeTypes.GAIN]:   '',
+    [NodeTypes.OSC]:    '',
+    [NodeTypes.FILTER]: `Filters may become unstable and we won't do anything about it. If this happens the program will cease to function properly and will need to be re-started.`,
+    [NodeTypes.PANNER]: '',
+    [NodeTypes.DELAY]:  '',
+    [NodeTypes.BUFFER]: '',
+    [NodeTypes.SGS]:    '',
+    [NodeTypes.B_SEQ]:  '',
+    [NodeTypes.CSN]:    '',
+    [NodeTypes.RECORD]: '',
+    [NodeTypes.CUSTOM]: ''
+}
+
 const ConnectionTypeColors : { readonly [key in ConnectionType] : string } =
 {
     channel:      'gray',
@@ -227,13 +241,22 @@ type CustomAudioNodeProperties =
     nSteps?      : number
     adsrIndex?   : number
     graphCode?   : string
-    title?       : string
-    INPUT_NODE_ID? : number
 }
 
 const isTransferable =
-    'kbMode,type,subdiv,isInSync,bufferKey,nSteps,adsrIndex,graphCode,title,INPUT_NODE_ID'
+    'kbMode,type,subdiv,isInSync,bufferKey,nSteps,adsrIndex,graphCode'
     .split(',')
     .reduce((acc,prop) => 
         ({ ...acc, [prop]: true })
     , {} as { [key in keyof CustomAudioNodeProperties]: true })
+
+
+type NodeSettings = { 
+    x : number, 
+    y : number, 
+    audioParamValues : Indexable<number>,   // Uses draggable number inputs
+    audioNodeProperties : CustomAudioNodeProperties,
+    title? : string
+    INPUT_NODE_ID? : { id : number }
+}
+

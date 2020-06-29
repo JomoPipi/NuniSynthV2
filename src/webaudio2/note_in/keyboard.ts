@@ -29,7 +29,7 @@ const held = [] as number[]
 
 const scale = keyCodes.map((_,i) => i * 100)
 
-const KB = { 
+export const KB = { 
     keyCodes, 
     keymap, 
     held, 
@@ -99,8 +99,3 @@ function updateKBImage(code : number, keydown : boolean) {
         .classList
         .toggle('key-pressed', keydown)
 }
-
-
-
-
-export default KB

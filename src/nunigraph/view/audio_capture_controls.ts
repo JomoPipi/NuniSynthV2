@@ -5,7 +5,7 @@
 
 
 
-import AudioBufferCaptureNode from "../../webaudio2/record/buffer_capture_node.js";
+import { AudioBufferCaptureNode } from "../../webaudio2/record/buffer_capture_node.js";
 import { BufferUtils } from "../../buffer_utils/internal.js";
 
 
@@ -14,7 +14,7 @@ import { BufferUtils } from "../../buffer_utils/internal.js";
 
 
 
-export default function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
+export  function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
     const controls = E('div')
 
     choose_buffer_index: {

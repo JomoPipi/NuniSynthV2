@@ -15,6 +15,4 @@ function set(key : number, buffer : AudioBuffer) {
     buffers[key] = buffer
 }
 
-const BufferStorage = { set, get }
-
-export default BufferStorage
+export const BufferStorage = { set, get }

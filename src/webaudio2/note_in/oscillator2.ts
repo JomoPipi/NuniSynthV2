@@ -6,7 +6,7 @@
 
 
 import { NuniSourceNode } from './nuni_source_node.js'
-import NuniAudioParam from '../nuni_audioparam.js'
+import { NuniAudioParam } from '../nuni_audioparam.js'
 
 export class OscillatorNode2 extends NuniSourceNode {
     /**

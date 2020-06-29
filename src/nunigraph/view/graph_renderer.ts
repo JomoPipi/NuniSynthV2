@@ -338,7 +338,7 @@ export class NuniGraphRenderer {
             isSelect || (fromNode && isEdge) 
             ? buttons === 1 ? 'grabbing' : 'grab'
             : isEdge ? 'crosshair'
-            : 'default'
+            : ' '
 
         for (const node of nodes) {
             

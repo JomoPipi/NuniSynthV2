@@ -5,18 +5,17 @@
 
 
 
-import { audioCtx } from '../../webaudio2/webaudio2.js'
-    
-import { NuniGraphNode, NodeSettings } from './nunigraph_node.js'
+import { NuniGraphNode } from './nunigraph_node.js'
 import { LZW_compress, LZW_decompress } from '../../helpers/lzw_compression.js'
-import SubgraphSequencer from '../../webaudio2/sequencers/subgraph_sequencer.js'
+import { SubgraphSequencer } from '../../webaudio2/sequencers/subgraph_sequencer.js'
 import { Destination } from '../../webaudio2/volumenode_container.js'
-import NuniAudioParam from '../../webaudio2/nuni_audioparam.js'
-import Sequencer from '../../webaudio2/sequencers/sequencer.js'
-import NuniGraphAudioNode from '../../webaudio2/nunigraph_audionode.js'
+import { NuniAudioParam } from '../../webaudio2/nuni_audioparam.js'
+import { Sequencer } from '../../webaudio2/sequencers/sequencer.js'
+import { NuniGraphAudioNode } from '../../webaudio2/nunigraph_audionode.js'
 
 const defaultSettings = () => ({
-    display: { x: 0.5, y: 0.5 },
+    x: 0.5, 
+    y: 0.5,
     audioParamValues: {},
     audioNodeProperties: {}
 })
@@ -42,7 +41,8 @@ export class NuniGraph {
     private initializeMasterGain() {
         const masterGainSettings = Object.assign(defaultSettings(), { 
             audioParamValues: { [NodeTypes.GAIN]: 0.5 },
-            display: { x: 0.5, y: 0.125 },
+            x: 0.5, 
+            y: 0.125,
             title: 'OUTPUT'
             })
 
@@ -77,7 +77,8 @@ export class NuniGraph {
         const newX = clamp(0, x+0.07, 1)
         const newY = newX === 1 ? clamp(0, y-0.07, 1) : y
         const settings = {
-            display: { x: newX, y: newY },
+            x: newX,
+            y: newY,
             audioParamValues,
             audioNodeProperties,
             INPUT_NODE_ID
@@ -344,7 +345,7 @@ export class NuniGraph {
         // recreate the nodes
         for (const node of nodes) {
 
-            const  { 
+            const { 
                 id, 
                 type, 
                 x, 
@@ -358,12 +359,13 @@ export class NuniGraph {
             if (id === 0) continue
             
             const settings = {
-                display: { x, y }, // <- improve this
+                x, 
+                y,
                 audioParamValues,
                 audioNodeProperties,
                 INPUT_NODE_ID,
-                }
-                if (!INPUT_NODE_ID) (<any>settings).title = title
+                } as NodeSettings
+                if (!INPUT_NODE_ID) settings.title = title
 
             this.nodes.push(new NuniGraphNode(id, type, settings))
         }
