@@ -339,7 +339,7 @@ export class NuniGraphController {
             this.lastMouse_DownMsg = 
             this.renderer.getGraphMouseTarget(e)
 
-        this.lastMouseXY = [e.clientX, e.clientY]
+        this.lastMouseXY = [e.offsetX, e.offsetY]
 
         if (node && 
             this.selectedNodes.length &&
@@ -426,7 +426,8 @@ export class NuniGraphController {
     private mousemove(e : MouseEvent) {
 
         const [x,y] = this.lastMouseXY
-        if (x !== e.clientX && y !== e.clientY) {
+        // FULLSCREEEN ADD AN EXTRA MOUSEMOVE EVENT, AND FUCKS WITH THE COORDINATES >:(
+        if (Math.abs(x - e.offsetX) > 1 || Math.abs(y - e.offsetY) > 1) {
             this.mouseHasMovedSinceLastMouseDown = true
         }
 
