@@ -43,6 +43,11 @@ export class NuniGraphController {
     // we should toggle the dialog box or not.
     private mouseHasMovedSinceLastMouseDown : boolean
 
+    // THIS IS NEEDED TO CHECK IF THE MOUSE ACTUALLY MOVED
+    //  BECAUSE CHROME FIRES A MOUSEMOVE EVENT
+    // WHEN CLICKING IN FULLSCREEN FOR SOME REASON.
+    private lastMouseXY : [number,number]
+
     private _keydown : (e : KeyboardEvent) => void
     private _mouseup : (e : MouseEvent) => void
     private _mouse_move : (e : MouseEvent) => void
@@ -70,6 +75,7 @@ export class NuniGraphController {
         this.lastCoordsOfWindow = {}
 
         this.mouseHasMovedSinceLastMouseDown = false
+        this.lastMouseXY = [0,0]
             
         this._mouse_move = (e : MouseEvent) => {
             const { x: offsetX, y: offsetY } = this.getMousePos(e)
@@ -333,6 +339,8 @@ export class NuniGraphController {
             this.lastMouse_DownMsg = 
             this.renderer.getGraphMouseTarget(e)
 
+        this.lastMouseXY = [e.clientX, e.clientY]
+
         if (node && 
             this.selectedNodes.length &&
             this.selectedNodes.includes(node)) {
@@ -417,7 +425,10 @@ export class NuniGraphController {
 
     private mousemove(e : MouseEvent) {
 
-        this.mouseHasMovedSinceLastMouseDown = true
+        const [x,y] = this.lastMouseXY
+        if (x !== e.clientX && y !== e.clientY) {
+            this.mouseHasMovedSinceLastMouseDown = true
+        }
 
         const isPressing = 
             e.buttons === 1 && 
@@ -488,6 +499,8 @@ export class NuniGraphController {
         const fromNode = renderer.fromNode
         const { type, id, node } = renderer.getGraphMouseTarget(e)
 
+        // log('fromNode,this.mouseHasMovedSinceLastMouseDown,node,this.lastMouse_DownMsg.node =',
+        // fromNode,this.mouseHasMovedSinceLastMouseDown,node,this.lastMouse_DownMsg.node)
         if (!fromNode) {
             if (!this.mouseHasMovedSinceLastMouseDown && node &&
                 node === this.lastMouse_DownMsg.node) {

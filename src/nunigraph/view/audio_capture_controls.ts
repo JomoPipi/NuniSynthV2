@@ -71,6 +71,11 @@ export  function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
         controls.appendChild(box)
     }
 
+    record_at_start_of_next_measure: {
+        const checkbox = E('input', { props: { type: 'checkbox' }})
+        controls.append(checkbox, E('br'))
+    }
+
     record_button: {
         const recordButton 
             = E('button', {
