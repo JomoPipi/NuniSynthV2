@@ -120,9 +120,9 @@ button {
 }
 
 .prompt button {
-  font-size: 1.5em;
-  border: 1px solid #1aff00;
-  border-width: 2px 4px;
+  font-size: 1em;
+  border: 1px solid #3a393a;
+  border-width: 2px 2px;
 }
 
 .info-menu-container {
@@ -722,26 +722,6 @@ a {
           box-shadow: 5px 5px 10px #302f30, -5px -5px 10px #444044;
 }
 
-.selected {
-  background: rgba(0, 255, 0, 0.25);
-}
-
-.selected2 {
-  border: 2px solid #f72d70;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-}
-
-.highlighted {
-  border: 8px solid cyan;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-}
-
-.show {
-  display: inline-block;
-}
-
 /* 
     Stolen from a jsfiddle and therefore does
     not fit into the atomic paradigm.
@@ -1084,6 +1064,31 @@ a {
     -webkit-transform: translate(-40px, 0px) rotate(-90deg);
     transform: translate(-40px, 0px) rotate(-90deg);
   }
+}
+
+.selected {
+  background: rgba(0, 255, 0, 0.25);
+}
+
+.selected2 {
+  border: 2px solid #f72d70;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.highlighted {
+  border: 8px solid cyan;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.show {
+  display: inline-block;
+}
+
+.show-grid {
+  display: -ms-grid;
+  display: grid;
 }
 
 @font-face {

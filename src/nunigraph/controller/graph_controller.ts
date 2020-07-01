@@ -100,14 +100,12 @@ export class NuniGraphController {
         window.addEventListener('mouseup', this._mouseup)
         window.addEventListener('keydown', this._keydown)
         this.renderer.canvas.onmousedown = e => this.mousedown(e)
-        // this.renderer.canvas.ondblclick = e => this.doubleClick(e)
 
         // Right-click options
         this.renderer.canvas.oncontextmenu = (e : MouseEvent) => {
             e.preventDefault()
             this.showContextMenu(e.clientX, e.clientY)
         }
-
     }
 
     deactivateEventHandlers() {
@@ -115,7 +113,6 @@ export class NuniGraphController {
         window.removeEventListener('mouseup', this._mouseup)
         window.removeEventListener('keydown', this._keydown)
         this.renderer.canvas.onmousedown = null
-        this.renderer.canvas.ondblclick = null
         this.renderer.canvas.oncontextmenu = null
     }
 
@@ -263,7 +260,7 @@ export class NuniGraphController {
 
         const container =
             createDraggableWindow({
-                text: `${node.type.toUpperCase()}, id: ${node.id}`,
+                text: `${NodeLabel[node.type]}, id: ${node.id}`,
                 clickCallback,
                 closeCallback,
                 color: node.id === 0 
@@ -329,7 +326,7 @@ export class NuniGraphController {
     }
 
     private mousedown(e : MouseEvent) {
-
+        
         this.mouseHasMovedSinceLastMouseDown = false
 
         this.hideContextMenu()
@@ -500,8 +497,6 @@ export class NuniGraphController {
         const fromNode = renderer.fromNode
         const { type, id, node } = renderer.getGraphMouseTarget(e)
 
-        // log('fromNode,this.mouseHasMovedSinceLastMouseDown,node,this.lastMouse_DownMsg.node =',
-        // fromNode,this.mouseHasMovedSinceLastMouseDown,node,this.lastMouse_DownMsg.node)
         if (!fromNode) {
             if (!this.mouseHasMovedSinceLastMouseDown && node &&
                 node === this.lastMouse_DownMsg.node) {
@@ -524,16 +519,17 @@ export class NuniGraphController {
                 node!,
                 e.clientX,
                 e.clientY)
-            
-        ;(<Indexed>{
-            [HOVER.EDGE]:       () => do_it(),
-            [HOVER.SELECT]:     () => do_it(),
-            [HOVER.CONNECTION]: () => {},
-            [HOVER.EMPTY]:      () => {}
-        })[type]()
+
+        const render = () => renderer.render({ selectedNodes })
 
         renderer.fromNode = null
-        renderer.render({ selectedNodes })
+
+        ;(<Indexed>{
+            [HOVER.EDGE]:       do_it,
+            [HOVER.SELECT]:     do_it,
+            [HOVER.CONNECTION]: render,
+            [HOVER.EMPTY]:      render
+        })[type]()
     }
 
     private keydown(e : KeyboardEvent) {
@@ -596,38 +592,45 @@ export class NuniGraphController {
         node1 : NuniGraphNode, node2 : NuniGraphNode, x : number, y : number) {
 
         const { renderer } = this
-
-        if (node2.id === 0 || AudioNodeParams[node2.type].length === 0) {
-            // No prompt needed in this case. 
-            // Only allow channel connections to the master gain node.
-            // Allowing connections to someGain.gain can prevent it from being muted.
-            this.save()
-            this.g.connect(node1, node2, 'channel')
-            return;
-        }
-        
-        const prompt = D('connection-type-prompt')!
-
-        prompt.classList.add('show')
-        prompt.innerHTML= ''
-        prompt.style.zIndex = (openWindowGlobalIndexThatKeepsRising+1).toString()
-
         const types = (
             SupportsInputChannels[node2.type] 
             ? ['channel'] 
             : []
-            ).concat(AudioNodeParams[node2.type])
+            ).concat(AudioNodeParams[node2.type]) as ConnectionType[]
+
+        if (node2.id === 0 || types.length === 1) {
+            // No prompt needed in this case. 
+            // Only allow channel connections to the master gain node.
+            // Allowing connections to someGain.gain can prevent it from being muted.
+            this.save()
+            this.g.connect(node1, node2, types[0])
+            return;
+        }
+
+        this.deactivateEventHandlers()
+        
+        const prompt = D('connection-type-prompt')!
+        const hide_it = () => {
+            prompt.classList.remove('show-grid')
+            this.activateEventHandlers()
+        }
+
+        prompt.classList.add('show-grid')
+        prompt.innerHTML= ''
+        prompt.style.zIndex = Number.MAX_SAFE_INTEGER.toString()
 
         for (const param of types as ConnectionType[]) {
             const btn = E('button', { text: param })
+            if (param === 'channel') btn.classList.toggle('selected')
+            btn.style.borderColor = ConnectionTypeColors[param]
+            btn.style.display = 'block'
             btn.onclick = () =>
             {
                 this.save()
                 this.g.connect(node1, node2, param)
-                prompt.classList.remove('show')
+                hide_it()
                 renderer.render()
             }
-
             prompt.appendChild(btn)
         }
 
@@ -635,11 +638,17 @@ export class NuniGraphController {
             text: 'cancel',
             className: 'connection-btn'
             })
-        cancel.onclick = () => prompt.classList.remove('show')
+        cancel.onclick = hide_it
         prompt.appendChild(cancel)
 
+        const w = prompt.offsetWidth
+        const _x = renderer.canvas.width/2 + renderer.canvas.offsetLeft
         // Place the prompt in an accessible location
-        UI_clamp(x, y + 40, prompt, document.body)
+        UI_clamp(
+            x > _x ? x - w : x + w,
+            y + 40, 
+            prompt,
+            document.body)
     }
 
     // private customNodePrompt(audioNode : NuniGraphAudioNode) {

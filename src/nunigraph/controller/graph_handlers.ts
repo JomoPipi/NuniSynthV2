@@ -57,8 +57,8 @@ const contextmenu = D('graph-contextmenu')!
             marginLeft: '20px',
             background: color
             })
-    
-        const textbox = E('span', { text: type })
+
+        const textbox = E('span', { text: NodeLabel[type] })
 
         const btn = E('button', { 
             className: 'list-btn', 
@@ -70,8 +70,10 @@ const contextmenu = D('graph-contextmenu')!
     }
 
     for (const key in NodeTypes) {
-        const type = (<Indexed>NodeTypes)[key] as NodeTypes
-        append(type, NodeTypeColors[type])
+        if (isNaN(+key)) {
+            const type = (<Indexed>NodeTypes)[key] as NodeTypes
+            append(type, NodeTypeColors[type])
+        }
     }
 }
 
@@ -96,8 +98,6 @@ const contextmenu = D('graph-contextmenu')!
         GraphController.renderer.render()
         input.value = ''
     } catch (e) {
-        log('e =',e)
-        log('fail input =', LZW_decompress(input.value)) // <-
         GraphController.undo()
         input.value = 'Invalid code'
     }

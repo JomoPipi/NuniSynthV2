@@ -61,7 +61,7 @@ class JsDial {
         const mouseMove  = (e : MouseEvent) => move (e.clientX,e.clientY)
         
         const move = (x:number, y:number) => {
-            if (y === 0) log('onwheel event')
+            // if (y === 0) log('onwheel event')
             if (!this.isActive) return;
             this.value += (this.lastY - y + x - this.lastX) * this.sensitivity
             this.value = clamp(this.min, this.value, this.max)

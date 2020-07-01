@@ -1,0 +1,29 @@
+
+
+
+
+
+
+
+.selected {
+    background: rgba(0, 255, 0, 0.25);
+}
+
+.selected2 {
+    border: 2px solid rgb(247, 45, 112);
+    box-sizing: border-box;
+}
+
+.highlighted {
+    border: 8px solid cyan;
+    box-sizing: border-box;
+}
+
+
+.show { // Has to be at the end so that it "wins".
+    display: inline-block;
+}
+
+.show-grid { // Has to be at the end so that it "wins".
+    display: grid;
+}

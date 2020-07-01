@@ -5,19 +5,19 @@
 
 
 
-enum NodeTypes 
+enum NodeTypes
 {
-    GAIN    = 'gain',
-    OSC     = 'oscillator',
-    FILTER  = 'filter',
-    PANNER  = 'panner',
-    DELAY   = 'delay',
-    BUFFER  = 'buffer',
-    SGS     = 'subgraph-sequencer',
-    B_SEQ   = 'buffer-sequencer',
-    CSN     = 'constant-source',
-    RECORD  = 'audiobuffer-capture',
-    CUSTOM  = 'module'
+    GAIN = 'gain',
+    OSC = 'oscillator',
+    FILTER = 'filter',
+    PANNER = 'panner',
+    DELAY = 'delay',
+    BUFFER = 'buffer',
+    SGS = 'subgraph-sequencer',
+    B_SEQ = 'buffer-sequencer',
+    CSN = 'constant-source',
+    RECORD = 'audio-capture',
+    CUSTOM = 'module'
 }
 
 type AudioParams 
@@ -40,8 +40,21 @@ type ConnecteeData = ConnecteeDatum[]
 
 
 
-const createAudioNode =
-{
+const NodeLabel = {
+    [NodeTypes.GAIN]:   'Gain',
+    [NodeTypes.OSC]:    'Oscillator',
+    [NodeTypes.FILTER]: 'Filter',
+    [NodeTypes.PANNER]: 'Panner',
+    [NodeTypes.DELAY]:  'Delay',
+    [NodeTypes.BUFFER]: 'Buffer',
+    [NodeTypes.SGS]:    'Subgraph Sequencer',
+    [NodeTypes.B_SEQ]:  'Buffer Sequencer',
+    [NodeTypes.CSN]:    'Constant Source',
+    [NodeTypes.RECORD]: 'Audio Capture',
+    [NodeTypes.CUSTOM]: 'Module'
+}
+
+const createAudioNode = {
     [NodeTypes.GAIN]:   'createGain',
     [NodeTypes.OSC]:    'createOscillator2',
     [NodeTypes.FILTER]: 'createBiquadFilter',

@@ -224,16 +224,7 @@ export class NuniGraph {
 
     private connect_audioNode_to_destination(node1 : NuniGraphNode, destination : Destination) {
         
-        if (destination instanceof NuniGraphAudioNode) {
-            const deleting_An_Input_Node_Inside_A_NuniGraphAudioNode_Must_Result_In_A_Disconnection_In_The_Outer_Scope_Function = () => {
-                log('executing this function')
-                const node2 = this.nodes.find(node => node.audioNode === destination)!
-                if (!node2) throw 'Find out why'
-                this.disconnect(node1, node2, 'channel')
-            }
-            destination.addInput(node1)
-        }
-        else if (destination instanceof SubgraphSequencer) {
+        if (destination instanceof NuniGraphAudioNode || destination instanceof SubgraphSequencer) {
             destination.addInput(node1)
         }
         else if (destination instanceof NuniAudioParam) {
@@ -309,10 +300,8 @@ export class NuniGraph {
     fromRawString(s : string) {
 
         try {
-            log('data =',s)
             var { connections, nodes } = JSON.parse(s)
         } catch(e) {
-            log('data failed:', s)
             throw 'Error parsing new graph'
         }
 
