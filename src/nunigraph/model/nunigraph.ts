@@ -284,11 +284,15 @@ export class NuniGraph {
     }
 
     convertNodeToNodeSettings(node : NuniGraphNode) : Indexed {
+        
+        const nodeCopy = { ...node, audioNode: {} }
+        
         const settings = { 
-            ...JSON.parse(JSON.stringify(node)),
+            ...JSON.parse(JSON.stringify(nodeCopy)),
             audioNodeProperties: {}
             }
-        for (const prop in isTransferable) {
+            
+        for (const prop in TransferableAudioNodeProperties) {
             if (prop in node.audioNode) {
                 settings.audioNodeProperties[prop] = 
                     node.audioNode[prop as AudioParams]
@@ -298,7 +302,7 @@ export class NuniGraph {
     }
 
     fromRawString(s : string) {
-
+        log('from string happening here')
         try {
             var { connections, nodes } = JSON.parse(s)
         } catch(e) {

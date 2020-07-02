@@ -454,12 +454,14 @@ code {
   background: -webkit-gradient(linear, left top, left bottom, from(#9a97a3), to(#444044));
   background: linear-gradient(#9a97a3, #444044);
   border: 2px solid #201e20;
+  border-radius: 10%;
 }
 
 .note-box-halfway {
   background: -webkit-gradient(linear, left top, left bottom, from(#9a97a3), to(#302f30));
   background: linear-gradient(#9a97a3, #302f30);
   border: 2px solid #201e20;
+  border-radius: 10%;
 }
 
 .smaller-text {
@@ -1077,7 +1079,7 @@ a {
 }
 
 .highlighted {
-  border: 8px solid cyan;
+  border: 2px solid cyan;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
 }

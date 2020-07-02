@@ -234,7 +234,7 @@ const sliderFactor : { readonly [key in AudioParams] : number } =
     offset:       2.0
 }
 
-type CustomAudioNodeProperties =
+interface CustomAudioNodeProperties
 {
     kbMode?      : boolean
     type?        : string
@@ -246,20 +246,32 @@ type CustomAudioNodeProperties =
     graphCode?   : string
 }
 
-const isTransferable =
+const TransferableAudioNodeProperties =
     'kbMode,type,subdiv,isInSync,bufferKey,nSteps,adsrIndex,graphCode'
     .split(',')
     .reduce((acc,prop) => 
         ({ ...acc, [prop]: true })
-    , {} as { [key in keyof CustomAudioNodeProperties]: true })
+    , {} as { [key in keyof CustomAudioNodeProperties] : true })
 
+// const TransferableAudioNodeProperties : CustomAudioNodeProperties = {
+//     [key in keyof CustomAudioNodeProperties] : true
+//     }
+
+// type TransferableAudioNodeProperty = keyof CustomAudioNodeProperties
 
 type NodeSettings = { 
-    x : number, 
-    y : number, 
-    audioParamValues : Indexable<number>,   // Uses draggable number inputs
-    audioNodeProperties : CustomAudioNodeProperties,
+    // type? : NodeTypes
+    x : number
+    y : number
+    audioParamValues : Indexable<number>   // Uses draggable number inputs
+    audioNodeProperties : CustomAudioNodeProperties
     title? : string
-    INPUT_NODE_ID? : { id : number }
+    INPUT_NODE_ID? : { id : number },
 }
 
+const TransferableNodeProperties = 
+    'id,type,x,y,audioParamValues,audioNodeProperties,title,INPUT_NODE_ID'
+    .split(',')
+    .reduce((acc,prop) => 
+        ({ ...acc, [prop]: true })
+    , {} as Indexed)

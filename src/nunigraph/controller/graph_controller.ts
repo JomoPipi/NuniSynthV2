@@ -621,7 +621,6 @@ export class NuniGraphController {
 
         for (const param of types as ConnectionType[]) {
             const btn = E('button', { text: param })
-            if (param === 'channel') btn.classList.toggle('selected')
             btn.style.borderColor = ConnectionTypeColors[param]
             btn.style.display = 'block'
             btn.onclick = () =>

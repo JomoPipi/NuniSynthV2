@@ -190,13 +190,15 @@ export class Sequencer extends VolumeNodeContainer {
                 const box = E('span')
                 this.HTMLBoxes[key][i] = box
                 box.classList.add('note-box' + (i === 0 || i === nSteps/2 ? '-halfway' : ''))
-                const boxSize = clamp(10, 750 / nSteps, 60)
+                const boxSize = clamp(10, 80 / nSteps**0.5, 35)
                 applyStyle(box, {
                     width: `${boxSize/PHI}px`,
-                    height: `${boxSize}px`
+                    height: `35px`
                     })
                 box.classList.toggle('selected', this.stepMatrix[key][i])
                 box.dataset.sequencerKey = `${key}:${i}`
+                // row.style.border = '1px solid red'
+                row.style.height = '35px' // 50 + 'px'
                 row.appendChild(box)
             }
             grid.appendChild(row)
@@ -224,7 +226,8 @@ export class Sequencer extends VolumeNodeContainer {
         }
 
         function rowOptions(items : HTMLElement, key : string) {
-            const box = E('span')
+            const box = E('span')//, { className: 'flat-grid' })
+            box.style.width = '200px'
 
             mute_solo_box: {
                 const muteSoloBox = E('span')
@@ -255,6 +258,7 @@ export class Sequencer extends VolumeNodeContainer {
                 dial.value = value**(1/4.0)
                 dial.sensitivity = 2**-9
                 dial.imgDegreeOffset = 200
+                dial.size = 30
                 dial.render()
 
                 const valueText = E('span', { text: volumeTodB(value).toFixed(1) + 'dB' })

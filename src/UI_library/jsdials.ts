@@ -38,6 +38,14 @@ class JsDial {
         this.imgDegreeOffset = 195
         this.arcLength = 320
     }
+
+    set size(px : number) {
+        this.dial.style.width = 
+        this.dial.style.height =
+        this.html.style.width = 
+        this.html.style.height =
+            px + 'px'
+    }
     
     attach(func : Function, startFunc? : Function, endFunc? : Function) {
         const start = (x:number, y:number) => { 

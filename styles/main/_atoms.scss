@@ -137,12 +137,14 @@ code {
     background: 
         linear-gradient($color5, $color3);
     border: 2px solid $color0;
+    border-radius: 10%;
 }
 
 .note-box-halfway {
     background: 
         linear-gradient($color5, $color1);
     border: 2px solid $color0;
+    border-radius: 10%;
 }
 
 .smaller-text {
