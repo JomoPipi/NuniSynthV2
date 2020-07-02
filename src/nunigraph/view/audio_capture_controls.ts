@@ -72,8 +72,14 @@ export  function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
     }
 
     record_at_start_of_next_measure: {
-        const checkbox = E('input', { props: { type: 'checkbox' }})
-        controls.append(checkbox, E('br'))
+        const checkbox = E('input', { 
+            props: { type: 'checkbox', checked: audioNode.sync }})
+
+        controls.append(checkbox, E('span', { text: 'sync' }))
+
+        checkbox.oninput = () => {
+            audioNode.sync = checkbox.checked
+        }
     }
 
     record_button: {

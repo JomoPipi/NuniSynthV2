@@ -189,7 +189,13 @@ export class Sequencer extends VolumeNodeContainer {
             for (let i = 0; i < nSteps; i++) {
                 const box = E('span')
                 this.HTMLBoxes[key][i] = box
-                box.classList.add('note-box' + (i === 0 || i === nSteps/2 ? '-halfway' : ''))
+                box.classList.add('note-box' 
+                    + (i === 0 
+                    || i === nSteps/2 
+                    || i === nSteps/4 
+                    || i === 3*nSteps/4 
+                    ? '-halfway' 
+                    : ''))
                 const boxSize = clamp(10, 80 / nSteps**0.5, 35)
                 applyStyle(box, {
                     width: `${boxSize/PHI}px`,
@@ -299,11 +305,9 @@ export class Sequencer extends VolumeNodeContainer {
 function createBeatGrid() {
     const grid = E('div')
 
-    // applyStyle(grid, {
-    //     overflow: 'scroll',
-    //     'max-width': '500px',
-    //     'max-height': '500px'
-    // })
+    applyStyle(grid, {
+        marginBottom: '5px'
+    })
 
     return grid
 }

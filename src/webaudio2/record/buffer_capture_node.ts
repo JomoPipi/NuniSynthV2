@@ -13,12 +13,14 @@ export  class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
     ctx : AudioContext
     bufferKey : number
     recordingLength : number
+    sync : boolean
 
     constructor(ctx : AudioContext) {
         super(ctx)
         this.ctx = ctx
         this.bufferKey = 0
         this.recordingLength = 2
+        this.sync = true
     }
 
     captureAudioFromStream(recordButton : HTMLElement) {
@@ -35,11 +37,13 @@ export  class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
             recordButton.style.backgroundColor = 'orange'
         }
 
-
-
+        const time = this.ctx.currentTime
+        const startTime = this.sync 
+            ? ((time / 4 | 0) + 1) * 4 // when the next measure starts 
+            : time
         
         const mediaRecorder = new MediaRecorder(this.stream)
-        mediaRecorder.start()
+        mediaRecorder.start(startTime)
 
         const audioChunks : Blob[] = []
         
@@ -78,6 +82,6 @@ export  class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
         BufferUtils.lastRecorderRequestId = 
             setTimeout(
                 BufferUtils.stopLastRecorder, 
-                this.recordingLength * 1000)
+                (this.recordingLength + startTime - time) * 1000)
     }
 }

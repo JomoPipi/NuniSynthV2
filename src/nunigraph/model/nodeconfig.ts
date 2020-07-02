@@ -41,17 +41,17 @@ type ConnecteeData = ConnecteeDatum[]
 
 
 const NodeLabel = {
-    [NodeTypes.GAIN]:   'Gain',
-    [NodeTypes.OSC]:    'Oscillator',
-    [NodeTypes.FILTER]: 'Filter',
-    [NodeTypes.PANNER]: 'Panner',
-    [NodeTypes.DELAY]:  'Delay',
-    [NodeTypes.BUFFER]: 'Buffer',
-    [NodeTypes.SGS]:    'Subgraph Sequencer',
-    [NodeTypes.B_SEQ]:  'Buffer Sequencer',
-    [NodeTypes.CSN]:    'Constant Source',
-    [NodeTypes.RECORD]: 'Audio Capture',
-    [NodeTypes.CUSTOM]: 'Module'
+    [NodeTypes.GAIN]:   'GAIN',
+    [NodeTypes.OSC]:    'OSCILLATOR',
+    [NodeTypes.FILTER]: 'FILTER',
+    [NodeTypes.PANNER]: 'PANNER',
+    [NodeTypes.DELAY]:  'DELAY',
+    [NodeTypes.BUFFER]: 'BUFFER',
+    [NodeTypes.SGS]:    'SUBGRAPH SEQUENCER',
+    [NodeTypes.B_SEQ]:  'BUFFER SEQUENCER',
+    [NodeTypes.CSN]:    'CONSTANT SOURCE',
+    [NodeTypes.RECORD]: 'AUDIO CAPTURE',
+    [NodeTypes.CUSTOM]: 'MODULE'
 }
 
 const createAudioNode = {
