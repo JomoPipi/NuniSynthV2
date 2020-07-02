@@ -55,12 +55,6 @@ export const GraphController
     = new Nuni(D('nunigraph-canvas') as HTMLCanvasElement, audioCtx.volume)
 
 GraphController.activateEventHandlers()
-// GraphController
-//     .g
-//     .nodes
-//     .find(({ id }) => id === 0)!
-//     .audioNode
-//     .connect(audioCtx.volume)
 
 ;(<any>window).cmap = GraphController.g.oneWayConnections
 

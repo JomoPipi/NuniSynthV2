@@ -77,12 +77,6 @@ const contextmenu = D('graph-contextmenu')!
     }
 }
 
-// // Right-click options
-// D('nunigraph-canvas')!.oncontextmenu = function(e : MouseEvent) {
-//     e.preventDefault()
-//     GraphController.showContextMenu(e.clientX, e.clientY)
-// }
-
 // Copy the graph
 ;(D('copy-graph-button') as HTMLButtonElement).onclick = function() {
     (D('graph-copy-output') as HTMLInputElement).value = GraphController.g.toString()

@@ -25,22 +25,26 @@ export  class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
 
     captureAudioFromStream(recordButton : HTMLElement) {
 
-        const isRecording = recordButton.classList.toggle('recording')
-        if (!isRecording) {
+        const isRecording = recordButton.classList.contains('recording')
+        if (isRecording) {
+            recordButton.classList.remove('recording')
             clearTimeout(BufferUtils.lastRecorderRequestId)
             BufferUtils.stopLastRecorder()
             return;
         }
+    
+        const time = this.ctx.currentTime
+        const startTime = this.sync 
+            ? ((time / 4 | 0) + 1) * 4 // when the next measure starts 
+            : time
+        const delta = startTime - time
+
+        setTimeout(() => recordButton.classList.add('recording'), 999 * delta)
         
         const errStuff = (err : string) => {
             recordButton.innerText = err
             recordButton.style.backgroundColor = 'orange'
         }
-
-        const time = this.ctx.currentTime
-        const startTime = this.sync 
-            ? ((time / 4 | 0) + 1) * 4 // when the next measure starts 
-            : time
         
         const mediaRecorder = new MediaRecorder(this.stream)
         mediaRecorder.start(startTime)
@@ -82,6 +86,6 @@ export  class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
         BufferUtils.lastRecorderRequestId = 
             setTimeout(
                 BufferUtils.stopLastRecorder, 
-                (this.recordingLength + startTime - time) * 1000)
+                (this.recordingLength + delta) * 1000)
     }
 }

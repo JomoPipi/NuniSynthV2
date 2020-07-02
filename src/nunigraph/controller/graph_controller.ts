@@ -592,6 +592,19 @@ export class NuniGraphController {
         node1 : NuniGraphNode, node2 : NuniGraphNode, x : number, y : number) {
 
         const { renderer } = this
+
+        const makeConnection = (destination : ConnectionType) => {
+            this.save()
+            this.g.connect(node1, node2, destination)
+            renderer.render()
+            
+            // Open the window because we will probably
+            // want to do something with the input node
+            if (node2.type === NodeTypes.CUSTOM) {
+                this.openValuesWindow(node2)
+            }
+        }
+
         const types = (
             SupportsInputChannels[node2.type] 
             ? ['channel'] 
@@ -602,8 +615,7 @@ export class NuniGraphController {
             // No prompt needed in this case. 
             // Only allow channel connections to the master gain node.
             // Allowing connections to someGain.gain can prevent it from being muted.
-            this.save()
-            this.g.connect(node1, node2, types[0])
+            makeConnection(types[0])
             return;
         }
 
@@ -625,10 +637,8 @@ export class NuniGraphController {
             btn.style.display = 'block'
             btn.onclick = () =>
             {
-                this.save()
-                this.g.connect(node1, node2, param)
                 hide_it()
-                renderer.render()
+                makeConnection(param)
             }
             prompt.appendChild(btn)
         }
@@ -649,8 +659,4 @@ export class NuniGraphController {
             prompt,
             document.body)
     }
-
-    // private customNodePrompt(audioNode : NuniGraphAudioNode) {
-    //     return E('span', { text: 'TODO' })
-    // }
 }
