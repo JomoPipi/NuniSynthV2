@@ -246,18 +246,18 @@ interface CustomAudioNodeProperties
     graphCode?   : string
 }
 
-const TransferableAudioNodeProperties =
+const Transferable_AudioNode_Properties =
     'kbMode,type,subdiv,isInSync,bufferKey,nSteps,adsrIndex,graphCode'
     .split(',')
     .reduce((acc,prop) => 
         ({ ...acc, [prop]: true })
-    , {} as { [key in keyof CustomAudioNodeProperties] : true })
+    , {} as Indexed)
 
-// const TransferableAudioNodeProperties : CustomAudioNodeProperties = {
-//     [key in keyof CustomAudioNodeProperties] : true
-//     }
-
-// type TransferableAudioNodeProperty = keyof CustomAudioNodeProperties
+const MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade = 
+    'stepMatrix'
+    .split(',')
+    .reduce((a,prop) =>
+        (a[prop] = true, a), <Indexed>{})
 
 type NodeSettings = { 
     // type? : NodeTypes

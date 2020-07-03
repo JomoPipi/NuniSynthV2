@@ -283,16 +283,26 @@ export class NuniGraph {
             
     }
 
-    convertNodeToNodeSettings(node : NuniGraphNode) : Indexed {
+    private convertNodeToNodeSettings(node : NuniGraphNode) : Indexed {
         
-        const nodeCopy = { ...node, audioNode: {} }
-        
-        const settings = { 
+        const nodeCopy = { 
+            ...node,
+            audioNode: { ...node.audioNode  }
+        }
+
+        // some audioNode properties need to be taken along but not all...
+        for (const name in nodeCopy.audioNode) {
+            if (!MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade[name]) {
+                delete nodeCopy.audioNode[name as AudioParams]
+            }
+        }
+
+        const settings = {
             ...JSON.parse(JSON.stringify(nodeCopy)),
             audioNodeProperties: {}
             }
             
-        for (const prop in TransferableAudioNodeProperties) {
+        for (const prop in Transferable_AudioNode_Properties) {
             if (prop in node.audioNode) {
                 settings.audioNodeProperties[prop] = 
                     node.audioNode[prop as AudioParams]
@@ -302,7 +312,6 @@ export class NuniGraph {
     }
 
     fromRawString(s : string) {
-        log('from string happening here')
         try {
             var { connections, nodes } = JSON.parse(s)
         } catch(e) {
@@ -323,6 +332,7 @@ export class NuniGraph {
     }
 
     private copyFrom(nodes : Indexed[], connections : Indexable<ConnecteeData>) {
+        // nodes comes from JSON.parse(JSON.strigify(graphCode))
 
         if (nodes[0].id !== 0) throw 'Oh, I did not expect this.'
 
@@ -348,7 +358,8 @@ export class NuniGraph {
                 audioParamValues, 
                 audioNodeProperties,
                 title,
-                INPUT_NODE_ID
+                INPUT_NODE_ID,
+                // audioNode
                 } = node
 
             if (id === 0) continue
@@ -362,7 +373,12 @@ export class NuniGraph {
                 } as NodeSettings
                 if (!INPUT_NODE_ID) settings.title = title
 
-            this.nodes.push(new NuniGraphNode(id, type, settings))
+            const newNode = new NuniGraphNode(id, type, settings)
+            // for (const name in audioNode) {
+            //     if (Transferable_AudioNode_Properties[name])
+            //         newNode.audioNode[name] = audioNode[name]
+            // }
+            this.nodes.push(newNode)
         }
 
         // reconnect the nodes
