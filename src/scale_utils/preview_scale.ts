@@ -5,8 +5,7 @@
 
 
 
-import { KB } from '../webaudio2/note_in/keyboard.js'
-import { NuniSourceNode } from '../webaudio2/note_in/nuni_source_node.js'
+import { KB, NuniSourceNode } from '../webaudio2/internal.js'
 
 export function refreshKeys() {
     for (const an of KB.connectedNodes()) {

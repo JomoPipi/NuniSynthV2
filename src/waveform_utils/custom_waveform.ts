@@ -5,7 +5,7 @@
 
 
 
-import { audioCtx } from '../webaudio2/webaudio2.js'
+import { audioCtx } from '../webaudio2/internal.js'
 
 function newRandomWaveForm(N : number) : PeriodicWave {
 

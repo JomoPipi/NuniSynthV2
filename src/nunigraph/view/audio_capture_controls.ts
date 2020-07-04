@@ -5,7 +5,7 @@
 
 
 
-import { AudioBufferCaptureNode } from "../../webaudio2/record/buffer_capture_node.js";
+import { AudioBufferCaptureNode } from "../../webaudio2/internal.js";
 import { BufferUtils } from "../../buffer_utils/internal.js";
 
 

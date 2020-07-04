@@ -6,10 +6,10 @@
 
 
 // import { UndoRedoModule } from '../../helpers/simple_undo_redo.js'
-import { NuniGraph } from '../model/nunigraph.js'
 import { NuniGraphRenderer, HOVER } from '../view/graph_renderer.js'
+import { NuniGraphAudioNode } from '../../webaudio2/internal.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
-import { NuniGraphAudioNode } from '../../webaudio2/nunigraph_audionode.js'
+import { NuniGraph } from '../model/nunigraph.js'
 
 export const ActiveControllers = [] as NuniGraphController[]
 

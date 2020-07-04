@@ -5,7 +5,7 @@
 
 
 
-import { NuniGraphAudioNode } from "../../webaudio2/nunigraph_audionode.js"
+import { NuniGraphAudioNode } from "../../webaudio2/internal.js"
 
 export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
     const box = E('div')

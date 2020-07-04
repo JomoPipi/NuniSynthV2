@@ -5,13 +5,10 @@
 
 
 
-import { audioCtx } from '../../webaudio2/webaudio2.js'
-import { OscillatorNode2 } from '../../webaudio2/note_in/oscillator2.js'
-import { BufferNode2 } from '../../webaudio2/note_in/buffer2.js'
-import { SubgraphSequencer } from '../../webaudio2/sequencers/subgraph_sequencer.js'
-import { BufferSequencer } from '../../webaudio2/sequencers/buffer_sequencer.js'
-import { AudioBufferCaptureNode } from '../../webaudio2/record/buffer_capture_node.js'
-import { NuniGraphAudioNode } from '../../webaudio2/nunigraph_audionode.js'
+import { 
+    audioCtx, OscillatorNode2 , BufferNode2, SubgraphSequencer,
+    BufferSequencer, AudioBufferCaptureNode, NuniGraphAudioNode
+    } from '../../webaudio2/internal.js'
 
 
 

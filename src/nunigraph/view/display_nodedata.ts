@@ -5,18 +5,15 @@
 
 
 
-import { NuniSourceNode } from '../../webaudio2/note_in/nuni_source_node.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
-import { BufferNode2 } from '../../webaudio2/note_in/buffer2.js'
 import { sequencerControls } from './sequencer_controls.js'
 import { BufferUtils } from '../../buffer_utils/internal.js'
-import { Sequencer } from '../../webaudio2/sequencers/sequencer.js'
 import { audioCaptureNodeControls } from './audio_capture_controls.js'
-import { AudioBufferCaptureNode } from '../../webaudio2/record/buffer_capture_node.js'
 import { createResizeableGraphEditor } from './resizeable_graph_editor.js'
-import { NuniGraphAudioNode } from '../../webaudio2/nunigraph_audionode.js'
-
-
+import { 
+    NuniSourceNode, BufferNode2, Sequencer, 
+    AudioBufferCaptureNode, NuniGraphAudioNode 
+    } from '../../webaudio2/internal.js'
 
 
 

@@ -7,11 +7,11 @@
 
 import { NuniGraphNode } from './nunigraph_node.js'
 import { LZW_compress, LZW_decompress } from '../../helpers/lzw_compression.js'
-import { SubgraphSequencer } from '../../webaudio2/sequencers/subgraph_sequencer.js'
-import { Destination } from '../../webaudio2/volumenode_container.js'
-import { NuniAudioParam } from '../../webaudio2/nuni_audioparam.js'
-import { Sequencer } from '../../webaudio2/sequencers/sequencer.js'
-import { NuniGraphAudioNode } from '../../webaudio2/nunigraph_audionode.js'
+import { 
+    SubgraphSequencer, Destination, 
+    NuniAudioParam, Sequencer, NuniGraphAudioNode 
+    } from '../../webaudio2/internal.js'
+
 
 const defaultSettings = () => ({
     x: 0.5, 

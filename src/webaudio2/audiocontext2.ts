@@ -14,7 +14,7 @@ import { AudioBufferCaptureNode } from './record/buffer_capture_node.js'
 import { NuniGraphAudioNode } from './nunigraph_audionode.js'
 
 
-export class AudioContext2 extends AudioContext {
+class AudioContext2 extends AudioContext {
     /** con·text    /ˈkäntekst/ 
      *  noun
      *      "the circumstances that form the setting for an event, 
