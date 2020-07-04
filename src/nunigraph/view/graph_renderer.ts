@@ -301,9 +301,9 @@ export class NuniGraphRenderer {
                 
             return gradient
         }
-        const prop = (<Indexed>AudioNodeParams)[node.type][0]
+        const prop = AudioNodeParams[node.type][0]
         const pValue = node.audioParamValues[prop]
-        const [min,max] = (<Indexed>AudioParamRanges)[prop]
+        const [min,max] = AudioParamRanges[prop]
         const factor = Math.log2(pValue-min) / (Math.log2(max-min) || 0.5)
         const cval = factor * 4
         const c1 = `rgb(${ [0,1,2].map(n => 100 * (1 + Math.sin(cval + n * twoThirdsPi)) |0).join(',') })`

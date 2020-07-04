@@ -26,16 +26,16 @@ function invertBuffer(index : number) {
     BufferUtils.refreshAffectedBuffers()
 }
 
+const funcMap = {
+    record:                 () => recordTo(BufferUtils.currentIndex),
+    'reverse-buffer':       () => reverseBuffer(BufferUtils.currentIndex),
+    'invert-buffer':        () => invertBuffer(BufferUtils.currentIndex),
+    'apply-buffer-formula': () => formulateBuffer(BufferUtils.currentIndex)
+}
+
 ;(<HTMLElement>D('buffer-functions')).onclick = (e : MouseEvent) => {
-    const btn = e.target as HTMLButtonElement
-    
-    if (!btn) return;
-    ;((<Indexed> {
-        record:                 () => recordTo(BufferUtils.currentIndex),
-        'reverse-buffer':       () => reverseBuffer(BufferUtils.currentIndex),
-        'invert-buffer':        () => invertBuffer(BufferUtils.currentIndex),
-        'apply-buffer-formula': () => formulateBuffer(BufferUtils.currentIndex)
-    })[btn.id] || ((x:unknown) => x))()
+    const btn = e.target as HTMLElement
+    ;(funcMap[btn.id as keyof typeof funcMap] || (() => void 0))()
 }
 
 D('new-buffer-length')!.oninput = () => {

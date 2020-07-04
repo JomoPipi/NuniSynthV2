@@ -19,6 +19,7 @@ class JsDial {
     html : HTMLElement
     imgDegreeOffset : number
     arcLength : number
+    update : Function
 
     constructor() {
         
@@ -37,6 +38,7 @@ class JsDial {
         this.value = this.min = this.sensitivity = 2**-8
         this.imgDegreeOffset = 195
         this.arcLength = 320
+        this.update = () => void 0
     }
 
     set size(px : number) {
@@ -81,6 +83,10 @@ class JsDial {
         }
 
         this.dial.addEventListener('mousedown', mouseStart as EventListener)
+        this.update = (value : number) => {
+            this.value = value
+            this.render()
+        }
     }
 
     attachDoubleClick(func : Function) {

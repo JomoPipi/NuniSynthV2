@@ -145,9 +145,11 @@ export const ADSR_Controller = {
     adsr.render()
 }
  
-{
-    const knobs = D('adsr-knobs')!
-    'attack,decay,sustain,release'.split(',').forEach(s => {
+
+const knobs = D('adsr-knobs')!
+const ADSR = 'attack,decay,sustain,release'.split(',')
+const adsrDials =
+    ADSR.reduce((a,s) => {
         const dial = new JsDial()
         const adsr = ADSR_Controller as Indexed
         
@@ -156,11 +158,13 @@ export const ADSR_Controller = {
         dial.render()
         dial.attach((value : number) => {
             adsr.values[adsr.index][s] = value * value
-            ADSR_Controller.render()
+            adsr.render()
         })
         knobs.appendChild(dial.html)
-    })
-}
+
+        a[s] = dial
+        return a
+    }, {} as Indexable<JsDial>)
 
 {
     const box = D('select-adsr')!
@@ -168,8 +172,12 @@ export const ADSR_Controller = {
         const btn = e.target
         if (btn instanceof HTMLElement && btn.id.startsWith('adsr-')) {
             const which = btn.id.split('-')[1].charCodeAt(0) - 65
-            ADSR_Controller.index = which
-            ADSR_Controller.render()
+            const adsr = ADSR_Controller
+            adsr.index = which
+            adsr.render()
+            for (const s of ADSR) {
+                adsrDials[s].update((<Indexed>adsr.values[adsr.index])[s] ** .5)
+            }
         }
     }
 }

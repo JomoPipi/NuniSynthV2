@@ -56,6 +56,7 @@ export class NuniGraph {
         }
 
         const node = new NuniGraphNode(this.nextId++, type, settings)
+
         this.nodes.push(node)
 
         return node
@@ -82,8 +83,9 @@ export class NuniGraph {
             audioParamValues,
             audioNodeProperties,
             INPUT_NODE_ID
-            }
-        if (!INPUT_NODE_ID) (<any>settings).title = title
+            } as NodeSettings
+
+        if (!INPUT_NODE_ID) settings.title = title
 
         return this.createNewNode(type, settings)
     }
@@ -358,8 +360,7 @@ export class NuniGraph {
                 audioParamValues, 
                 audioNodeProperties,
                 title,
-                INPUT_NODE_ID,
-                // audioNode
+                INPUT_NODE_ID
                 } = node
 
             if (id === 0) continue
@@ -374,10 +375,7 @@ export class NuniGraph {
                 if (!INPUT_NODE_ID) settings.title = title
 
             const newNode = new NuniGraphNode(id, type, settings)
-            // for (const name in audioNode) {
-            //     if (Transferable_AudioNode_Properties[name])
-            //         newNode.audioNode[name] = audioNode[name]
-            // }
+
             this.nodes.push(newNode)
         }
 
@@ -411,7 +409,7 @@ export class NuniGraph {
             if (node.type === NodeTypes.SGS || node.type === NodeTypes.B_SEQ) {
                 const thisNode = this.nodes.find(n => n.id === node.id)!
 
-                ;(<any>thisNode.audioNode).stepMatrix = node.audioNode.stepMatrix
+                ;(<Sequencer>thisNode.audioNode).stepMatrix = node.audioNode.stepMatrix
             }
         }
 

@@ -85,8 +85,7 @@ const volumeTodB = (volume : number) =>
 
 
 interface DIRTYGLOBALINTERFACE {
-    lastControllerToOpenTheContextmenu? : Indexed,
-    
+    lastControllerToOpenTheContextmenu? : Indexed
 }
 
 const ISMAC = navigator.platform.toUpperCase().indexOf('MAC') >= 0

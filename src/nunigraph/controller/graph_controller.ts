@@ -524,12 +524,12 @@ export class NuniGraphController {
 
         renderer.fromNode = null
 
-        ;(<Indexed>{
+        ;({
             [HOVER.EDGE]:       do_it,
             [HOVER.SELECT]:     do_it,
             [HOVER.CONNECTION]: render,
             [HOVER.EMPTY]:      render
-        })[type]()
+        })[type as HOVER]()
     }
 
     private keydown(e : KeyboardEvent) {

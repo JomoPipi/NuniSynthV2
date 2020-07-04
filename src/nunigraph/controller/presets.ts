@@ -58,14 +58,13 @@ import { LZW_decompress } from '../../helpers/lzw_compression.js'
         if (name in presets) {
             GraphController.save()
             GraphController.closeAllWindows()
-            GraphController.fromString((<Indexed>presets)[name])
+            GraphController.fromString(presets[name as keyof typeof presets])
             GraphController.renderer.render()
         }
     }
 
     Apply_The_Default_Preset: {
-
-        // GraphController.fromString(presets['Keyboard 1'])
+        GraphController.fromString(presets['Keyboard 1'])
         GraphController.renderer.render()
     }
 }

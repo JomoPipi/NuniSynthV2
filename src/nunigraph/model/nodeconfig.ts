@@ -124,7 +124,7 @@ const HasNoOutput = {
     [NodeTypes.CUSTOM]: false,
 }
 
-const AudioNodeParams : Indexable<AudioParams[]> = {
+const AudioNodeParams : Record<NodeTypes,AudioParams[]> = {
     [NodeTypes.GAIN]:   ['gain'],
     [NodeTypes.OSC]:    ['frequency','detune'],
     [NodeTypes.FILTER]: ['frequency','Q','gain','detune'],

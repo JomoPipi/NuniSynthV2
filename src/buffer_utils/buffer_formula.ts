@@ -9,21 +9,22 @@ import { BufferUtils } from './init_buffers.js'
 import { audioCtx } from '../webaudio2/internal.js'
 import { BufferStorage } from '../storage/general/buffer_storage.js'
 
+const formulaInput = D('buffer-formula') as HTMLInputElement
+
 export function formulateBuffer(index : number) {
     
-    const formula = D('buffer-formula') as HTMLInputElement
     const seconds = BufferUtils.nextBufferDuration
-       
+
     const buffer = audioCtx
         .createBuffer(
             2, 
             audioCtx.sampleRate * seconds, 
             audioCtx.sampleRate)
     
-    const isError = validateExp(formula.value)
+    const isError = validateExp(formulaInput.value)
 
     if (isError) {
-        formula.value = isError
+        formulaInput.value = isError
         log('buffer formulation denied')
         return;
     } 
@@ -115,8 +116,8 @@ function showBufferFormulaTemplates() {
 
 function clickBufferTemplateOrNot(e : MouseEvent) {
     if (e.target instanceof HTMLElement && e.target.innerText in presets) {
-        ;(D('buffer-formula') as HTMLInputElement).value = 
-            (<Indexed>presets)[e.target.innerText]
+        formulaInput.value = 
+            presets[e.target.innerText as keyof typeof presets]
     }
 
     window.removeEventListener('mousedown', clickBufferTemplateOrNot)

@@ -71,7 +71,7 @@ const contextmenu = D('graph-contextmenu')!
 
     for (const key in NodeTypes) {
         if (isNaN(+key)) {
-            const type = (<Indexed>NodeTypes)[key] as NodeTypes
+            const type = NodeTypes[key as keyof typeof NodeTypes]
             append(type, NodeTypeColors[type])
         }
     }
