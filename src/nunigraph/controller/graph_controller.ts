@@ -163,7 +163,7 @@ export class NuniGraphController {
         }
     }
 
-    private closeValuesWindow(id : number) {
+    closeValuesWindow(id : number) {
 
         const node = this.g.nodes.find(({ id: _id }) => _id === id)!
         if (!node) throw 'figure out what to do from here'
@@ -378,6 +378,7 @@ export class NuniGraphController {
             },
 
             [HOVER.CONNECTION]: () => { 
+            
                 this.selectedNodes = []
 
                 const cache = this.renderer.connectionsCache
@@ -391,8 +392,21 @@ export class NuniGraphController {
 
                 const to = 
                     this.g.nodes.find(node => node.id === toId)!
-                    
+
                 delete cache[id!]
+
+                // We have to close this inputNode's window if it's open.
+                if (to.audioNode instanceof NuniGraphAudioNode) {
+
+                    const inputNode 
+                        = to.audioNode.controller.g.nodes.find(node =>
+                            node.INPUT_NODE_ID?.id === fromId)
+
+                    if (!inputNode) throw 'error, this should be here'
+
+                    to.audioNode.controller.closeValuesWindow(
+                        inputNode.id)
+                }
 
                 this.g.disconnect(this.renderer.fromNode, to, connectionType)
             },
