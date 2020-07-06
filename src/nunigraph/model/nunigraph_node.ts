@@ -80,8 +80,7 @@ export  class NuniGraphNode<T extends NodeTypes = NodeTypes> {
     }
 
     setValueOfParam(param : AudioParams, value: number) {
-        
         this.audioParamValues[param] = value
-        this.audioNode[param].setValueAtTime(value, 0)
+        this.audioNode[param].value = value
     }
 }

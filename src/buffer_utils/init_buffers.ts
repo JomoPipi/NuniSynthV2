@@ -26,6 +26,10 @@ const presets = (i:number, channel : number) => ([
     [...Array(90)].reduce((a,_,n) => a + Math.abs(Math.sin(i/(n * 10))) / 90, 0)
 ])
 
+const offscreenCanvas = 
+    (D('buffer-canvas') as HTMLCanvasElement)
+    // .transferControlToOffscreen()
+
 class BufferUtily {
     
     currentIndex : number;
@@ -55,9 +59,7 @@ class BufferUtily {
             buff.duration
         } seconds`
     
-        drawBuffer(
-            buff, 
-            D('buffer-canvas') as HTMLCanvasElement)
+        drawBuffer(buff, offscreenCanvas)
     }
 
     refreshAffectedBuffers() {

@@ -27,30 +27,21 @@ const releaseTimeConstant = 10
 // waveArray[7] = 0;
 // waveArray[8] = 0.5;
 
+const N_ADSRs = 4
+
+const defaultADSR = () => ({
+    attack: 0.010416984558105469, 
+    decay: 0.17708349227905273, 
+    sustain: 0.2166603088378906, 
+    release: 0.3812504768371582
+    })
+
 export const ADSR_Controller = {
     canvas: D('adsr-canvas')! as HTMLCanvasElement,
 
     index: 0,
 
-    values: [{
-        attack: 0.010416984558105469, 
-        decay: 0.17708349227905273, 
-        sustain: 0.2166603088378906, 
-        release: 0.3812504768371582
-        },
-        {
-        attack: 0.110416984558105469, 
-        decay: 0.17708349227905273, 
-        sustain: 0.4166603088378906, 
-        release: 0.1812504768371582
-        },
-        {
-        attack: 0.010416984558105469, 
-        decay: 0.00708349227905273, 
-        sustain: 0.8166603088378906, 
-        release: 0.0012504768371582
-        },
-    ],
+    values: [...Array(N_ADSRs)].map(defaultADSR),
 
     trigger: function(gain : AudioParam, time : number, volume : number, adsrIndex : number) {
         const { attack, decay, sustain } = this.values[adsrIndex]
@@ -167,17 +158,33 @@ const adsrDials =
     }, {} as Indexable<JsDial>)
 
 {
-    const box = D('select-adsr')!
-    box.onclick = function(e : MouseEvent) {
-        const btn = e.target
-        if (btn instanceof HTMLElement && btn.id.startsWith('adsr-')) {
-            const which = btn.id.split('-')[1].charCodeAt(0) - 65
+    // const box = D('select-adsr')!
+    // box.onclick = function(e : MouseEvent) {
+    //     const btn = e.target
+    //     if (btn instanceof HTMLElement && btn.id.startsWith('adsr-')) {
+    //         const which = btn.id.split('-')[1].charCodeAt(0) - 65
+    //         const adsr = ADSR_Controller
+    //         adsr.index = which
+    //         adsr.render()
+    //         for (const s of ADSR) {
+    //             adsrDials[s].update((<Indexed>adsr.values[adsr.index])[s] ** .5)
+    //         }
+    //     }
+    // }
+}
+{ 
+    D('select-adsr')!.appendChild(createRadioButtonGroup({
+        buttons: [...'ABCD'],
+        selected: 'A',
+        className: 'top-bar-btn',
+        onclick: (data : any, index : number) => {
             const adsr = ADSR_Controller
-            adsr.index = which
+            adsr.index = index
             adsr.render()
             for (const s of ADSR) {
                 adsrDials[s].update((<Indexed>adsr.values[adsr.index])[s] ** .5)
             }
-        }
-    }
+        },
+        text: 'ADSR'
+    }))
 }

@@ -10,6 +10,8 @@ import { Sequencer, BufferSequencer } from '../../webaudio2/internal.js'
 export function sequencerControls(an : Sequencer) {
 
     const controls = E('div')
+        // This makes it so that the buttons on top don't wrap
+        controls.style.minWidth = '450px'
 
     controls.appendChild(createTopRowControls(an))
     
@@ -133,30 +135,16 @@ function createTopRowControls(an : Sequencer) {
         controls.appendChild(box)
     }
 
-    chooseADSR: {
-        const box = E('span', { text: 'ADSR', children: [E('br')] })
-        
-        const abc = [0,1,2].map(n => {
-            const btn = E('button', {
-                text: String.fromCharCode(n + 65),
-                className: 'top-bar-btn',
-                })
-                btn.dataset.key = n.toString()
-            box.appendChild(btn)
-            return btn
-        })
-        abc[an.adsrIndex].classList.add('selected')
-        box.onclick = (e : MouseEvent) => {
-            const btn = e.target
-            if (btn instanceof HTMLElement && btn.dataset.key) {
-                an.adsrIndex = +btn.dataset.key
-
-                for (const _btn of abc) {
-                    _btn.classList.toggle('selected', _btn === btn)
-                }
-            }
-        }
-        controls.appendChild(box)
+    choose_ADSR: {
+        controls.appendChild(createRadioButtonGroup({
+            buttons: [...'ABCD'],
+            selected: String.fromCharCode(an.adsrIndex + 65),
+            className: 'top-bar-btn',
+            onclick: (data : string, index : number) => {
+                an.adsrIndex = index
+            },
+            text: 'ADSR'
+        }))
     }
 
     toggleSyncPlay: {

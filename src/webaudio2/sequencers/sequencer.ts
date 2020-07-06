@@ -196,7 +196,7 @@ export class Sequencer extends VolumeNodeContainer {
                     || i === 3*nSteps/4 
                     ? '-halfway' 
                     : ''))
-                const boxSize = clamp(10, 80 / nSteps**0.5, 35)
+                const boxSize = clamp(10, 100 / nSteps**0.5, 35)
                 applyStyle(box, {
                     width: `${boxSize/PHI}px`,
                     height: `35px`

@@ -15,7 +15,7 @@ export  class NuniAudioParam extends ConstantSourceNode {
         this.start(ctx.currentTime)
     }
     
-    setValueAtTime(value : number, time : never) {
+    set value(value : number) {
         this.offset.value = value
     }
 }
