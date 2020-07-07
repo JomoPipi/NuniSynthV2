@@ -46,6 +46,7 @@ class BufferUtily {
         this.nextBufferDuration = +(D('new-buffer-length') as HTMLSelectElement).value
         this.nBuffers = 26
         this.refreshFunc = (x : never) => x
+        // this.updateBufferUI()
     }
 
     updateBufferUI() {
