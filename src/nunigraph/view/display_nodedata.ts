@@ -26,7 +26,6 @@ export  function createValuesWindow(
     deleteCallback : Function) {
 
     const controls = E('div')
-        controls.style.margin = '0 2%'
 
     controls.appendChild(showSubtypes(node, saveCallback))
 

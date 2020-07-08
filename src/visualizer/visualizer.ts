@@ -10,7 +10,7 @@ export function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : An
     analyser.minDecibels = -90
     
     const bufferLength = analyser.frequencyBinCount
-    const worker = new Worker('/src/visualizer/visualizer_worker.js')
+    const worker = new Worker('/dist/visualizer/visualizer_worker.js')
 
     canvas.width = canvas.offsetWidth
     canvas.height = canvas.offsetHeight
@@ -97,7 +97,7 @@ export function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : An
 
 
 
-
+// NON WEB WORKER VERSION
 // export function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : AnalyserNode) {
 
 //     analyser.fftSize = fftSize

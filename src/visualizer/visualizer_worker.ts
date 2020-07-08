@@ -7,15 +7,17 @@
 
 // 'visualizer_worker.js'
 
-const map_to_new_range = (value, start, end) =>
+export {}
+
+const map_to_new_range = (value : number, start : number, end : number) =>
     value / 255.0 * (start - end) + end
 
 const widthConstant = 138
 const rainbow = '#C88,#AA8,#898,#9AB,#A8F,#EBE'.split(',')
 
-let ctx, W, H, h2, gradient, bufferLength, sliceWidth
+let [ctx, W, H, h2, gradient, bufferLength, sliceWidth] = [] as any[]
 
-const init = (e) => {
+const init = (e : MessageEvent) => {
     W = e.data.canvas.width
     H = e.data.canvas.height
     bufferLength = e.data.bufferLength
@@ -27,7 +29,7 @@ const init = (e) => {
         gradient.addColorStop(i/(arr.length-1), color))
 }
 
-onmessage = e => 
+onmessage = (e : MessageEvent) => 
 {
     if (e.data.canvas) 
     {
@@ -39,7 +41,7 @@ onmessage = e =>
     }
 }
 
-function drawFrequencySpectrum(e) {
+function drawFrequencySpectrum(e : MessageEvent) {
     const fbc_array = new Uint8Array(e.data.buffer)
 
     let x = 0, isClipping = false

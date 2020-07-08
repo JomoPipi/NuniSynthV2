@@ -10,8 +10,8 @@ import { Sequencer, BufferSequencer } from '../../webaudio2/internal.js'
 export function sequencerControls(an : Sequencer) {
 
     const controls = E('div')
-        // This makes it so that the buttons on top don't wrap
-        controls.style.minWidth = '450px'
+        // This makes it so that the buttons on top don't wrap to the next line
+        controls.style.minWidth = '400px'
 
     controls.appendChild(createTopRowControls(an))
     

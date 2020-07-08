@@ -5,7 +5,9 @@
 
 
 
-let ctx, H, W
+export {}
+
+let [ctx, H, W] = [] as any[]
 
 onmessage = function({ data: { canvas, buffer }}) {
     console.log('i got a message')
