@@ -57,7 +57,7 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
     box.append(topRow, canvas, bottomRow)
 
     // It needs to render after the HTML is appended to the document
-    setTimeout(() => audioNode.controller.renderer.render(), 5)
+    requestAnimationFrame(() => audioNode.controller.renderer.render())
 
     return box
 }

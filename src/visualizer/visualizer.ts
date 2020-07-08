@@ -5,71 +5,19 @@
 
 
 
-const fftSize = 2048
-
-const code = `
-    console.log('executed the workerFunc');
-
-    const map_to_new_range = (value, start, end) =>
-        value / 255.0 * (start - end) + end
-
-    const bufferLength = ${fftSize}
-
-    const widthConstant = 270 * ${fftSize / 2048.0} | 0
-
-    let ctx, W, H, h2, gradient;
-
-    onmessage = (e) => {
-        postMessage('data =' + e.data)
-
-        if (e.data.canvas) {
-            W = e.data.canvas.width
-            H = e.data.canvas.height
-            h2 = H/2
-            console.log('got canvas')
-            
-            ctx = e.data.canvas.getContext('2d')
-
-            gradient = ctx.createLinearGradient(0, 0, W, 0)
-                '#C88,#AA8,#898,#9AB,#A8F,#EBE'.split(',').forEach((color,i,arr) =>
-                gradient.addColorStop(i/(arr.length-1), color))
-        }
-
-        if (e.data.buffer) {
-            ctx.clearRect(0,0,W,H)
-            const fbc_array = new Uint8Array(e.data.buffer)
-
-            let x = 0, isClipping = false
-            ctx.beginPath()
-            ctx.moveTo(0,h2)
-            for (let i = 1; i < bufferLength; i++) {
-                const sliceWidth = W / bufferLength
-                const value = fbc_array[i]
-                if (value === 255) isClipping = true
-                ctx.lineTo(x, map_to_new_range(value, h2 - H / 2, h2))
-                x += sliceWidth * (widthConstant/i)
-            }
-            ctx.strokeStyle = isClipping ? 'red' : gradient
-            ctx.stroke()
-        }
-    }
-`
-
 export function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : AnalyserNode) {
-    analyser.fftSize = fftSize
+    analyser.fftSize = 2048
     analyser.minDecibels = -90
     
-    const blob = new Blob([code], {type: "application/javascript"});
-    const worker = new Worker(URL.createObjectURL(blob))
+    const bufferLength = analyser.frequencyBinCount
+    const worker = new Worker('/src/visualizer/visualizer_worker.js')
 
     canvas.width = canvas.offsetWidth
     canvas.height = canvas.offsetHeight
 
-    const bufferLength = analyser.frequencyBinCount
-    
     const offscreen = canvas.transferControlToOffscreen()
 
-    worker.postMessage({ canvas: offscreen }, [offscreen])
+    worker.postMessage({ canvas: offscreen, bufferLength }, [offscreen])
 
     return function render() {
 
@@ -226,7 +174,7 @@ export function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : An
 //             let x = 0, max = -Infinity
         
 //             ctx.beginPath()
-//             for(var i = 0; i < bufferLength; i++) {
+//             for(var i = 0; i < bufferLengthS i++) {
 //                 const v = dataArray[i]/128.0
 //                 const y = v * H/2
 

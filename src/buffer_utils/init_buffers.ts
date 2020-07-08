@@ -28,7 +28,7 @@ const presets = (i:number, channel : number) => ([
 
 const offscreenCanvas = 
     (D('buffer-canvas') as HTMLCanvasElement)
-    // .transferControlToOffscreen()
+    .transferControlToOffscreen()
 
 class BufferUtily {
     

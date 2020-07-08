@@ -39,7 +39,7 @@ export  class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
             : time
         const delta = startTime - time
 
-        setTimeout(() => recordButton.classList.add('recording'), 999 * delta)
+        setTimeout(() => recordButton.classList.add('recording'), 1000 * delta)
         
         const errStuff = (err : string) => {
             recordButton.innerText = err

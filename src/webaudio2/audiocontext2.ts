@@ -9,7 +9,7 @@ import { BufferNode2 } from './note_in/buffer2.js'
 import { OscillatorNode2 } from './note_in/oscillator2.js'
 import { SubgraphSequencer } from './sequencers/subgraph_sequencer.js'
 import { BufferSequencer } from './sequencers/buffer_sequencer.js'
-import { graphVisualEqualizer } from './equalizer/global_visualizer.js'
+import { graphVisualEqualizer } from '../visualizer/global_visualizer.js'
 import { AudioBufferCaptureNode } from './record/buffer_capture_node.js'
 import { NuniGraphAudioNode } from './nunigraph_audionode.js'
 

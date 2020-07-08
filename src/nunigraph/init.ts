@@ -59,6 +59,9 @@ ActiveControllers.push(GraphController)
 
 
 Graph_Attachments: {
+
+    // break Graph_Attachments
+
     const g = GraphController.g
 
     function* yeildNodes(g : NuniGraph) : Generator {
