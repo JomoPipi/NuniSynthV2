@@ -52,6 +52,7 @@ export const GraphController
     = new Nuni(D('nunigraph-canvas') as HTMLCanvasElement, audioCtx.volume)
 
 GraphController.activateEventHandlers()
+GraphController.g.nodes[0].setValueOfParam('gain', 0.125)
 
 ActiveControllers.push(GraphController)
 

@@ -22,7 +22,8 @@ export function previewScale() {
 
         const speed = 0.1
         for (const an of KB.connectedNodes()) {
-            if (an instanceof NuniSourceNode) {
+            if (an instanceof NuniSourceNode && an.kbMode) {
+                log('playing keys')
                 an.playKeyAtTime(key, an.ctx.currentTime + count * speed, speed/2.0)
             }
         }
