@@ -46,6 +46,13 @@ class Command {
     }
 }
 
+// class CreateNodeCommand {
+//     data : Indexed
+//     constructor (data : Indexed) {
+//         this.data = data
+//     }
+// }
+
 // class ChangeValueOfNodeCommand { 
 //     id : number
 //     param : 

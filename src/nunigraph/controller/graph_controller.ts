@@ -567,7 +567,7 @@ export class NuniGraphController {
         //     if (audioNode instanceof NuniGraphAudioNode && 
         //         audioNode.windowIsOpen &&
         //         audioNode.controller.selectedNodes.length > 0) {
-
+            
         //         // Don't do mouse events here
         //         return; 
         //     }

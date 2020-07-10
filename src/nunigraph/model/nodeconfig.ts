@@ -212,26 +212,26 @@ const AudioParamRanges : { readonly [key in AudioParams] : [number,number] } =
 
 const hasLinearSlider : { readonly [key in AudioParams] : boolean } = 
 {
-    gain:         true,
+    gain:         false,
     frequency:    false,
     detune:       true,
     Q:            true,
     pan:          true,
     delayTime:    false,
     playbackRate: false,
-    offset:       true
+    offset:       false
 }
 
 const sliderFactor : { readonly [key in AudioParams] : number } = 
 {
-    gain:         .025,
+    gain:         10**-2,
     frequency:    2**-7,
     detune:       1.0,
     Q:            .05,
     pan:          .005,
     delayTime:    .005,
     playbackRate: 2**-6,
-    offset:       2.0
+    offset:       10**-2
 }
 
 interface CustomAudioNodeProperties

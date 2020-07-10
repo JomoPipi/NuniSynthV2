@@ -26,18 +26,18 @@ const presets = (i:number, channel : number) => ([
     [...Array(90)].reduce((a,_,n) => a + Math.abs(Math.sin(i/(n * 10))) / 90, 0)
 ])
 
-const offscreenCanvas = 
+const bufferDrawCanvas = 
     (D('buffer-canvas') as HTMLCanvasElement)
     .transferControlToOffscreen()
 
 class BufferUtily {
     
-    currentIndex : number;
-    lastRecorderRequestId : number;
-    stopLastRecorder : Function;
-    nextBufferDuration : number;
-    nBuffers : number;
-    private refreshFunc : Function;
+    currentIndex : number
+    lastRecorderRequestId : number
+    stopLastRecorder : Function
+    nextBufferDuration : number
+    nBuffers : number
+    private refreshFunc : Function
 
     constructor() {
         this.currentIndex = 0
@@ -59,7 +59,7 @@ class BufferUtily {
             buff.duration
         } seconds`
     
-        drawBuffer(buff, offscreenCanvas)
+        drawBuffer(buff, bufferDrawCanvas)
     }
 
     refreshAffectedBuffers() {
