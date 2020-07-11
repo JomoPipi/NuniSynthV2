@@ -219,7 +219,7 @@ const hasLinearSlider : { readonly [key in AudioParams] : boolean } =
     pan:          true,
     delayTime:    false,
     playbackRate: false,
-    offset:       false
+    offset:       true
 }
 
 const sliderFactor : { readonly [key in AudioParams] : number } = 
@@ -231,7 +231,7 @@ const sliderFactor : { readonly [key in AudioParams] : number } =
     pan:          .005,
     delayTime:    .005,
     playbackRate: 2**-6,
-    offset:       10**-2
+    offset:       2.0
 }
 
 interface CustomAudioNodeProperties
@@ -244,20 +244,22 @@ interface CustomAudioNodeProperties
     nSteps?      : number
     adsrIndex?   : number
     graphCode?   : string
+    stepMatrix?  : Indexed
+    channelData? : Indexed
 }
 
 const Transferable_AudioNode_Properties =
-    'kbMode,type,subdiv,isInSync,bufferKey,nSteps,adsrIndex,graphCode'
+    'kbMode,type,subdiv,isInSync,bufferKey,nSteps,adsrIndex,graphCode,stepMatrix,channelData'// ,channelData'
     .split(',')
     .reduce((acc,prop) => 
         ({ ...acc, [prop]: true })
     , {} as Indexed)
 
-const MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade = 
-    'stepMatrix'
-    .split(',')
-    .reduce((a,prop) =>
-        (a[prop] = true, a), <Indexed>{})
+// const MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade = 
+//     'stepMatrix'
+//     .split(',')
+//     .reduce((a,prop) =>
+//         (a[prop] = true, a), <Indexed>{})
 
 type NodeSettings = { 
     // type? : NodeTypes
