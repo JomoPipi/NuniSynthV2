@@ -260,13 +260,14 @@ interface CustomAudioNodeProperties
     graphCode?   : string
 }
 
-const Transferable_AudioNode_Properties =
-    'kbMode,type,subdiv,isInSync,bufferKey,nSteps,adsrIndex,graphCode'
+const Transferable_AudioNode_Properties =                             // TODO: remove dirty dirty
+    'kbMode,type,subdiv,isInSync,bufferKey,nSteps,adsrIndex,graphCode,stepMatrix,channelData'
     .split(',')
     .reduce((acc,prop) => 
         ({ ...acc, [prop]: true })
     , {} as Indexed)
 
+// TODO: get rid of this by refactoring sequencers to compose Sequencer rather than inherit
 const MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade = 
     'stepMatrix'
     .split(',')

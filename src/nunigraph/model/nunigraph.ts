@@ -305,6 +305,10 @@ export class NuniGraph {
             }
             
         for (const prop in Transferable_AudioNode_Properties) {
+            // TODO remove this dirty dirty hack
+            if (node.type === NodeTypes.SGS && (prop === 'stepMatrix' || prop === 'channelData')) {
+                continue;
+            }
             if (prop in node.audioNode) {
                 settings.audioNodeProperties[prop] = 
                     node.audioNode[prop as AudioParams]
