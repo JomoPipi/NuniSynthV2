@@ -612,9 +612,7 @@ export class NuniGraphController {
             this.g.connect(node1, node2, destination)
             renderer.render()
             
-            // Open the window because we will probably
-            // want to do something with the input node
-            if (node2.type === NodeTypes.CUSTOM) {
+            if (OpensDialogBoxWhenConnectedTo[node2.type]) {
                 this.openValuesWindow(node2)
             }
         }

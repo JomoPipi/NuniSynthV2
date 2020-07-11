@@ -9,7 +9,7 @@ import { NuniGraphNode } from './nunigraph_node.js'
 import { LZW_compress, LZW_decompress } from '../../helpers/lzw_compression.js'
 import { 
     SubgraphSequencer, Destination, 
-    NuniAudioParam, Sequencer, NuniGraphAudioNode, BufferSequencer 
+    NuniAudioParam, Sequencer, NuniGraphAudioNode 
     } from '../../webaudio2/internal.js'
 
 
@@ -291,14 +291,12 @@ export class NuniGraph {
             ...node,
             audioNode: { ...node.audioNode  }
         }
-        if (node.audioNode instanceof BufferSequencer)
-            log('stepMatrix =',(<any>nodeCopy.audioNode).stepMatrix)
 
         // some audioNode properties need to be taken along but not all...
         for (const name in nodeCopy.audioNode) {
-            // if (!MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade[name]) {
+            if (!MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade[name]) {
                 delete nodeCopy.audioNode[name as AudioParams]
-            // }
+            }
         }
 
         const settings = {

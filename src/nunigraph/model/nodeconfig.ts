@@ -124,6 +124,20 @@ const HasNoOutput = {
     [NodeTypes.CUSTOM]: false,
 }
 
+const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } = {
+    [NodeTypes.GAIN]: false,
+    [NodeTypes.OSC]:  false,
+    [NodeTypes.FILTER]: false,
+    [NodeTypes.PANNER]: false,
+    [NodeTypes.DELAY]:  false,
+    [NodeTypes.BUFFER]: false,
+    [NodeTypes.SGS]: true,
+    [NodeTypes.B_SEQ]: false,
+    [NodeTypes.CSN]: false,
+    [NodeTypes.RECORD]: true,
+    [NodeTypes.CUSTOM]: true
+}
+
 const AudioNodeParams : Record<NodeTypes,AudioParams[]> = {
     [NodeTypes.GAIN]:   ['gain'],
     [NodeTypes.OSC]:    ['frequency','detune'],
@@ -219,7 +233,7 @@ const hasLinearSlider : { readonly [key in AudioParams] : boolean } =
     pan:          true,
     delayTime:    false,
     playbackRate: false,
-    offset:       true
+    offset:       false
 }
 
 const sliderFactor : { readonly [key in AudioParams] : number } = 
@@ -231,7 +245,7 @@ const sliderFactor : { readonly [key in AudioParams] : number } =
     pan:          .005,
     delayTime:    .005,
     playbackRate: 2**-6,
-    offset:       2.0
+    offset:       10**-2
 }
 
 interface CustomAudioNodeProperties
@@ -244,22 +258,20 @@ interface CustomAudioNodeProperties
     nSteps?      : number
     adsrIndex?   : number
     graphCode?   : string
-    stepMatrix?  : Indexed
-    channelData? : Indexed
 }
 
 const Transferable_AudioNode_Properties =
-    'kbMode,type,subdiv,isInSync,bufferKey,nSteps,adsrIndex,graphCode,stepMatrix,channelData'// ,channelData'
+    'kbMode,type,subdiv,isInSync,bufferKey,nSteps,adsrIndex,graphCode'
     .split(',')
     .reduce((acc,prop) => 
         ({ ...acc, [prop]: true })
     , {} as Indexed)
 
-// const MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade = 
-//     'stepMatrix'
-//     .split(',')
-//     .reduce((a,prop) =>
-//         (a[prop] = true, a), <Indexed>{})
+const MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade = 
+    'stepMatrix'
+    .split(',')
+    .reduce((a,prop) =>
+        (a[prop] = true, a), <Indexed>{})
 
 type NodeSettings = { 
     // type? : NodeTypes
