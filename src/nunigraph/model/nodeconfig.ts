@@ -268,6 +268,7 @@ const Transferable_AudioNode_Properties =                             // TODO: r
     , {} as Indexed)
 
 // TODO: get rid of this by refactoring sequencers to compose Sequencer rather than inherit
+// only SGS uses this
 const MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade = 
     'stepMatrix'
     .split(',')

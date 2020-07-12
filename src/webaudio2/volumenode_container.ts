@@ -5,13 +5,6 @@
 
 
 
-import { NuniAudioParam } from "./nuni_audioparam.js"
-
-
-
-
-export type Destination = AudioNode | AudioParam | NuniAudioParam | VolumeNodeContainer
-
 export class VolumeNodeContainer {
     
     /**
@@ -27,26 +20,19 @@ export class VolumeNodeContainer {
         this.volumeNode.gain.value = 1
     }
     
-    connect(destination : Destination) {
-        this.connection(true, destination)
+    connect(destination : AudioNode | AudioParam) {
+        this.volumeNode.connect(destination as any) //***
     }
 
-    disconnect(destination? : Destination) {
+    disconnect(destination? : AudioNode | AudioParam) {
         if (!destination) {
             this.volumeNode.disconnect()
             return;
         }
-        this.connection(false, destination)
+        this.volumeNode.disconnect(destination as any) //***
     }
 
-    protected connection(on : boolean, d : Destination) {
-        const dest = d instanceof NuniAudioParam ? d.offset : d as AudioParam
-        if (on) {
-            this.volumeNode.connect(dest) 
-        } else {
-            this.volumeNode.disconnect(dest)
-        }
-    }
+    // *** - these need 'any' because of `tsc -w`
 
     refresh() {
         throw 'This should be implemented in a child class.'

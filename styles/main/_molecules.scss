@@ -67,3 +67,21 @@
     height: 10px;
     cursor: nwse-resize;
 }
+
+.number-dial-input::-webkit-outer-spin-button,
+.number-dial-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.number-dial-input {
+    background-color: $color1;
+    width: 60px;
+    color: $color5; 
+}
+
+.number-dial-component {
+    display: inline-block;
+    text-align: start;
+    width: 100px;
+    height: 100px;
+}

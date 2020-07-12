@@ -8,9 +8,11 @@
 import { NuniGraphNode } from './nunigraph_node.js'
 import { LZW_compress, LZW_decompress } from '../../helpers/lzw_compression.js'
 import { 
-    SubgraphSequencer, Destination, 
-    NuniAudioParam, Sequencer, NuniGraphAudioNode 
+    SubgraphSequencer, NuniAudioParam, 
+    Sequencer, NuniGraphAudioNode 
     } from '../../webaudio2/internal.js'
+
+type Destination = AudioNode | AudioParam | NuniAudioParam
 
 
 const defaultSettings = () => ({
@@ -107,7 +109,7 @@ export class NuniGraph {
                 if (a !== nodeA || b !== nodeB) {
 
                     if (b.audioNode instanceof NuniGraphAudioNode ) {
-                        // WE NEED TOP HANDLE THE INPUT NODES OF b
+                        // WE NEED TO HANDLE THE INPUT NODES OF b
 
                         const innerInputNode 
                             = b.audioNode.controller.g.nodes.find(node => 
@@ -123,7 +125,7 @@ export class NuniGraph {
                         }
                     }
 
-                    this.connect(a, b, connectionType)
+                    this.makeConnection(a, b, connectionType)
                 }
             }
         }
@@ -199,7 +201,7 @@ export class NuniGraph {
         }
     }
     
-    connect(node1 : NuniGraphNode, node2 : NuniGraphNode, connectionType : ConnectionType) {
+    makeConnection(node1 : NuniGraphNode, node2 : NuniGraphNode, connectionType : ConnectionType) {
         const connections = this.oneWayConnections[node1.id]
 
         const isDuplicate = 
@@ -230,6 +232,7 @@ export class NuniGraph {
             destination.addInput(node1)
         }
         else if (destination instanceof NuniAudioParam) {
+            log('happened')
             node1.audioNode.connect(destination.offset)
             
         } else {
@@ -261,7 +264,7 @@ export class NuniGraph {
             node1.audioNode.disconnect(destination.offset)
 
         } else {
-            node1.audioNode.disconnect(destination)
+            node1.audioNode.disconnect(destination as AudioNode)
         }
     }
 
@@ -398,7 +401,7 @@ export class NuniGraph {
                     nodeB.audioNode.inputs[nodeA.id] = innerInputNode
                 }
 
-                this.connect(nodeA, nodeB, connectionType)
+                this.makeConnection(nodeA, nodeB, connectionType)
             }
         }
 

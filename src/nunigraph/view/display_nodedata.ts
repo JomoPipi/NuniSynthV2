@@ -215,7 +215,7 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
     for (const param of AudioNodeParams[node.type]) {
         
         const box = E('div', { 
-            className: 'box',
+            className: 'params-box',
             text: param
             })
 
@@ -228,6 +228,7 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
             saveCallback()
             return node.audioParamValues[param]
         }
+
         const manualUpdater = (x:number) => {
             saveCallback()
             node.setValueOfParam(param, x)
@@ -239,6 +240,11 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
                 mousedownFunc, 
                 updateFunc, 
                 manualUpdater))
+        
+        // box.appendChild(createNumberDialComponent(
+        //     initialValue,
+        //     manualUpdater, {}
+        //     ))
 
         allParams.appendChild(box)
     }

@@ -36,18 +36,30 @@ function startScheduling(scheduleNotes : (tempo : number) => void) {
 
 
 // Add tempo input
-const tempo = createDraggableNumberInput(
-    120,
+// const tempo = createDraggableNumberInput(
+//     120,
     
-    () => MasterClock.tempo,
+//     () => MasterClock.tempo,
 
-    (delta : number, value : number) =>
-        (MasterClock.tempo = clamp(20, value + delta, 999)).toFixed(0),
+//     (delta : number, value : number) =>
+//         (MasterClock.tempo = clamp(20, value + delta, 999)).toFixed(0),
 
-    (value : number) => 
-        MasterClock.tempo = value 
-)
-tempo.style.width = '100px'
+//     (value : number) => 
+//         MasterClock.tempo = value 
+// )
+// tempo.style.width = '100px'
+
+const tempo = createNumberDialComponent(
+    120,
+    (value : number) => MasterClock.tempo = value, 
+    {   dial: {
+            sensitivity: 2**-2,
+            min: 20,
+            max: 999,
+            rounds: 8
+        }
+    })
+
 D('tempo-input-container')!.appendChild(tempo)
 
 
@@ -65,7 +77,7 @@ function count() {
     } else {
         delta = new Date().getTime() - start
         const newTempo = Math.round(60 * 1000 * counter / delta)
-        tempo.value = newTempo.toString()
+        tempo.setValue(newTempo)
         MasterClock.tempo = newTempo
         
         // A sec N times
@@ -80,7 +92,7 @@ function count() {
         delta = 0
         start = 0
         tempo.classList.remove('selected2')
-    }, 500)
+    }, 2000)
 }
 tapBtn.addEventListener('click', count)
 

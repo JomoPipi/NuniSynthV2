@@ -609,7 +609,7 @@ export class NuniGraphController {
 
         const makeConnection = (destination : ConnectionType) => {
             this.save()
-            this.g.connect(node1, node2, destination)
+            this.g.makeConnection(node1, node2, destination)
             renderer.render()
             
             if (OpensDialogBoxWhenConnectedTo[node2.type]) {

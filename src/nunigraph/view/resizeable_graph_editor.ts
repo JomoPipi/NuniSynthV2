@@ -27,22 +27,22 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
 
     bottomRow.appendChild(dragCorner)
 
-    let xy = [] as number[], wh = [] as number[]
+    let start_xy = [] as number[], wh = [] as number[]
 
     function mousedown(e : MouseEvent) {
-        xy = [e.clientX, e.clientY]
+        start_xy = [e.clientX, e.clientY]
         wh = [canvas.offsetWidth, canvas.offsetHeight]
         window.addEventListener('mousemove', mousemove)
         window.addEventListener('mouseup', mouseup)
     }
     function mousemove(e : MouseEvent) {
         
-        const [x,y] = [e.clientX, e.clientY]
-        const [X,Y] = xy
-        const [w,h] = wh// = [canvas.offsetWidth, canvas.offsetHeight]
+        const [X,Y] = [e.clientX, e.clientY]
+        const [x,y] = start_xy
+        const [w,h] = wh
         
-        canvas.width = Math.max(0, w + x - X)
-        canvas.height = trace(Math.max(0, h + y - Y) )
+        canvas.width = Math.max(0, w + X - x)
+        canvas.height = trace(Math.max(0, h + Y - y) )
 
         audioNode.controller.renderer.render()
     }
@@ -50,7 +50,7 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
         
         window.removeEventListener('mousemove', mousemove)
         window.removeEventListener('mouseup', mouseup)
-        xy = []
+        start_xy = []
     }
     dragCorner.onmousedown = mousedown
 

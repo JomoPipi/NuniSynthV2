@@ -255,7 +255,7 @@ button {
       grid-template-columns: 0.5fr 0.25fr 0.25fr 0.25fr 0.5fr;
 }
 
-.box {
+.params-box {
   display: -ms-grid;
   display: grid;
   -ms-grid-columns: 39% 61%;
@@ -310,7 +310,7 @@ code {
   display: none;
 }
 
-.some-margin, .buffer-row, .box {
+.some-margin, .buffer-row, .params-box {
   margin: 10px;
 }
 
@@ -526,6 +526,25 @@ code {
   width: 10px;
   height: 10px;
   cursor: nwse-resize;
+}
+
+.number-dial-input::-webkit-outer-spin-button,
+.number-dial-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.number-dial-input {
+  background-color: #302f30;
+  width: 60px;
+  color: #9a97a3;
+}
+
+.number-dial-component {
+  display: inline-block;
+  text-align: start;
+  width: 100px;
+  height: 100px;
 }
 
 .info-button {

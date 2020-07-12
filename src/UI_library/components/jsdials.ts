@@ -8,7 +8,7 @@
 class JsDial {
     
     [x : string] : unknown
-    isActive : boolean
+    private isActive : boolean
     sensitivity : number
     lastY : number
     lastX : number
@@ -19,7 +19,8 @@ class JsDial {
     html : HTMLElement
     imgDegreeOffset : number
     arcLength : number
-    update : Function
+    rounds : number
+    update : (value : number) => void
 
     constructor() {
         
@@ -38,7 +39,8 @@ class JsDial {
         this.value = this.min = this.sensitivity = 2**-8
         this.imgDegreeOffset = 195
         this.arcLength = 320
-        this.update = () => void 0
+        this.update = x => void 0
+        this.rounds = 1
     }
 
     set size(px : number) {
@@ -49,7 +51,7 @@ class JsDial {
             px + 'px'
     }
     
-    attach(func : Function, startFunc? : Function, endFunc? : Function) {
+    attach(func : (n : number) => void, startFunc? : Function, endFunc? : Function) {
         const start = (x:number, y:number) => { 
             this.lastX = x
             this.lastY = y
@@ -99,7 +101,7 @@ class JsDial {
     render() {
         this.dial.style.transform = 
             `rotate(${
-                this.arcLength * 
+                this.rounds * this.arcLength * 
                 ((this.value-this.min)/(this.max-this.min)) +
                 this.imgDegreeOffset}deg)`
     }
