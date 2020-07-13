@@ -8,7 +8,6 @@
 import { MasterClock } from './master_clock.js'
 import { VolumeNodeContainer } from '../volumenode_container.js'
 
-
 type ChannelData = {
     adsr? : GainNode
     volume : number
@@ -127,7 +126,7 @@ export class Sequencer extends VolumeNodeContainer {
 
     playStepsAtTime(time : number, updateBox : boolean) {
         const boxIsVisible = this.HTMLGrid.offsetParent != null
-        
+
         for (const key in this.channelData) {
             const stepIsActive = this.stepMatrix[key][this.currentStep]
             if (!this.mutedChannel[key] && (!this.soloChannel || this.soloChannel === key)) {

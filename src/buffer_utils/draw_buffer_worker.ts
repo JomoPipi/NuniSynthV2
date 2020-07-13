@@ -22,7 +22,7 @@ onmessage = function({ data: { canvas, buffer }}) {
         const channel = Float32Array.from(buffer)
 
         console.log('drawing a buffer. length =',channel.length)
-        console.log('buffer =',buffer)
+        
         ctx.save()
         ctx.fillStyle = '#222'
         ctx.fillRect(0, 0, W, H)

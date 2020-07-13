@@ -9,7 +9,7 @@ import { NuniGraphNode } from './nunigraph_node.js'
 import { LZW_compress, LZW_decompress } from '../../helpers/lzw_compression.js'
 import { 
     SubgraphSequencer, NuniAudioParam, 
-    Sequencer, NuniGraphAudioNode 
+    Sequencer, NuniGraphAudioNode, BufferSequencer 
     } from '../../webaudio2/internal.js'
 
 type Destination = AudioNode | AudioParam | NuniAudioParam
@@ -65,6 +65,7 @@ export class NuniGraph {
     }
 
     private copyNode(node : NuniGraphNode) {
+        
         const copiedNode = this.convertNodeToNodeSettings(node)
         
         const { 
@@ -98,6 +99,7 @@ export class NuniGraph {
             return map
             }, {} as { [key : number] : NuniGraphNode })
 
+            
         const connections = this.oneWayConnections
         for (const id in connections) {
             for (const { id: id2, connectionType } of connections[id]) {
@@ -141,7 +143,8 @@ export class NuniGraph {
             
         for (const node of nodes) {
             if (node.audioNode instanceof Sequencer) {
-                
+                // TODO 
+                if (node.type === NodeTypes.B_SEQ) continue;
                 
                 const matrix = node.audioNode.stepMatrix
                 
@@ -232,7 +235,6 @@ export class NuniGraph {
             destination.addInput(node1)
         }
         else if (destination instanceof NuniAudioParam) {
-            log('happened')
             node1.audioNode.connect(destination.offset)
             
         } else {
@@ -289,15 +291,14 @@ export class NuniGraph {
     }
 
     private convertNodeToNodeSettings(node : NuniGraphNode) : Indexed {
-        
         const nodeCopy = { 
             ...node,
-            audioNode: { ...node.audioNode  }
+            audioNode: { ...node.audioNode }
         }
 
         // some audioNode properties need to be taken along but not all...
         for (const name in nodeCopy.audioNode) {
-            if (nodeCopy.type !== NodeTypes.SGS || !MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade[name]) {
+            if (nodeCopy.type !== NodeTypes.SGS || !SGS_MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade[name]) {
                 delete nodeCopy.audioNode[name as AudioParams]
             }
         }
@@ -314,7 +315,7 @@ export class NuniGraph {
             }
             if (prop in node.audioNode) {
                 settings.audioNodeProperties[prop] = 
-                    node.audioNode[prop as AudioParams]
+                    JSON.parse(JSON.stringify(node.audioNode[prop as AudioParams]))
             }
         }
         return settings
@@ -351,7 +352,6 @@ export class NuniGraph {
         this.nodes[0].setValueOfParam('gain', nodes[0].audioParamValues.gain)
 
         this.nodes[0].title = 'OUTPUT'
-
         // recreate the nodes
         for (const node of nodes) {
 
@@ -378,7 +378,6 @@ export class NuniGraph {
                 if (!INPUT_NODE_ID) settings.title = title
 
             const newNode = new NuniGraphNode(id, type, settings)
-
             this.nodes.push(newNode)
         }
 
@@ -405,11 +404,12 @@ export class NuniGraph {
             }
         }
 
+        // SUBGRAPH SEQUENCER _ONLY_
         // Sampler needs to have stepMatrix and nSteps copied after connections are made
         for (const node of nodes) {
             // Can't use instanceof to check if audioNode is a SubgraphSequencer
             // because those nodes were parsed with JSON.parse
-            if (node.type === NodeTypes.SGS || node.type === NodeTypes.B_SEQ) {
+            if (node.type === NodeTypes.SGS) {
                 const thisNode = this.nodes.find(n => n.id === node.id)!
 
                 ;(<Sequencer>thisNode.audioNode).stepMatrix = node.audioNode.stepMatrix

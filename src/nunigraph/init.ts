@@ -56,8 +56,10 @@ GraphController.g.nodes[0].setValueOfParam('gain', 0.125)
 
 ActiveControllers.push(GraphController)
 
-
-
+let DEBUG = true
+if (DEBUG) {
+    (<any>window).controller = GraphController
+}
 
 Graph_Attachments: {
 
@@ -86,6 +88,7 @@ Graph_Attachments: {
     MasterClock.setSchedule((tempo : number) => {
         for (const an of yeildNodes(g)) {
             if (an instanceof Sequencer) {
+                console.info(an)
                 an.scheduleNotes(tempo)
             }
         }

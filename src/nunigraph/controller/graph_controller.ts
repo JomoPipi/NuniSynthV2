@@ -586,10 +586,12 @@ export class NuniGraphController {
         }
 
         if (e.ctrlKey && e.keyCode === 86) { // ctrl + V
-            this.save()
-
             const nodesToCopy = 
                 this.selectedNodes.filter(node => !node.INPUT_NODE_ID)
+
+            if (nodesToCopy.length === 0) return;
+            
+            this.save()
 
             this.selectedNodes = 
                 this.g.copyNodes(nodesToCopy)
