@@ -297,7 +297,7 @@ export class NuniGraph {
 
         // some audioNode properties need to be taken along but not all...
         for (const name in nodeCopy.audioNode) {
-            if (!MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade[name]) {
+            if (nodeCopy.type !== NodeTypes.SGS || !MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade[name]) {
                 delete nodeCopy.audioNode[name as AudioParams]
             }
         }

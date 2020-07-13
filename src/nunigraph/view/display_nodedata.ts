@@ -241,10 +241,17 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
                 updateFunc, 
                 manualUpdater))
         
+        // const [min,max] = AudioParamRanges[param]
         // box.appendChild(createNumberDialComponent(
         //     initialValue,
-        //     manualUpdater, {}
-        //     ))
+        //     manualUpdater, {
+        //         dial: {
+        //             min,
+        //             max,
+        //             sensitivity: 4
+        //         }
+        //     }
+        // ))
 
         allParams.appendChild(box)
     }
