@@ -27,6 +27,26 @@ type AudioNodeMap = {
     [NodeTypes.CUSTOM]: NuniGraphAudioNode
 }
 
+// NON GENERIC:
+// type AudioNode2<T extends NodeTypes> 
+//     = AudioNodeMap[T] 
+//     & { [key in AudioParams] : AudioParam }
+    
+// export class NuniGraphNode { //<T extends NodeTypes = NodeTypes> {
+
+//     id : number
+//     type : NodeTypes
+//     audioNode : AudioNode2<NodeTypes>
+//     x : number
+//     y : number
+//     audioParamValues : Indexable<number>
+//     title? : string
+//     readonly INPUT_NODE_ID? : { id : number }
+
+    
+//     constructor(id : number, type : NodeTypes, settings : NodeSettings) {
+
+
 type AudioNode2<T extends NodeTypes> 
     = AudioNodeMap[T] 
     & { [key in AudioParams] : AudioParam }

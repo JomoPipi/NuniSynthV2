@@ -9,13 +9,13 @@ import { NuniGraphNode } from './nunigraph_node.js'
 import { LZW_compress, LZW_decompress } from '../../helpers/lzw_compression.js'
 import { 
     SubgraphSequencer, NuniAudioParam, 
-    Sequencer, NuniGraphAudioNode, BufferSequencer 
+    Sequencer, NuniGraphAudioNode
     } from '../../webaudio2/internal.js'
 
 type Destination = AudioNode | AudioParam | NuniAudioParam
 
 
-const defaultSettings = () => ({
+const defaultNodeSettings = () => ({
     x: 0.5, 
     y: 0.5,
     audioParamValues: {},
@@ -41,7 +41,7 @@ export class NuniGraph {
     }
 
     private initializeMasterGain() {
-        const masterGainSettings = Object.assign(defaultSettings(), { 
+        const masterGainSettings = Object.assign(defaultNodeSettings(), { 
             audioParamValues: { [NodeTypes.GAIN]: 1 },
             x: 0.5, 
             y: 0.125,
@@ -54,7 +54,7 @@ export class NuniGraph {
     createNewNode(type : NodeTypes, settings? : NodeSettings) {
 
         if (!settings) {
-            settings = defaultSettings()
+            settings = defaultNodeSettings()
         }
 
         const node = new NuniGraphNode(this.nextId++, type, settings)
@@ -64,7 +64,7 @@ export class NuniGraph {
         return node
     }
 
-    private copyNode(node : NuniGraphNode) {
+    private reproduceNode(node : NuniGraphNode) {
         
         const copiedNode = this.convertNodeToNodeSettings(node)
         
@@ -93,50 +93,64 @@ export class NuniGraph {
         return this.createNewNode(type, settings)
     }
 
-    copyNodes(nodes : NuniGraphNode[]) {
+    reproduceNodesAndConnections(nodes : NuniGraphNode[]) {
+        
         const correspondenceMap = nodes.reduce((map,node) => {
-            map[node.id] = this.copyNode(node)
+            map[node.id] = this.reproduceNode(node)
             return map
-            }, {} as { [key : number] : NuniGraphNode })
+        }, {} as { [key : number] : NuniGraphNode })
 
-            
-        const connections = this.oneWayConnections
-        for (const id in connections) {
-            for (const { id: id2, connectionType } of connections[id]) {
-                const nodeA = this.nodes.find(node => node.id === +id)!
-                const nodeB = this.nodes.find(node => node.id === id2)!
-                const a = correspondenceMap[nodeA.id] || nodeA
-                const b = correspondenceMap[nodeB.id] || nodeB
+        this.reproduceConnections(correspondenceMap)
+
+        this.copyThingsThatCanOnlyBeCopiedAfterConnectionsAreMade(nodes, correspondenceMap)
+        return Object.values(correspondenceMap)
+    }
+
+    reproduceConnections(mapToNewNode : { [id : number] : NuniGraphNode }) {
+        for (const id1 in this.oneWayConnections) {
+            for (const { id: id2, connectionType } of this.oneWayConnections[id1]) {
+                // nodeA connects to nodeB
+                const nodeA = this.nodes.find(node => node.id ===+id1)
+                const nodeB = this.nodes.find(node => node.id === id2)
+                if (!nodeA || !nodeB) throw 'Something is wrong here'
+                const a = mapToNewNode[nodeA.id] || nodeA
+                const b = mapToNewNode[nodeB.id] || nodeB
 
                 if (a !== nodeA || b !== nodeB) {
 
-                    if (b.audioNode instanceof NuniGraphAudioNode ) {
-                        // WE NEED TO HANDLE THE INPUT NODES OF b
-
-                        const innerInputNode 
-                            = b.audioNode.controller.g.nodes.find(node => 
-                                node.INPUT_NODE_ID && node.INPUT_NODE_ID.id === nodeA.id)
-
-                        if (innerInputNode?.INPUT_NODE_ID && b !== nodeB) {
-                            innerInputNode.INPUT_NODE_ID.id = a.id
-                            innerInputNode.title = `INPUT (id-${a.id})`
-
-                            b.audioNode.inputs[a.id] = innerInputNode
-                            if (a !== nodeA)
-                                delete b.audioNode.inputs[nodeA.id]
-                        }
-                    }
+                    this.copyModuleInputNodes(a, b, nodeA, nodeB)
 
                     this.makeConnection(a, b, connectionType)
                 }
             }
         }
-
-        this.copyThingsThatCanOnlyBeCopiedAfterConnectionsAreMade(nodes, correspondenceMap)
-
-        return Object.values(correspondenceMap)
     }
 
+    private copyModuleInputNodes(
+        // TODO: figure out the type situation so b can be NuniGraphNode<NodeTypes.CUSTOM>
+        ...[a, b, nodeA, nodeB] : NuniGraphNode[]) {
+
+        // Handle the input node(s) of b
+        if (b.audioNode instanceof NuniGraphAudioNode && b !== nodeB) {
+
+            const innerInputNode 
+                = b.audioNode.controller.g.nodes.find(node =>
+                    node.INPUT_NODE_ID?.id === nodeA.id)
+    
+            if (!innerInputNode) 
+                throw 'An input node with INPUT_NODE_ID = nodeA.id should exist inside node b'
+
+            innerInputNode.INPUT_NODE_ID!.id = a.id
+            innerInputNode.title = `INPUT (id-${a.id})`
+
+            b.audioNode.inputs[a.id] = innerInputNode
+            if (a !== nodeA) {
+                // nodeA doesn't connect to b
+                delete b.audioNode.inputs[nodeA.id]
+            }
+        }
+    }
+    
     private copyThingsThatCanOnlyBeCopiedAfterConnectionsAreMade(
         nodes : NuniGraphNode[], 
         mapToNewNode : Indexable<{ audioNode : Indexed, id : number }>) {

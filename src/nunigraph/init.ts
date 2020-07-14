@@ -88,7 +88,6 @@ Graph_Attachments: {
     MasterClock.setSchedule((tempo : number) => {
         for (const an of yeildNodes(g)) {
             if (an instanceof Sequencer) {
-                console.info(an)
                 an.scheduleNotes(tempo)
             }
         }

@@ -594,7 +594,7 @@ export class NuniGraphController {
             this.save()
 
             this.selectedNodes = 
-                this.g.copyNodes(nodesToCopy)
+                this.g.reproduceNodesAndConnections(nodesToCopy)
 
             this.renderer.render({ selectedNodes: this.selectedNodes })
 
