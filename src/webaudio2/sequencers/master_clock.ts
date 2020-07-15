@@ -87,7 +87,7 @@ function count() {
     counter++
     
     // Reset counter after 2 seconds
-    clearTimer = setTimeout(function(){
+    clearTimer = window.setTimeout(function(){
         counter = 0
         delta = 0
         start = 0
