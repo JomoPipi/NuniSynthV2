@@ -11,10 +11,21 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    trafficLightPosition: '0 0',
     webPreferences: {
       nodeIntegration: true
-    }
+    },
+    icon: __dirname + '/styles/icon.ico',
+    // frame: false,
+    // titleBarStyle: 'hidden',
+    // backgroundColor: '#111111' // 'rgb(48, 47, 48)'
+    darkTheme: true,
+    backgroundColor: '#2E2C29',
+    thickFrame: false,
+    simpleFullscreen: true,
   });
+
+  mainWindow.setMenu(null)
 
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, 'index.html'));

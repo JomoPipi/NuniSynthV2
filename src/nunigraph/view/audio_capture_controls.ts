@@ -14,7 +14,7 @@ import { BufferUtils } from "../../buffer_utils/internal.js";
 
 
 
-export  function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
+export function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
     const controls = E('div')
 
     choose_buffer_index: {

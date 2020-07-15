@@ -14,7 +14,7 @@ import { BufferUtils } from "../../buffer_utils/init_buffers.js"
 
 
 
-export  class BufferSequencer extends Sequencer {
+export class BufferSequencer extends Sequencer {
 
     nextId : number
     detune : NuniAudioParam

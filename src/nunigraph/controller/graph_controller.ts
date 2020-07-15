@@ -585,7 +585,7 @@ export class NuniGraphController {
             }
         }
 
-        if (e.ctrlKey && e.keyCode === 86) { // ctrl + V
+        if (e.ctrlKey && e.keyCode === 83) { // ctrl + s : node reproduction function
             const nodesToCopy = 
                 this.selectedNodes.filter(node => !node.INPUT_NODE_ID)
 

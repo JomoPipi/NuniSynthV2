@@ -102,16 +102,6 @@ export class NuniGraph {
             }
         }
     }
-    disconnectFromSpecialNodes(node) {
-        for (const { audioNode } of this.nodes) {
-            if (audioNode instanceof SubgraphSequencer && audioNode.channelData[node.id]) {
-                audioNode.removeInput(node);
-            }
-            else if (audioNode instanceof NuniGraphAudioNode && audioNode.inputs[node.id]) {
-                audioNode.removeInput(node);
-            }
-        }
-    }
     deleteNode(node) {
         if (node.audioNode instanceof Sequencer) {
             node.audioNode.stop();
@@ -124,6 +114,16 @@ export class NuniGraph {
         for (const id in this.oneWayConnections) {
             this.oneWayConnections[id] =
                 this.oneWayConnections[id].filter(({ id }) => id !== node.id);
+        }
+    }
+    disconnectFromSpecialNodes(node) {
+        for (const { audioNode } of this.nodes) {
+            if (audioNode instanceof SubgraphSequencer && audioNode.channelData[node.id]) {
+                audioNode.removeInput(node);
+            }
+            else if (audioNode instanceof NuniGraphAudioNode && audioNode.inputs[node.id]) {
+                audioNode.removeInput(node);
+            }
         }
     }
     makeConnection(node1, node2, connectionType) {
@@ -218,15 +218,6 @@ export class NuniGraph {
             throw 'Error parsing new graph';
         }
         this.clear();
-        this.copyFrom(nodes, connections);
-    }
-    toString() {
-        return LZW_compress(this.toRawString());
-    }
-    fromString(s) {
-        return this.fromRawString(LZW_decompress(s));
-    }
-    copyFrom(nodes, connections) {
         if (nodes[0].id !== 0)
             throw 'Oh, I did not expect this.';
         this.nodes[0].x = nodes[0].x;
@@ -249,6 +240,8 @@ export class NuniGraph {
             const newNode = new NuniGraphNode(id, type, settings);
             this.nodes.push(newNode);
         }
+        this.nextId =
+            Math.max(...this.nodes.map(node => node.id)) + 1;
         for (const id in connections) {
             for (const { id: id2, connectionType } of connections[id]) {
                 const nodeA = this.nodes.find(node => node.id === +id);
@@ -269,8 +262,12 @@ export class NuniGraph {
                 thisNode.audioNode.stepMatrix = node.audioNode.stepMatrix;
             }
         }
-        this.nextId =
-            Math.max(...this.nodes.map(node => node.id)) + 1;
+    }
+    toString() {
+        return LZW_compress(this.toRawString());
+    }
+    fromString(s) {
+        return this.fromRawString(LZW_decompress(s));
     }
 }
 //# sourceMappingURL=nunigraph.js.map

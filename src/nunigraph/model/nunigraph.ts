@@ -28,9 +28,15 @@ export class NuniGraph {
      * It has a list of nodes and a connection map.*
      */
     
+
+
+
     private nextId : number
-    nodes : NuniGraphNode[]
-    oneWayConnections : Indexable<ConnecteeData>
+    readonly nodes : NuniGraphNode[]
+    readonly oneWayConnections : Indexable<ConnecteeData>
+
+
+
 
     constructor() {
         this.nextId = 0
@@ -39,6 +45,9 @@ export class NuniGraph {
 
         this.initializeMasterGain()
     }
+
+
+
 
     private initializeMasterGain() {
         const masterGainSettings = Object.assign(defaultNodeSettings(), { 
@@ -50,6 +59,9 @@ export class NuniGraph {
 
         this.createNewNode(NodeTypes.GAIN, masterGainSettings)
     }
+
+
+
 
     createNewNode(type : NodeTypes, settings? : NodeSettings) {
 
@@ -64,6 +76,9 @@ export class NuniGraph {
         return node
     }
 
+
+
+    ///////////////////////////////////////////////////////////////////////// cmd + s copy function /////////////////////////////////////////////////////////////////////////
     private reproduceNode(node : NuniGraphNode) {
         
         const copiedNode = this.convertNodeToNodeSettings(node)
@@ -93,6 +108,9 @@ export class NuniGraph {
         return this.createNewNode(type, settings)
     }
 
+
+
+
     reproduceNodesAndConnections(nodes : NuniGraphNode[]) {
         
         const correspondenceMap = nodes.reduce((map,node) => {
@@ -105,6 +123,9 @@ export class NuniGraph {
         this.copyThingsThatCanOnlyBeCopiedAfterConnectionsAreMade(nodes, correspondenceMap)
         return Object.values(correspondenceMap)
     }
+
+
+
 
     reproduceConnections(mapToNewNode : { [id : number] : NuniGraphNode }) {
         for (const id1 in this.oneWayConnections) {
@@ -125,6 +146,9 @@ export class NuniGraph {
             }
         }
     }
+
+
+
 
     private copyModuleInputNodes(
         // TODO: figure out the type situation so b can be NuniGraphNode<NodeTypes.CUSTOM>
@@ -151,6 +175,9 @@ export class NuniGraph {
         }
     }
     
+
+
+
     private copyThingsThatCanOnlyBeCopiedAfterConnectionsAreMade(
         nodes : NuniGraphNode[], 
         mapToNewNode : Indexable<{ audioNode : Indexed, id : number }>) {
@@ -172,28 +199,10 @@ export class NuniGraph {
             }
         }
     }
+    /////////////////////////////////////////////////////////////////////////    /////////////////////////////////////////////////////////////////////////
 
-    private disconnectFromSpecialNodes(node : NuniGraphNode) { 
-        /** Motivation:
-         * Since some nodes get 
-         * disconnected in a custom way,
-         * they won't get the message when 
-         * an AudioNode calls disconnect() (with no arguments). 
-         * So This is a temporary fix, here.
-         * 
-         * A better solution may be to wrap disconnect(), or 
-         * stop using it all together.
-         *  */ 
-        for (const { audioNode } of this.nodes) {
-            if (audioNode instanceof SubgraphSequencer && audioNode.channelData[node.id])
-            {
-                audioNode.removeInput(node)
-            } 
-            else if (audioNode instanceof NuniGraphAudioNode && audioNode.inputs[node.id]) {
-                audioNode.removeInput(node)
-            }
-        }
-    }
+
+
 
     deleteNode(node : NuniGraphNode) {
         // Without this, the setTimeout could keep looping forever:
@@ -217,6 +226,34 @@ export class NuniGraph {
             this.oneWayConnections[id].filter(({ id }) => id !== node.id)
         }
     }
+
+
+
+
+    private disconnectFromSpecialNodes(node : NuniGraphNode) { 
+        /** Motivation:
+         * Since some nodes get 
+         * disconnected in a custom way,
+         * they won't get the message when 
+         * an AudioNode calls disconnect() (with no arguments). 
+         * So This is a temporary fix, here.
+         * 
+         * A better solution may be to wrap disconnect(), or 
+         * stop using it all together.
+         *  */ 
+        for (const { audioNode } of this.nodes) {
+            if (audioNode instanceof SubgraphSequencer && audioNode.channelData[node.id])
+            {
+                audioNode.removeInput(node)
+            } 
+            else if (audioNode instanceof NuniGraphAudioNode && audioNode.inputs[node.id]) {
+                audioNode.removeInput(node)
+            }
+        }
+    }
+
+
+
     
     makeConnection(node1 : NuniGraphNode, node2 : NuniGraphNode, connectionType : ConnectionType) {
         const connections = this.oneWayConnections[node1.id]
@@ -243,6 +280,9 @@ export class NuniGraph {
         this.connect_audioNode_to_destination(node1, destination)
     }
 
+
+
+
     private connect_audioNode_to_destination(node1 : NuniGraphNode, destination : Destination) {
         
         if (destination instanceof NuniGraphAudioNode || destination instanceof SubgraphSequencer) {
@@ -255,6 +295,9 @@ export class NuniGraph {
             node1.audioNode.connect(destination as AudioNode)
         }
     }
+
+
+
 
     disconnect(node1 : NuniGraphNode, node2 : NuniGraphNode, connectionType : ConnectionType) {
         const connections = this.oneWayConnections[node1.id]
@@ -272,6 +315,9 @@ export class NuniGraph {
         this.disconnect_audioNode_from_destination(node1, destination)
     }
 
+
+
+
     private disconnect_audioNode_from_destination(node1 : NuniGraphNode, destination : Destination) {
         if (destination instanceof SubgraphSequencer || destination instanceof NuniGraphAudioNode) {
             destination.removeInput(node1)
@@ -284,10 +330,16 @@ export class NuniGraph {
         }
     }
 
+
+
+
     private prepareDestination (connectionType : ConnectionType) {
         return (destination : Indexed) => 
             connectionType === 'channel' ? destination : destination[connectionType] 
     }
+
+
+
 
     clear() {
         for (const node of [...this.nodes]) {
@@ -296,13 +348,18 @@ export class NuniGraph {
         }
     }
 
+
+
+
     toRawString() {
         return JSON.stringify({
             connections: this.oneWayConnections,
             nodes: this.nodes.map(this.convertNodeToNodeSettings)
         })
-            
     }
+
+
+
 
     private convertNodeToNodeSettings(node : NuniGraphNode) : Indexed {
         const nodeCopy = { 
@@ -335,6 +392,9 @@ export class NuniGraph {
         return settings
     }
 
+
+
+
     fromRawString(s : string) {
         try {
             var { connections, nodes } = JSON.parse(s)
@@ -344,20 +404,7 @@ export class NuniGraph {
 
         this.clear() 
 
-        this.copyFrom(nodes, connections)
-    }
-
-    toString() {
-        return LZW_compress(this.toRawString())
-    }
-
-    fromString(s : string) {
-        return this.fromRawString(LZW_decompress(s))
-    }
-
-    private copyFrom(nodes : Indexed[], connections : Indexable<ConnecteeData>) {
-        // nodes comes from JSON.parse(JSON.strigify(graphCode))
-
+        // Arrays stay in order
         if (nodes[0].id !== 0) throw 'Oh, I did not expect this.'
 
         // Manually copy the master-gain, because it can't be deleted
@@ -366,6 +413,7 @@ export class NuniGraph {
         this.nodes[0].setValueOfParam('gain', nodes[0].audioParamValues.gain)
 
         this.nodes[0].title = 'OUTPUT'
+
         // recreate the nodes
         for (const node of nodes) {
 
@@ -380,6 +428,7 @@ export class NuniGraph {
                 INPUT_NODE_ID
                 } = node
 
+            // We already copied the master gain
             if (id === 0) continue
             
             const settings = {
@@ -394,6 +443,8 @@ export class NuniGraph {
             const newNode = new NuniGraphNode(id, type, settings)
             this.nodes.push(newNode)
         }
+        this.nextId = 
+            Math.max(...this.nodes.map(node=>node.id)) + 1
 
         // reconnect the nodes
         for (const id in connections) {
@@ -429,8 +480,19 @@ export class NuniGraph {
                 ;(<Sequencer>thisNode.audioNode).stepMatrix = node.audioNode.stepMatrix
             }
         }
+    }
 
-        this.nextId = 
-            Math.max(...this.nodes.map(node=>node.id)) + 1
+
+
+
+    toString() {
+        return LZW_compress(this.toRawString())
+    }
+
+
+
+
+    fromString(s : string) {
+        return this.fromRawString(LZW_decompress(s))
     }
 }

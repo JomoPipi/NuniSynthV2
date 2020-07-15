@@ -149,7 +149,7 @@ export function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : An
 
 
 
-// export  function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : AnalyserNode) {
+// export function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : AnalyserNode) {
 
 //     analyser.fftSize = 2048
 //     const bufferLength = analyser.fftSize

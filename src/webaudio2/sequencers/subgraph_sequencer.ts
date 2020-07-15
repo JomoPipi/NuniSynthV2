@@ -11,7 +11,7 @@ import { Sequencer } from './sequencer.js'
 
 
 
-export  class SubgraphSequencer extends Sequencer {
+export class SubgraphSequencer extends Sequencer {
     /**
      * This creates an N-step sequencer out of
      * whatever inputs are connected to it.

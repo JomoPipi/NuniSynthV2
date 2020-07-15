@@ -51,7 +51,7 @@ type AudioNode2<T extends NodeTypes>
     = AudioNodeMap[T] 
     & { [key in AudioParams] : AudioParam }
     
-export  class NuniGraphNode<T extends NodeTypes = NodeTypes> {
+export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
     id : number
     type : T

@@ -20,7 +20,7 @@ import {
 
 
 
-export  function createValuesWindow(
+export function createValuesWindow(
     node : NuniGraphNode, 
     saveCallback : Function,
     deleteCallback : Function) {
