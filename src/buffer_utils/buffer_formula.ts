@@ -75,6 +75,8 @@ const presets = {
     , 'Warble Laser': '0.5 * sin(n / 10 / sqrt(n/5.0)) * cos(n /  sqrt(n/50.0))'
     , 'Noise 1': 'random() * .5 - .25'
     , 'Noise 2': 'sin(n/(2- sin(n/11))) * sin(n/23) * 0.5'
+    , 'Noise 3': 'sin(sin(n/30) * sin(n/20) * 3000)'
+    , 'Tone': 'sin(sin(n/24.5) * cos(n/50.5) * 10) *.25 + sin(sin(n/28) * sin(n/22) * 10) *.25 + sin(sin(n/29) * sin(n/21) * 10) *.25 + sin(sin(n/30) * sin(n/20) * 10) *.25'
     , 'Water Drum': '0.5 * sin(n / sqrt(n/(10.0 + 2*(0.5 * sin(n / sqrt(n/3.0))))))'
     , 'Space Drum 1': '0.5 * sin(n / cbrt(n/(15.0 + 1*(0.5 * sin(n / sqrt(n/3.0))))))'
     , 'Space Laser 1': '0.5 * sin(n / sqrt(n/(15.0 + 1*(0.5 * sin(n / cbrt(n/3.0))))))'
