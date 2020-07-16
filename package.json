@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@types/dom-mediacapture-record": "^1.0.7",
+    "electron-packager": "^15.0.0",
     "electron-squirrel-startup": "^1.0.0"
   },
   "devDependencies": {

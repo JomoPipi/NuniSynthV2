@@ -1,5 +1,6 @@
 import { HOVER } from '../view/graph_renderer.js';
 import { NuniGraphAudioNode } from '../../webaudio2/internal.js';
+import { clipboard } from './clipboard.js';
 export const ActiveControllers = [];
 let openWindowGlobalIndexThatKeepsRising = 0;
 export class NuniGraphController {
@@ -13,10 +14,10 @@ export class NuniGraphController {
         this.lastMouse_MoveMsg =
             this.lastMouse_DownMsg =
                 renderer.getGraphMouseTarget({ offsetX: -Infinity, offsetY: -Infinity });
-        this.openWindow = {};
+        this.getOpenWindow = {};
         this.lastCoordsOfWindow = {};
         this.mouseHasMovedSinceLastMouseDown = false;
-        this.lastMouseXY = [0, 0];
+        this.lastMouse_DownXY = [0, 0];
         this._mouse_move = (e) => {
             const { x: offsetX, y: offsetY } = this.getMousePos(e);
             const msg = {
@@ -77,15 +78,15 @@ export class NuniGraphController {
         var _a;
         this.unselectNodes();
         this.selectedNodes = [node];
-        (_a = this.openWindow[node.id]) === null || _a === void 0 ? void 0 : _a.classList.add('selected2');
+        (_a = this.getOpenWindow[node.id]) === null || _a === void 0 ? void 0 : _a.classList.add('selected2');
     }
     unselectNodes() {
         this.selectedNodes = [];
-        for (const key in this.openWindow) {
-            this.openWindow[key].classList.remove('selected2');
+        for (const key in this.getOpenWindow) {
+            this.getOpenWindow[key].classList.remove('selected2');
         }
     }
-    closeValuesWindow(id) {
+    closeWindow(id) {
         const node = this.g.nodes.find(({ id: _id }) => _id === id);
         if (!node)
             throw 'figure out what to do from here';
@@ -97,35 +98,35 @@ export class NuniGraphController {
                 node.audioNode.deactivateWindow();
             }
         }
-        const nodeWindow = this.openWindow[id];
+        const nodeWindow = this.getOpenWindow[id];
         if (nodeWindow) {
             this.lastCoordsOfWindow[id] = [nodeWindow.offsetLeft, nodeWindow.offsetTop];
             D('node-windows').removeChild(nodeWindow);
-            delete this.openWindow[id];
+            delete this.getOpenWindow[id];
         }
     }
     closeAllWindows() {
-        for (const nodeId in this.openWindow) {
-            this.closeValuesWindow(+nodeId);
+        for (const nodeId in this.getOpenWindow) {
+            this.closeWindow(+nodeId);
         }
     }
     deleteNode(node) {
         if (node.INPUT_NODE_ID)
             return;
         this.connectionTypePrompt.classList.remove('show');
-        this.closeValuesWindow(node.id);
+        this.closeWindow(node.id);
         this.renderer.removeFromConnectionsCache(node.id);
         this.g.deleteNode(node);
         this.unselectNodes();
         this.selectedNodes = [];
         this.renderer.render();
     }
-    openValuesWindow(node) {
+    openWindow(node) {
         const moveTheWindowToTheTop = (box) => {
             box.style.zIndex = (++openWindowGlobalIndexThatKeepsRising).toString();
         };
-        if (this.openWindow[node.id]) {
-            moveTheWindowToTheTop(this.openWindow[node.id]);
+        if (this.getOpenWindow[node.id]) {
+            moveTheWindowToTheTop(this.getOpenWindow[node.id]);
             return;
         }
         if (node.audioNode instanceof NuniGraphAudioNode) {
@@ -143,7 +144,7 @@ export class NuniGraphController {
             }
         };
         const closeCallback = () => {
-            this.closeValuesWindow(node.id);
+            this.closeWindow(node.id);
         };
         const deleteCallBack = () => {
             this.save();
@@ -162,7 +163,7 @@ export class NuniGraphController {
             });
             return input;
         };
-        const container = createDraggableWindow({
+        const dialogBox = createDraggableWindow({
             text: `${NodeLabel[node.type]}, id: ${node.id}`,
             clickCallback,
             closeCallback,
@@ -173,17 +174,20 @@ export class NuniGraphController {
                 ? titleEditor()
                 : undefined
         });
-        this.openWindow[node.id] = container;
-        container.children[1].appendChild(this.createValuesWindow(node, () => this.save(), deleteCallBack));
-        D('node-windows').appendChild(container);
-        moveTheWindowToTheTop(container);
+        this.getOpenWindow[node.id] = dialogBox;
+        dialogBox.children[1].appendChild(this.createValuesWindow(node, () => this.save(), deleteCallBack));
+        D('node-windows').appendChild(dialogBox);
+        moveTheWindowToTheTop(dialogBox);
         if (node.id in this.lastCoordsOfWindow) {
             const [x, y] = this.lastCoordsOfWindow[node.id];
-            container.style.left = x + 'px';
-            container.style.top = y + 'px';
+            dialogBox.style.left = x + 'px';
+            dialogBox.style.top = y + 'px';
         }
         else {
-            UI_clamp(0, 0, container, D('nunigraph-stuff'));
+            const container = D('nunigraph-stuff');
+            const canvas = this.renderer.canvas;
+            const placeUnder = node.y < .25 ? -1 : 1;
+            UI_clamp(node.x * canvas.offsetWidth, node.y * canvas.offsetHeight - dialogBox.offsetHeight * placeUnder, dialogBox, container);
         }
     }
     getNodesInBox(x, y) {
@@ -205,12 +209,12 @@ export class NuniGraphController {
         return this.selectedNodes;
     }
     toggleDialogBox(node) {
-        if (!this.openWindow[node.id]) {
-            this.openValuesWindow(node);
-            this.openWindow[node.id].classList.add('selected2');
+        if (!this.getOpenWindow[node.id]) {
+            this.openWindow(node);
+            this.getOpenWindow[node.id].classList.add('selected2');
         }
         else {
-            this.closeValuesWindow(node.id);
+            this.closeWindow(node.id);
         }
     }
     mousedown(e) {
@@ -219,7 +223,7 @@ export class NuniGraphController {
         this.mouseIsDown = true;
         const { type, id, node } = this.lastMouse_DownMsg =
             this.renderer.getGraphMouseTarget(e);
-        this.lastMouseXY = [e.offsetX, e.offsetY];
+        this.lastMouse_DownXY = [e.offsetX, e.offsetY];
         if (node &&
             this.selectedNodes.length &&
             this.selectedNodes.includes(node)) {
@@ -267,7 +271,7 @@ export class NuniGraphController {
                     const inputNode = to.audioNode.controller.g.nodes.find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === fromId; });
                     if (!inputNode)
                         throw 'error, this should be here';
-                    to.audioNode.controller.closeValuesWindow(inputNode.id);
+                    to.audioNode.controller.closeWindow(inputNode.id);
                 }
                 this.g.disconnect(this.renderer.fromNode, to, connectionType);
             },
@@ -290,7 +294,7 @@ export class NuniGraphController {
         deselectNodesOfOtherGraphs();
     }
     mousemove(e) {
-        const [x, y] = this.lastMouseXY;
+        const [x, y] = this.lastMouse_DownXY;
         if (Math.abs(x - e.offsetX) > 1 || Math.abs(y - e.offsetY) > 1) {
             this.mouseHasMovedSinceLastMouseDown = true;
         }
@@ -340,6 +344,13 @@ export class NuniGraphController {
         this.renderer.render(options);
     }
     mouseup(e) {
+        if (e.ctrlKey && e.target === this.renderer.canvas) {
+            const X = e.offsetX / this.renderer.canvas.width;
+            const Y = e.offsetY / this.renderer.canvas.height;
+            this.selectedNodes =
+                this.g.pasteNodes(X, Y, clipboard.nodes, clipboard.connections);
+            this.renderer.render(this);
+        }
         this.mouseIsDown = false;
         this.selectionStart = undefined;
         const { renderer, selectedNodes } = this;
@@ -379,16 +390,39 @@ export class NuniGraphController {
                 }
             }
         }
-        if (e.ctrlKey && e.keyCode === 83) {
+        else if (e.ctrlKey && e.keyCode === 83) {
             const nodesToCopy = this.selectedNodes.filter(node => !node.INPUT_NODE_ID);
             if (nodesToCopy.length === 0)
                 return;
             this.save();
             this.selectedNodes =
                 this.g.reproduceNodesAndConnections(nodesToCopy);
-            this.renderer.render({ selectedNodes: this.selectedNodes });
+            this.renderer.render(this);
             if (this.selectedNodes.length === 1) {
-                this.openValuesWindow(this.selectedNodes[0]);
+                this.openWindow(this.selectedNodes[0]);
+            }
+        }
+        else if (e.ctrlKey && e.keyCode === 67 || e.keyCode === 88) {
+            const nodesToCopy = this.selectedNodes.filter(node => !node.INPUT_NODE_ID);
+            if (nodesToCopy.length === 0)
+                return;
+            clipboard.nodes = nodesToCopy.map(this.g.convertNodeToNodeSettings);
+            clipboard.connections = nodesToCopy.map(node => {
+                const connectionList = [];
+                for (const { id, connectionType } of this.g.oneWayConnections[node.id] || []) {
+                    const index = nodesToCopy.findIndex(node => node.id === id);
+                    if (index >= 0) {
+                        connectionList.push({ id: index, connectionType });
+                    }
+                }
+                return connectionList;
+            });
+            if (e.keyCode === 88) {
+                for (const node of nodesToCopy) {
+                    if (node.id !== 0) {
+                        this.deleteNode(node);
+                    }
+                }
             }
         }
     }
@@ -399,7 +433,7 @@ export class NuniGraphController {
             this.g.makeConnection(node1, node2, destination);
             renderer.render();
             if (OpensDialogBoxWhenConnectedTo[node2.type]) {
-                this.openValuesWindow(node2);
+                this.openWindow(node2);
             }
         };
         const types = (SupportsInputChannels[node2.type]

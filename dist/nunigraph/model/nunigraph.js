@@ -31,6 +31,44 @@ export class NuniGraph {
         this.nodes.push(node);
         return node;
     }
+    pasteNodes(X, Y, _nodes, connections) {
+        const centerX = _nodes.reduce((a, { x }) => a + x, 0) / _nodes.length;
+        const centerY = _nodes.reduce((a, { y }) => a + y, 0) / _nodes.length;
+        const nodes = _nodes.map(({ type, x, y, audioParamValues, audioNodeProperties }) => {
+            const newX = clamp(0, x - centerX + X, 1);
+            const newY = clamp(0, y - centerY + Y, 1);
+            const settings = {
+                x: newX,
+                y: newY,
+                audioParamValues,
+                audioNodeProperties
+            };
+            return this.createNewNode(type, settings);
+        });
+        for (const indexA in nodes) {
+            for (const { id: indexB, connectionType } of connections[indexA]) {
+                const a = nodes[indexA];
+                const b = nodes[indexB];
+                if (b.audioNode instanceof NuniGraphAudioNode) {
+                    const innerInputNode = b.audioNode.controller.g.nodes.find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === _nodes[indexA].oldId; });
+                    if (!innerInputNode)
+                        throw 'An input node with INPUT_NODE_ID = nodeA.id should exist inside node b';
+                    innerInputNode.INPUT_NODE_ID.id = a.id;
+                    innerInputNode.title = `INPUT (id-${a.id})`;
+                    b.audioNode.inputs[a.id] = innerInputNode;
+                    delete b.audioNode.inputs[_nodes[indexA].oldId];
+                }
+                this.makeConnection(a, b, connectionType);
+            }
+        }
+        for (const i in _nodes) {
+            const an = nodes[i].audioNode;
+            if (an instanceof SubgraphSequencer) {
+                an.stepMatrix = JSON.parse(JSON.stringify(_nodes[i].audioNode.stepMatrix));
+            }
+        }
+        return nodes;
+    }
     reproduceNode(node) {
         const copiedNode = this.convertNodeToNodeSettings(node);
         const { type, x, y, audioParamValues, audioNodeProperties, title, INPUT_NODE_ID } = copiedNode;
@@ -72,7 +110,7 @@ export class NuniGraph {
             }
         }
     }
-    copyModuleInputNodes(...[a, b, nodeA, nodeB]) {
+    copyModuleInputNodes(a, b, nodeA, nodeB) {
         if (b.audioNode instanceof NuniGraphAudioNode && b !== nodeB) {
             const innerInputNode = b.audioNode.controller.g.nodes.find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === nodeA.id; });
             if (!innerInputNode)
@@ -198,7 +236,7 @@ export class NuniGraph {
                 delete nodeCopy.audioNode[name];
             }
         }
-        const settings = Object.assign(Object.assign({}, JSON.parse(JSON.stringify(nodeCopy))), { audioNodeProperties: {} });
+        const settings = Object.assign(Object.assign({}, JSON.parse(JSON.stringify(nodeCopy))), { audioNodeProperties: {}, oldId: node.id });
         for (const prop in Transferable_AudioNode_Properties) {
             if (node.type === NodeTypes.SGS && (prop === 'stepMatrix' || prop === 'channelData')) {
                 continue;

@@ -78,7 +78,73 @@ export class NuniGraph {
 
 
 
-    ///////////////////////////////////////////////////////////////////////// cmd + s copy function /////////////////////////////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////////////////////////// ctrl + click paste function /////////////////////////////////////////////////////////////////////////
+    pasteNodes(X : number, Y : number, _nodes : Indexed[], connections : any[]) {
+
+        // const xs = _nodes.map(({ x }) => x)
+        // const ys = _nodes.map(({ y }) => y)
+        const centerX = _nodes.reduce((a, { x }) => a + x, 0) / _nodes.length
+        const centerY = _nodes.reduce((a, { y }) => a + y, 0) / _nodes.length
+        // const w2      = (Math.max(...xs) - Math.min(...xs)) / 2
+        // const h2      = (Math.max(...ys) - Math.min(...ys)) / 2
+
+        // Make nodes
+        const nodes = _nodes.map(({ type, x, y, audioParamValues, audioNodeProperties }) => {
+
+            const newX = clamp(0, x - centerX + X, 1)
+            const newY = clamp(0, y - centerY + Y, 1)
+            const settings = {
+                x: newX,
+                y: newY,
+                audioParamValues,
+                audioNodeProperties
+            }
+            return this.createNewNode(type, settings)
+        })
+
+        // Make connections
+        for (const indexA in nodes) {
+            for (const { id: indexB, connectionType } of connections[indexA]) { 
+                const a = nodes[indexA]
+                const b = nodes[indexB]
+
+                if (b.audioNode instanceof NuniGraphAudioNode) {
+                    // Handle the input nodes of b, again (TODO: cleanup)
+                    const innerInputNode 
+                        = b.audioNode.controller.g.nodes.find(node =>
+                            node.INPUT_NODE_ID?.id === _nodes[indexA].oldId)
+            
+                    if (!innerInputNode) 
+                        throw 'An input node with INPUT_NODE_ID = nodeA.id should exist inside node b'
+        
+                    innerInputNode.INPUT_NODE_ID!.id = a.id
+                    innerInputNode.title = `INPUT (id-${a.id})`
+        
+                    b.audioNode.inputs[a.id] = innerInputNode
+                    delete b.audioNode.inputs[_nodes[indexA].oldId]
+                }
+                
+                this.makeConnection(a, b, connectionType)
+            }
+        }
+
+        // Copy subgraph sequencer 
+        for (const i in _nodes) {
+            const an = nodes[i].audioNode
+            if (an instanceof SubgraphSequencer) {
+                an.stepMatrix = JSON.parse(JSON.stringify(_nodes[i].audioNode.stepMatrix))
+            }
+        }
+
+        return nodes
+    }
+    /////////////////////////////////////////////////////////////////////////    /////////////////////////////////////////////////////////////////////////
+
+
+
+
+    ///////////////////////////////////////////////////////////////////////// ctrl + s copy and paste function /////////////////////////////////////////////////////////////////////////
     private reproduceNode(node : NuniGraphNode) {
         
         const copiedNode = this.convertNodeToNodeSettings(node)
@@ -152,7 +218,8 @@ export class NuniGraph {
 
     private copyModuleInputNodes(
         // TODO: figure out the type situation so b can be NuniGraphNode<NodeTypes.CUSTOM>
-        ...[a, b, nodeA, nodeB] : NuniGraphNode[]) {
+        a : NuniGraphNode, b : NuniGraphNode, nodeA : NuniGraphNode, nodeB : NuniGraphNode) {
+        // ...[a, b, nodeA, nodeB] : NuniGraphNode[]) {
 
         // Handle the input node(s) of b
         if (b.audioNode instanceof NuniGraphAudioNode && b !== nodeB) {
@@ -361,7 +428,7 @@ export class NuniGraph {
 
 
 
-    private convertNodeToNodeSettings(node : NuniGraphNode) : Indexed {
+    convertNodeToNodeSettings(node : NuniGraphNode) : Indexed {
         const nodeCopy = { 
             ...node,
             audioNode: { ...node.audioNode }
@@ -376,7 +443,8 @@ export class NuniGraph {
 
         const settings = {
             ...JSON.parse(JSON.stringify(nodeCopy)),
-            audioNodeProperties: {}
+            audioNodeProperties: {},
+            oldId: node.id
             }
             
         for (const prop in Transferable_AudioNode_Properties) {

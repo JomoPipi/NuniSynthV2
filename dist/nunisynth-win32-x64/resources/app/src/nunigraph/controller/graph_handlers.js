@@ -1,0 +1,79 @@
+import { GraphController } from '../init.js';
+const contextmenu = D('graph-contextmenu');
+{
+    D('nuni-logo').onclick = (e) => GraphController.showContextMenu(e.clientX, e.clientY);
+    const append = (type, color) => {
+        const create = () => {
+            const controller = DIRTYGLOBALS.lastControllerToOpenTheContextmenu || GraphController;
+            controller.save();
+            const node = controller.g.createNewNode(type);
+            const menu = contextmenu;
+            if (menu.style.display !== 'none') {
+                const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = controller === GraphController
+                    ? controller.renderer.canvas
+                    : controller.renderer.canvas.parentNode.parentNode.parentNode.parentNode;
+                node.x = clamp(0, (menu.offsetLeft - offsetLeft + menu.offsetWidth / 2.0) / offsetWidth, 1);
+                node.y = clamp(0, (menu.offsetTop - offsetTop + menu.offsetHeight / 2.0) / offsetHeight, 1);
+                controller.hideContextMenu();
+            }
+            controller.renderer.render();
+            DIRTYGLOBALS.lastControllerToOpenTheContextmenu = undefined;
+        };
+        const colorbox = E('span');
+        applyStyle(colorbox, {
+            display: 'inline-block',
+            width: '18px',
+            height: '18px',
+            float: 'right',
+            opacity: 0.5,
+            margin: '2px',
+            marginLeft: '20px',
+            background: color
+        });
+        const textbox = E('span', { text: NodeLabel[type] });
+        const btn = E('button', {
+            className: 'list-btn',
+            children: [textbox, colorbox],
+            props: { onclick: create }
+        });
+        contextmenu.appendChild(btn);
+    };
+    for (const key in NodeTypes) {
+        if (isNaN(+key)) {
+            const type = NodeTypes[key];
+            append(type, NodeTypeColors[type]);
+        }
+    }
+}
+;
+D('copy-graph-button').onclick = function () {
+    D('graph-copy-output').value = GraphController.g.toString();
+};
+D('from-string-button').onclick = function () {
+    const input = D('graph-copy-input');
+    try {
+        GraphController.save();
+        GraphController.closeAllWindows();
+        GraphController.fromString(input.value);
+        GraphController.renderer.render();
+        input.value = '';
+    }
+    catch (e) {
+        GraphController.undo();
+        input.value = 'Invalid code';
+    }
+};
+D('graph-undo-redo-btns').onclick = function (e) {
+    const undoBtnId = 'graph-undo-button';
+    const redoBtnId = 'graph-redo-button';
+    const id = e.target.id;
+    if (id === undoBtnId) {
+        GraphController.undo();
+        GraphController.renderer.render();
+    }
+    else if (id === redoBtnId) {
+        GraphController.redo();
+        GraphController.renderer.render();
+    }
+};
+//# sourceMappingURL=graph_handlers.js.map

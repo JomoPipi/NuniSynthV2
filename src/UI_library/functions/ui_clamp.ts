@@ -16,14 +16,14 @@ function UI_clamp(
      */
 
     const [w, h, W, H, dx, dy] = [
-        element.offsetWidth+1, 
-        element.offsetHeight+1,
+        element.offsetWidth+2, 
+        element.offsetHeight+2,
         container.offsetWidth, 
         container.offsetHeight,
         container.offsetLeft,
-        container.offsetTop
+        container.offsetTop,
         ]
-
+        
     element.style.left = 
         clamp(dx, x-w/2+dx, W-w+dx) + 'px'
 

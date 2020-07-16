@@ -20,3 +20,11 @@ function resizeKeyboardImage () {
     const size = keyboard.parentNode.clientWidth / 60
     keyboard.style.fontSize = size + 'px'
 }
+
+// TODO: send messages to the worker to resize the canvas
+// See the error that this throws:
+// function resizeVisualizerCanvas() {
+//     const canvas = D('analyser-canvas')! as HTMLCanvasElement
+//         canvas.width = canvas.offsetWidth
+//         canvas.height = canvas.offsetHeight
+// }

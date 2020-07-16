@@ -10,6 +10,7 @@ import { NuniGraphRenderer, HOVER } from '../view/graph_renderer.js'
 import { NuniGraphAudioNode } from '../../webaudio2/internal.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { NuniGraph } from '../model/nunigraph.js'
+import { clipboard } from './clipboard.js'
 
 export const ActiveControllers = [] as NuniGraphController[]
 
@@ -33,7 +34,7 @@ export class NuniGraphController {
     private lastMouse_DownMsg : { type : HOVER } & Indexed
     private lastMouse_MoveMsg : { type : HOVER } & Indexed
     private selectionStart? : [number,number]
-    openWindow : Indexable<HTMLElement> // [node.id]:nodeValuesWindow
+    getOpenWindow : Indexable<HTMLElement> // [node.id]:nodeValuesWindow
     private lastCoordsOfWindow : Indexable<[number,number]>
     // private undoRedoModule : UndoRedoModule
     private createValuesWindow : CreateValuesWindow
@@ -46,7 +47,7 @@ export class NuniGraphController {
     // THIS IS NEEDED TO CHECK IF THE MOUSE ACTUALLY MOVED
     //  BECAUSE CHROME FIRES A MOUSEMOVE EVENT
     // WHEN CLICKING IN FULLSCREEN FOR SOME REASON.
-    private lastMouseXY : [number,number]
+    private lastMouse_DownXY : [number,number]
 
     private _keydown : (e : KeyboardEvent) => void
     private _mouseup : (e : MouseEvent) => void
@@ -71,11 +72,11 @@ export class NuniGraphController {
         this.lastMouse_MoveMsg = 
             this.lastMouse_DownMsg = 
             renderer.getGraphMouseTarget({ offsetX: -Infinity, offsetY: -Infinity})
-        this.openWindow = {}
+        this.getOpenWindow = {}
         this.lastCoordsOfWindow = {}
 
         this.mouseHasMovedSinceLastMouseDown = false
-        this.lastMouseXY = [0,0]
+        this.lastMouse_DownXY = [0,0]
             
         this._mouse_move = (e : MouseEvent) => {
             const { x: offsetX, y: offsetY } = this.getMousePos(e)
@@ -153,17 +154,17 @@ export class NuniGraphController {
         this.unselectNodes()
 
         this.selectedNodes = [node]
-        this.openWindow[node.id]?.classList.add('selected2')
+        this.getOpenWindow[node.id]?.classList.add('selected2')
     }
 
     unselectNodes() {
         this.selectedNodes = []
-        for (const key in this.openWindow) {
-            this.openWindow[key].classList.remove('selected2')
+        for (const key in this.getOpenWindow) {
+            this.getOpenWindow[key].classList.remove('selected2')
         }
     }
 
-    closeValuesWindow(id : number) {
+    private closeWindow(id : number) {
 
         const node = this.g.nodes.find(({ id: _id }) => _id === id)!
         if (!node) throw 'figure out what to do from here'
@@ -176,17 +177,17 @@ export class NuniGraphController {
             }
         }
 
-        const nodeWindow = this.openWindow[id]
+        const nodeWindow = this.getOpenWindow[id]
         if (nodeWindow) {
             this.lastCoordsOfWindow[id] = [nodeWindow.offsetLeft, nodeWindow.offsetTop]
             D('node-windows')!.removeChild(nodeWindow)
-            delete this.openWindow[id]
+            delete this.getOpenWindow[id]
         }
     }
 
     closeAllWindows() {
-        for (const nodeId in this.openWindow) {
-            this.closeValuesWindow(+nodeId)
+        for (const nodeId in this.getOpenWindow) {
+            this.closeWindow(+nodeId)
         }
     }
 
@@ -194,7 +195,7 @@ export class NuniGraphController {
 
         if (node.INPUT_NODE_ID) return; // This can only be deleted from its' outer scope.
         this.connectionTypePrompt.classList.remove('show')
-        this.closeValuesWindow(node.id)
+        this.closeWindow(node.id)
         this.renderer.removeFromConnectionsCache(node.id)
         this.g.deleteNode(node)
         this.unselectNodes()
@@ -202,14 +203,14 @@ export class NuniGraphController {
         this.renderer.render()
     }
 
-    private openValuesWindow(node : NuniGraphNode) {
+    private openWindow(node : NuniGraphNode) {
 
         const moveTheWindowToTheTop = (box : HTMLElement) => {
             box.style.zIndex = (++openWindowGlobalIndexThatKeepsRising).toString()
         }
 
-        if (this.openWindow[node.id]) {
-            moveTheWindowToTheTop(this.openWindow[node.id])
+        if (this.getOpenWindow[node.id]) {
+            moveTheWindowToTheTop(this.getOpenWindow[node.id])
             return;
         }
 
@@ -236,7 +237,7 @@ export class NuniGraphController {
         }
 
         const closeCallback = () => {
-            this.closeValuesWindow(node.id)
+            this.closeWindow(node.id)
         }
 
         const deleteCallBack = () => {  
@@ -258,7 +259,7 @@ export class NuniGraphController {
             return input
         }
 
-        const container =
+        const dialogBox =
             createDraggableWindow({
                 text: `${NodeLabel[node.type]}, id: ${node.id}`,
                 clickCallback,
@@ -272,23 +273,31 @@ export class NuniGraphController {
                 })
 
 
-        this.openWindow[node.id] = container
+        this.getOpenWindow[node.id] = dialogBox
 
-        container.children[1].appendChild(
+        dialogBox.children[1].appendChild(
             this.createValuesWindow(
                 node, 
                 () => this.save(),
                 deleteCallBack))
         
-        D('node-windows')!.appendChild(container)
-        moveTheWindowToTheTop(container)
+        D('node-windows')!.appendChild(dialogBox)
+        moveTheWindowToTheTop(dialogBox)
 
         if (node.id in this.lastCoordsOfWindow) {
             const [x,y] = this.lastCoordsOfWindow[node.id]
-            container.style.left = x+'px'
-            container.style.top = y+'px'
+            dialogBox.style.left = x+'px'
+            dialogBox.style.top = y+'px'
         } else {
-            UI_clamp(0, 0, container, D('nunigraph-stuff')!)
+            // Place it over the node
+            const container = D('nunigraph-stuff')!
+            const canvas = this.renderer.canvas
+            const placeUnder = node.y < .25 ? -1 : 1
+            UI_clamp(
+                node.x * canvas.offsetWidth, 
+                node.y * canvas.offsetHeight - dialogBox.offsetHeight * placeUnder,
+                dialogBox, 
+                container)
         }
     }
 
@@ -316,12 +325,12 @@ export class NuniGraphController {
     }
 
     private toggleDialogBox(node : NuniGraphNode) {
-        if (!this.openWindow[node.id]) {
-            this.openValuesWindow(node)
-            this.openWindow[node.id].classList.add('selected2')
+        if (!this.getOpenWindow[node.id]) {
+            this.openWindow(node)
+            this.getOpenWindow[node.id].classList.add('selected2')
         }
         else {
-            this.closeValuesWindow(node.id)
+            this.closeWindow(node.id)
         }
     }
 
@@ -336,7 +345,7 @@ export class NuniGraphController {
             this.lastMouse_DownMsg = 
             this.renderer.getGraphMouseTarget(e)
 
-        this.lastMouseXY = [e.offsetX, e.offsetY]
+        this.lastMouse_DownXY = [e.offsetX, e.offsetY]
 
         if (node && 
             this.selectedNodes.length &&
@@ -404,7 +413,7 @@ export class NuniGraphController {
 
                     if (!inputNode) throw 'error, this should be here'
 
-                    to.audioNode.controller.closeValuesWindow(
+                    to.audioNode.controller.closeWindow(
                         inputNode.id)
                 }
 
@@ -436,7 +445,8 @@ export class NuniGraphController {
 
     private mousemove(e : MouseEvent) {
 
-        const [x,y] = this.lastMouseXY
+        const [x,y] = this.lastMouse_DownXY
+
         // FULLSCREEEN ADD AN EXTRA MOUSEMOVE EVENT, AND FUCKS WITH THE COORDINATES >:(
         if (Math.abs(x - e.offsetX) > 1 || Math.abs(y - e.offsetY) > 1) {
             this.mouseHasMovedSinceLastMouseDown = true
@@ -503,6 +513,16 @@ export class NuniGraphController {
     }
 
     private mouseup(e : MouseEvent) {
+
+        if (e.ctrlKey && e.target === this.renderer.canvas) {
+            const X = e.offsetX / this.renderer.canvas.width
+            const Y = e.offsetY / this.renderer.canvas.height
+
+            this.selectedNodes = 
+                this.g.pasteNodes(X, Y, clipboard.nodes, clipboard.connections)
+
+            this.renderer.render(this)
+        }
         
         this.mouseIsDown = false
         this.selectionStart = undefined
@@ -555,9 +575,9 @@ export class NuniGraphController {
 
         //     // Close the ones that shouldn't be there anymore
         //     // const IDs = new Set(this.g.nodes.map(node => node.id))
-        //     // for (const nodeId in this.openWindow) {
+        //     // for (const nodeId in this.getOpenWindow) {
         //     //     if (!IDs.has(+nodeId)) {
-        //     //         this.closeValuesWindow(+nodeId)
+        //     //         this.closeWindow(+nodeId)
         //     //     }
         //     // }
         //     this.renderer.render()
@@ -585,9 +605,15 @@ export class NuniGraphController {
             }
         }
 
-        if (e.ctrlKey && e.keyCode === 83) { // ctrl + s : node reproduction function
+        else if (e.ctrlKey && e.keyCode === 83) { // ctrl + s : node reproduction function
             const nodesToCopy = 
                 this.selectedNodes.filter(node => !node.INPUT_NODE_ID)
+                // this.selectedNodes.map(node => {
+                //     const copy = { ...node }
+                //     delete copy.INPUT_NODE_ID
+                //     return copy as NuniGraphNode
+                // })
+
 
             if (nodesToCopy.length === 0) return;
             
@@ -596,10 +622,42 @@ export class NuniGraphController {
             this.selectedNodes = 
                 this.g.reproduceNodesAndConnections(nodesToCopy)
 
-            this.renderer.render({ selectedNodes: this.selectedNodes })
+            this.renderer.render(this)
 
             if (this.selectedNodes.length === 1) {
-                this.openValuesWindow(this.selectedNodes[0])
+                this.openWindow(this.selectedNodes[0])
+            }
+        }
+
+        else if (e.ctrlKey && e.keyCode === 67 || e.keyCode === 88) { // ctrl + c/x copy function
+            const nodesToCopy = 
+                this.selectedNodes.filter(node => !node.INPUT_NODE_ID)
+                // this.selectedNodes.map(node => {
+                //     const copy = { ...node }
+                //     delete copy.INPUT_NODE_ID
+                //     return copy as NuniGraphNode
+                // })
+
+            if (nodesToCopy.length === 0) return;
+
+            clipboard.nodes = nodesToCopy.map(this.g.convertNodeToNodeSettings)
+            clipboard.connections = nodesToCopy.map(node => {
+                const connectionList = []
+                for (const { id, connectionType } of this.g.oneWayConnections[node.id] || []) {
+                    const index = nodesToCopy.findIndex(node => node.id === id)
+                    if (index >= 0) {
+                        connectionList.push({ id: index, connectionType })
+                    } 
+                }
+                return connectionList
+            })
+
+            if (e.keyCode === 88) { // cut
+                for (const node of nodesToCopy) {
+                    if (node.id !== 0) {
+                        this.deleteNode(node)
+                    }
+                }
             }
         }
     }
@@ -615,7 +673,7 @@ export class NuniGraphController {
             renderer.render()
             
             if (OpensDialogBoxWhenConnectedTo[node2.type]) {
-                this.openValuesWindow(node2)
+                this.openWindow(node2)
             }
         }
 

@@ -1,3 +1,10 @@
+
+
+
+
+
+
+
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 
@@ -9,29 +16,25 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    trafficLightPosition: '0 0',
+    width: 500,
+    height: 500,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      preload: './preload.js',
     },
-    icon: __dirname + '/styles/icon.ico',
-    // frame: false,
-    // titleBarStyle: 'hidden',
-    // backgroundColor: '#111111' // 'rgb(48, 47, 48)'
-    darkTheme: true,
-    backgroundColor: '#2E2C29',
-    thickFrame: false,
-    simpleFullscreen: true,
+    icon: __dirname + '/../styles/icon.ico',
+    frame: false,
+    backgroundColor: '#111111',
+    fullscreen: true
   });
-
-  mainWindow.setMenu(null)
+  // mainWindow.setMenu(null)
 
   // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, 'index.html'));
+  mainWindow.loadFile(path.join(__dirname, '/../index.html'));
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+
 };
 
 app.on('ready', createWindow);
@@ -50,5 +53,8 @@ app.on('activate', () => {
   }
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
+
+
+
+// TODO: find out what this security warning is actually about
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
