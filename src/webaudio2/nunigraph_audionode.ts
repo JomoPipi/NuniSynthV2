@@ -85,7 +85,7 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
         }
     }
 
-    removeInput({ id } : { id: number }) {
+    removeInput({ id } : { id : number }) {
         const inputNode = this.inputs[id]
         inputNode.audioNode.disconnect()
         this.controller.renderer.removeFromConnectionsCache(inputNode.id)

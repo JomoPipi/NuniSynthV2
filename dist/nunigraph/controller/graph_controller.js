@@ -110,8 +110,8 @@ export class NuniGraphController {
             this.closeWindow(+nodeId);
         }
     }
-    deleteNode(node) {
-        if (node.INPUT_NODE_ID)
+    deleteNode(node, force) {
+        if (!force && node.INPUT_NODE_ID)
             return;
         this.connectionTypePrompt.classList.remove('show');
         this.closeWindow(node.id);

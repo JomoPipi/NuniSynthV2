@@ -96,10 +96,10 @@ export class NuniGraphRenderer {
     }
     drawGridLines(H, W, buttons = -1, selectedNodes) {
         const { ctx, g } = this;
-        ctx.lineWidth = 0.2;
+        ctx.lineWidth = 0.4;
         ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-        const gridGrap = W / 25;
-        for (let i = 0; i < W; i += gridGrap) {
+        const gridGrap = W / 20;
+        for (let i = 0; i < Math.max(W, H); i += gridGrap) {
             this.line(0, i, W, i);
             this.line(i, 0, i, H);
         }

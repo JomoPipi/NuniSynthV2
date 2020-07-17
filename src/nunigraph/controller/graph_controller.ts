@@ -191,9 +191,10 @@ export class NuniGraphController {
         }
     }
 
-    deleteNode(node : NuniGraphNode) {
-
-        if (node.INPUT_NODE_ID) return; // This can only be deleted from its' outer scope.
+    deleteNode(node : NuniGraphNode, force? : boolean) {
+        // The `force` parameter was added because of a requirement of NuniGraph.pasteNodes
+        if (!force && node.INPUT_NODE_ID) return; // This can only be deleted from its' outer scope.
+        
         this.connectionTypePrompt.classList.remove('show')
         this.closeWindow(node.id)
         this.renderer.removeFromConnectionsCache(node.id)
