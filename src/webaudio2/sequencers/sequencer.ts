@@ -7,6 +7,7 @@
 
 import { MasterClock } from './master_clock.js'
 import { VolumeNodeContainer } from '../volumenode_container.js'
+import { applyStyle, JsDial } from '../../UI_library/internal.js'
 
 type ChannelData = {
     adsr? : GainNode
@@ -25,6 +26,7 @@ export class Sequencer extends VolumeNodeContainer {
     startTime : number
     noteTime : number
     subdiv : number
+    phaseShift : number
     stepMatrix : Indexable<boolean[]>
     mutedChannel : Indexable<boolean>
     soloChannel? : string
@@ -46,6 +48,7 @@ export class Sequencer extends VolumeNodeContainer {
         this.startTime = 0
         this.noteTime = 0
         this.subdiv = 8
+        this.phaseShift = 0
         this.stepMatrix = {}
         this.mutedChannel = {}
         this.isPlaying = true
@@ -143,7 +146,7 @@ export class Sequencer extends VolumeNodeContainer {
                 // }
 
                 if (stepIsActive && (this.soloChannel == undefined || this.soloChannel === key)) {
-                    this.playStepAtTime(key, time)
+                    this.playStepAtTime(key, time + this.phaseShift)
                 }
             }
         }
@@ -304,9 +307,7 @@ export class Sequencer extends VolumeNodeContainer {
 function createBeatGrid() {
     const grid = E('div')
 
-    applyStyle(grid, {
-        marginBottom: '5px'
-    })
-
+    grid.style.marginBottom = '5px'
+    
     return grid
 }

@@ -1,5 +1,4 @@
-"use strict";
-const applyStyle = (e, style) => {
+export const applyStyle = (e, style) => {
     Object.assign(e.style, style);
 };
 //# sourceMappingURL=apply_style.js.map

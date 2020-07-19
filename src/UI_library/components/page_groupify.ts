@@ -5,7 +5,7 @@
 
 
 
-function pageGroupify(parent : HTMLElement, pageIds : string[]) {
+export function pageGroupify(parent : HTMLElement, pageIds : string[]) {
     D(pageIds[0]+'-btn')!.classList.add('selected')
     parent.onclick = (e : MouseEvent) => {
         if (e.target === parent) return;

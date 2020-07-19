@@ -5,6 +5,14 @@
 
 
 
+import { JsDial, createRadioButtonGroup } from "../UI_library/internal.js"
+
+
+
+
+
+
+
 interface SourceNode {
     start : (when : number) => void;
     stop : (when : number) => void;
@@ -157,21 +165,6 @@ const adsrDials =
         return a
     }, {} as Indexable<JsDial>)
     
-{
-    // const box = D('select-adsr')!
-    // box.onclick = function(e : MouseEvent) {
-    //     const btn = e.target
-    //     if (btn instanceof HTMLElement && btn.id.startsWith('adsr-')) {
-    //         const which = btn.id.split('-')[1].charCodeAt(0) - 65
-    //         const adsr = ADSR_Controller
-    //         adsr.index = which
-    //         adsr.render()
-    //         for (const s of ADSR) {
-    //             adsrDials[s].update((<Indexed>adsr.values[adsr.index])[s] ** .5)
-    //         }
-    //     }
-    // }
-}
 { 
     D('select-adsr')!.appendChild(createRadioButtonGroup({
         buttons: [...'ABCD'],

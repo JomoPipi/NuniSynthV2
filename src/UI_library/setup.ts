@@ -5,6 +5,14 @@
 
 
 
+import { pageGroupify } from "./components/page_groupify.js"
+
+
+
+
+
+
+
 // Group tab-swappers with their tabs
 pageGroupify(D('tab-swapper')!, [
     'graph-tab',

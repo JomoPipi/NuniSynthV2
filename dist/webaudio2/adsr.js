@@ -1,3 +1,4 @@
+import { JsDial, createRadioButtonGroup } from "../UI_library/internal.js";
 const releaseTimeConstant = 10;
 const N_ADSRs = 4;
 const defaultADSR = () => ({
@@ -96,8 +97,6 @@ const adsrDials = ADSR.reduce((a, s) => {
     a[s] = dial;
     return a;
 }, {});
-{
-}
 {
     D('select-adsr').appendChild(createRadioButtonGroup({
         buttons: [...'ABCD'],

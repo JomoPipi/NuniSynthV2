@@ -1,3 +1,4 @@
+import { applyStyle } from "../../UI_library/internal.js";
 export function createResizeableGraphEditor(audioNode) {
     const box = E('div');
     const { canvas } = audioNode;
@@ -5,9 +6,6 @@ export function createResizeableGraphEditor(audioNode) {
     const bottomRow = E('div', { className: 'full' });
     const dragCorner = E('span', {
         className: 'corner-drag-box'
-    });
-    applyStyle(dragCorner, {
-        backgroundColor: '#444'
     });
     applyStyle(topRow, {
         height: '10px'

@@ -5,7 +5,7 @@
 
 
 
-function createDraggableNumberInput(
+export function createDraggableNumberInput(
     initialValue : number, 
     mousedownFunc : () => number,
     updateFunc : (delta : number, startValue : number) => string, 

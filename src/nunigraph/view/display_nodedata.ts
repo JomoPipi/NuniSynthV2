@@ -14,6 +14,7 @@ import {
     NuniSourceNode, BufferNode2, Sequencer, 
     AudioBufferCaptureNode, NuniGraphAudioNode 
     } from '../../webaudio2/internal.js'
+import { createDraggableNumberInput, createToggleButton, applyStyle, JsDial } from '../../UI_library/internal.js'
 
 
 
@@ -193,7 +194,6 @@ function samplerControls(audioNode : BufferNode2) {
 
             value.innerText = String.fromCharCode(65 + v)
             audioNode.bufferKey = v
-            audioNode.refresh()
         }
         box.appendChild(btn)
     })

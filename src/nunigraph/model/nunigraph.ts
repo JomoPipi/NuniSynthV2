@@ -81,13 +81,10 @@ export class NuniGraph {
 
     ///////////////////////////////////////////////////////////////////////// ctrl + click paste function /////////////////////////////////////////////////////////////////////////
     pasteNodes(X : number, Y : number, _nodes : Indexed[], connections : any[]) {
+        // This function can go fuck itself, to be honest
 
-        // const xs = _nodes.map(({ x }) => x)
-        // const ys = _nodes.map(({ y }) => y)
         const centerX = _nodes.reduce((a, { x }) => a + x, 0) / _nodes.length
         const centerY = _nodes.reduce((a, { y }) => a + y, 0) / _nodes.length
-        // const w2      = (Math.max(...xs) - Math.min(...xs)) / 2
-        // const h2      = (Math.max(...ys) - Math.min(...ys)) / 2
 
         // Make nodes
         const nodes = _nodes.map(({ type, x, y, audioParamValues, audioNodeProperties }) => {
@@ -105,8 +102,12 @@ export class NuniGraph {
 
         // Make connections
         for (const indexA in nodes) {
+
+            const a = nodes[indexA]
+
             for (const { id: indexB, connectionType } of connections[indexA]) { 
-                const a = nodes[indexA]
+                if (indexA === indexB) continue
+
                 const b = nodes[indexB]
 
                 if (b.audioNode instanceof NuniGraphAudioNode) {
@@ -118,6 +119,7 @@ export class NuniGraph {
                     if (!innerInputNode) 
                         throw 'An input node with INPUT_NODE_ID = nodeA.id should exist inside node b'
         
+                    // Reassign its' connectee id
                     innerInputNode.INPUT_NODE_ID!.id = a.id
                     innerInputNode.title = `INPUT (id-${a.id})`
         
@@ -129,11 +131,45 @@ export class NuniGraph {
             }
         }
 
+        // Remove dangling inputNodes from modules
+        for (const node of nodes) {
+            
+            // Disconnect loose inputnodes
+            if (node.audioNode instanceof NuniGraphAudioNode) {
+
+                for (const moduleNode of node.audioNode.controller.g.nodes) {
+                    if (moduleNode.INPUT_NODE_ID) {
+                        const input_id = moduleNode.INPUT_NODE_ID.id
+
+                        if (!nodes.some(_node => _node.id === input_id)) {
+                            node.audioNode.controller.deleteNode(moduleNode, true)
+                        }
+                    }
+                }
+            }
+        }
+
+
         // Copy subgraph sequencer 
         for (const i in _nodes) {
             const an = nodes[i].audioNode
             if (an instanceof SubgraphSequencer) {
-                an.stepMatrix = JSON.parse(JSON.stringify(_nodes[i].audioNode.stepMatrix))
+                const matrix = _nodes[i].audioNode.stepMatrix
+
+                // Map input id to new node id
+                const matrixWithRemappedKeys = Object.keys(matrix).reduce((mat, key) => {
+                    const index = _nodes.findIndex(({ oldId }) => oldId === +key)
+                    
+                    if (index >= 0) {
+                        // The input exists and this row should be copied over
+                        // log(`remapped stepMatrix key from ${key} to ${nodes[index].id}`)
+                        mat[nodes[index].id] = matrix[key]
+                    }
+
+                    return mat
+                }, {} as Indexable<Boolean>)
+
+                an.stepMatrix = JSON.parse(JSON.stringify(matrixWithRemappedKeys))
             }
         }
 

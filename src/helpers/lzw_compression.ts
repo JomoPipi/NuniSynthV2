@@ -5,7 +5,7 @@
 
 
 
-// Credit: Google
+// Credit: Google Search / Stackoverflow
 
 export function LZW_compress(uncompressed : string) : string {
     

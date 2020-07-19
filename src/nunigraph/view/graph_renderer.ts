@@ -187,19 +187,19 @@ export class NuniGraphRenderer {
     private drawGridLines(
         H : number, 
         W : number, 
-        buttons = -1, 
+        snapNodes : boolean, 
         selectedNodes : NuniGraphNode[]) {
         const { ctx, g } = this
-        ctx.lineWidth = 0.2
+        ctx.lineWidth = 0.4
         ctx.strokeStyle = 'rgba(255,255,255,0.5)'
-        const gridGrap = W/25
+        const gridGrap = 30 // W / 25 // (W+H) / 50
 
-        for (let i = 0; i < W; i += gridGrap) {
+        for (let i = 0; i < Math.max(W, H); i += gridGrap) {
             this.line(0,i,W,i)
             this.line(i,0,i,H)
         }
         
-        if (buttons === 0) { // snap these nodes to the grid
+        if (snapNodes) { // snap these nodes to the grid
             for (const node of selectedNodes) {
                 const {x,y} = node
                 const [X,Y] = [x*W, y*H]
@@ -394,15 +394,16 @@ export class NuniGraphRenderer {
             y,
             buttons, 
             selectionStart, 
-            selectedNodes
+            selectedNodes,
             } = options as GraphRenderOptions
         const innerOptions = { ...options, H, W, selectedNodes: selectedNodes||[] }
 
         ctx.font = '15px Arial'
         ctx.clearRect(0,0,W,H)
-    
+        
         if (snapToGrid) {
-            this.drawGridLines(H, W, buttons, selectedNodes)
+            const snapNodes = buttons === 0
+            this.drawGridLines(H, W, snapNodes, selectedNodes)
         }
 
         if (selectionStart) {

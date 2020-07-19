@@ -5,7 +5,7 @@
 
 
 
-function UI_clamp(
+export function UI_clamp(
     x : number, 
     y : number, 
     element : HTMLElement,

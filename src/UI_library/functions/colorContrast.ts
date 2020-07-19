@@ -5,7 +5,7 @@
 
 
 
-function rgbaColorContrast(rgba: string) {
+export function rgbaColorContrast(rgba: string) {
     const [r,g,b] = 
         rgba.slice(
             rgba.indexOf('(')+1,

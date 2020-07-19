@@ -5,7 +5,7 @@
 
 
 
-class JsDial {
+export class JsDial {
     
     [x : string] : unknown
     private isActive : boolean
@@ -89,6 +89,8 @@ class JsDial {
             this.value = value
             this.render()
         }
+
+        this.render()
     }
 
     attachDoubleClick(func : Function) {

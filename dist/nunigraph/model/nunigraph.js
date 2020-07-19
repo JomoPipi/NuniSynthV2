@@ -46,8 +46,10 @@ export class NuniGraph {
             return this.createNewNode(type, settings);
         });
         for (const indexA in nodes) {
+            const a = nodes[indexA];
             for (const { id: indexB, connectionType } of connections[indexA]) {
-                const a = nodes[indexA];
+                if (indexA === indexB)
+                    continue;
                 const b = nodes[indexB];
                 if (b.audioNode instanceof NuniGraphAudioNode) {
                     const innerInputNode = b.audioNode.controller.g.nodes.find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === _nodes[indexA].oldId; });
@@ -61,10 +63,30 @@ export class NuniGraph {
                 this.makeConnection(a, b, connectionType);
             }
         }
+        for (const node of nodes) {
+            if (node.audioNode instanceof NuniGraphAudioNode) {
+                for (const moduleNode of node.audioNode.controller.g.nodes) {
+                    if (moduleNode.INPUT_NODE_ID) {
+                        const input_id = moduleNode.INPUT_NODE_ID.id;
+                        if (!nodes.some(_node => _node.id === input_id)) {
+                            node.audioNode.controller.deleteNode(moduleNode, true);
+                        }
+                    }
+                }
+            }
+        }
         for (const i in _nodes) {
             const an = nodes[i].audioNode;
             if (an instanceof SubgraphSequencer) {
-                an.stepMatrix = JSON.parse(JSON.stringify(_nodes[i].audioNode.stepMatrix));
+                const matrix = _nodes[i].audioNode.stepMatrix;
+                const matrixWithRemappedKeys = Object.keys(matrix).reduce((mat, key) => {
+                    const index = _nodes.findIndex(({ oldId }) => oldId === +key);
+                    if (index >= 0) {
+                        mat[nodes[index].id] = matrix[key];
+                    }
+                    return mat;
+                }, {});
+                an.stepMatrix = JSON.parse(JSON.stringify(matrixWithRemappedKeys));
             }
         }
         return nodes;

@@ -13,7 +13,7 @@ type RadioButtonOptions = {
     onclick : (data : any, index : number) => void
     }
 
-function createRadioButtonGroup({
+export function createRadioButtonGroup({
     buttons, selected, className, onclick, text
     } : RadioButtonOptions) {
 

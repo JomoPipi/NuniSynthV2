@@ -5,7 +5,17 @@
 
 
 
-function createDraggableWindow({
+import { applyStyle } from "../functions/apply_style.js"
+import { rgbaColorContrast } from "../functions/colorContrast.js"
+import { UI_clamp } from "../functions/ui_clamp.js"
+
+
+
+
+
+
+
+export function createDraggableWindow({
     text, 
     clickCallback, 
     closeCallback,

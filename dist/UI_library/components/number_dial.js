@@ -1,9 +1,16 @@
-"use strict";
-function createNumberDialComponent(initialValue, manualUpdater, props) {
+import { JsDial } from "./jsdials.js";
+export function createNumberDialComponent(initialValue, manualUpdater, props) {
     const box = E('span', {
         className: 'number-dial-component'
     });
     const dial = Object.assign(new JsDial(), props.dial);
+    if (props.ondblclick) {
+        dial.html.ondblclick = () => {
+            const newValue = props.ondblclick();
+            valueInput.value = newValue.toString();
+            dial.update(newValue);
+        };
+    }
     const valueInput = E('input', {
         className: 'number-dial-input',
         props: {

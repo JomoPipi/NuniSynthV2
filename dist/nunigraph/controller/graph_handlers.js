@@ -19,23 +19,13 @@ const contextmenu = D('graph-contextmenu');
             controller.renderer.render();
             DIRTYGLOBALS.lastControllerToOpenTheContextmenu = undefined;
         };
-        const colorbox = E('span');
-        applyStyle(colorbox, {
-            display: 'inline-block',
-            width: '18px',
-            height: '18px',
-            float: 'right',
-            opacity: 0.5,
-            margin: '2px',
-            marginLeft: '20px',
-            background: color
-        });
         const textbox = E('span', { text: NodeLabel[type] });
         const btn = E('button', {
             className: 'list-btn',
-            children: [textbox, colorbox],
+            children: [textbox],
             props: { onclick: create }
         });
+        btn.style.borderLeft = `4px solid ${color}`;
         contextmenu.appendChild(btn);
     };
     for (const key in NodeTypes) {

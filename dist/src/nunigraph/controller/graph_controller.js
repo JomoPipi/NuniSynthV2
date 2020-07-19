@@ -1,5 +1,6 @@
 import { HOVER } from '../view/graph_renderer.js';
 import { NuniGraphAudioNode } from '../../webaudio2/internal.js';
+import { clipboard } from './clipboard.js';
 export const ActiveControllers = [];
 let openWindowGlobalIndexThatKeepsRising = 0;
 export class NuniGraphController {
@@ -109,8 +110,8 @@ export class NuniGraphController {
             this.closeWindow(+nodeId);
         }
     }
-    deleteNode(node) {
-        if (node.INPUT_NODE_ID)
+    deleteNode(node, force) {
+        if (!force && node.INPUT_NODE_ID)
             return;
         this.connectionTypePrompt.classList.remove('show');
         this.closeWindow(node.id);
@@ -156,8 +157,8 @@ export class NuniGraphController {
                 this.renderer.render();
             };
             applyStyle(input, {
-                backgroundColor: '#111',
-                color: '#999',
+                backgroundColor: 'transparent',
+                color: '#111',
                 margin: '0 20px'
             });
             return input;
@@ -343,6 +344,13 @@ export class NuniGraphController {
         this.renderer.render(options);
     }
     mouseup(e) {
+        if (e.ctrlKey && e.target === this.renderer.canvas) {
+            const X = e.offsetX / this.renderer.canvas.width;
+            const Y = e.offsetY / this.renderer.canvas.height;
+            this.selectedNodes =
+                this.g.pasteNodes(X, Y, clipboard.nodes, clipboard.connections);
+            this.renderer.render(this);
+        }
         this.mouseIsDown = false;
         this.selectionStart = undefined;
         const { renderer, selectedNodes } = this;
@@ -382,16 +390,47 @@ export class NuniGraphController {
                 }
             }
         }
-        if (e.ctrlKey && e.keyCode === 83) {
+        else if (e.ctrlKey && e.keyCode === 83) {
             const nodesToCopy = this.selectedNodes.filter(node => !node.INPUT_NODE_ID);
             if (nodesToCopy.length === 0)
                 return;
             this.save();
             this.selectedNodes =
                 this.g.reproduceNodesAndConnections(nodesToCopy);
-            this.renderer.render({ selectedNodes: this.selectedNodes });
+            this.renderer.render(this);
             if (this.selectedNodes.length === 1) {
                 this.openWindow(this.selectedNodes[0]);
+            }
+        }
+        else if (e.ctrlKey && e.keyCode === 67 || e.keyCode === 88) {
+            const nodesToCopy = this.selectedNodes.filter(node => !node.INPUT_NODE_ID);
+            if (nodesToCopy.length === 0)
+                return;
+            clipboard.nodes = nodesToCopy.map(this.g.convertNodeToNodeSettings);
+            clipboard.connections = nodesToCopy.map(node => {
+                const connectionList = [];
+                for (const { id, connectionType } of this.g.oneWayConnections[node.id] || []) {
+                    const index = nodesToCopy.findIndex(node => node.id === id);
+                    if (index >= 0) {
+                        connectionList.push({ id: index, connectionType });
+                    }
+                }
+                return connectionList;
+            });
+            if (e.keyCode === 67) {
+                requestAnimationFrame(() => {
+                    this.renderer.render();
+                    requestAnimationFrame(() => {
+                        this.renderer.render({ selectedNodes: nodesToCopy });
+                    });
+                });
+            }
+            else if (e.keyCode === 88) {
+                for (const node of nodesToCopy) {
+                    if (node.id !== 0) {
+                        this.deleteNode(node);
+                    }
+                }
             }
         }
     }
@@ -422,9 +461,8 @@ export class NuniGraphController {
         prompt.innerHTML = '';
         prompt.style.zIndex = Number.MAX_SAFE_INTEGER.toString();
         for (const param of types) {
-            const btn = E('button', { text: param });
+            const btn = E('button', { text: param, className: 'connection-type-button' });
             btn.style.borderColor = ConnectionTypeColors[param];
-            btn.style.display = 'block';
             btn.onclick = () => {
                 hide_it();
                 makeConnection(param);
@@ -433,7 +471,7 @@ export class NuniGraphController {
         }
         const cancel = E('button', {
             text: 'cancel',
-            className: 'connection-btn'
+            className: 'connection-type-button'
         });
         cancel.onclick = hide_it;
         prompt.appendChild(cancel);

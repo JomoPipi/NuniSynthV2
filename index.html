@@ -22,7 +22,7 @@
     
     <script src="dist/helpers/helpers.js"         defer></script>
 
-    <script src="dist/UI_library/functions/ui_clamp.js"      defer></script>
+    <!-- <script src="dist/UI_library/functions/ui_clamp.js"      defer></script>
     <script src="dist/UI_library/functions/apply_style.js"   defer></script>
     <script src="dist/UI_library/functions/colorContrast.js" defer></script>
     <script src="dist/UI_library/components/jsdials.js"           defer></script>
@@ -31,8 +31,8 @@
     <script src="dist/UI_library/components/toggle_button.js"     defer></script>
     <script src="dist/UI_library/components/number_input.js"      defer></script>
     <script src="dist/UI_library/components/page_groupify.js"     defer></script>
-    <script src="dist/UI_library/components/radio_group.js"       defer></script>
-    <script src="dist/UI_library/setup.js"             defer></script>
+    <script src="dist/UI_library/components/radio_group.js"       defer></script> -->
+    <!-- <script src="dist/UI_library/setup.js"             defer></script> -->
     
     <script src="dist/nunigraph/model/nodeconfig.js" defer></script>
 
@@ -62,7 +62,7 @@
     <span> Create New Node.. </span>
 </div>
 
-<div id="connection-type-prompt" class="prompt"></div>
+<div id="connection-type-prompt" class="connection-type-prompt"></div>
 
 
 
@@ -74,10 +74,10 @@
     <div class="top-bar-2">
       <span>
         <div id="tab-swapper" class="flat-grid swapper">
-          <span id="graph-tab-btn" class="flex-center">         Graph          </span>
-          <span id="keyboard-tab-btn" class="flex-center">      Keyboard       </span>
-          <span id="buffer-edit-tab-btn" class="flex-center">   Buffers        </span>
-          <span id="waveform-edit-tab-btn" class="flex-center"> Waveforms      </span>
+          <span id="graph-tab-btn" class="flex-center nodrag">         Graph          </span>
+          <span id="keyboard-tab-btn" class="flex-center nodrag">      Keyboard       </span>
+          <span id="buffer-edit-tab-btn" class="flex-center nodrag">   Buffers        </span>
+          <span id="waveform-edit-tab-btn" class="flex-center nodrag"> Waveforms      </span>
         </div>
       </span>
     </div>
@@ -460,16 +460,16 @@
           <button id="snap-to-grid-btn" class="grid-icon"></button>
         </span>
 
-        <span class="flex-center full">
+        <!-- <span class="flex-center full"> -->
           <!-- <button 
             id="info-button" 
             class="info-button"> 
             i 
           </button>  -->
-          <button id="show-love" onclick="
+          <!-- <button id="show-love" onclick="
           const url = 'https:\/\/www.gofundme.com/f/nunisynth-a-graphical-audio-sandbox?utm_source=customer&utm_medium=copy_link&utm_campaign=p_cf%20share-flow-1&fbclid=IwAR3Ph-YHEoSf91OqaTD9ETf9SV0kCN2sip7wLM6pVgjuAWJD7_dr6OG85cQ'
-          window.open(url, '_blank')" class="top-bar-btn"> ❤️ </button>
-        </span>
+          window.open(url, '_blank')" class="top-bar-btn"> ❤️ </button> -->
+        <!-- </span> -->
       </span>
 
     </div>

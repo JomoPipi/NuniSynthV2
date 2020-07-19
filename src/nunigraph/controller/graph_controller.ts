@@ -11,6 +11,7 @@ import { NuniGraphAudioNode } from '../../webaudio2/internal.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { NuniGraph } from '../model/nunigraph.js'
 import { clipboard } from './clipboard.js'
+import { createDraggableWindow, UI_clamp, applyStyle } from '../../UI_library/internal.js'
 
 export const ActiveControllers = [] as NuniGraphController[]
 
@@ -25,7 +26,7 @@ export class NuniGraphController {
 /**
  *  Manipulates the graph and its' view
  */
-
+// fernando -  ganar2017
     g : NuniGraph
     private connectionTypePrompt : HTMLElement // belongs in view
     renderer : NuniGraphRenderer
@@ -191,9 +192,10 @@ export class NuniGraphController {
         }
     }
 
-    deleteNode(node : NuniGraphNode) {
-
-        if (node.INPUT_NODE_ID) return; // This can only be deleted from its' outer scope.
+    deleteNode(node : NuniGraphNode, force? : boolean) {
+        // The `force` parameter was added because of a requirement of NuniGraph.pasteNodes
+        if (!force && node.INPUT_NODE_ID) return; // This can only be deleted from its' outer scope.
+        
         this.connectionTypePrompt.classList.remove('show')
         this.closeWindow(node.id)
         this.renderer.removeFromConnectionsCache(node.id)
@@ -216,7 +218,7 @@ export class NuniGraphController {
 
 
 
-        // CUSTOM NODE STUFF
+        // CUSTOM NODE STUFF - make it an active controller
         if (node.audioNode instanceof NuniGraphAudioNode) {
             const controller = node.audioNode.controller
             if (ActiveControllers.includes(controller)) throw 'This shouldn\'t have happened'
@@ -246,16 +248,14 @@ export class NuniGraphController {
         }
 
         const titleEditor = () => {
-            const input = E('input', { props: { value: node.title||'' }})
+            const input = E('input', {
+                className: 'title-editor',
+                props: { value: node.title||'' }
+            })
             input.oninput = () => {
                 node.title = input.value
                 this.renderer.render()
             }
-            applyStyle(input, {
-                backgroundColor: '#111',
-                color: '#999',
-                margin: '0 20px'
-                })
             return input
         }
 
@@ -652,9 +652,22 @@ export class NuniGraphController {
                 return connectionList
             })
 
-            if (e.keyCode === 88) { // cut
+            if (e.keyCode === 67) {
+                // copy - flash the copied nodes
+                requestAnimationFrame(() => {
+                    this.renderer.render()
+
+                    requestAnimationFrame(() => {
+                        this.renderer.render({ selectedNodes: nodesToCopy })
+                    })
+                })
+            }
+
+            else if (e.keyCode === 88) { 
+                // cut - delete nodes
                 for (const node of nodesToCopy) {
                     if (node.id !== 0) {
+                        // TODO: optimize to be deleteNodes because render() happens in there
                         this.deleteNode(node)
                     }
                 }
@@ -704,9 +717,8 @@ export class NuniGraphController {
         prompt.style.zIndex = Number.MAX_SAFE_INTEGER.toString()
 
         for (const param of types as ConnectionType[]) {
-            const btn = E('button', { text: param })
+            const btn = E('button', { text: param, className: 'connection-type-button' })
             btn.style.borderColor = ConnectionTypeColors[param]
-            btn.style.display = 'block'
             btn.onclick = () =>
             {
                 hide_it()
@@ -717,7 +729,7 @@ export class NuniGraphController {
 
         const cancel = E('button', {
             text: 'cancel',
-            className: 'connection-btn'
+            className: 'connection-type-button'
             })
         cancel.onclick = hide_it
         prompt.appendChild(cancel)

@@ -66,6 +66,7 @@
     width: 10px;
     height: 10px;
     cursor: nwse-resize;
+    background-color: #444;
 }
 
 .number-dial-input::-webkit-outer-spin-button,
@@ -77,11 +78,16 @@
     background-color: $color1;
     width: 60px;
     color: $color5; 
+    display: block;
 }
 
 .number-dial-component {
     display: inline-block;
     text-align: start;
-    width: 100px;
-    height: 100px;
+}
+
+.title-editor {
+    background-color: transparent;
+    color: #111;
+    margin: 0 20px;
 }

@@ -5,7 +5,15 @@
 
 
 
-function createNumberDialComponent(
+import { JsDial } from "./jsdials.js"
+
+
+
+
+
+
+
+export function createNumberDialComponent(
     initialValue : number, 
     manualUpdater : (value : number) => void,
     props : Indexed) {
@@ -15,6 +23,14 @@ function createNumberDialComponent(
         })
     
     const dial = Object.assign(new JsDial(), props.dial)
+    
+    if (props.ondblclick) {
+        dial.html.ondblclick = () => {
+            const newValue = props.ondblclick()
+            valueInput.value = newValue.toString()
+            dial.update(newValue)
+        }
+    }
 
     const valueInput = E('input', {
         className: 'number-dial-input',

@@ -94,16 +94,16 @@ export class NuniGraphRenderer {
         this.line(x, y, X, Y);
         this.drawDirectionTriangle(X, Y, angle, x >= X);
     }
-    drawGridLines(H, W, buttons = -1, selectedNodes) {
+    drawGridLines(H, W, snapNodes, selectedNodes) {
         const { ctx, g } = this;
-        ctx.lineWidth = 0.2;
+        ctx.lineWidth = 0.4;
         ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-        const gridGrap = W / 25;
-        for (let i = 0; i < W; i += gridGrap) {
+        const gridGrap = 30;
+        for (let i = 0; i < Math.max(W, H); i += gridGrap) {
             this.line(0, i, W, i);
             this.line(i, 0, i, H);
         }
-        if (buttons === 0) {
+        if (snapNodes) {
             for (const node of selectedNodes) {
                 const { x, y } = node;
                 const [X, Y] = [x * W, y * H];
@@ -231,12 +231,13 @@ export class NuniGraphRenderer {
         const nodes = g.nodes;
         const W = canvas.width = canvas.offsetWidth;
         const H = canvas.height = canvas.offsetHeight;
-        const { x, y, buttons, selectionStart, selectedNodes } = options;
+        const { x, y, buttons, selectionStart, selectedNodes, } = options;
         const innerOptions = Object.assign(Object.assign({}, options), { H, W, selectedNodes: selectedNodes || [] });
         ctx.font = '15px Arial';
         ctx.clearRect(0, 0, W, H);
         if (snapToGrid) {
-            this.drawGridLines(H, W, buttons, selectedNodes);
+            const snapNodes = buttons === 0;
+            this.drawGridLines(H, W, snapNodes, selectedNodes);
         }
         if (selectionStart) {
             const [X, Y] = selectionStart;

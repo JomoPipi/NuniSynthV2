@@ -3,13 +3,15 @@
 
 
 
+
+
 type ToggleButtonOptions = {
     update? : (on : boolean) => void
     text? : string
     className? : string
     }
 
-function createToggleButton(
+export function createToggleButton(
     obj : Indexed,
     prop : string,
     options : ToggleButtonOptions

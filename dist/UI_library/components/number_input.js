@@ -1,5 +1,4 @@
-"use strict";
-function createDraggableNumberInput(initialValue, mousedownFunc, updateFunc, manualUpdater) {
+export function createDraggableNumberInput(initialValue, mousedownFunc, updateFunc, manualUpdater) {
     const valueInput = E('input', {
         className: 'number-grab',
         props: {
