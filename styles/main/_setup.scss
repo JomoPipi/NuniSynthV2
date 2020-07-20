@@ -54,7 +54,7 @@ button {
 .panel {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 5% 95%;
+    grid-template-rows: 25px calc(100% - 25px);
     width: 100%;
     height: 100%;
 }
@@ -63,12 +63,6 @@ button {
 .top-bar {
     background: $color0;
 }
-
-// .the-three-panels {
-//     display: grid;
-//     grid-template-columns: 20% 30% 50%;
-//     grid-template-rows: 1fr;
-// }
 
 .the-two-panels {
     display: grid;
@@ -86,9 +80,9 @@ button {
     padding: 0% 4%;
 }
 
-.top-bar-2 {
+.main-top-bar {
     -webkit-app-region: drag;
-    background: $color4;
+    background: black;
     // linear-gradient($color1,darken($color1, 4%));
     box-sizing: border-box;
 

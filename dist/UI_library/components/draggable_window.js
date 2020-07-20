@@ -9,9 +9,11 @@ export function createDraggableWindow({ text, clickCallback, closeCallback, colo
     box.style.top = '50vh';
     const bar = E('div', { text });
     const exitBtn = E('button', { text: 'x' });
+    const size = 25;
+    const sizePx = `${size}px`;
     box.appendChild(bar);
     applyStyle(bar, {
-        height: '30px',
+        height: sizePx,
         width: '100%',
         background: color || '#555',
         color: rgbaColorContrast(color || '#555'),
@@ -25,11 +27,11 @@ export function createDraggableWindow({ text, clickCallback, closeCallback, colo
         boxSizing: 'border-box',
         backgroundColor: 'inherit',
         color: 'inherit',
-        height: '30px',
-        width: '30px',
+        height: sizePx,
+        width: sizePx,
         float: 'right',
         textAlign: 'center',
-        lineHeight: '30px'
+        lineHeight: sizePx
     });
     if (content)
         bar.appendChild(content);

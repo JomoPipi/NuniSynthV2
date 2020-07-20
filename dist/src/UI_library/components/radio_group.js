@@ -1,5 +1,4 @@
-"use strict";
-function createRadioButtonGroup({ buttons, selected, className, onclick, text }) {
+export function createRadioButtonGroup({ buttons, selected, className, onclick, text }) {
     const box = E('span', {
         text,
         children: [E('br')],

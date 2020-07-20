@@ -401,7 +401,7 @@ export class NuniGraphController {
                 this.openWindow(this.selectedNodes[0]);
             }
         }
-        else if (e.ctrlKey && e.keyCode === 67 || e.keyCode === 88) {
+        else if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 88)) {
             const nodesToCopy = this.selectedNodes.filter(node => !node.INPUT_NODE_ID);
             if (nodesToCopy.length === 0)
                 return;

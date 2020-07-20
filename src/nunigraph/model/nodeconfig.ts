@@ -258,11 +258,14 @@ interface CustomAudioNodeProperties
     nSteps?      : number
     adsrIndex?   : number
     graphCode?   : string
+    phaseShift?  : number
 }
 
 const Transferable_AudioNode_Properties =                             // TODO: remove dirty dirty
-    'kbMode,type,subdiv,isInSync,bufferKey,nSteps,adsrIndex,graphCode,stepMatrix,channelData'
-    .split(',')
+    `kbMode,type,subdiv,isInSync,bufferKey
+    nSteps,adsrIndex,graphCode,stepMatrix
+    channelData,phaseShift`
+    .split(/,|\n/)
     .reduce((acc,prop) => 
         ({ ...acc, [prop]: true })
     , {} as Indexed)

@@ -11,7 +11,7 @@ import { NuniGraphAudioNode } from '../../webaudio2/internal.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { NuniGraph } from '../model/nunigraph.js'
 import { clipboard } from './clipboard.js'
-import { createDraggableWindow, UI_clamp, applyStyle } from '../../UI_library/internal.js'
+import { createDraggableWindow, UI_clamp } from '../../UI_library/internal.js'
 
 export const ActiveControllers = [] as NuniGraphController[]
 
@@ -26,7 +26,7 @@ export class NuniGraphController {
 /**
  *  Manipulates the graph and its' view
  */
-// fernando -  ganar2017
+
     g : NuniGraph
     private connectionTypePrompt : HTMLElement // belongs in view
     renderer : NuniGraphRenderer
@@ -629,7 +629,9 @@ export class NuniGraphController {
             }
         }
 
-        else if (e.ctrlKey && e.keyCode === 67 || e.keyCode === 88) { // ctrl + c/x copy function
+        else if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 88)) { 
+            // Do the ctrl + c/x copy function
+
             const nodesToCopy = 
                 this.selectedNodes.filter(node => !node.INPUT_NODE_ID)
                 // this.selectedNodes.map(node => {

@@ -1,31 +1,12 @@
 import { BufferSequencer } from '../../webaudio2/internal.js';
+import { createToggleButton, createRadioButtonGroup, createNumberDialComponent } from '../../UI_library/internal.js';
 export function sequencerControls(an) {
     const controls = E('div');
     controls.style.minWidth = '400px';
     controls.appendChild(createTopRowControls(an));
     an.setupGrid();
     controls.appendChild(an.HTMLGrid);
-    add_or_remove_inputs: {
-        if (an instanceof BufferSequencer) {
-            ;
-            ['-', '+'].forEach((text, i) => {
-                const btn = E('button', {
-                    text,
-                    className: 'top-bar-btn'
-                });
-                btn.onclick = () => {
-                    if (text === '+') {
-                        an.addInput();
-                    }
-                    else {
-                        an.removeInput();
-                    }
-                    an.setupGrid();
-                };
-                controls.appendChild(btn);
-            });
-        }
-    }
+    controls.appendChild(createBottomRowControls(an));
     return controls;
 }
 const subdivisionList = [
@@ -116,5 +97,41 @@ function createTopRowControls(an) {
         }));
     }
     return controls;
+}
+function createBottomRowControls(an) {
+    const row = E('div', { className: 'flex-center' });
+    if (an instanceof BufferSequencer) {
+        const box = E('span');
+        ['-', '+'].forEach((text, i) => {
+            const btn = E('button', {
+                text,
+                className: 'top-bar-btn'
+            });
+            btn.onclick = () => {
+                if (text === '+') {
+                    an.addInput();
+                }
+                else {
+                    an.removeInput();
+                }
+                an.setupGrid();
+            };
+            box.appendChild(btn);
+        });
+        row.appendChild(box);
+    }
+    const box = E('span', { text: 'p-shift' });
+    const phaseShift = createNumberDialComponent(0, (value) => an.phaseShift = value, { dial: {
+            sensitivity: 2 ** -10,
+            min: 0,
+            max: 1,
+            rounds: 1,
+            size: 25
+        },
+        ondblclick: () => an.phaseShift = 0
+    });
+    box.appendChild(phaseShift);
+    row.appendChild(box);
+    return row;
 }
 //# sourceMappingURL=sequencer_controls.js.map

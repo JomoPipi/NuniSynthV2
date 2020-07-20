@@ -1,5 +1,4 @@
-"use strict";
-class JsDial {
+export class JsDial {
     constructor() {
         this.dial = E('div', {
             className: 'js-dial'
@@ -57,6 +56,7 @@ class JsDial {
             this.value = value;
             this.render();
         };
+        this.render();
     }
     attachDoubleClick(func) {
         this.dial.ondblclick = () => {

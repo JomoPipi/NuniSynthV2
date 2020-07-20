@@ -1,5 +1,4 @@
-"use strict";
-function UI_clamp(x, y, element, container) {
+export function UI_clamp(x, y, element, container) {
     const [w, h, W, H, dx, dy] = [
         element.offsetWidth + 2,
         element.offsetHeight + 2,

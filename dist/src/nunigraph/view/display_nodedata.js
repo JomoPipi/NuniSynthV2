@@ -3,6 +3,7 @@ import { BufferUtils } from '../../buffer_utils/internal.js';
 import { audioCaptureNodeControls } from './audio_capture_controls.js';
 import { createResizeableGraphEditor } from './resizeable_graph_editor.js';
 import { NuniSourceNode, BufferNode2, Sequencer, AudioBufferCaptureNode, NuniGraphAudioNode } from '../../webaudio2/internal.js';
+import { createDraggableNumberInput, createToggleButton, applyStyle, JsDial } from '../../UI_library/internal.js';
 export function createValuesWindow(node, saveCallback, deleteCallback) {
     const controls = E('div');
     controls.appendChild(showSubtypes(node, saveCallback));
@@ -110,7 +111,6 @@ function samplerControls(audioNode) {
             const v = clamp(0, audioNode.bufferKey + Math.sign(i - .5), BufferUtils.nBuffers - 1);
             value.innerText = String.fromCharCode(65 + v);
             audioNode.bufferKey = v;
-            audioNode.refresh();
         };
         box.appendChild(btn);
     });

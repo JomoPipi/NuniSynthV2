@@ -1,4 +1,4 @@
-"use strict";
+import { pageGroupify } from "./components/page_groupify.js";
 pageGroupify(D('tab-swapper'), [
     'graph-tab',
     'keyboard-tab',

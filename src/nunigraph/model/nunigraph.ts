@@ -81,13 +81,16 @@ export class NuniGraph {
 
     ///////////////////////////////////////////////////////////////////////// ctrl + click paste function /////////////////////////////////////////////////////////////////////////
     pasteNodes(X : number, Y : number, _nodes : Indexed[], connections : any[]) {
-        // This function can go fuck itself, to be honest
 
         const centerX = _nodes.reduce((a, { x }) => a + x, 0) / _nodes.length
         const centerY = _nodes.reduce((a, { y }) => a + y, 0) / _nodes.length
 
         // Make nodes
-        const nodes = _nodes.map(({ type, x, y, audioParamValues, audioNodeProperties }) => {
+        const nodes = _nodes.map(({ 
+            type, x, y, 
+            audioParamValues, 
+            audioNodeProperties, 
+            INPUT_NODE_ID, title }) => {
 
             const newX = clamp(0, x - centerX + X, 1)
             const newY = clamp(0, y - centerY + Y, 1)
@@ -95,10 +98,14 @@ export class NuniGraph {
                 x: newX,
                 y: newY,
                 audioParamValues,
-                audioNodeProperties
+                audioNodeProperties,
+                title: INPUT_NODE_ID ? undefined : title
             }
+
             return this.createNewNode(type, settings)
         })
+
+        const retainedInputs = new Set()
 
         // Make connections
         for (const indexA in nodes) {
@@ -106,7 +113,6 @@ export class NuniGraph {
             const a = nodes[indexA]
 
             for (const { id: indexB, connectionType } of connections[indexA]) { 
-                if (indexA === indexB) continue
 
                 const b = nodes[indexB]
 
@@ -122,6 +128,7 @@ export class NuniGraph {
                     // Reassign its' connectee id
                     innerInputNode.INPUT_NODE_ID!.id = a.id
                     innerInputNode.title = `INPUT (id-${a.id})`
+                    retainedInputs.add(a.id)
         
                     b.audioNode.inputs[a.id] = innerInputNode
                     delete b.audioNode.inputs[_nodes[indexA].oldId]
@@ -130,18 +137,20 @@ export class NuniGraph {
                 this.makeConnection(a, b, connectionType)
             }
         }
-
+        log ('r-inputs =',retainedInputs)
         // Remove dangling inputNodes from modules
         for (const node of nodes) {
             
             // Disconnect loose inputnodes
             if (node.audioNode instanceof NuniGraphAudioNode) {
 
-                for (const moduleNode of node.audioNode.controller.g.nodes) {
+                // Without spreading the array, we would skip over indexes
+                // Because deleteNode splices the array
+                for (const moduleNode of [...node.audioNode.controller.g.nodes]) {
                     if (moduleNode.INPUT_NODE_ID) {
                         const input_id = moduleNode.INPUT_NODE_ID.id
 
-                        if (!nodes.some(_node => _node.id === input_id)) {
+                        if (!retainedInputs.has(input_id)) {
                             node.audioNode.controller.deleteNode(moduleNode, true)
                         }
                     }

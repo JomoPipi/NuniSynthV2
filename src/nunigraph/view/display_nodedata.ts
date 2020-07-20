@@ -101,7 +101,7 @@ function warningButton(type : NodeTypes) {
 function gainControls(node : NuniGraphNode) {
     const value = node.audioNode.gain.value
     
-    const dial = new JsDial()
+    const dial = new JsDial(1)
     dial.min = 0.1
     dial.max = Math.SQRT2
     dial.value = value**(1/4.0)

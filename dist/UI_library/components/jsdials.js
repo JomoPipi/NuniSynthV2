@@ -1,10 +1,14 @@
+const classes = [
+    'shadow-knob',
+    'shadow-knob2'
+];
 export class JsDial {
-    constructor() {
+    constructor(classIndex) {
         this.dial = E('div', {
             className: 'js-dial'
         });
         this.html = E('div', {
-            className: 'shadow-knob',
+            className: classes[classIndex || 0],
             children: [this.dial]
         });
         this.isActive = false;

@@ -1,5 +1,7 @@
-"use strict";
-function createDraggableWindow({ text, clickCallback, closeCallback, color, content }) {
+import { applyStyle } from "../functions/apply_style.js";
+import { rgbaColorContrast } from "../functions/colorContrast.js";
+import { UI_clamp } from "../functions/ui_clamp.js";
+export function createDraggableWindow({ text, clickCallback, closeCallback, color, content }) {
     const box = E('div', {
         className: 'window show'
     });

@@ -121,7 +121,7 @@ function createBottomRowControls(an) {
         row.appendChild(box);
     }
     const box = E('span', { text: 'p-shift' });
-    const phaseShift = createNumberDialComponent(0, (value) => an.phaseShift = value, { dial: {
+    const phaseShift = createNumberDialComponent(an.phaseShift || 0, (value) => an.phaseShift = value, { dial: {
             sensitivity: 2 ** -10,
             min: 0,
             max: 1,

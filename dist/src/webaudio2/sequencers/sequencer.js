@@ -1,5 +1,6 @@
 import { MasterClock } from './master_clock.js';
 import { VolumeNodeContainer } from '../volumenode_container.js';
+import { applyStyle, JsDial } from '../../UI_library/internal.js';
 export class Sequencer extends VolumeNodeContainer {
     constructor(ctx) {
         super(ctx);
@@ -9,6 +10,7 @@ export class Sequencer extends VolumeNodeContainer {
         this.startTime = 0;
         this.noteTime = 0;
         this.subdiv = 8;
+        this.phaseShift = 0;
         this.stepMatrix = {};
         this.mutedChannel = {};
         this.isPlaying = true;
@@ -88,7 +90,7 @@ export class Sequencer extends VolumeNodeContainer {
                     (_b = this.HTMLBoxes[key][lastStep]) === null || _b === void 0 ? void 0 : _b.classList.remove('highlighted');
                 }
                 if (stepIsActive && (this.soloChannel == undefined || this.soloChannel === key)) {
-                    this.playStepAtTime(key, time);
+                    this.playStepAtTime(key, time + this.phaseShift);
                 }
             }
         }
@@ -216,9 +218,7 @@ export class Sequencer extends VolumeNodeContainer {
 }
 function createBeatGrid() {
     const grid = E('div');
-    applyStyle(grid, {
-        marginBottom: '5px'
-    });
+    grid.style.marginBottom = '5px';
     return grid;
 }
 //# sourceMappingURL=sequencer.js.map

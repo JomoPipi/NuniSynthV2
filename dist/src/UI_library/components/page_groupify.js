@@ -1,5 +1,4 @@
-"use strict";
-function pageGroupify(parent, pageIds) {
+export function pageGroupify(parent, pageIds) {
     D(pageIds[0] + '-btn').classList.add('selected');
     parent.onclick = (e) => {
         if (e.target === parent)

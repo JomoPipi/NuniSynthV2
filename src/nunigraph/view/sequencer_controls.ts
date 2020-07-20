@@ -204,7 +204,7 @@ function createBottomRowControls(an : Sequencer) {
 
     const box = E('span', { text: 'p-shift' })
     const phaseShift = createNumberDialComponent(
-        0,
+        an.phaseShift || 0,
         (value : number) => an.phaseShift = value, 
         {   dial: {
                 sensitivity: 2**-10,

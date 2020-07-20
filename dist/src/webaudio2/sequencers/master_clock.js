@@ -1,3 +1,4 @@
+import { createNumberDialComponent } from "../../UI_library/internal.js";
 let activated = false, isPaused = false;
 export const MasterClock = {
     tempo: 120,

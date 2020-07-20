@@ -5,6 +5,11 @@
 
 
 
+const classes = [
+    'shadow-knob',
+    'shadow-knob2'
+    ]
+
 export class JsDial {
     
     [x : string] : unknown
@@ -22,14 +27,14 @@ export class JsDial {
     rounds : number
     update : (value : number) => void
 
-    constructor() {
+    constructor(classIndex? : number) {
         
         this.dial = E('div', {
             className: 'js-dial'
             })
         
         this.html = E('div', {
-            className: 'shadow-knob',
+            className: classes[classIndex || 0],
             children: [this.dial]
             }) 
             

@@ -1,6 +1,7 @@
 import { HOVER } from '../view/graph_renderer.js';
 import { NuniGraphAudioNode } from '../../webaudio2/internal.js';
 import { clipboard } from './clipboard.js';
+import { createDraggableWindow, UI_clamp } from '../../UI_library/internal.js';
 export const ActiveControllers = [];
 let openWindowGlobalIndexThatKeepsRising = 0;
 export class NuniGraphController {
@@ -151,16 +152,14 @@ export class NuniGraphController {
             this.deleteNode(node);
         };
         const titleEditor = () => {
-            const input = E('input', { props: { value: node.title || '' } });
+            const input = E('input', {
+                className: 'title-editor',
+                props: { value: node.title || '' }
+            });
             input.oninput = () => {
                 node.title = input.value;
                 this.renderer.render();
             };
-            applyStyle(input, {
-                backgroundColor: 'transparent',
-                color: '#111',
-                margin: '0 20px'
-            });
             return input;
         };
         const dialogBox = createDraggableWindow({
