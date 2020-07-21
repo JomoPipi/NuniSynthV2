@@ -276,7 +276,7 @@ export class NuniGraphRenderer {
         for (const id in connectionsCache) {
             const { x: X, y: Y } = connectionsCache[id];
             if (distance(x, y, X, Y) < triangleRadius) {
-                return { type: HOVER.CONNECTION, id };
+                return { type: HOVER.CONNECTION, id: +id };
             }
         }
         return { type: HOVER.EMPTY };

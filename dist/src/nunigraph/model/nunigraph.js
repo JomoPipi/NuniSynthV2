@@ -34,22 +34,22 @@ export class NuniGraph {
     pasteNodes(X, Y, _nodes, connections) {
         const centerX = _nodes.reduce((a, { x }) => a + x, 0) / _nodes.length;
         const centerY = _nodes.reduce((a, { y }) => a + y, 0) / _nodes.length;
-        const nodes = _nodes.map(({ type, x, y, audioParamValues, audioNodeProperties }) => {
+        const nodes = _nodes.map(({ type, x, y, audioParamValues, audioNodeProperties, INPUT_NODE_ID, title }) => {
             const newX = clamp(0, x - centerX + X, 1);
             const newY = clamp(0, y - centerY + Y, 1);
             const settings = {
                 x: newX,
                 y: newY,
                 audioParamValues,
-                audioNodeProperties
+                audioNodeProperties,
+                title: INPUT_NODE_ID ? undefined : title
             };
             return this.createNewNode(type, settings);
         });
+        const retainedInputs = new Set();
         for (const indexA in nodes) {
             const a = nodes[indexA];
             for (const { id: indexB, connectionType } of connections[indexA]) {
-                if (indexA === indexB)
-                    continue;
                 const b = nodes[indexB];
                 if (b.audioNode instanceof NuniGraphAudioNode) {
                     const innerInputNode = b.audioNode.controller.g.nodes.find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === _nodes[indexA].oldId; });
@@ -57,6 +57,7 @@ export class NuniGraph {
                         throw 'An input node with INPUT_NODE_ID = nodeA.id should exist inside node b';
                     innerInputNode.INPUT_NODE_ID.id = a.id;
                     innerInputNode.title = `INPUT (id-${a.id})`;
+                    retainedInputs.add(a.id);
                     b.audioNode.inputs[a.id] = innerInputNode;
                     delete b.audioNode.inputs[_nodes[indexA].oldId];
                 }
@@ -65,10 +66,10 @@ export class NuniGraph {
         }
         for (const node of nodes) {
             if (node.audioNode instanceof NuniGraphAudioNode) {
-                for (const moduleNode of node.audioNode.controller.g.nodes) {
+                for (const moduleNode of [...node.audioNode.controller.g.nodes]) {
                     if (moduleNode.INPUT_NODE_ID) {
                         const input_id = moduleNode.INPUT_NODE_ID.id;
-                        if (!nodes.some(_node => _node.id === input_id)) {
+                        if (!retainedInputs.has(input_id)) {
                             node.audioNode.controller.deleteNode(moduleNode, true);
                         }
                     }
@@ -105,6 +106,9 @@ export class NuniGraph {
         };
         if (!INPUT_NODE_ID)
             settings.title = title;
+        if (node.type === NodeTypes.B_SEQ) {
+            log('stepMatrix =', settings.audioNodeProperties.stepMatrix);
+        }
         return this.createNewNode(type, settings);
     }
     reproduceNodesAndConnections(nodes) {

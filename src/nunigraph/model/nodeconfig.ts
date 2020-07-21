@@ -248,27 +248,6 @@ const sliderFactor : { readonly [key in AudioParams] : number } =
     offset:       10**-2
 }
 
-const Transferable_AudioNode_Properties = 
-    { type       : true
-    , kbMode     : true
-    , subdiv     : true
-    , isInSync   : true
-    , bufferKey  : true
-    , nSteps     : true
-    , adsrIndex  : true
-    , graphCode  : true
-    , stepMatrix : true
-    , phaseShift : true
-    }
-    // const Transferable_AudioNode_Properties =
-    // `kbMode,type,subdiv,isInSync,bufferKey
-    // nSteps,adsrIndex,graphCode,stepMatrix
-    // channelData,phaseShift`
-    //     .split(/,|\n/)
-    //     .reduce((acc,prop) => 
-    //         ({ ...acc, [prop]: true })
-    //     , {} as {  })
-
 interface CustomAudioNodeProperties
 {
     kbMode?      : boolean
@@ -283,6 +262,20 @@ interface CustomAudioNodeProperties
     phaseShift?  : number
 }
 
+const Transferable_AudioNode_Properties 
+: { [key in keyof CustomAudioNodeProperties] : true } = 
+    { type       : true
+    , kbMode     : true
+    , subdiv     : true
+    , isInSync   : true
+    , bufferKey  : true
+    , nSteps     : true
+    , adsrIndex  : true
+    , graphCode  : true
+    , stepMatrix : true
+    , phaseShift : true
+    }
+
 // TODO: get rid of this by refactoring sequencers to compose Sequencer rather than inherit
 // only SGS uses this
 const SGS_MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade = 
@@ -291,7 +284,7 @@ const SGS_MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade =
     .reduce((a,prop) =>
         (a[prop] = true, a), <Indexed>{})
 
-type NodeSettings = { 
+type NodeCreationSettings = { 
     x : number
     y : number
     audioParamValues : Indexable<number>   // Uses draggable number inputs

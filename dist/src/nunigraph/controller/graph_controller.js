@@ -220,12 +220,12 @@ export class NuniGraphController {
         this.mouseHasMovedSinceLastMouseDown = false;
         this.hideContextMenu();
         this.mouseIsDown = true;
-        const { type, id, node } = this.lastMouse_DownMsg =
+        const hoverMsg = this.lastMouse_DownMsg =
             this.renderer.getGraphMouseTarget(e);
+        const { id, node } = hoverMsg;
         this.lastMouse_DownXY = [e.offsetX, e.offsetY];
-        if (node &&
-            this.selectedNodes.length &&
-            this.selectedNodes.includes(node)) {
+        if ((hoverMsg.type === HOVER.EDGE || hoverMsg.type === HOVER.SELECT) &&
+            this.selectedNodes.includes(hoverMsg.node)) {
             const nodes = this.selectedNodes;
             const o = {
                 top: nodes.reduce((a, node) => Math.max(a, node.y), 0),
@@ -281,7 +281,7 @@ export class NuniGraphController {
                 this.selectionStart = [x, y];
                 this.renderer.render();
             }
-        })[type]();
+        })[hoverMsg.type]();
         const deselectNodesOfOtherGraphs = () => {
             for (const controller of ActiveControllers) {
                 if (controller !== this) {
@@ -299,7 +299,7 @@ export class NuniGraphController {
         }
         const isPressing = e.buttons === 1 &&
             this.mouseIsDown;
-        const { type, id, node } = this.renderer.getGraphMouseTarget(e);
+        const msg = this.renderer.getGraphMouseTarget(e);
         const { width: W, height: H } = this.renderer.canvas;
         const { selectedNodes } = this;
         if (!this.selectionStart &&
@@ -323,20 +323,26 @@ export class NuniGraphController {
             }
         }
         const { type: lastType } = this.lastMouse_MoveMsg;
-        if (!node
+        const { type } = msg;
+        if (type !== HOVER.SELECT
+            && type !== HOVER.EDGE
             && lastType === type
             && !this.renderer.fromNode
             && !isPressing
             && !this.selectionStart) {
             return;
         }
-        this.lastMouse_MoveMsg = { type, id, node };
+        this.lastMouse_MoveMsg = msg;
+        const hover_id = msg.type === HOVER.CONNECTION
+            ? msg.id
+            : msg.type !== HOVER.EMPTY
+                ? msg.node.id : undefined;
         const options = {
             x: e.offsetX,
             y: e.offsetY,
             buttons: e.buttons,
             hover_type: type,
-            hover_id: node ? node.id : id,
+            hover_id,
             selectionStart: this.selectionStart,
             selectedNodes: this.getNodesInBox(e.offsetX, e.offsetY)
         };
@@ -354,21 +360,22 @@ export class NuniGraphController {
         this.selectionStart = undefined;
         const { renderer, selectedNodes } = this;
         const fromNode = renderer.fromNode;
-        const { type, id, node } = renderer.getGraphMouseTarget(e);
+        const msg = renderer.getGraphMouseTarget(e);
         if (!fromNode) {
-            if (!this.mouseHasMovedSinceLastMouseDown && node &&
-                node === this.lastMouse_DownMsg.node) {
-                this.toggleDialogBox(node);
+            if (!this.mouseHasMovedSinceLastMouseDown &&
+                (msg.type === HOVER.SELECT || msg.type === HOVER.EDGE) &&
+                msg.node === this.lastMouse_DownMsg.node) {
+                this.toggleDialogBox(msg.node);
             }
             renderer.render({ selectedNodes });
             return;
         }
-        if (node === fromNode) {
+        if (msg.node === fromNode) {
             renderer.fromNode = null;
             renderer.render();
             return;
         }
-        const do_it = () => this.promptUserToSelectConnectionType(fromNode, node, e.clientX, e.clientY);
+        const do_it = () => this.promptUserToSelectConnectionType(fromNode, msg.node, e.clientX, e.clientY);
         const render = () => renderer.render({ selectedNodes });
         renderer.fromNode = null;
         ({
@@ -376,7 +383,7 @@ export class NuniGraphController {
             [HOVER.SELECT]: do_it,
             [HOVER.CONNECTION]: render,
             [HOVER.EMPTY]: render
-        })[type]();
+        })[msg.type]();
     }
     keydown(e) {
         if (e.keyCode === 46 || (ISMAC && e.keyCode === 8)) {
@@ -401,7 +408,7 @@ export class NuniGraphController {
                 this.openWindow(this.selectedNodes[0]);
             }
         }
-        else if (e.ctrlKey && e.keyCode === 67 || e.keyCode === 88) {
+        else if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 88)) {
             const nodesToCopy = this.selectedNodes.filter(node => !node.INPUT_NODE_ID);
             if (nodesToCopy.length === 0)
                 return;

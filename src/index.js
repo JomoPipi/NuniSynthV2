@@ -27,6 +27,7 @@ const createWindow = () => {
     backgroundColor: '#111111',
     fullscreen: true
   });
+  
   // mainWindow.setMenu(null)
 
   // and load the index.html of the app.

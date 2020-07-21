@@ -13,7 +13,7 @@ export enum HOVER { EDGE, SELECT, CONNECTION, EMPTY }
 export type HoverResponse 
     = { type : HOVER.SELECT, node : NuniGraphNode, id? : null }
     | { type : HOVER.EDGE, node : NuniGraphNode, id? : null }
-    | { type : HOVER.CONNECTION, node? : null, id : number }
+    | { type : HOVER.CONNECTION, node? : null, id : string }
     | { type : HOVER.EMPTY, node? : null, id? : null }
 
 type GraphRenderOptions = {
@@ -465,7 +465,7 @@ export class NuniGraphRenderer {
         for (const id in connectionsCache) {
             const { x:X, y:Y } = connectionsCache[id]
             if (distance(x, y, X, Y) < triangleRadius) {
-                return { type: HOVER.CONNECTION, id: +id }
+                return { type: HOVER.CONNECTION, id }
             }
         }
         

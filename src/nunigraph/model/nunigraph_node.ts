@@ -44,7 +44,7 @@ type AudioNodeMap = {
 //     readonly INPUT_NODE_ID? : { id : number }
 
     
-//     constructor(id : number, type : NodeTypes, settings : NodeSettings) {
+//     constructor(id : number, type : NodeTypes, settings : NodeCreationSettings) {
 
 
 type AudioNode2<T extends NodeTypes> 
@@ -63,7 +63,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
     readonly INPUT_NODE_ID? : { id : number }
 
     
-    constructor(id : number, type : T, settings : NodeSettings) {
+    constructor(id : number, type : T, settings : NodeCreationSettings) {
 
         // Change display: {x,y} to just x,y later to save space on the string conversions
         // (will require changing/throwing away all currently saved graphs :/)

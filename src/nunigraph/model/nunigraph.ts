@@ -63,7 +63,7 @@ export class NuniGraph {
 
 
 
-    createNewNode(type : NodeTypes, settings? : NodeSettings) {
+    createNewNode(type : NodeTypes, settings? : NodeCreationSettings) {
 
         if (!settings) {
             settings = defaultNodeSettings()
@@ -212,7 +212,7 @@ export class NuniGraph {
             audioParamValues,
             audioNodeProperties,
             INPUT_NODE_ID
-            } as NodeSettings
+            } as NodeCreationSettings
 
         if (!INPUT_NODE_ID) settings.title = title
 
@@ -554,7 +554,7 @@ export class NuniGraph {
                 audioParamValues,
                 audioNodeProperties,
                 INPUT_NODE_ID,
-                } as NodeSettings
+                } as NodeCreationSettings
                 if (!INPUT_NODE_ID) settings.title = title
 
             const newNode = new NuniGraphNode(id, type, settings)

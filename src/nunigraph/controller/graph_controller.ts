@@ -390,7 +390,7 @@ export class NuniGraphController {
             [HOVER.CONNECTION]: () => { 
             
                 this.selectedNodes = []
-
+                
                 const cache = this.renderer.connectionsCache
                 const { fromId, toId, connectionType } = cache[id!]
 
