@@ -64,7 +64,6 @@ export class NuniGraph {
                 this.makeConnection(a, b, connectionType);
             }
         }
-        log('r-inputs =', retainedInputs);
         for (const node of nodes) {
             if (node.audioNode instanceof NuniGraphAudioNode) {
                 for (const moduleNode of [...node.audioNode.controller.g.nodes]) {
@@ -107,6 +106,9 @@ export class NuniGraph {
         };
         if (!INPUT_NODE_ID)
             settings.title = title;
+        if (node.type === NodeTypes.B_SEQ) {
+            log('stepMatrix =', settings.audioNodeProperties.stepMatrix);
+        }
         return this.createNewNode(type, settings);
     }
     reproduceNodesAndConnections(nodes) {

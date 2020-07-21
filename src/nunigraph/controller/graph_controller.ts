@@ -32,7 +32,7 @@ export class NuniGraphController {
     renderer : NuniGraphRenderer
     private mouseIsDown : boolean
     private selectedNodes : NuniGraphNode[]
-    private lastMouse_DownMsg : { type : HOVER } & Indexed
+    private lastMouse_DownMsg : { type : HOVER } & Indexed // { bounds? : Indexed }
     private lastMouse_MoveMsg : { type : HOVER } & Indexed
     private selectionStart? : [number,number]
     getOpenWindow : Indexable<HTMLElement> // [node.id]:nodeValuesWindow
@@ -341,17 +341,18 @@ export class NuniGraphController {
         this.hideContextMenu()
         this.mouseIsDown = true
         
-        const { type, id, node } = 
+        const hoverMsg = 
             this.lastMouse_DownMsg = 
             this.renderer.getGraphMouseTarget(e)
+        const { id, node } = hoverMsg
 
         this.lastMouse_DownXY = [e.offsetX, e.offsetY]
 
-        if (node && 
-            this.selectedNodes.length &&
-            this.selectedNodes.includes(node)) {
+        if ((hoverMsg.type === HOVER.EDGE || hoverMsg.type === HOVER.SELECT) &&
+            this.selectedNodes.includes(hoverMsg.node)) {
 
             const nodes = this.selectedNodes
+
             // this is all about keeping those 
             // selected nodes inside the canvas
             // while being dragged.
@@ -369,7 +370,7 @@ export class NuniGraphController {
                 R: o.right - node!.x
                 }
         }
-
+        
         ;({
             
             [HOVER.SELECT]: () => {
@@ -429,7 +430,7 @@ export class NuniGraphController {
                 this.renderer.render()
             }
 
-        })[type as HOVER]()
+        })[hoverMsg.type as HOVER]()
 
         
         const deselectNodesOfOtherGraphs = () => {
@@ -456,7 +457,7 @@ export class NuniGraphController {
             e.buttons === 1 && 
             this.mouseIsDown
 
-        const { type, id, node } = this.renderer.getGraphMouseTarget(e)
+        const msg = this.renderer.getGraphMouseTarget(e)
         const { width: W, height: H } = this.renderer.canvas
         const { selectedNodes } = this
 
@@ -489,7 +490,9 @@ export class NuniGraphController {
         
         // Avoid re-rendering when it's not necessary
         const { type: lastType } = this.lastMouse_MoveMsg
-        if (!node 
+        const { type } = msg
+        if (type !== HOVER.SELECT 
+            && type !== HOVER.EDGE
             && lastType === type 
             && !this.renderer.fromNode 
             && !isPressing
@@ -497,14 +500,18 @@ export class NuniGraphController {
             
             return; 
         }
-        this.lastMouse_MoveMsg = { type, id, node }
+        this.lastMouse_MoveMsg = msg
 
+        const hover_id = msg.type === HOVER.CONNECTION 
+            ? msg.id
+            : msg.type !== HOVER.EMPTY
+            ? msg.node.id : undefined
         const options = {
             x: e.offsetX, 
             y: e.offsetY,
             buttons: e.buttons,
             hover_type: type, 
-            hover_id: node ? node.id : id,
+            hover_id,
             selectionStart: this.selectionStart,
             selectedNodes: this.getNodesInBox(e.offsetX, e.offsetY)
             }
@@ -529,18 +536,19 @@ export class NuniGraphController {
 
         const { renderer, selectedNodes } = this
         const fromNode = renderer.fromNode
-        const { type, id, node } = renderer.getGraphMouseTarget(e)
+        const msg = renderer.getGraphMouseTarget(e)
 
         if (!fromNode) {
-            if (!this.mouseHasMovedSinceLastMouseDown && node &&
-                node === this.lastMouse_DownMsg.node) {
-                this.toggleDialogBox(node)
+            if (!this.mouseHasMovedSinceLastMouseDown && 
+                (msg.type === HOVER.SELECT || msg.type === HOVER.EDGE) &&
+                msg.node === this.lastMouse_DownMsg.node) {
+                this.toggleDialogBox(msg.node)
             }
             renderer.render({ selectedNodes })
             return;
         }
 
-        if (node === fromNode) {
+        if (msg.node === fromNode) {
             renderer.fromNode = null
             renderer.render()
             return;
@@ -550,7 +558,7 @@ export class NuniGraphController {
         const do_it = () =>
             this.promptUserToSelectConnectionType(
                 fromNode, 
-                node!,
+                msg.node!,
                 e.clientX,
                 e.clientY)
 
@@ -563,7 +571,7 @@ export class NuniGraphController {
             [HOVER.SELECT]:     do_it,
             [HOVER.CONNECTION]: render,
             [HOVER.EMPTY]:      render
-        })[type as HOVER]()
+        })[msg.type as HOVER]()
     }
 
     private keydown(e : KeyboardEvent) {

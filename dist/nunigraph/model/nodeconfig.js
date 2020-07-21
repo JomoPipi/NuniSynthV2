@@ -199,11 +199,17 @@ const sliderFactor = {
     playbackRate: 2 ** -6,
     offset: 10 ** -2
 };
-const Transferable_AudioNode_Properties = `kbMode,type,subdiv,isInSync,bufferKey
-    nSteps,adsrIndex,graphCode,stepMatrix
-    channelData,phaseShift`
-    .split(/,|\n/)
-    .reduce((acc, prop) => (Object.assign(Object.assign({}, acc), { [prop]: true })), {});
+const Transferable_AudioNode_Properties = { type: true,
+    kbMode: true,
+    subdiv: true,
+    isInSync: true,
+    bufferKey: true,
+    nSteps: true,
+    adsrIndex: true,
+    graphCode: true,
+    stepMatrix: true,
+    phaseShift: true
+};
 const SGS_MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade = 'stepMatrix'
     .split(',')
     .reduce((a, prop) => (a[prop] = true, a), {});

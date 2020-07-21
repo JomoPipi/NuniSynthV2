@@ -10,6 +10,12 @@ import { NuniGraph } from '../model/nunigraph.js'
 
 export enum HOVER { EDGE, SELECT, CONNECTION, EMPTY }
 
+export type HoverResponse 
+    = { type : HOVER.SELECT, node : NuniGraphNode, id? : null }
+    | { type : HOVER.EDGE, node : NuniGraphNode, id? : null }
+    | { type : HOVER.CONNECTION, node? : null, id : number }
+    | { type : HOVER.EMPTY, node? : null, id? : null }
+
 type GraphRenderOptions = {
     H : number,
     W : number,
@@ -422,7 +428,9 @@ export class NuniGraphRenderer {
         }
     }
 
-    getGraphMouseTarget({ offsetX: x, offsetY: y } : { offsetX : number, offsetY : number }) {
+    getGraphMouseTarget(
+        { offsetX: x, offsetY: y } 
+        : { offsetX : number, offsetY : number }) : HoverResponse {
         
         const { canvas, g, innerEdgeBoundary, outerEdgeBoundary,
             connectionsCache, triangleRadius 
@@ -457,7 +465,7 @@ export class NuniGraphRenderer {
         for (const id in connectionsCache) {
             const { x:X, y:Y } = connectionsCache[id]
             if (distance(x, y, X, Y) < triangleRadius) {
-                return { type: HOVER.CONNECTION, id }
+                return { type: HOVER.CONNECTION, id: +id }
             }
         }
         

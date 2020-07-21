@@ -10,6 +10,7 @@ import { audioCtx } from '../webaudio2/internal.js'
 import { BufferStorage } from '../storage/general/buffer_storage.js'
 
 const formulaInput = D('buffer-formula') as HTMLInputElement
+const errorMsgText = D('buffer-formula-error-msg') as HTMLElement
 
 export function formulateBuffer(index : number) {
     
@@ -24,11 +25,12 @@ export function formulateBuffer(index : number) {
     const isError = validateExp(formulaInput.value)
 
     if (isError) {
-        formulaInput.value = isError
+        errorMsgText.innerText = isError
         log('buffer formulation denied')
         return;
     } 
     else {
+        errorMsgText.innerText = ''
         BufferStorage.set(index, buffer)
         BufferUtils.refreshAffectedBuffers()
         BufferUtils.updateBufferUI()
