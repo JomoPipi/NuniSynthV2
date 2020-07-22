@@ -38,7 +38,7 @@ class BufferUtily {
     nextBufferDuration : number
     nBuffers : number
     private refreshFunc : Function
-
+    
     constructor() {
         this.currentIndex = 0
         this.lastRecorderRequestId = 0

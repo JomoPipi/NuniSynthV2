@@ -50,7 +50,7 @@ D('from-string-button').onclick = function () {
     }
     catch (e) {
         GraphController.undo();
-        input.value = 'Invalid code';
+        input.value = `Invalid code: ${e}`;
     }
 };
 D('graph-undo-redo-btns').onclick = function (e) {

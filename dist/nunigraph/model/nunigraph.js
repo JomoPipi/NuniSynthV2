@@ -268,8 +268,9 @@ export class NuniGraph {
                 continue;
             }
             if (prop in node.audioNode) {
+                const p = prop;
                 settings.audioNodeProperties[prop] =
-                    JSON.parse(JSON.stringify(node.audioNode[prop]));
+                    JSON.parse(JSON.stringify(node.audioNode[p]));
             }
         }
         return settings;
@@ -279,7 +280,7 @@ export class NuniGraph {
             var { connections, nodes } = JSON.parse(s);
         }
         catch (e) {
-            throw 'Error parsing new graph';
+            throw `Error parsing new graph: ${e}`;
         }
         this.clear();
         if (nodes[0].id !== 0)

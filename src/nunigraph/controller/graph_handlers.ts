@@ -82,7 +82,7 @@ const contextmenu = D('graph-contextmenu')!
         input.value = ''
     } catch (e) {
         GraphController.undo()
-        input.value = 'Invalid code'
+        input.value = `Invalid code: ${e}`
     }
 }
 

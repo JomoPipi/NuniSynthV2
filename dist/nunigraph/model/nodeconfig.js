@@ -208,7 +208,8 @@ const Transferable_AudioNode_Properties = { type: true,
     adsrIndex: true,
     graphCode: true,
     stepMatrix: true,
-    phaseShift: true
+    phaseShift: true,
+    channelData: true
 };
 const SGS_MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade = 'stepMatrix'
     .split(',')

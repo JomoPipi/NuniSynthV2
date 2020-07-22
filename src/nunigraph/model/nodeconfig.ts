@@ -250,6 +250,9 @@ const sliderFactor : { readonly [key in AudioParams] : number } =
 
 interface CustomAudioNodeProperties
 {
+// Is this interface useless?
+// It only throws errors if stepMatrix isn't there.
+
     kbMode?      : boolean
     type?        : string
     subdiv?      : number
@@ -262,18 +265,18 @@ interface CustomAudioNodeProperties
     phaseShift?  : number
 }
 
-const Transferable_AudioNode_Properties 
-: { [key in keyof CustomAudioNodeProperties] : true } = 
-    { type       : true
-    , kbMode     : true
-    , subdiv     : true
-    , isInSync   : true
-    , bufferKey  : true
-    , nSteps     : true
-    , adsrIndex  : true
-    , graphCode  : true
-    , stepMatrix : true
-    , phaseShift : true
+const Transferable_AudioNode_Properties = 
+    { type        : true
+    , kbMode      : true
+    , subdiv      : true
+    , isInSync    : true
+    , bufferKey   : true
+    , nSteps      : true
+    , adsrIndex   : true
+    , graphCode   : true
+    , stepMatrix  : true
+    , phaseShift  : true
+    , channelData : true
     }
 
 // TODO: get rid of this by refactoring sequencers to compose Sequencer rather than inherit

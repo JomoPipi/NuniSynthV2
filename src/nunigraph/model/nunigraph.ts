@@ -500,9 +500,11 @@ export class NuniGraph {
             if (node.type === NodeTypes.SGS && (prop === 'stepMatrix' || prop === 'channelData')) {
                 continue;
             }
+
             if (prop in node.audioNode) {
+                const p = prop as keyof typeof node.audioNode
                 settings.audioNodeProperties[prop] = 
-                    JSON.parse(JSON.stringify(node.audioNode[prop as AudioParams]))
+                    JSON.parse(JSON.stringify(node.audioNode[p]))
             }
         }
 
@@ -516,7 +518,7 @@ export class NuniGraph {
         try {
             var { connections, nodes } = JSON.parse(s)
         } catch(e) {
-            throw 'Error parsing new graph'
+            throw `Error parsing new graph: ${e}`
         }
 
         this.clear() 
