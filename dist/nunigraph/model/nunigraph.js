@@ -70,7 +70,7 @@ export class NuniGraph {
                     if (moduleNode.INPUT_NODE_ID) {
                         const input_id = moduleNode.INPUT_NODE_ID.id;
                         if (!retainedInputs.has(input_id)) {
-                            node.audioNode.controller.deleteNode(moduleNode, true);
+                            node.audioNode.controller.deleteNode(moduleNode, { force: true });
                         }
                     }
                 }

@@ -151,7 +151,7 @@ export class NuniGraph {
                         const input_id = moduleNode.INPUT_NODE_ID.id
 
                         if (!retainedInputs.has(input_id)) {
-                            node.audioNode.controller.deleteNode(moduleNode, true)
+                            node.audioNode.controller.deleteNode(moduleNode, { force: true })
                         }
                     }
                 }
@@ -267,7 +267,6 @@ export class NuniGraph {
     private copyModuleInputNodes(
         // TODO: figure out the type situation so b can be NuniGraphNode<NodeTypes.CUSTOM>
         a : NuniGraphNode, b : NuniGraphNode, nodeA : NuniGraphNode, nodeB : NuniGraphNode) {
-        // ...[a, b, nodeA, nodeB] : NuniGraphNode[]) {
 
         // Handle the input node(s) of b
         if (b.audioNode instanceof NuniGraphAudioNode && b !== nodeB) {

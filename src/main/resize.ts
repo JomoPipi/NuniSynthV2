@@ -5,21 +5,21 @@
 
 
 
-import { GraphController } from '../nunigraph/init.js'
+// import { GraphController } from '../nunigraph/init.js'
 
-window.addEventListener('resize', resizeHandler)
+// window.addEventListener('resize', resizeHandler)
 
-resizeHandler()
+// resizeHandler()
 
-function resizeHandler() {
-    GraphController.renderer.render()
-}
+// function resizeHandler() {
+//     GraphController.renderer.render()
+// }
 
-function resizeKeyboardImage () {
-    const keyboard = D('keyboard-image') as HTMLElement & { parentNode : HTMLElement }
-    const size = keyboard.parentNode.clientWidth / 60
-    keyboard.style.fontSize = size + 'px'
-}
+// function resizeKeyboardImage () {
+//     const keyboard = D('keyboard-image') as HTMLElement & { parentNode : HTMLElement }
+//     const size = keyboard.parentNode.clientWidth / 60
+//     keyboard.style.fontSize = size + 'px'
+// }
 
 // TODO: send messages to the worker to resize the canvas
 // See the error that this throws:

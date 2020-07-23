@@ -111,7 +111,8 @@ export class NuniGraphController {
             this.closeWindow(+nodeId);
         }
     }
-    deleteNode(node, force) {
+    deleteNode(node, options = {}) {
+        const { force, noRender } = options;
         if (!force && node.INPUT_NODE_ID)
             return;
         this.connectionTypePrompt.classList.remove('show');
@@ -120,7 +121,9 @@ export class NuniGraphController {
         this.g.deleteNode(node);
         this.unselectNodes();
         this.selectedNodes = [];
-        this.renderer.render();
+        if (!noRender) {
+            this.renderer.render();
+        }
     }
     openWindow(node) {
         const moveTheWindowToTheTop = (box) => {
@@ -141,8 +144,8 @@ export class NuniGraphController {
             moveTheWindowToTheTop(box);
             if (node.type !== NodeTypes.CUSTOM) {
                 this.selectNode(node);
-                this.renderer.render({ selectedNodes: [node] });
             }
+            this.renderer.render({ selectedNodes: [node] });
         };
         const closeCallback = () => {
             this.closeWindow(node.id);
@@ -200,8 +203,8 @@ export class NuniGraphController {
                 this.g.nodes.filter(node => {
                     const [startX, endX] = [x, X].sort((a, b) => a - b);
                     const [startY, endY] = [y, Y].sort((a, b) => a - b);
-                    const isInside = (nx, ny) => startX < nx && nx < endX &&
-                        startY < ny && ny < endY;
+                    const isInside = (nodeX, nodeY) => startX < nodeX && nodeX < endX &&
+                        startY < nodeY && nodeY < endY;
                     return isInside(node.x * W, node.y * H);
                 });
         }
@@ -434,9 +437,10 @@ export class NuniGraphController {
             else if (e.keyCode === 88) {
                 for (const node of nodesToCopy) {
                     if (node.id !== 0) {
-                        this.deleteNode(node);
+                        this.deleteNode(node, { noRender: true });
                     }
                 }
+                this.renderer.render();
             }
         }
     }

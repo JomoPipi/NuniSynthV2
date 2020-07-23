@@ -20,6 +20,11 @@ type CreateValuesWindow =
     saveCallback : Function, 
     deleteCallBack : Function) => HTMLElement
 
+type DeleteNodeOptions = {
+    force? : boolean
+    noRender? : boolean
+    }
+
 let openWindowGlobalIndexThatKeepsRising = 0
 
 export class NuniGraphController {
@@ -192,7 +197,10 @@ export class NuniGraphController {
         }
     }
 
-    deleteNode(node : NuniGraphNode, force? : boolean) {
+    deleteNode(node : NuniGraphNode, options = {} as DeleteNodeOptions) {
+        
+        const { force, noRender } = options
+
         // The `force` parameter was added because of a requirement of NuniGraph.pasteNodes
         if (!force && node.INPUT_NODE_ID) return; // This can only be deleted from its' outer scope.
         
@@ -202,7 +210,10 @@ export class NuniGraphController {
         this.g.deleteNode(node)
         this.unselectNodes()
         this.selectedNodes = []
-        this.renderer.render()
+
+        if (!noRender) {
+            this.renderer.render()
+        }
     }
 
     private openWindow(node : NuniGraphNode) {
@@ -234,8 +245,8 @@ export class NuniGraphController {
 
             if (node.type !== NodeTypes.CUSTOM) {
                 this.selectNode(node)
-                this.renderer.render({ selectedNodes: [node] })
             }
+            this.renderer.render({ selectedNodes: [node] })
         }
 
         const closeCallback = () => {
@@ -314,9 +325,9 @@ export class NuniGraphController {
             this.g.nodes.filter(node => {
                 const [startX, endX] = [x!, X].sort((a,b)=>a-b)
                 const [startY, endY] = [y!, Y].sort((a,b)=>a-b)
-                const isInside = (nx : number, ny : number) => 
-                    startX < nx && nx < endX && 
-                    startY < ny && ny < endY
+                const isInside = (nodeX : number, nodeY : number) => 
+                    startX < nodeX && nodeX < endX && 
+                    startY < nodeY && nodeY < endY
 
                 return isInside(node.x*W, node.y*H)
             })
@@ -616,13 +627,7 @@ export class NuniGraphController {
         else if (e.ctrlKey && e.keyCode === 83) { // ctrl + s : node reproduction function
             const nodesToCopy = 
                 this.selectedNodes.filter(node => !node.INPUT_NODE_ID)
-                // this.selectedNodes.map(node => {
-                //     const copy = { ...node }
-                //     delete copy.INPUT_NODE_ID
-                //     return copy as NuniGraphNode
-                // })
-
-
+                
             if (nodesToCopy.length === 0) return;
             
             this.save()
@@ -642,11 +647,6 @@ export class NuniGraphController {
 
             const nodesToCopy = 
                 this.selectedNodes.filter(node => !node.INPUT_NODE_ID)
-                // this.selectedNodes.map(node => {
-                //     const copy = { ...node }
-                //     delete copy.INPUT_NODE_ID
-                //     return copy as NuniGraphNode
-                // })
 
             if (nodesToCopy.length === 0) return;
 
@@ -677,10 +677,10 @@ export class NuniGraphController {
                 // cut - delete nodes
                 for (const node of nodesToCopy) {
                     if (node.id !== 0) {
-                        // TODO: optimize to be deleteNodes because render() happens in there
-                        this.deleteNode(node)
+                        this.deleteNode(node, { noRender: true })
                     }
                 }
+                this.renderer.render()
             }
         }
     }

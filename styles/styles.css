@@ -777,8 +777,8 @@ a {
   margin: 4%;
   border-radius: 9px;
   background: transparent;
-  -webkit-box-shadow: 5px 5px 10px #302f30, -5px -5px 10px #444044;
-          box-shadow: 5px 5px 10px #302f30, -5px -5px 10px #444044;
+  -webkit-box-shadow: 5px 5px 5px #302f30, -5px -5px 5px #444044;
+          box-shadow: 5px 5px 5px #302f30, -5px -5px 5px #444044;
 }
 
 /* 
