@@ -72,7 +72,7 @@ button {
 
 .main-top-bar {
   -webkit-app-region: drag;
-  background: black;
+  background: #302f30;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
 }
@@ -227,10 +227,18 @@ button {
       grid-template-columns: 1fr 1fr;
 }
 
+.nunigraph-container {
+  border: 30px solid #3a393a;
+  background-color: #3a393a;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
 .nunigraph-canvas {
   background-color: #201e20;
   height: 100%;
   width: 100%;
+  border-radius: 40px;
 }
 
 .nunigraph-canvas--custom {

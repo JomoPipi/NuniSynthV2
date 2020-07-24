@@ -82,7 +82,7 @@ button {
 
 .main-top-bar {
     -webkit-app-region: drag;
-    background: black;
+    background: $color1;
     // linear-gradient($color1,darken($color1, 4%));
     box-sizing: border-box;
 
@@ -247,12 +247,17 @@ button {
 
 
 
-
+.nunigraph-container {
+    border: 30px solid $color2;
+    background-color: $color2;
+    box-sizing: border-box;
+}
 
 .nunigraph-canvas {
     background-color: $canvas-bg;
     height: 100%;
     width: 100%;
+    border-radius: 40px;
 }
 
 .nunigraph-canvas--custom {
