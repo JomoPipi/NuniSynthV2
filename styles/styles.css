@@ -776,7 +776,7 @@ a {
   -webkit-app-region: no-drag;
 }
 
-.main-top-bar .nodrag {
+.no-drag {
   -webkit-app-region: no-drag;
 }
 
@@ -790,56 +790,36 @@ a {
   border: none;
 }
 
-.menu {
-  --menu-height: 40px;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  width: 100%;
-}
-
-.menu ul {
-  list-style: none;
-  padding: 16px;
-  margin: 0;
-}
-
-.menu ul li, .menu ul li a {
-  opacity: .8;
-  color: #ffffff;
-  cursor: pointer;
-  -webkit-transition: 200ms;
-  transition: 200ms;
-  text-decoration: none;
-  white-space: nowrap;
-  font-weight: 700;
-}
-
-.menu ul li:hover, .menu ul li a:hover {
-  opacity: 1;
-}
-
-.menu ul li a, .menu ul li a a {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+.menu-nav {
+  margin: 0px;
   height: 100%;
-  width: 100%;
+  background-color: #302f30;
+  /* Hide Dropdowns by Default */
+  /* Display Dropdowns on Hover */
+  /* Fisrt Tier Dropdown */
+  /* Second, Third and more Tiers	*/
 }
 
-.menu ul li {
-  padding-right: 36px;
+.menu-nav ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  position: relative;
 }
 
-.menu ul li::before {
+.menu-nav ul li {
+  display: inline-block;
+  background-color: #302f30;
+  /* Change this in order to change the Dropdown symbol */
+}
+
+.menu-nav ul li li > a:after {
   content: '';
   width: 0;
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 5px solid #FFA500;
+  border-top: 5px solid #fffecc;
   position: absolute;
   right: 8px;
   top: 50%;
@@ -847,84 +827,46 @@ a {
           transform: translateY(-50%);
 }
 
-.menu ul .link::before {
-  padding-right: 0;
+.menu-nav ul li li > a:only-child:after {
+  content: '';
+  border-width: 0px;
+}
+
+.menu-nav a {
+  display: block;
+  padding: 0 10px;
+  color: #FFF;
+  font-size: 20px;
+  line-height: 30px;
+  text-decoration: none;
+}
+
+.menu-nav a:hover {
+  background-color: #000000;
+}
+
+.menu-nav ul ul {
   display: none;
-}
-
-.menu > ul {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  height: var(--menu-height);
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  background-color: #000000;
-}
-
-.menu > ul li {
-  position: relative;
-  margin: 0 8px;
-}
-
-.menu > ul li ul {
-  visibility: hidden;
-  opacity: 0;
-  padding: 0;
-  min-width: 160px;
-  background-color: #333;
   position: absolute;
-  top: calc(var(--menu-height) + 5px);
-  left: 50%;
-  -webkit-transform: translateX(-50%);
-          transform: translateX(-50%);
-  -webkit-transition: 200ms;
-  transition: 200ms;
-  -webkit-transition-delay: 200ms;
-          transition-delay: 200ms;
+  top: 30px;
+  /* the height of the main nav */
 }
 
-.menu > ul li ul li {
-  margin: 0;
-  padding: 8px 16px;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
-  height: 30px;
-  padding-right: 40px;
+.menu-nav ul li:hover > ul {
+  display: inherit;
 }
 
-.menu > ul li ul li::before {
-  width: 0;
-  height: 0;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-left: 5px solid #FFA500;
+.menu-nav ul ul li {
+  width: 170px;
+  float: none;
+  display: list-item;
+  position: relative;
 }
 
-.menu > ul li ul li ul {
-  top: -2%;
-  left: 100%;
-  -webkit-transform: translate(0);
-          transform: translate(0);
-}
-
-.menu > ul li ul li:hover {
-  background-color: #000000;
-}
-
-.menu > ul li:hover > ul {
-  opacity: 1;
-  visibility: visible;
-  -webkit-transition-delay: 0ms;
-          transition-delay: 0ms;
+.menu-nav ul ul ul li {
+  position: relative;
+  top: -30px;
+  left: 170px;
 }
 
 /* 

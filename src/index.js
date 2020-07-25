@@ -21,11 +21,12 @@ const createWindow = () => {
     webPreferences: {
       nodeIntegration: true,
       preload: './preload.js',
+      enableRemoteModule: true
     },
     icon: __dirname + '/../styles/icon.ico',
     frame: false,
     backgroundColor: '#111111',
-    fullscreen: true
+    fullscreen: true,
   });
   
   // mainWindow.setMenu(null)

@@ -3,6 +3,7 @@ import './buffer_utils/internal.js';
 import './nunigraph/controller/presets.js';
 import './nunigraph/controller/graph_handlers.js';
 import './main/resize.js';
+import './main/file_menu_UI.js';
 log('o-O-__-O-o-_.._-o-O-__-O-oo-O-__-O-o-_.._-o-O-__-O-oo-O-__-O-o-_.._-o-O-__-O-oo-O-__-O-o-_.._-o-O-__-O-o');
 window.onload = () => {
     log('Everything has been loaded');

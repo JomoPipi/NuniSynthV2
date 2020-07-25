@@ -5,15 +5,15 @@
 
 
 
-// import { GraphController } from '../nunigraph/init.js'
+import { GraphController } from '../nunigraph/init.js'
 
-// window.addEventListener('resize', resizeHandler)
+window.addEventListener('resize', resizeHandler)
 
-// resizeHandler()
+resizeHandler()
 
-// function resizeHandler() {
-//     GraphController.renderer.render()
-// }
+function resizeHandler() {
+    GraphController.renderer.render()
+}
 
 // function resizeKeyboardImage () {
 //     const keyboard = D('keyboard-image') as HTMLElement & { parentNode : HTMLElement }

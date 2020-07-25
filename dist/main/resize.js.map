@@ -1,1 +1,1 @@
-{"version":3,"file":"resize.js","sourceRoot":"","sources":["../../src/main/resize.ts"],"names":[],"mappings":""}
+{"version":3,"file":"resize.js","sourceRoot":"","sources":["../../src/main/resize.ts"],"names":[],"mappings":"AAOA,OAAO,EAAE,eAAe,EAAE,MAAM,sBAAsB,CAAA;AAEtD,MAAM,CAAC,gBAAgB,CAAC,QAAQ,EAAE,aAAa,CAAC,CAAA;AAEhD,aAAa,EAAE,CAAA;AAEf,SAAS,aAAa;IAClB,eAAe,CAAC,QAAQ,CAAC,MAAM,EAAE,CAAA;AACrC,CAAC"}
