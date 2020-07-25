@@ -56,6 +56,7 @@ export function createNumberDialComponent(
         setValue(value : number) {
             valueInput.value = value.toString()
             dial.update(value)
+            manualUpdater(value)
         }
     })
 }

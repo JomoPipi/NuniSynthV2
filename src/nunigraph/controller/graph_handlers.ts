@@ -66,26 +66,6 @@ const contextmenu = D('graph-contextmenu')!
     }
 }
 
-// Copy the graph
-;(D('copy-graph-button') as HTMLButtonElement).onclick = function() {
-    (D('graph-copy-output') as HTMLInputElement).value = GraphController.g.toString()
-}
-
-// Create graph from string
-;(D('from-string-button') as HTMLButtonElement).onclick = function() {
-    const input = D('graph-copy-input') as HTMLInputElement
-    try { 
-        GraphController.save()
-        GraphController.closeAllWindows()
-        GraphController.fromString(input.value)
-        GraphController.renderer.render()
-        input.value = ''
-    } catch (e) {
-        GraphController.undo()
-        input.value = `Invalid code: ${e}`
-    }
-}
-
 // Undo / redo btns
 ;(D('graph-undo-redo-btns') as HTMLElement).onclick = function(e : MouseEvent) {
     const undoBtnId = 'graph-undo-button'

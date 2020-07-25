@@ -32,6 +32,7 @@ export function createNumberDialComponent(initialValue, manualUpdater, props) {
         setValue(value) {
             valueInput.value = value.toString();
             dial.update(value);
+            manualUpdater(value);
         }
     });
 }

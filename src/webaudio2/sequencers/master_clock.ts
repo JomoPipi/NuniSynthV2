@@ -13,64 +13,48 @@ import { createNumberDialComponent } from "../../UI_library/internal.js"
 
 
 
-let activated = false, isPaused = false
+let activated = false, isPaused = false, _tempo = 69
+
+const tempoComponent = createNumberDialComponent
+    ( 120
+    , (value : number) => _tempo = clamp(1, value, 69420)
+    , { dial: 
+        { sensitivity: 2**-2
+        , min: 20
+        , max: 999
+        , rounds: 8
+        }
+    })
 
 export const MasterClock = {
-    tempo: 120,
 
     setSchedule: function (scheduleNotes : (tempo : number) => void) {
         if (activated) 
             throw 'MasterClock already has a schedule.'
         activated = true
         startScheduling(scheduleNotes)
-    }
+    },
+
+    getTempo: () => _tempo,
+
+    setTempo: (tempo : number) => tempoComponent.setValue(tempo),
 }
+
+MasterClock.setTempo(120)
+
+D('tempo-input-container')!.appendChild(tempoComponent)
+
 
 function startScheduling(scheduleNotes : (tempo : number) => void) {
 
-    if (!isPaused) scheduleNotes(MasterClock.tempo)
+    if (!isPaused) scheduleNotes(_tempo)
 
     const goAgain = startScheduling.bind(null, scheduleNotes)
 
     // window.setTimeout(goAgain)
-
     // More efficient, but sequencer stops when tabs are switched:
     window.requestAnimationFrame(goAgain)
 }
-
-
-
-
-
-
-// Add tempo input
-// const tempo = createDraggableNumberInput(
-//     120,
-    
-//     () => MasterClock.tempo,
-
-//     (delta : number, value : number) =>
-//         (MasterClock.tempo = clamp(20, value + delta, 999)).toFixed(0),
-
-//     (value : number) => 
-//         MasterClock.tempo = value 
-// )
-// tempo.style.width = '100px'
-
-const tempo = createNumberDialComponent(
-    120,
-    (value : number) => MasterClock.tempo = value, 
-    {   dial: {
-            sensitivity: 2**-2,
-            min: 20,
-            max: 999,
-            rounds: 8
-        }
-    })
-
-D('tempo-input-container')!.appendChild(tempo)
-
-
 
 // Add tempo tapper
 const tapBtn = D('tempo-tapper')!
@@ -81,12 +65,11 @@ function count() {
     
     if(!start) {
         start = new Date().getTime()
-        tempo.classList.add('selected2')
+        tempoComponent.classList.add('selected2')
     } else {
         delta = new Date().getTime() - start
         const newTempo = Math.round(60 * 1000 * counter / delta)
-        tempo.setValue(newTempo)
-        MasterClock.tempo = newTempo
+        tempoComponent.setValue(newTempo)
         
         // A sec N times
         // 60 sec X times
@@ -99,7 +82,7 @@ function count() {
         counter = 0
         delta = 0
         start = 0
-        tempo.classList.remove('selected2')
+        tempoComponent.classList.remove('selected2')
     }, 2000)
 }
 tapBtn.addEventListener('click', count)

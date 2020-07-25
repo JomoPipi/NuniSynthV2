@@ -81,15 +81,19 @@ export const ADSR_Controller = {
         return time + release * releaseTimeConstant
     },
 
-    render: () => {}
+    render: (options? : any) => {}
 }
+
+type RenderOptions = Partial<{
+    updateKnobs : boolean 
+}>
 
 {
     const adsr = ADSR_Controller
     const isAux = false // s === 'aux-'        
     const ctx = adsr.canvas.getContext('2d')!
     
-    adsr.render = function () {
+    adsr.render = function (options : RenderOptions = {}) {
         const H = this.canvas.height, W = this.canvas.width
         ctx.lineWidth = 5
 
@@ -139,6 +143,10 @@ export const ADSR_Controller = {
             ctx.closePath()
         })
         ctx.closePath()
+
+        if (options.updateKnobs) {
+            updateKnobs()
+        }
     }
 
     adsr.render()
@@ -173,11 +181,15 @@ const adsrDials =
         onclick: (data : any, index : number) => {
             const adsr = ADSR_Controller
             adsr.index = index
-            adsr.render()
-            for (const s of ADSR) {
-                adsrDials[s].update((<Indexed>adsr.values[adsr.index])[s] ** .5)
-            }
+            adsr.render({ updateKnobs: true })
         },
         text: 'ADSR'
     }))
+}
+
+function updateKnobs() {log('executing')
+    const adsr = ADSR_Controller
+    for (const s of ADSR) {
+        adsrDials[s].update((<Indexed>adsr.values[adsr.index])[s] ** .5)
+    }
 }

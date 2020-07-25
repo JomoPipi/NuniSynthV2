@@ -466,10 +466,16 @@ export class NuniGraph {
 
 
     toRawString() {
-        return JSON.stringify({
-            connections: this.oneWayConnections,
+        return JSON.stringify(this.toJSON())
+    }
+
+
+
+    toJSON() {
+        return {
+            connections: JSON.parse(JSON.stringify(this.oneWayConnections)),
             nodes: this.nodes.map(this.convertNodeToNodeSettings)
-        })
+        }
     }
 
 
@@ -515,10 +521,17 @@ export class NuniGraph {
 
     fromRawString(s : string) {
         try {
-            var { connections, nodes } = JSON.parse(s)
+            var json = JSON.parse(s)
         } catch(e) {
-            throw `Error parsing new graph: ${e}`
+            throw `Error parsing graph JSON string: ${e}`
         }
+        this.fromJSON(json)
+    }
+
+
+
+
+    fromJSON({ connections, nodes }  : Indexed) {
 
         this.clear() 
 

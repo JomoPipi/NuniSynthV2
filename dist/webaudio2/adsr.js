@@ -35,13 +35,13 @@ export const ADSR_Controller = {
         gain.setTargetAtTime(0, time, release);
         return time + release * releaseTimeConstant;
     },
-    render: () => { }
+    render: (options) => { }
 };
 {
     const adsr = ADSR_Controller;
     const isAux = false;
     const ctx = adsr.canvas.getContext('2d');
-    adsr.render = function () {
+    adsr.render = function (options = {}) {
         const H = this.canvas.height, W = this.canvas.width;
         ctx.lineWidth = 5;
         const { attack, decay, sustain, release } = this.values[this.index];
@@ -78,6 +78,9 @@ export const ADSR_Controller = {
             ctx.closePath();
         });
         ctx.closePath();
+        if (options.updateKnobs) {
+            updateKnobs();
+        }
     };
     adsr.render();
 }
@@ -105,12 +108,16 @@ const adsrDials = ADSR.reduce((a, s) => {
         onclick: (data, index) => {
             const adsr = ADSR_Controller;
             adsr.index = index;
-            adsr.render();
-            for (const s of ADSR) {
-                adsrDials[s].update(adsr.values[adsr.index][s] ** .5);
-            }
+            adsr.render({ updateKnobs: true });
         },
         text: 'ADSR'
     }));
+}
+function updateKnobs() {
+    log('executing');
+    const adsr = ADSR_Controller;
+    for (const s of ADSR) {
+        adsrDials[s].update(adsr.values[adsr.index][s] ** .5);
+    }
 }
 //# sourceMappingURL=adsr.js.map

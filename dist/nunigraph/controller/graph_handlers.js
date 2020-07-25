@@ -36,23 +36,6 @@ const contextmenu = D('graph-contextmenu');
     }
 }
 ;
-D('copy-graph-button').onclick = function () {
-    D('graph-copy-output').value = GraphController.g.toString();
-};
-D('from-string-button').onclick = function () {
-    const input = D('graph-copy-input');
-    try {
-        GraphController.save();
-        GraphController.closeAllWindows();
-        GraphController.fromString(input.value);
-        GraphController.renderer.render();
-        input.value = '';
-    }
-    catch (e) {
-        GraphController.undo();
-        input.value = `Invalid code: ${e}`;
-    }
-};
 D('graph-undo-redo-btns').onclick = function (e) {
     const undoBtnId = 'graph-undo-button';
     const redoBtnId = 'graph-redo-button';

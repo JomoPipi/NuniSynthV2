@@ -52,7 +52,7 @@ export class Sequencer extends VolumeNodeContainer {
         this.stepMatrix = {}
         this.mutedChannel = {}
         this.isPlaying = true
-        this.tick = (60*4 / MasterClock.tempo) / this.subdiv
+        this.tick = (60*4 / MasterClock.getTempo()) / this.subdiv
         this.windowIsOpen = false
         this.HTMLGrid = createBeatGrid()
         this.HTMLBoxes = {}
