@@ -52,12 +52,13 @@ export class NuniGraphRenderer {
         ctx.setLineDash([]);
         return;
     }
-    circle(x, y, r) {
+    circle(x, y, r, stroke = true) {
         const { ctx } = this;
         ctx.beginPath();
         ctx.arc(x, y, r, 0, 7);
         ctx.fill();
-        ctx.stroke();
+        if (stroke)
+            ctx.stroke();
         ctx.closePath();
     }
     line(x1, y1, x2, y2) {
@@ -211,15 +212,14 @@ export class NuniGraphRenderer {
             const highlightCenter = selectedNodes.includes(node) ||
                 (isTarget && (fromNode || hover_type === HOVER.SELECT))
                 ? true : false;
-            ctx.strokeStyle =
-                highlightEdge
-                    ? 'rgba(255,255,255,0.75)'
-                    : node.id === 0 ? MasterGainColor : NodeTypeColors[node.type];
+            ctx.strokeStyle = highlightEdge
+                ? 'rgba(255,255,255,0.75)'
+                : node.id === 0 ? MasterGainColor : NodeTypeColors[node.type];
             ctx.lineWidth = nodeLineWidth;
             ctx.shadowColor = '';
             ctx.fillStyle =
                 this.getNodeColor(node, H, W, highlightCenter);
-            this.circle(X, Y, nodeRadius);
+            this.circle(X, Y, nodeRadius, !HasNoOutput[node.type]);
             if (node.title) {
                 ctx.fillStyle = '#BAA';
                 ctx.fillText(node.title, X - 30, Y - nodeRadius * 1.5);

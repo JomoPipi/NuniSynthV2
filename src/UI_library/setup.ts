@@ -27,12 +27,10 @@ pageGroupify(D('scale-kinds'), [
     'scale-builder'
     ])
 
-pageGroupify(D('buffer-edit-create-select'), [
-    'buffer-create',
-    'buffer-edit'
-    ])
-
-
+// pageGroupify(D('buffer-edit-create-select'), [
+//     'buffer-create',
+//     'buffer-edit'
+//     ])
 
 
 // Set up the info menu

@@ -36,7 +36,7 @@ const contextmenu = D('graph-contextmenu')
                 const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = 
                     controller === GraphController 
                     ? controller.renderer.canvas
-                    : controller.renderer.canvas.parentNode.parentNode.parentNode.parentNode // TODO: clean this line up...
+                    : controller.renderer.canvas.parentNode.parentNode.parentNode.parentNode.parentNode // TODO: clean this line up...
 
                 node.x = clamp(0, (menu.offsetLeft - offsetLeft + menu.offsetWidth / 2.0) / offsetWidth, 1)
                 node.y = clamp(0, (menu.offsetTop - offsetTop + menu.offsetHeight / 2.0) / offsetHeight, 1)

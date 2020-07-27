@@ -121,12 +121,12 @@ export class NuniGraphRenderer {
         return
     }
 
-    private circle(x : number, y : number, r : number) {
+    private circle(x : number, y : number, r : number, stroke : boolean = true) {
         const { ctx } = this
         ctx.beginPath()
         ctx.arc(x,y,r,0,7)
         ctx.fill()
-        ctx.stroke()
+        if (stroke) ctx.stroke()
         ctx.closePath()
     }
 
@@ -378,21 +378,20 @@ export class NuniGraphRenderer {
                 ? true : false
 
 
-            ctx.strokeStyle = 
-                highlightEdge 
+            ctx.strokeStyle = highlightEdge 
                 ? 'rgba(255,255,255,0.75)' 
                 : node.id === 0 ? MasterGainColor : NodeTypeColors[node.type]
 
             ctx.lineWidth = nodeLineWidth
             ctx.shadowColor = ''
-            ctx.fillStyle = 
+            ctx.fillStyle =
                 this.getNodeColor(
                     node,
                     H, 
                     W, 
                     highlightCenter)
             
-            this.circle(X, Y, nodeRadius)
+            this.circle(X, Y, nodeRadius, !HasNoOutput[node.type])
 
             if (node.title) 
             {

@@ -167,15 +167,58 @@
           <div class="main-tab">
 
               <div id="project-title"> </div>
-              
+
               <div class="lcd-display">
                 <code> BUFFER </code>
                 <code id="buffer-info"> A -- 3 seconds </code>
+                <button id="open-buffer-edit-dialog-button" class="top-bar-btn"> ⚙️ </button>
               </div>
       
-              <div class="buffer-box">
-                <div id="buffer-container" class="buffers-list"></div>
-                <canvas id="buffer-canvas"></canvas>
+              <div>
+                <div id="bufferbox1" class="buffer-box">
+                  <div id="buffer-container" class="buffers-list"></div>
+                  <canvas id="buffer-canvas"></canvas>
+                </div>
+
+                <!-- <div id="bufferbox2" class="builder-section">
+                  Buffer Expression:
+                  <button id="buffer-formula-templates-button" class="apply-btn" style="float:right"> 
+                      PRESETS 📋 </button>
+            
+                  <br>
+                  <span class="smaller-text">
+            
+                      <span class="code2">  n  </span> represents the position of each sample in the buffer.
+                      Samples should be numbers -1 and 1. Use JavaScript
+                        <a 
+                          target="_blank" 
+                          href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators"> 
+                          operators </a> 
+                      and
+                        <a 
+                          target="_blank"
+                          href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math"> 
+                          functions </a>.
+                      <br>
+                      
+                  </span>
+                  
+                  <code>
+                    for n in range [0, 48000 * seconds]: <br>
+                    &nbsp; &nbsp; samples[n] =
+                  </code>
+            
+                  <input
+                      type="text" 
+                      id="buffer-formula"
+                      class="text-input-wide center"
+                      value="sin(n/30) + sin(n/20)"> 
+            
+                  <button id="apply-buffer-formula" class="apply-btn"> apply </button>
+            
+                  <div id="buffer-formula-error-msg" class="error-msg"></div>
+            
+                </div> -->
               </div>
 
               <div>
@@ -387,15 +430,6 @@
               <button id="invert-buffer" class="neumorph">  
                 invert </button>
 
-              <!-- <button id="trim-buffer" class="neumorph">   
-                trim </button>
-              
-              <button id="buffer-copy-from" class="neumorph"> 
-                copy from </button>
-
-              <button id="buffer-copy-from" class="neumorph"> 
-                merge </button> -->
-
             </div>
 
             
@@ -542,7 +576,10 @@
     </div>
 
     <div id="nunigraph-stuff" class="nunigraph-container">
-      <canvas id="nunigraph-canvas" class="nunigraph-canvas"></canvas>
+      <!-- <div class="nunicanvas-container"> -->
+        <canvas id="nunigraph-canvas" class="nunigraph-canvas"></canvas>
+        <!-- <div class="nunigraph-canvas-tint"></div> -->
+      <!-- </div> -->
       <div id="node-windows"></div>      
     </div>
 

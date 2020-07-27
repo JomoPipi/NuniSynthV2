@@ -27,4 +27,6 @@ D('new-buffer-length').oninput = () => {
     D('new-buffer-length-text').innerText = value;
     BufferUtils.nextBufferDuration = +value;
 };
+function toggleBufferEditDialog(index) {
+}
 //# sourceMappingURL=delegate_events.js.map

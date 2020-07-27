@@ -9,10 +9,6 @@ pageGroupify(D('scale-kinds'), [
     'preset-library',
     'scale-builder'
 ]);
-pageGroupify(D('buffer-edit-create-select'), [
-    'buffer-create',
-    'buffer-edit'
-]);
 {
     const container = D('info-menu-container');
     const infoBtns = [...document.querySelectorAll('._info-menu-button_')];
