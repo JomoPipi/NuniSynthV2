@@ -71,10 +71,10 @@
             <li><a href="#">File</a>
               <ul>
                 <li><a href="#"> New Project </a></li>
+                <li><a href="#"> Open.. </a></li>
                 <li><a href="#"> Save </a></li>
                 <li><a href="#"> Save As.. </a></li>
                 <li><a href="#"> Export.. </a></li>
-                <li><a href="#"> Open.. </a></li>
                   <!-- <ul>
                     <li><a href="#"> Saved projects </a></li>
                     <li><a href="#"> Examples </a></li>
@@ -99,20 +99,23 @@
             
             <li><a href="#">Utilities</a>
               <ul>
-                  <li><a href="#">A</a></li>
+                  <li><a href="#">
+                    <span id="tab-swapper" class="flat-grid swapper">
+                      <span id="graph-tab-btn" class="flex-center nodrag">         Graph          </span>
+                      <span id="keyboard-tab-btn" class="flex-center nodrag">      Keyboard       </span>
+                      <span id="buffer-edit-tab-btn" class="flex-center nodrag">   Buffers        </span>
+                      <span id="waveform-edit-tab-btn" class="flex-center nodrag"> Waveforms      </span>
+                    </span>
+                  </a></li>
                   <li><a href="#">B</a></li>
               </ul>        
             </li>
 
         </ul>
+        
       </nav>
       
-      <!-- <div id="tab-swapper" class="flat-grid swapper">
-        <span id="graph-tab-btn" class="flex-center nodrag">         Graph          </span>
-        <span id="keyboard-tab-btn" class="flex-center nodrag">      Keyboard       </span>
-        <span id="buffer-edit-tab-btn" class="flex-center nodrag">   Buffers        </span>
-        <span id="waveform-edit-tab-btn" class="flex-center nodrag"> Waveforms      </span>
-      </div> -->
+      
     </div>
     
     <div id="tabs">
@@ -122,10 +125,12 @@
       <div id="graph-tab" class="_tab_ show">
           <div class="main-tab">
 
+              <div id="project-title"> </div>
+
               <div>
                 
                 <div class="center">
-                  Project Tempo
+                  Tempo
                   <span id="tempo-input-container">
                     
                   </span>
@@ -153,8 +158,10 @@
               
               <div>
 
-                PRESETS
-                <div id="graph-preset-list" class="preset-list">
+                <!-- PRESETS -->
+                <div id="graph-preset-list" class="preset-list"
+                style="display: none;">
+                <!-- TODO: Remove this and put in the nav menu -->
                 </div>
                 
               </div>

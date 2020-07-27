@@ -17,7 +17,7 @@ type SoundSource = OscillatorNode | AudioBufferSourceNode
 type StopFunc = { 
     stop: (when : number ) => void 
     stopImmediately: () => void
-}
+    }
 
 export class NuniSourceNode extends VolumeNodeContainer {
     /** Parent interface for Sampler and Oscillator nodes
@@ -29,7 +29,7 @@ export class NuniSourceNode extends VolumeNodeContainer {
     private _kbMode : boolean
     protected soloSource? : SoundSource
     
-    constructor(ctx : AudioContext){
+    constructor(ctx : AudioContext) {
         super(ctx)
         this.playingKeys = {}
         this.stopLastNSources = []
@@ -49,14 +49,16 @@ export class NuniSourceNode extends VolumeNodeContainer {
     }
 
     refresh() {
-        if (this.soloSource) {
+        if (this.soloSource) 
+        {
             this.soloSource.stop(0)
             delete this.soloSource
         }
         this.playingKeys = {}
         this.stopLastNSources = []
 
-        if (!this.kbMode) {
+        if (!this.kbMode) 
+        {
             const src = this.createSource()
             const adsr = this.ctx.createGain()
             const t = this.ctx.currentTime
@@ -87,15 +89,19 @@ export class NuniSourceNode extends VolumeNodeContainer {
     update(keydown : boolean, key : number, when? : number) {
         if (!this.kbMode) return;
         const time = when ?? this.ctx.currentTime
-        if (keydown) {
+        if (keydown) 
+        {
             this.beginPlayingNote(key, time)
 
             this.stopLastNSources.push(this.playingKeys[key])
-            while (this.stopLastNSources.length >= KB.nVoices + 1) {
+            while (this.stopLastNSources.length >= KB.nVoices + 1) 
+            {
                 this.stopLastNSources.shift()!.stopImmediately()
             }
             
-        } else {
+        } 
+        else 
+        {
             this.playingKeys[key]?.stop(time)
             delete this.playingKeys[key]
         }
@@ -103,7 +109,8 @@ export class NuniSourceNode extends VolumeNodeContainer {
 
     beginPlayingNote(key : number, time : number) {
 
-        if (this.playingKeys[key]) {
+        if (this.playingKeys[key]) 
+        {
             this.playingKeys[key].stop(time)
         }
 

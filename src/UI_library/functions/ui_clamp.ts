@@ -6,10 +6,7 @@
 
 
 export function UI_clamp(
-    x : number, 
-    y : number, 
-    element : HTMLElement,
-    container : HTMLElement) {
+    x : number, y : number, element : HTMLElement, container : HTMLElement) {
     /**
      * Moves the element to (x,y) while
      * staying inside the container.

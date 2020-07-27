@@ -15,28 +15,32 @@ apply_scale_button: {
         'apply-cent-delta,apply-equal-temperament,apply-scale-csv'
         .split(',')
 
-    D('scale-builder')!.onclick = function(e : MouseEvent) {
+    D('scale-builder').onclick = function(e : MouseEvent) {
         const btnId = (e.target as HTMLElement).id
         
-        if (btnId === deltaBtnId) {
+        if (btnId === deltaBtnId) 
+        {
             setDeltaExpressionScale()
-
-        } else if (btnId === equalBtnId) {
+        } 
+        else if (btnId === equalBtnId) 
+        {
             setEqualTemperamentScale()
-
-        } else if (btnId === csvBtnId) {
+        } 
+        else if (btnId === csvBtnId) 
+        {
             setScaleFromCSV()
         }
     }
 }
 
 apply_scale_preset: {
-    const div = D('scale-preset-list') as HTMLDivElement
-
-    for (const name in scalePresets) {
-        const item = E('button', {
-            text: name,
-            className: 'list-btn'
+    const div = D('scale-preset-list')
+    
+    for (const name in scalePresets) 
+    {
+        const item = E('button', 
+            { text: name
+            , className: 'list-btn'
             })
         div.appendChild(item)
     }
@@ -44,10 +48,14 @@ apply_scale_preset: {
     div.onclick = function(e : MouseEvent) {
         const name = (e.target as HTMLElement).innerText
         const P = <Indexed>scalePresets
-        if (name in P) {
-            if (name.endsWith('EDO')) {
+        if (name in P) 
+        {
+            if (name.endsWith('EDO')) 
+            {
                 setEqualTemperamentScale(P[name])
-            } else {
+            }
+            else 
+            {
                 setScaleFromCSV(P[name])
             }
         }

@@ -42,8 +42,7 @@ class BufferUtily {
         const div = D('buffer-container');
         for (let n = 0; n < this.nBuffers; n++) {
             const seconds = n === 0 ? 4 : _seconds;
-            const btn = E('button', {
-                text: String.fromCharCode(65 + n),
+            const btn = E('button', { text: String.fromCharCode(65 + n),
                 className: 'list-btn',
                 props: { id: `buff-${n}` }
             });
@@ -63,8 +62,8 @@ class BufferUtily {
             var _a, _b;
             const btn = e.target;
             const [_, n] = btn.id.split('-').map(Number);
-            (_a = D(`buff-${this.currentIndex}`)) === null || _a === void 0 ? void 0 : _a.classList.remove('selected2');
-            (_b = D(`buff-${n}`)) === null || _b === void 0 ? void 0 : _b.classList.add('selected2');
+            (_a = document.getElementById(`buff-${this.currentIndex}`)) === null || _a === void 0 ? void 0 : _a.classList.remove('selected2');
+            (_b = document.getElementById(`buff-${n}`)) === null || _b === void 0 ? void 0 : _b.classList.add('selected2');
             this.currentIndex = n;
             this.updateBufferUI();
         };

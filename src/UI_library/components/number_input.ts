@@ -11,11 +11,11 @@ export function createDraggableNumberInput(
     updateFunc : (delta : number, startValue : number) => string, 
     manualUpdater : (value : number) => void ) {
 
-    const valueInput = E('input', {
-        className: 'number-grab',
-        props: {
-            type: 'number',
-            value: initialValue
+    const valueInput = E('input', 
+        { className: 'number-grab'
+        , props: 
+            { type: 'number'
+            , value: initialValue
             }
         })
 

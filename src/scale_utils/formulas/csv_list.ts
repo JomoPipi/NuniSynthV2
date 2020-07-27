@@ -16,8 +16,7 @@ export const setScaleFromCSV = (_ => {
 
         KB.scale = 
         KB.keyCodes.map((_,i) => 
-            arr[i % N] + 1200 * (i / N | 0)
-            )
+            arr[i % N] + 1200 * (i / N | 0))
 
         refreshKeys()
     }
@@ -35,14 +34,15 @@ export const setScaleFromCSV = (_ => {
             .map(s => s.trim())
             .sort((a,b) => toCents(a) - toCents(b))
 
-        if (!input) {
+        if (!input) 
+        {
             valueInput.value = values.join(',  ')
         }
 
-        setTimeout(() => {// *
+        setTimeout(() => { // *
             assignToKeyboard([0].concat(values.map(toCents)))
 
             previewScale()
-            }, 100)
+        }, 100)
     }
 })()

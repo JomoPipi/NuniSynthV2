@@ -29,15 +29,15 @@ const held = [] as number[]
 
 const scale = keyCodes.map((_,i) => i * 100)
 
-export const KB = { 
-    keyCodes, 
-    keymap, 
-    held, 
-    scale,
-    mode: 'poly' as 'mono' | 'poly',
-    nVoices: 10,
-    attachToGraph, 
-    connectedNodes: function*(){ yield* [] as Indexed[] }
+export const KB = 
+    { keyCodes
+    , keymap
+    , held
+    , scale
+    , mode: 'poly' as 'mono' | 'poly'
+    , nVoices: 10
+    , attachToGraph
+    , connectedNodes: function*() { yield* [] as Indexed[] }
     }
 
 function attachToGraph(getNodes : () => Generator<Indexed, void, unknown>) {
@@ -49,8 +49,8 @@ function attachToGraph(getNodes : () => Generator<Indexed, void, unknown>) {
 
 function updateKeys(keydown : boolean) {
     return ({ keyCode: key } : KeyboardEvent) => {
-        if (key in keymap){ 
-
+        if (key in keymap)
+        { 
             // Maybe only do this when the keyboard image is visible?
             // TODO: make it match what it actually plays
             updateKBImage(key, keydown)
@@ -58,12 +58,16 @@ function updateKeys(keydown : boolean) {
             // UPDATE HELD-KEY ARRAY 
             // Sets up last-note priority, and prevents event spamming when keys are held.
             const idx = held.indexOf(key)
-            if (keydown) {
+            if (keydown) 
+            {
                 if (idx >= 0) return;
                 held.push(key)
-            } else {
+            } 
+            else 
+            {
                 held.splice(idx,1)
-                if (idx !== held.length && KB.mode === 'mono') {
+                if (idx !== held.length && KB.mode === 'mono') 
+                {
                     // We are lifting a note that wasnt the last, 
                     // and we're in last node priority.
                     return;
@@ -71,11 +75,14 @@ function updateKeys(keydown : boolean) {
             }
 
             // MAKE THE SOUND HAPPEN
-            for (const an of KB.connectedNodes()) {
+            for (const an of KB.connectedNodes()) 
+            {
                 an.update(keydown, key)
             }
 
-        } else {
+        } 
+        else 
+        {
             // TODO: implement key-hold, or something.
             log('keyCode =', key)
         }
@@ -84,7 +91,7 @@ function updateKeys(keydown : boolean) {
 
 const slider = D('n-poly-slider') as HTMLInputElement
 slider.oninput = function () {
-    D('n-poly-text')!.innerText = slider.value 
+    D('n-poly-text').innerText = slider.value 
     KB.nVoices = +slider.value
 } 
 

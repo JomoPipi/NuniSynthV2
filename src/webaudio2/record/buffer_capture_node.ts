@@ -26,7 +26,8 @@ export class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
     captureAudioFromStream(recordButton : HTMLElement) {
 
         const isRecording = recordButton.classList.contains('recording')
-        if (isRecording) {
+        if (isRecording) 
+        {
             recordButton.classList.remove('recording')
             clearTimeout(BufferUtils.lastRecorderRequestId)
             BufferUtils.stopLastRecorder()

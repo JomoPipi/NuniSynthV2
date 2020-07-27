@@ -52,7 +52,7 @@ class BufferUtily {
         const n = this.currentIndex
         const buff = BufferStorage.get(n)
 
-        D('buffer-info')!.innerText =
+        D('buffer-info').innerText =
         `${
             String.fromCharCode(65 + n)
         } -- ${
@@ -73,22 +73,25 @@ class BufferUtily {
     initBufferPresets(ctx : AudioContext) {
         const _seconds = 0.1
         
-        const div = D('buffer-container')!
+        const div = D('buffer-container')
 
-        for (let n = 0; n < this.nBuffers; n++) {
+        for (let n = 0; n < this.nBuffers; n++) 
+        {
             const seconds = n === 0 ? 4 : _seconds
 
-            const btn = E('button', {
-                text: String.fromCharCode(65+n),
-                className: 'list-btn',
-                props: { id: `buff-${n}` }
+            const btn = E('button', 
+                { text: String.fromCharCode(65+n)
+                , className: 'list-btn'
+                , props: { id: `buff-${n}` }
                 })
             div.appendChild(btn)
 
             const buffer = ctx.createBuffer(2, ctx.sampleRate * seconds, ctx.sampleRate)
-            for (let channel = 0; channel < buffer.numberOfChannels; channel++) {  
+            for (let channel = 0; channel < buffer.numberOfChannels; channel++) 
+            {  
                 const nowBuffering = buffer.getChannelData(channel)
-                for (let i = 1; i < buffer.length; i++) {
+                for (let i = 1; i < buffer.length; i++) 
+                {
                     nowBuffering[i] = presets(i,channel)[n] || (i % 2) / 2.0
                 }
             }
@@ -96,13 +99,20 @@ class BufferUtily {
         }
         this.updateBufferUI()
         
-        D('buff-0')!.classList.add('selected2')
+        D('buff-0').classList.add('selected2')
 
         div.onclick = (e : MouseEvent) =>{
             const btn = e.target as HTMLButtonElement
             const [_,n] = btn.id.split('-').map(Number)
-            D(`buff-${this.currentIndex}`)?.classList.remove('selected2')
-            D(`buff-${n}`)?.classList.add('selected2')
+
+            // Disable the previous step
+            document.getElementById(`buff-${this.currentIndex}`)
+                ?.classList.remove('selected2')
+
+            // Enable the next step
+            document.getElementById(`buff-${n}`)
+                ?.classList.add('selected2')
+
             this.currentIndex = n
             this.updateBufferUI()
         }

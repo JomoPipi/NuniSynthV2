@@ -29,13 +29,11 @@ export class JsDial {
 
     constructor(classIndex? : number) {
         
-        this.dial = E('div', {
-            className: 'js-dial'
-            })
+        this.dial = E('div', { className: 'js-dial' })
         
-        this.html = E('div', {
-            className: classes[classIndex || 0],
-            children: [this.dial]
+        this.html = E('div', 
+            { className: classes[classIndex || 0]
+            , children: [this.dial]
             }) 
             
         this.isActive = false
@@ -57,6 +55,7 @@ export class JsDial {
     }
     
     attach(func : (n : number) => void, startFunc? : Function, endFunc? : Function) {
+
         const start = (x:number, y:number) => { 
             this.lastX = x
             this.lastY = y
@@ -67,6 +66,7 @@ export class JsDial {
             window.addEventListener('mousemove', mouseMove)
             window.addEventListener('mouseup', end)
         }
+
         const end = () => { 
             this.isActive = false
             endFunc && endFunc()
@@ -74,6 +74,7 @@ export class JsDial {
             window.removeEventListener('mousemove', mouseMove)
             window.removeEventListener('mouseup', end)
         }
+
         const mouseStart = (e : MouseEvent) => start(e.clientX,e.clientY)
         const mouseMove  = (e : MouseEvent) => move (e.clientX,e.clientY)
         
@@ -109,7 +110,7 @@ export class JsDial {
         this.dial.style.transform = 
             `rotate(${
                 this.rounds * this.arcLength * 
-                ((this.value-this.min)/(this.max-this.min)) +
+                ((this.value-this.min) / (this.max-this.min)) +
                 this.imgDegreeOffset}deg)`
     }
 }

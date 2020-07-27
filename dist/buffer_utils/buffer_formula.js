@@ -10,7 +10,6 @@ export function formulateBuffer(index) {
     const isError = validateExp(formulaInput.value);
     if (isError) {
         errorMsgText.innerText = isError;
-        log('buffer formulation denied');
         return;
     }
     else {
@@ -22,12 +21,16 @@ export function formulateBuffer(index) {
     function validateExp(expression) {
         const { sin, cos, tan, log, log2, exp, sqrt, random, atan, atan2, atanh, abs, acos, acosh, asin, asinh, cbrt, ceil, cosh, expm1, floor, hypot, log10, LN2, LN10, LOG2E, max, min, pow, round, sign, SQRT1_2, SQRT2, tanh, trunc } = Math;
         try {
-            eval(`for (let channel = 0; channel < buffer.numberOfChannels; channel++) {  
-                const nowBuffering = buffer.getChannelData(channel)
-                for (let n = 1; n < buffer.length; n++) {
-                    nowBuffering[n] = clamp(-1, ${expression}, 1)
+            eval(`
+                for (let channel = 0; channel < buffer.numberOfChannels; channel++) 
+                {  
+                    const nowBuffering = buffer.getChannelData(channel)
+                    for (let n = 1; n < buffer.length; n++) 
+                    {
+                        nowBuffering[n] = clamp(-1, ${expression}, 1)
+                    }
                 }
-            }`);
+            `);
         }
         catch (e) {
             return e;
@@ -35,8 +38,7 @@ export function formulateBuffer(index) {
         return undefined;
     }
 }
-const presets = {
-    'Hard Wave': 'sin(n / 32.0) + sin(n / 512.0)',
+const bufferPresets = { 'Hard Wave': 'sin(n / 32.0) + sin(n / 512.0)',
     'Kick-1A': '0.5 * sin(n / sqrt(n/3.0))',
     'Kick-2A': '0.5 * sin(n / (2*sqrt(n/4.0)))',
     'Kick-3A': '0.5 * sin(n / (0.4*sqrt(n/1.0)))',
@@ -66,25 +68,23 @@ const presets = {
     'Water Wave': '0.5 * sin(n / (sqrt(n/90)-sqrt(n/4)+sqrt(n/705)**2.3))'
 };
 D('buffer-formula-templates-button').onclick = () => showBufferFormulaTemplates();
-const container = D('formula-template-container');
+const bufferPresetsContainer = D('formula-template-container');
 function showBufferFormulaTemplates() {
-    const buttons = Object.keys(presets).map(name => E('div', {
-        className: 'list-btn',
+    const buttons = Object.keys(bufferPresets).map(name => E('div', { className: 'list-btn',
         text: name
     }));
-    const list = E('span', {
-        className: 'window show preset-list',
+    const list = E('span', { className: 'window show preset-list',
         children: buttons
     });
-    container.appendChild(list);
+    bufferPresetsContainer.appendChild(list);
     window.addEventListener('mousedown', clickBufferTemplateOrNot);
 }
 function clickBufferTemplateOrNot(e) {
-    if (e.target instanceof HTMLElement && e.target.innerText in presets) {
+    if (e.target instanceof HTMLElement && e.target.innerText in bufferPresets) {
         formulaInput.value =
-            presets[e.target.innerText];
+            bufferPresets[e.target.innerText];
     }
+    bufferPresetsContainer.innerHTML = '';
     window.removeEventListener('mousedown', clickBufferTemplateOrNot);
-    container.innerHTML = '';
 }
 //# sourceMappingURL=buffer_formula.js.map

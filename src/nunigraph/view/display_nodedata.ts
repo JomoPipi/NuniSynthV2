@@ -10,9 +10,9 @@ import { sequencerControls } from './sequencer_controls.js'
 import { BufferUtils } from '../../buffer_utils/internal.js'
 import { audioCaptureNodeControls } from './audio_capture_controls.js'
 import { createResizeableGraphEditor } from './resizeable_graph_editor.js'
-import { 
-    NuniSourceNode, BufferNode2, Sequencer, 
-    AudioBufferCaptureNode, NuniGraphAudioNode 
+import 
+    { NuniSourceNode, BufferNode2, Sequencer
+    , AudioBufferCaptureNode, NuniGraphAudioNode 
     } from '../../webaudio2/internal.js'
 import { createDraggableNumberInput, createToggleButton, applyStyle, JsDial } from '../../UI_library/internal.js'
 
@@ -30,47 +30,56 @@ export function createValuesWindow(
 
     controls.appendChild(showSubtypes(node, saveCallback))
 
-    if (NodeTypeWarnings[node.type]) {
+    if (NodeTypeWarnings[node.type]) 
+    {
         controls.appendChild(warningButton(node.type))
     }
 
-    if (node.audioNode instanceof NuniGraphAudioNode) {
+    if (node.audioNode instanceof NuniGraphAudioNode) 
+    {
         controls.style.margin = '0 0'
         controls.appendChild(createResizeableGraphEditor(node.audioNode))
     }
 
-    if (node.audioNode instanceof AudioBufferCaptureNode) {
+    if (node.audioNode instanceof AudioBufferCaptureNode) 
+    {
         controls.appendChild(audioCaptureNodeControls(node.audioNode))
     }
 
-    if (node.audioNode instanceof Sequencer) {
+    if (node.audioNode instanceof Sequencer) 
+    {
         controls.appendChild(sequencerControls(node.audioNode))
     }
 
-    if (node.audioNode instanceof BufferNode2) {
+    if (node.audioNode instanceof BufferNode2) 
+    {
         controls.appendChild(samplerControls(node.audioNode))
     }
 
-    if (node.audioNode instanceof NuniSourceNode) {
+    if (node.audioNode instanceof NuniSourceNode) 
+    {
         controls.appendChild(activateKeyboardButton(node.audioNode))
     }
 
-    if (node.id === 0) {
+    if (node.id === 0) 
+    {
         controls.appendChild(gainControls(node))
     }
-    else if (node.type !== NodeTypes.B_SEQ) {
+    else if (node.type !== NodeTypes.B_SEQ) 
+    {
         controls.appendChild(exposeAudioParams(node, saveCallback))
     }
 
     // // Add delete button, but not if id is 0, because that's the master gain.
-    // if (node.id !== 0) {
+    // if (node.id !== 0) 
+    // {
     //     const deleteNodeBtn = E('button', { text: '🗑️' })
-    //     applyStyle(deleteNodeBtn, {
-    //         textAlign: 'center',
-    //         backgroundColor: 'transparent',
-    //         border: 'none',
-    //         fontSize: '1.25em'
-    //     })
+    //     applyStyle(deleteNodeBtn, 
+    //         { textAlign: 'center'
+    //         , backgroundColor: 'transparent'
+    //         , border: 'none'
+    //         , fontSize: '1.25em'
+    //         })
     //     deleteNodeBtn.onclick = () => deleteCallback()
     //     controls.append(deleteNodeBtn)
     // }
@@ -79,22 +88,22 @@ export function createValuesWindow(
 }
 
 function warningButton(type : NodeTypes) {
-    return E('span', {
-        text: '!',
-        className: 'tooltip',
+    return E('span', 
+        { text: '!'
+        , className: 'tooltip'
         
-        children: [E('span',{ 
-            text: NodeTypeWarnings[type],
-            className: 'tooltiptext'
-        })],
+        , children: [E('span',
+            { text: NodeTypeWarnings[type]
+            , className: 'tooltiptext'
+            })]
         
-        props:{style: {
-            width: '20px',
-            height: '20px',
-            float: 'right',
-            backgroundColor:' orange'
-        }}
-    })
+        , props: { style: 
+            { width: '20px'
+            , height: '20px'
+            , float: 'right'
+            , backgroundColor:' orange'
+            }}
+        })
 }
 
 
@@ -108,20 +117,19 @@ function gainControls(node : NuniGraphNode) {
     dial.sensitivity = 2**-9
     dial.render()
 
-    const valueText = E('span', { 
-        text: `${volumeTodB(value).toFixed(1)}dB` // (${(value*100).toFixed(2)}%)`
-        })
+    const valueText = E('span', 
+        { text: `${volumeTodB(value).toFixed(1)}dB` })
 
-        applyStyle(valueText, {
-            display: 'inline-block',
-            width: '70px'
+        applyStyle(valueText, 
+            { display: 'inline-block'
+            , width: '70px'
             })
     
     dial.attach((v : number) => {
         const value = v ** 4.0
         node.setValueOfParam('gain', value)
         valueText.innerText =
-            `${volumeTodB(value).toFixed(1)}dB` //(${(value*100).toFixed(2)}%)`
+            `${volumeTodB(value).toFixed(1)}dB`
     })
 
     const box = E('div', { children: [dial.html, valueText] })
@@ -136,9 +144,9 @@ function activateKeyboardButton(an : NuniSourceNode) {
     return createToggleButton(
         an,
         'kbMode',
-        {   text: '🎹', 
-            className: 'kb-button' }
-        )
+        { text: '🎹'
+        , className: 'kb-button' 
+        })
 }
 
 
@@ -148,7 +156,9 @@ function showSubtypes(node : NuniGraphNode, saveCallback: Function) : Node {
     const subtypes = AudioNodeSubTypes[node.type] as string[]
     const box = E('span')
     const an = node.audioNode as { type : any }
-    if (subtypes.length > 0) { // Show subtypes selector
+
+    if (subtypes.length > 0) // Show subtypes selector
+    { 
         const select = E('select')
         
         insertOptions(select, subtypes)
@@ -174,9 +184,9 @@ function insertOptions(select : HTMLSelectElement, options : string[]) {
 
 
 function samplerControls(audioNode : BufferNode2) {
-    const box = E('span', {
-        className: 'buffer-row',
-        children: [E('span', { text: 'buffer' })]
+    const box = E('span', 
+        { className: 'buffer-row'
+        , children: [E('span', { text: 'buffer' })]
         })
         
     const value = E('span', { text: String.fromCharCode(65 + audioNode.bufferKey) })
@@ -212,11 +222,11 @@ function samplerControls(audioNode : BufferNode2) {
 
 function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node {
     const allParams = E('div')
-    for (const param of AudioNodeParams[node.type]) {
-        
-        const box = E('div', { 
-            className: 'params-box',
-            text: param
+    for (const param of AudioNodeParams[node.type]) 
+    {
+        const box = E('div', 
+            { className: 'params-box'
+            , text: param
             })
 
         const initialValue = node.audioParamValues[param]
@@ -245,10 +255,10 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
         // box.appendChild(createNumberDialComponent(
         //     initialValue,
         //     manualUpdater, {
-        //         dial: {
-        //             min,
-        //             max,
-        //             sensitivity: 4
+        //         dial: 
+        //         { min
+        //         , max
+        //         , sensitivity: 4
         //         }
         //     }
         // ))

@@ -231,7 +231,7 @@ export class NuniGraphRenderer {
         const nodes = g.nodes;
         const W = canvas.width = canvas.offsetWidth;
         const H = canvas.height = canvas.offsetHeight;
-        const { x, y, buttons, selectionStart, selectedNodes, } = options;
+        const { x, y, buttons, selectionStart, selectedNodes } = options;
         const innerOptions = Object.assign(Object.assign({}, options), { H, W, selectedNodes: selectedNodes || [] });
         ctx.font = '15px Arial';
         ctx.clearRect(0, 0, W, H);

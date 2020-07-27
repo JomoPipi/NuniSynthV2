@@ -14,8 +14,8 @@ export const setEqualTemperamentScale = (_ => {
         ] as HTMLSelectElement[]
 
     const assignToKeyboard = (centDelta : number) => {
-        KB.scale = KB.keyCodes.map((_,i) => 
-            i * centDelta)
+
+        KB.scale = KB.keyCodes.map((_,i) => i * centDelta)
         
         refreshKeys()
     }
@@ -34,7 +34,7 @@ export const setEqualTemperamentScale = (_ => {
     } 
 
     return function(edo? : number) {
-        setTimeout(() => {// *
+        setTimeout(() => { // *
             const value = edo ? 1200.0 / edo : +cents.value
 
             assignToKeyboard(value)

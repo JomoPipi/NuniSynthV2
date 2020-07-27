@@ -15,10 +15,10 @@ import { createNumberDialComponent } from "../../UI_library/internal.js"
 
 let activated = false, isPaused = false, _tempo = 69
 
-const tempoComponent = createNumberDialComponent
-    ( 120
-    , (value : number) => _tempo = clamp(1, value, 69420)
-    , { dial: 
+const tempoComponent = createNumberDialComponent(
+    120, 
+    (value : number) => _tempo = clamp(1, value, 69420),
+    { dial: 
         { sensitivity: 2**-2
         , min: 20
         , max: 999
@@ -28,9 +28,10 @@ const tempoComponent = createNumberDialComponent
 
 export const MasterClock = {
 
-    setSchedule: function (scheduleNotes : (tempo : number) => void) {
-        if (activated) 
+    setSchedule: (scheduleNotes : (tempo : number) => void) => {
+        if (activated) {
             throw 'MasterClock already has a schedule.'
+        }
         activated = true
         startScheduling(scheduleNotes)
     },
@@ -42,7 +43,7 @@ export const MasterClock = {
 
 MasterClock.setTempo(120)
 
-D('tempo-input-container')!.appendChild(tempoComponent)
+D('tempo-input-container').appendChild(tempoComponent)
 
 
 function startScheduling(scheduleNotes : (tempo : number) => void) {
@@ -57,16 +58,19 @@ function startScheduling(scheduleNotes : (tempo : number) => void) {
 }
 
 // Add tempo tapper
-const tapBtn = D('tempo-tapper')!
+const tapBtn = D('tempo-tapper')
 let counter = 0, clearTimer= -1, start = 0, delta = 0
 
 function count() {
     clearTimeout(clearTimer)
     
-    if(!start) {
+    if(!start) 
+    {
         start = new Date().getTime()
         tempoComponent.classList.add('selected2')
-    } else {
+    } 
+    else 
+    {
         delta = new Date().getTime() - start
         const newTempo = Math.round(60 * 1000 * counter / delta)
         tempoComponent.setValue(newTempo)
@@ -78,7 +82,7 @@ function count() {
     counter++
     
     // Reset counter after 2 seconds
-    clearTimer = window.setTimeout(function(){
+    clearTimer = window.setTimeout(function() {
         counter = 0
         delta = 0
         start = 0
@@ -89,6 +93,6 @@ tapBtn.addEventListener('click', count)
 
 
 // Add hold button
-const holdBtn = D('beat-hold-button')!
+const holdBtn = D('beat-hold-button')
 holdBtn.onmousedown = () => isPaused = true
 holdBtn.onmouseup = () => isPaused = false

@@ -50,7 +50,8 @@ function drawFrequencySpectrum(e : MessageEvent) {
     ctx.beginPath()
     ctx.moveTo(0,h2)
 
-    for (let i = 1; i < bufferLength; i++) {
+    for (let i = 1; i < bufferLength; i++) 
+    {
         if (fbc_array[i] === 255) isClipping = true
         ctx.lineTo(x, map_to_new_range(fbc_array[i], 0, h2))
         x += sliceWidth * widthConstant / i

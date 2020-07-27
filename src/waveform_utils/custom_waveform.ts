@@ -12,7 +12,8 @@ function newRandomWaveForm(N : number) : PeriodicWave {
     const real = new Float32Array(N);
     const imag = new Float32Array(N);
     
-    for (let i = 1; i < N; i++) {
+    for (let i = 1; i < N; i++) 
+    {
         real[i] = i/N // Math.random()
         imag[i] = 1-i/N // Math.random()
     }

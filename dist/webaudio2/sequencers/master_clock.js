@@ -7,9 +7,10 @@ const tempoComponent = createNumberDialComponent(120, (value) => _tempo = clamp(
     }
 });
 export const MasterClock = {
-    setSchedule: function (scheduleNotes) {
-        if (activated)
+    setSchedule: (scheduleNotes) => {
+        if (activated) {
             throw 'MasterClock already has a schedule.';
+        }
         activated = true;
         startScheduling(scheduleNotes);
     },

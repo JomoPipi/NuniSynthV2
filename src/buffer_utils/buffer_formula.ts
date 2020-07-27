@@ -10,7 +10,7 @@ import { audioCtx } from '../webaudio2/internal.js'
 import { BufferStorage } from '../storage/general/buffer_storage.js'
 
 const formulaInput = D('buffer-formula') as HTMLInputElement
-const errorMsgText = D('buffer-formula-error-msg') as HTMLElement
+const errorMsgText = D('buffer-formula-error-msg')
 
 export function formulateBuffer(index : number) {
     
@@ -24,12 +24,13 @@ export function formulateBuffer(index : number) {
     
     const isError = validateExp(formulaInput.value)
 
-    if (isError) {
+    if (isError) 
+    {
         errorMsgText.innerText = isError
-        log('buffer formulation denied')
         return;
     } 
-    else {
+    else 
+    {
         errorMsgText.innerText = ''
         BufferStorage.set(index, buffer)
         BufferUtils.refreshAffectedBuffers()
@@ -38,22 +39,28 @@ export function formulateBuffer(index : number) {
     
 
     function validateExp(expression : string) {
-        const {
-            sin, cos, tan, log, log2, exp, sqrt, random, 
-            atan, atan2, atanh, abs, acos, acosh, asin, asinh,
-            cbrt, ceil, cosh, expm1, floor, hypot, log10, LN2, 
-            LN10, LOG2E, max, min, pow, round, sign, SQRT1_2, SQRT2,
-            tanh, trunc
+        const 
+            { sin, cos, tan, log, log2, exp, sqrt, random, atan
+            , atan2, atanh, abs, acos, acosh, asin, asinh, cbrt
+            , ceil, cosh, expm1, floor, hypot, log10, LN2, LN10
+            , LOG2E, max, min, pow, round, sign, SQRT1_2, SQRT2
+            , tanh, trunc
             } = Math
-        try {
-            eval(`for (let channel = 0; channel < buffer.numberOfChannels; channel++) {  
-                const nowBuffering = buffer.getChannelData(channel)
-                for (let n = 1; n < buffer.length; n++) {
-                    nowBuffering[n] = clamp(-1, ${expression}, 1)
+        try 
+        {
+            eval(`
+                for (let channel = 0; channel < buffer.numberOfChannels; channel++) 
+                {  
+                    const nowBuffering = buffer.getChannelData(channel)
+                    for (let n = 1; n < buffer.length; n++) 
+                    {
+                        nowBuffering[n] = clamp(-1, ${expression}, 1)
+                    }
                 }
-            }`)
-                    
-        } catch (e) {
+            `)
+        } 
+        catch (e) 
+        {
             return e
         }
         
@@ -61,9 +68,8 @@ export function formulateBuffer(index : number) {
     }
 }
 
-const presets = {
-
-      'Hard Wave': 'sin(n / 32.0) + sin(n / 512.0)'
+const bufferPresets = 
+    { 'Hard Wave': 'sin(n / 32.0) + sin(n / 512.0)'
     , 'Kick-1A': '0.5 * sin(n / sqrt(n/3.0))'
     , 'Kick-2A': '0.5 * sin(n / (2*sqrt(n/4.0)))'
     , 'Kick-3A': '0.5 * sin(n / (0.4*sqrt(n/1.0)))'
@@ -94,36 +100,37 @@ const presets = {
     }
 
 
-D('buffer-formula-templates-button')!.onclick = () =>
+D('buffer-formula-templates-button').onclick = () =>
     showBufferFormulaTemplates()
 
+const bufferPresetsContainer = D('formula-template-container')
 
-const container = D('formula-template-container')!
 function showBufferFormulaTemplates() {
 
     const buttons =
-        Object.keys(presets).map(name => 
-            E('div',{
-                className: 'list-btn',
-                text: name
-                }))
+        Object.keys(bufferPresets).map(name => 
+            E(  'div',
+                { className: 'list-btn'
+                , text: name
+                }
+            ))
 
-    const list = E('span', {
-        className: 'window show preset-list',
-        children: buttons
+    const list = E('span', 
+        { className: 'window show preset-list'
+        , children: buttons
         })
     
-    container.appendChild(list)
-
+    bufferPresetsContainer.appendChild(list)
     window.addEventListener('mousedown', clickBufferTemplateOrNot)
 }
 
 function clickBufferTemplateOrNot(e : MouseEvent) {
-    if (e.target instanceof HTMLElement && e.target.innerText in presets) {
+    if (e.target instanceof HTMLElement && e.target.innerText in bufferPresets) 
+    {
         formulaInput.value = 
-            presets[e.target.innerText as keyof typeof presets]
+            bufferPresets[e.target.innerText as keyof typeof bufferPresets]
     }
 
+    bufferPresetsContainer.innerHTML = ''
     window.removeEventListener('mousedown', clickBufferTemplateOrNot)
-    container.innerHTML = ''
 }

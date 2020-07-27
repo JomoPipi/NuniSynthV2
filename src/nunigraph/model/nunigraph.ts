@@ -7,20 +7,20 @@
 
 import { NuniGraphNode } from './nunigraph_node.js'
 import { LZW_compress, LZW_decompress } from '../../helpers/lzw_compression.js'
-import { 
-    SubgraphSequencer, NuniAudioParam, 
-    Sequencer, NuniGraphAudioNode
+import 
+    { SubgraphSequencer, NuniAudioParam
+    , Sequencer, NuniGraphAudioNode
     } from '../../webaudio2/internal.js'
 
 type Destination = AudioNode | AudioParam | NuniAudioParam
 
 
-const defaultNodeSettings = () => ({
-    x: 0.5, 
-    y: 0.5,
-    audioParamValues: {},
-    audioNodeProperties: {}
-})
+const defaultNodeSettings = () => (
+    { x: 0.5
+    , y: 0.5
+    , audioParamValues: {}
+    , audioNodeProperties: {}
+    })
 
 export class NuniGraph {
     /**
@@ -50,11 +50,11 @@ export class NuniGraph {
 
 
     private initializeMasterGain() {
-        const masterGainSettings = Object.assign(defaultNodeSettings(), { 
-            audioParamValues: { [NodeTypes.GAIN]: 1 },
-            x: 0.5, 
-            y: 0.125,
-            title: 'OUTPUT'
+        const masterGainSettings = Object.assign(defaultNodeSettings(), 
+            { audioParamValues: { [NodeTypes.GAIN]: 1 }
+            , x: 0.5
+            , y: 0.125
+            , title: 'OUTPUT'
             })
 
         this.createNewNode(NodeTypes.GAIN, masterGainSettings)
@@ -65,7 +65,8 @@ export class NuniGraph {
 
     createNewNode(type : NodeTypes, settings? : NodeCreationSettings) {
 
-        if (!settings) {
+        if (!settings) 
+        {
             settings = defaultNodeSettings()
         }
 
@@ -86,21 +87,21 @@ export class NuniGraph {
         const centerY = _nodes.reduce((a, { y }) => a + y, 0) / _nodes.length
 
         // Make nodes
-        const nodes = _nodes.map(({ 
-            type, x, y, 
-            audioParamValues, 
-            audioNodeProperties, 
-            INPUT_NODE_ID, title }) => {
+        const nodes = _nodes.map((
+            { type, x, y
+            , audioParamValues
+            , audioNodeProperties
+            , INPUT_NODE_ID, title }) => {
 
             const newX = clamp(0, x - centerX + X, 1)
             const newY = clamp(0, y - centerY + Y, 1)
-            const settings = {
-                x: newX,
-                y: newY,
-                audioParamValues,
-                audioNodeProperties,
-                title: INPUT_NODE_ID ? undefined : title
-            }
+            const settings = 
+                { x: newX
+                , y: newY
+                , audioParamValues
+                , audioNodeProperties
+                , title: INPUT_NODE_ID ? undefined : title
+                }
 
             return this.createNewNode(type, settings)
         })
@@ -108,22 +109,25 @@ export class NuniGraph {
         const retainedInputs = new Set()
 
         // Make connections
-        for (const indexA in nodes) {
-
+        for (const indexA in nodes) 
+        {
             const a = nodes[indexA]
 
-            for (const { id: indexB, connectionType } of connections[indexA]) { 
-
+            for (const { id: indexB, connectionType } of connections[indexA]) 
+            { 
                 const b = nodes[indexB]
 
-                if (b.audioNode instanceof NuniGraphAudioNode) {
+                if (b.audioNode instanceof NuniGraphAudioNode) 
+                {
                     // Handle the input nodes of b, again (TODO: cleanup)
                     const innerInputNode 
                         = b.audioNode.controller.g.nodes.find(node =>
                             node.INPUT_NODE_ID?.id === _nodes[indexA].oldId)
             
                     if (!innerInputNode) 
+                    {
                         throw 'An input node with INPUT_NODE_ID = nodeA.id should exist inside node b'
+                    }
         
                     // Reassign its' connectee id
                     innerInputNode.INPUT_NODE_ID!.id = a.id
@@ -133,24 +137,29 @@ export class NuniGraph {
                     b.audioNode.inputs[a.id] = innerInputNode
                     delete b.audioNode.inputs[_nodes[indexA].oldId]
                 }
-                
+
                 this.makeConnection(a, b, connectionType)
             }
         }
         
         // Remove dangling inputNodes from modules
-        for (const node of nodes) {
+        for (const node of nodes) 
+        {
             
             // Disconnect loose inputnodes
-            if (node.audioNode instanceof NuniGraphAudioNode) {
+            if (node.audioNode instanceof NuniGraphAudioNode) 
+            {
 
                 // Without spreading the array, we would skip over indexes
                 // Because deleteNode splices the array
-                for (const moduleNode of [...node.audioNode.controller.g.nodes]) {
-                    if (moduleNode.INPUT_NODE_ID) {
+                for (const moduleNode of [...node.audioNode.controller.g.nodes]) 
+                {
+                    if (moduleNode.INPUT_NODE_ID) 
+                    {
                         const input_id = moduleNode.INPUT_NODE_ID.id
 
-                        if (!retainedInputs.has(input_id)) {
+                        if (!retainedInputs.has(input_id)) 
+                        {
                             node.audioNode.controller.deleteNode(moduleNode, { force: true })
                         }
                     }
@@ -160,16 +169,19 @@ export class NuniGraph {
 
 
         // Copy subgraph sequencer 
-        for (const i in _nodes) {
+        for (const i in _nodes) 
+        {
             const an = nodes[i].audioNode
-            if (an instanceof SubgraphSequencer) {
+            if (an instanceof SubgraphSequencer) 
+            {
                 const matrix = _nodes[i].audioNode.stepMatrix
 
                 // Map input id to new node id
                 const matrixWithRemappedKeys = Object.keys(matrix).reduce((mat, key) => {
                     const index = _nodes.findIndex(({ oldId }) => oldId === +key)
                     
-                    if (index >= 0) {
+                    if (index >= 0) 
+                    {
                         // The input exists and this row should be copied over
                         // log(`remapped stepMatrix key from ${key} to ${nodes[index].id}`)
                         mat[nodes[index].id] = matrix[key]
@@ -194,31 +206,28 @@ export class NuniGraph {
         
         const copiedNode = this.convertNodeToNodeSettings(node)
         
-        const { 
-            type, 
-            x, 
-            y, 
-            audioParamValues, 
-            audioNodeProperties,
-            title,
-            INPUT_NODE_ID
+        const 
+            { type
+            , x
+            , y
+            , audioParamValues
+            , audioNodeProperties
+            , title
+            , INPUT_NODE_ID
             } = copiedNode
 
         const newX = clamp(0, x+0.07, 1)
         const newY = newX === 1 ? clamp(0, y-0.07, 1) : y
-        const settings = {
-            x: newX,
-            y: newY,
-            audioParamValues,
-            audioNodeProperties,
-            INPUT_NODE_ID
+        const settings = 
+            { x: newX
+            , y: newY
+            , audioParamValues
+            , audioNodeProperties
+            , INPUT_NODE_ID
             } as NodeCreationSettings
 
         if (!INPUT_NODE_ID) settings.title = title
-
-        if (node.type === NodeTypes.B_SEQ) {
-            log ('stepMatrix =',settings.audioNodeProperties.stepMatrix)
-        }
+        
         return this.createNewNode(type, settings)
     }
 
@@ -242,8 +251,10 @@ export class NuniGraph {
 
 
     reproduceConnections(mapToNewNode : { [id : number] : NuniGraphNode }) {
-        for (const id1 in this.oneWayConnections) {
-            for (const { id: id2, connectionType } of this.oneWayConnections[id1]) {
+        for (const id1 in this.oneWayConnections) 
+        {
+            for (const { id: id2, connectionType } of this.oneWayConnections[id1]) 
+            {
                 // nodeA connects to nodeB
                 const nodeA = this.nodes.find(node => node.id ===+id1)
                 const nodeB = this.nodes.find(node => node.id === id2)
@@ -251,10 +262,9 @@ export class NuniGraph {
                 const a = mapToNewNode[nodeA.id] || nodeA
                 const b = mapToNewNode[nodeB.id] || nodeB
 
-                if (a !== nodeA || b !== nodeB) {
-
+                if (a !== nodeA || b !== nodeB) 
+                {
                     this.copyModuleInputNodes(a, b, nodeA, nodeB)
-
                     this.makeConnection(a, b, connectionType)
                 }
             }
@@ -269,8 +279,8 @@ export class NuniGraph {
         a : NuniGraphNode, b : NuniGraphNode, nodeA : NuniGraphNode, nodeB : NuniGraphNode) {
 
         // Handle the input node(s) of b
-        if (b.audioNode instanceof NuniGraphAudioNode && b !== nodeB) {
-
+        if (b.audioNode instanceof NuniGraphAudioNode && b !== nodeB) 
+        {
             const innerInputNode 
                 = b.audioNode.controller.g.nodes.find(node =>
                     node.INPUT_NODE_ID?.id === nodeA.id)
@@ -282,7 +292,8 @@ export class NuniGraph {
             innerInputNode.title = `INPUT (id-${a.id})`
 
             b.audioNode.inputs[a.id] = innerInputNode
-            if (a !== nodeA) {
+            if (a !== nodeA) 
+            {
                 // nodeA doesn't connect to b
                 delete b.audioNode.inputs[nodeA.id]
             }
@@ -296,14 +307,17 @@ export class NuniGraph {
         nodes : NuniGraphNode[], 
         mapToNewNode : Indexable<{ audioNode : Indexed, id : number }>) {
             
-        for (const node of nodes) {
-            if (node.audioNode instanceof Sequencer) {
-                // TODO 
+        for (const node of nodes) 
+        {
+            if (node.audioNode instanceof Sequencer) 
+            {
+                // TODO - clean this up by using config objects to know what objects to copy
                 if (node.type === NodeTypes.B_SEQ) continue;
                 
                 const matrix = node.audioNode.stepMatrix
                 
-                for (const id in matrix) {
+                for (const id in matrix) 
+                {
                     const newId = mapToNewNode[id]?.id ?? id
                     mapToNewNode[node.id]
                         .audioNode
@@ -320,7 +334,8 @@ export class NuniGraph {
 
     deleteNode(node : NuniGraphNode) {
         // Without this, the setTimeout could keep looping forever:
-        if (node.audioNode instanceof Sequencer) {
+        if (node.audioNode instanceof Sequencer) 
+        {
             node.audioNode.stop()
         }
 
@@ -335,7 +350,8 @@ export class NuniGraph {
 
         // Remove from this.oneWayConnections:
         delete this.oneWayConnections[node.id]
-        for (const id in this.oneWayConnections) {
+        for (const id in this.oneWayConnections) 
+        {
             this.oneWayConnections[id] = 
             this.oneWayConnections[id].filter(({ id }) => id !== node.id)
         }
@@ -355,12 +371,14 @@ export class NuniGraph {
          * A better solution may be to wrap disconnect(), or 
          * stop using it all together.
          *  */ 
-        for (const { audioNode } of this.nodes) {
+        for (const { audioNode } of this.nodes) 
+        {
             if (audioNode instanceof SubgraphSequencer && audioNode.channelData[node.id])
             {
                 audioNode.removeInput(node)
             } 
-            else if (audioNode instanceof NuniGraphAudioNode && audioNode.inputs[node.id]) {
+            else if (audioNode instanceof NuniGraphAudioNode && audioNode.inputs[node.id]) 
+            {
                 audioNode.removeInput(node)
             }
         }
@@ -379,16 +397,19 @@ export class NuniGraph {
 
         if (isDuplicate) return;
 
-        const destinationData = {
-            id: node2.id, 
-            connectionType
+        const destinationData = 
+            { id: node2.id
+            , connectionType
             }
 
-        if (!connections || connections.length === 0)
+        if (!connections || connections.length === 0) 
+        {
             this.oneWayConnections[node1.id] = [destinationData]
+        }
         else
+        {
             connections.push(destinationData)
-
+        }
     
         const destination = this.prepareDestination(connectionType)(node2.audioNode)
         this.connect_audioNode_to_destination(node1, destination)
@@ -399,13 +420,16 @@ export class NuniGraph {
 
     private connect_audioNode_to_destination(node1 : NuniGraphNode, destination : Destination) {
         
-        if (destination instanceof NuniGraphAudioNode || destination instanceof SubgraphSequencer) {
+        if (destination instanceof NuniGraphAudioNode || destination instanceof SubgraphSequencer) 
+        {
             destination.addInput(node1)
         }
-        else if (destination instanceof NuniAudioParam) {
+        else if (destination instanceof NuniAudioParam) 
+        {
             node1.audioNode.connect(destination.offset)
-            
-        } else {
+        } 
+        else 
+        {
             node1.audioNode.connect(destination as AudioNode)
         }
     }
@@ -433,13 +457,17 @@ export class NuniGraph {
 
 
     private disconnect_audioNode_from_destination(node1 : NuniGraphNode, destination : Destination) {
-        if (destination instanceof SubgraphSequencer || destination instanceof NuniGraphAudioNode) {
+
+        if (destination instanceof SubgraphSequencer || destination instanceof NuniGraphAudioNode) 
+        {
             destination.removeInput(node1)
-
-        } else if (destination instanceof NuniAudioParam) {
+        } 
+        else if (destination instanceof NuniAudioParam) 
+        {
             node1.audioNode.disconnect(destination.offset)
-
-        } else {
+        } 
+        else 
+        {
             node1.audioNode.disconnect(destination as AudioNode)
         }
     }
@@ -449,14 +477,17 @@ export class NuniGraph {
 
     private prepareDestination (connectionType : ConnectionType) {
         return (destination : Indexed) => 
-            connectionType === 'channel' ? destination : destination[connectionType] 
+            connectionType === 'channel' 
+                ? destination 
+                : destination[connectionType] 
     }
 
 
 
 
     clear() {
-        for (const node of [...this.nodes]) {
+        for (const node of [...this.nodes]) 
+        {
             if (node.id === 0) continue
             this.deleteNode(node)
         }
@@ -482,31 +513,36 @@ export class NuniGraph {
 
 
     convertNodeToNodeSettings(node : NuniGraphNode) : Indexed {
-        const nodeCopy = { 
-            ...node,
-            audioNode: { ...node.audioNode }
-        }
+        const nodeCopy = 
+            { ...node
+            , audioNode: { ...node.audioNode }
+            }
 
         // some audioNode properties need to be taken along but not all...
-        for (const name in nodeCopy.audioNode) {
-            if (nodeCopy.type !== NodeTypes.SGS || !SGS_MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade[name]) {
+        for (const name in nodeCopy.audioNode) 
+        {
+            if (nodeCopy.type !== NodeTypes.SGS || !SGS_MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade[name]) 
+            {
                 delete nodeCopy.audioNode[name as AudioParams]
             }
         }
 
-        const settings = {
-            ...JSON.parse(JSON.stringify(nodeCopy)),
-            audioNodeProperties: {},
-            oldId: node.id
+        const settings = 
+            { ...JSON.parse(JSON.stringify(nodeCopy))
+            , audioNodeProperties: {}
+            , oldId: node.id
             }
             
-        for (const prop in Transferable_AudioNode_Properties) {
-            // TODO remove this dirty dirty hack
-            if (node.type === NodeTypes.SGS && (prop === 'stepMatrix' || prop === 'channelData')) {
+        for (const prop in Transferable_AudioNode_Properties) 
+        {
+            // TODO: this is stupid..
+            if (node.type === NodeTypes.SGS && (prop === 'stepMatrix' || prop === 'channelData')) 
+            {
                 continue;
             }
 
-            if (prop in node.audioNode) {
+            if (prop in node.audioNode) 
+            {
                 const p = prop as keyof typeof node.audioNode
                 settings.audioNodeProperties[prop] = 
                     JSON.parse(JSON.stringify(node.audioNode[p]))
@@ -520,9 +556,12 @@ export class NuniGraph {
 
 
     fromRawString(s : string) {
-        try {
+        try 
+        {
             var json = JSON.parse(s)
-        } catch(e) {
+        } 
+        catch(e) 
+        {
             throw `Error parsing graph JSON string: ${e}`
         }
         this.fromJSON(json)
@@ -546,29 +585,30 @@ export class NuniGraph {
         this.nodes[0].title = 'OUTPUT'
 
         // recreate the nodes
-        for (const node of nodes) {
-
-            const { 
-                id, 
-                type, 
-                x, 
-                y, 
-                audioParamValues, 
-                audioNodeProperties,
-                title,
-                INPUT_NODE_ID
+        for (const node of nodes) 
+        {
+            const 
+                { id
+                , type
+                , x
+                , y
+                , audioParamValues
+                , audioNodeProperties
+                , title
+                , INPUT_NODE_ID
                 } = node
 
             // We already copied the master gain
             if (id === 0) continue
             
-            const settings = {
-                x, 
-                y,
-                audioParamValues,
-                audioNodeProperties,
-                INPUT_NODE_ID,
-                } as NodeCreationSettings
+            const settings : NodeCreationSettings = 
+                { x 
+                , y
+                , audioParamValues
+                , audioNodeProperties
+                , INPUT_NODE_ID
+                }
+
                 if (!INPUT_NODE_ID) settings.title = title
 
             const newNode = new NuniGraphNode(id, type, settings)
@@ -578,12 +618,15 @@ export class NuniGraph {
             Math.max(...this.nodes.map(node=>node.id)) + 1
 
         // reconnect the nodes
-        for (const id in connections) {
-            for (const { id: id2, connectionType } of connections[id]) {
+        for (const id in connections) 
+        {
+            for (const { id: id2, connectionType } of connections[id]) 
+            {
                 const nodeA = this.nodes.find(node => node.id === +id)!
                 const nodeB = this.nodes.find(node => node.id === id2)!
                 
-                if (nodeB.audioNode instanceof NuniGraphAudioNode ) {
+                if (nodeB.audioNode instanceof NuniGraphAudioNode ) 
+                {
                     // WE NEED TOP HANDLE THE INPUT NODES OF nodeB
 
                     const innerInputNode 
@@ -602,10 +645,12 @@ export class NuniGraph {
 
         // SUBGRAPH SEQUENCER _ONLY_
         // Sampler needs to have stepMatrix and nSteps copied after connections are made
-        for (const node of nodes) {
+        for (const node of nodes) 
+        {
             // Can't use instanceof to check if audioNode is a SubgraphSequencer
             // because those nodes were parsed with JSON.parse
-            if (node.type === NodeTypes.SGS) {
+            if (node.type === NodeTypes.SGS) 
+            {
                 const thisNode = this.nodes.find(n => n.id === node.id)!
 
                 ;(<Sequencer>thisNode.audioNode).stepMatrix = node.audioNode.stepMatrix

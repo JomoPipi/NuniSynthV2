@@ -21,8 +21,7 @@ apply_scale_button: {
 apply_scale_preset: {
     const div = D('scale-preset-list');
     for (const name in scalePresets) {
-        const item = E('button', {
-            text: name,
+        const item = E('button', { text: name,
             className: 'list-btn'
         });
         div.appendChild(item);

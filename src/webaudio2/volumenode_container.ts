@@ -25,7 +25,8 @@ export class VolumeNodeContainer {
     }
 
     disconnect(destination? : AudioNode | AudioParam) {
-        if (!destination) {
+        if (!destination) 
+        {
             this.volumeNode.disconnect()
             return;
         }

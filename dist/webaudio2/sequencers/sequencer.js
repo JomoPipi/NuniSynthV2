@@ -119,9 +119,7 @@ export class Sequencer extends VolumeNodeContainer {
         const grid = this.HTMLGrid;
         const { nSteps, channelData, mutedChannel } = this;
         for (const key in channelData) {
-            const row = E('div', {
-                className: 'flex-center'
-            });
+            const row = E('div', { className: 'flex-center' });
             row.appendChild(rowOptions(this.additionalRowItems(key), key));
             this.HTMLBoxes[key] = {};
             for (let i = 0; i < nSteps; i++) {
@@ -135,8 +133,7 @@ export class Sequencer extends VolumeNodeContainer {
                         ? '-halfway'
                         : ''));
                 const boxSize = clamp(10, 100 / nSteps ** 0.5, 35);
-                applyStyle(box, {
-                    width: `${boxSize / PHI}px`,
+                applyStyle(box, { width: `${boxSize / PHI}px`,
                     height: `35px`
                 });
                 box.classList.toggle('selected', this.stepMatrix[key][i]);
@@ -172,8 +169,7 @@ export class Sequencer extends VolumeNodeContainer {
             box.style.width = '200px';
             mute_solo_box: {
                 const muteSoloBox = E('span');
-                const mute = E('button', {
-                    className: 'top-bar-btn',
+                const mute = E('button', { className: 'top-bar-btn',
                     text: 'M'
                 });
                 mute.dataset.sequencerRowKey = key;
@@ -192,8 +188,7 @@ export class Sequencer extends VolumeNodeContainer {
                 dial.size = 30;
                 dial.render();
                 const valueText = E('span', { text: volumeTodB(value).toFixed(1) + 'dB' });
-                applyStyle(valueText, {
-                    display: 'inline-block',
+                applyStyle(valueText, { display: 'inline-block',
                     width: '70px'
                 });
                 dial.attach((value) => {

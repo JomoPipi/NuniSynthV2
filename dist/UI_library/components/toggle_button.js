@@ -1,7 +1,6 @@
 export function createToggleButton(obj, prop, options) {
     const { text, update, className } = options;
-    const btn = E('button', {
-        text: text || prop,
+    const btn = E('button', { text: text || prop,
         className
     });
     btn.classList.toggle('selected', obj[prop]);

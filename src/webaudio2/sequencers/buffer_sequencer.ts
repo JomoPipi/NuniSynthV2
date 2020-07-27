@@ -38,9 +38,9 @@ export class BufferSequencer extends Sequencer {
     // }
 
     addInput() {
-        this.channelData[this.nextId] = {
-            volume: 1,
-            bufferKey: 0
+        this.channelData[this.nextId] = 
+            { volume: 1
+            , bufferKey: 0
             }
         this.stepMatrix[this.nextId] = this.createStepRow()
         this.nextId++
@@ -56,17 +56,15 @@ export class BufferSequencer extends Sequencer {
     }
 
     createSource(id : string) {
-        const { 
-            bufferKey
-            } = this.channelData[id]
 
+        const { bufferKey } = this.channelData[id]
         const src = this.ctx.createBufferSource()
 
         src.playbackRate.setValueAtTime(0, this.ctx.currentTime)
         this.detune.connect(src.detune)
         this.playbackRate.connect(src.playbackRate)
         src.buffer = BufferStorage.get(bufferKey!)
-        // src.loop = loop ?? false
+        // src.loop = loop || false
 
         return src
     }
@@ -81,32 +79,38 @@ export class BufferSequencer extends Sequencer {
         // const key = 'Q'.charCodeAt(0) // noteData.keyIndex
         // src.detune.value = KB.scale[KB.keymap[key]]
 
-        const { 
-            volume
-            } = this.channelData[id]
+        const { volume } = this.channelData[id]
 
         const adsr = new GainNode(this.ctx)
         adsr.gain.setValueAtTime(0, 0)
         adsr.connect(this.volumeNode)
         
+        // Connect the source to the envelope
         src.connect(adsr)
+
+        // Schedule the envelope on
         ADSR_Controller.triggerSource(src, adsr.gain, time, volume, this.adsrIndex)
-        const stopTime = ADSR_Controller.untriggerAndGetStopTime(adsr.gain, time + duration, this.adsrIndex)
+
+        // Schedule the envelope off
+        const stopTime = ADSR_Controller.untriggerAndGetStopTime(
+            adsr.gain, 
+            time + duration, 
+            this.adsrIndex)
+            
         src.stop(stopTime)
     }
 
     additionalRowItems(key : string) { 
         
         const box = E('span')
-        const valueText = E('span', {
-            text: String.fromCharCode(65 + this.channelData[key].bufferKey!)
-            })
+        const valueText = E('span', 
+            { text: String.fromCharCode(65 + this.channelData[key].bufferKey!) })
 
         add_buffer_select: {
             ;['-','+'].forEach((op,i) => { // change the buffer index
-                const btn = E('button', { 
-                    text: op,
-                    className: 'top-bar-btn'
+                const btn = E('button', 
+                    { text: op
+                    , className: 'top-bar-btn'
                     })
 
                 btn.onclick = () => {
@@ -117,9 +121,10 @@ export class BufferSequencer extends Sequencer {
                     valueText.innerText = String.fromCharCode(65 + v)
                     this.channelData[key].bufferKey = v
                 }
+
                 box.appendChild(btn)
             })
-
+            
             box.appendChild(valueText)
         }
 

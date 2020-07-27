@@ -18,8 +18,11 @@ const log = console.log
 
 const trace = <T>(x : T) => (log(x), x)
 
-const D = (x:string) => 
-    document.getElementById(x)
+const D = (id : string) => {
+    const el = document.getElementById(id)
+    if (!el) throw `Error: No element found with id ${id}.`
+    return el
+}
 
 type AllElements = {
     a      : HTMLAnchorElement
@@ -51,12 +54,17 @@ const E = <T extends string>(x : T, settings : ElementSettings = {}) => {
 
     if (className)
         for (const name of className.split(' ')) 
+        {
             element.classList.add(name)
+        }
     
     for (const child of children || [])
+    {
         element.appendChild(child)
+    }
     
-    for (const prop in props || {}) {
+    for (const prop in props || {}) 
+    {
         (<Indexed>element)[prop] = props![prop]
     }
 

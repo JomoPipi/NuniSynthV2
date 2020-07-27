@@ -5,9 +5,7 @@ export class SubgraphSequencer extends Sequencer {
         super(ctx);
     }
     addInput({ id, audioNode }) {
-        this.channelData[id] = {
-            volume: 1
-        };
+        this.channelData[id] = { volume: 1 };
         const adsr = this.channelData[id].adsr = new GainNode(this.ctx);
         adsr.gain.value = 0;
         audioNode.connect(adsr);

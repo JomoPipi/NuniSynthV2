@@ -25,9 +25,9 @@ export function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
         // Change the buffer index
         ;['-','+'].forEach((op,i) => {
 
-            const btn = E('button', {
-                text: op,
-                className: 'top-bar-btn'
+            const btn = E('button', 
+                { text: op
+                , className: 'top-bar-btn'
                 })
 
             value.innerText = String.fromCharCode(65 + audioNode.bufferKey)
@@ -52,28 +52,32 @@ export function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
 
         const value = audioNode.recordingLength
         lengthText.innerText = value + 's'
-        const lengthSlider = E('input', {
-            props: {
-                type: 'range',
-                min: 0.1,
-                max: 20,
-                step: 0.1,
-                value: audioNode.recordingLength.toString(),
-                oninput: () => {
+        const lengthSlider = E('input', 
+            { props: 
+                { type: 'range'
+                , min: 0.1
+                , max: 20
+                , step: 0.1
+                , value: audioNode.recordingLength.toString()
+                , oninput: () => {
                     const value = lengthSlider.value
                     lengthText.innerText = value + 's'
                     audioNode.recordingLength = +value
                 }
-            }
-        })
+                }
+            })
 
         const box = E('div', { children: [lengthSlider, lengthText] })
         controls.appendChild(box)
     }
 
     record_at_start_of_next_measure: {
-        const checkbox = E('input', { 
-            props: { type: 'checkbox', checked: audioNode.sync }})
+        const checkbox = E('input', 
+            { props: 
+                { type: 'checkbox'
+                , checked: audioNode.sync 
+                }
+            })
 
         controls.append(checkbox, E('span', { text: 'sync' }))
 
@@ -84,9 +88,9 @@ export function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
 
     record_button: {
         const recordButton 
-            = E('button', {
-            className: 'record',
-            text: 'rec'
+            = E('button', 
+            { className: 'record'
+            , text: 'rec'
             })
 
         recordButton.onclick = () => 

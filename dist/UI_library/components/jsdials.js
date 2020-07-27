@@ -4,11 +4,8 @@ const classes = [
 ];
 export class JsDial {
     constructor(classIndex) {
-        this.dial = E('div', {
-            className: 'js-dial'
-        });
-        this.html = E('div', {
-            className: classes[classIndex || 0],
+        this.dial = E('div', { className: 'js-dial' });
+        this.html = E('div', { className: classes[classIndex || 0],
             children: [this.dial]
         });
         this.isActive = false;

@@ -18,13 +18,12 @@ export function createNumberDialComponent(
     manualUpdater : (value : number) => void,
     props : Indexed) {
 
-    const box = E('span', {
-        className: 'number-dial-component'
-        })
+    const box = E('span', { className: 'number-dial-component' })
     
     const dial = Object.assign(new JsDial(), props.dial)
     
-    if (props.ondblclick) {
+    if (props.ondblclick) 
+    {
         dial.html.ondblclick = () => {
             const newValue = props.ondblclick()
             valueInput.value = newValue.toString()
@@ -34,10 +33,10 @@ export function createNumberDialComponent(
 
     const valueInput = E('input', {
         className: 'number-dial-input',
-        props: {
-            type: 'number',
-            value: initialValue,
-            oninput: () => {
+        props: 
+            { type: 'number'
+            , value: initialValue
+            , oninput: () => {
                 manualUpdater(+valueInput.value)
                 dial.update(+valueInput.value)
                 }
@@ -48,7 +47,7 @@ export function createNumberDialComponent(
     dial.attach((value : number) => {
         valueInput.value = value.toString()
         manualUpdater(value)
-        })
+    })
     
     box.append(valueInput, dial.html)
 

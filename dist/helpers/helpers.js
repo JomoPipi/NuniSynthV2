@@ -1,17 +1,24 @@
 "use strict";
 const log = console.log;
 const trace = (x) => (log(x), x);
-const D = (x) => document.getElementById(x);
+const D = (id) => {
+    const el = document.getElementById(id);
+    if (!el)
+        throw `Error: No element found with id ${id}.`;
+    return el;
+};
 const E = (x, settings = {}) => {
     const element = document.createElement(x);
     const { text, className, children, props } = settings;
     if (text)
         element.innerText = text;
     if (className)
-        for (const name of className.split(' '))
+        for (const name of className.split(' ')) {
             element.classList.add(name);
-    for (const child of children || [])
+        }
+    for (const child of children || []) {
         element.appendChild(child);
+    }
     for (const prop in props || {}) {
         element[prop] = props[prop];
     }

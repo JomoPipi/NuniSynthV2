@@ -66,10 +66,12 @@ export class Sequencer extends VolumeNodeContainer {
         tempo = clamp(1, tempo, Infinity)
         const newTick = (60 * 4 / tempo) / this.subdiv
         
-        if (this.tick !== newTick) {
+        if (this.tick !== newTick) 
+        {
             this.tick = newTick
 
-            if (this.isInSync) {
+            if (this.isInSync) 
+            {
                 this.stop()
                 this.play()
             }
@@ -84,11 +86,14 @@ export class Sequencer extends VolumeNodeContainer {
 
     updateSteps(nSteps : number) {
         const m = this.stepMatrix 
-        for (const key in m) {
-            if (m[key].length < nSteps) {
-                // We need to add steps
+        for (const key in m) 
+        {
+            if (m[key].length < nSteps) 
+            { // We add steps
                 m[key] = m[key].concat(Array(nSteps - m[key].length).fill(0))
-            } else {
+            } 
+            else 
+            { // We remove steps
                 m[key] = m[key].slice(0, nSteps)
             }
         }
@@ -109,10 +114,11 @@ export class Sequencer extends VolumeNodeContainer {
         const currentTime = time - this.startTime
         
         let updateBox = true && this.noteTime > 0
-        while (this.noteTime < currentTime + 0.200) {
-            
+        while (this.noteTime < currentTime + 0.200) 
+        {
             const patternTime = this.noteTime + this.startTime
-            if (patternTime > time) { 
+            if (patternTime > time) 
+            { 
                 this.playStepsAtTime(patternTime, updateBox)
             }
 
@@ -130,22 +136,26 @@ export class Sequencer extends VolumeNodeContainer {
     playStepsAtTime(time : number, updateBox : boolean) {
         const boxIsVisible = this.HTMLGrid.offsetParent != null
 
-        for (const key in this.channelData) {
+        for (const key in this.channelData) 
+        {
             const stepIsActive = this.stepMatrix[key][this.currentStep]
-            if (!this.mutedChannel[key] && (!this.soloChannel || this.soloChannel === key)) {
-
-                if (boxIsVisible && updateBox) {
+            if (!this.mutedChannel[key] && (!this.soloChannel || this.soloChannel === key)) 
+            {
+                if (boxIsVisible && updateBox) 
+                {
                     // Highlight box+
                     this.HTMLBoxes[key][this.currentStep]?.classList.add('highlighted')
                     const lastStep = (this.currentStep + this.nSteps - 1) % this.nSteps
                     this.HTMLBoxes[key][lastStep]?.classList.remove('highlighted')
                 }
 
-                // if (this.controls.offsetParent != null && updateBox) {
+                // if (this.controls.offsetParent != null && updateBox) 
+                // {
                 //     this.controls.highlight(key,this.currentStep)
                 // }
 
-                if (stepIsActive && (this.soloChannel == undefined || this.soloChannel === key)) {
+                if (stepIsActive && (this.soloChannel == undefined || this.soloChannel === key)) 
+                {
                     this.playStepAtTime(key, time + this.phaseShift)
                 }
             }
@@ -159,8 +169,10 @@ export class Sequencer extends VolumeNodeContainer {
     stop() {
         this.isPlaying = false
 
-        for (const key in this.HTMLBoxes) {
-            for (const step in this.HTMLBoxes[key]) {
+        for (const key in this.HTMLBoxes) 
+        {
+            for (const step in this.HTMLBoxes[key]) 
+            {
                 this.HTMLBoxes[key][step].classList.remove('highlighted')
             }
         }
@@ -169,7 +181,8 @@ export class Sequencer extends VolumeNodeContainer {
     }
 
     refresh() {
-        for (const key in this.channelData) {
+        for (const key in this.channelData) 
+        {
             this.channelData[key].adsr?.connect(this.volumeNode)
         }
         this.setupGrid()
@@ -180,15 +193,15 @@ export class Sequencer extends VolumeNodeContainer {
         this.HTMLBoxes = {}
         const grid = this.HTMLGrid
         const { nSteps, channelData, mutedChannel } = this
-        for (const key in channelData) {
-            const row = E('div', {
-                className: 'flex-center'
-                })
+        for (const key in channelData) 
+        {
+            const row = E('div', { className: 'flex-center' })
 
             row.appendChild(rowOptions(this.additionalRowItems(key), key))
 
             this.HTMLBoxes[key] = {}
-            for (let i = 0; i < nSteps; i++) {
+            for (let i = 0; i < nSteps; i++) 
+            {
                 const box = E('span')
                 this.HTMLBoxes[key][i] = box
                 box.classList.add('note-box' 
@@ -199,9 +212,9 @@ export class Sequencer extends VolumeNodeContainer {
                     ? '-halfway' 
                     : ''))
                 const boxSize = clamp(10, 100 / nSteps**0.5, 35)
-                applyStyle(box, {
-                    width: `${boxSize/PHI}px`,
-                    height: `35px`
+                applyStyle(box, 
+                    { width: `${boxSize/PHI}px`
+                    , height: `35px`
                     })
                 box.classList.toggle('selected', this.stepMatrix[key][i])
                 box.dataset.sequencerKey = `${key}:${i}`
@@ -213,19 +226,23 @@ export class Sequencer extends VolumeNodeContainer {
         }
         grid.onclick = (e : MouseEvent) => {
             const box = e.target as HTMLSpanElement
-            if (box.dataset.sequencerKey) {
+            if (box.dataset.sequencerKey) 
+            {
                 const turnOn = box.classList.toggle('selected')
                 const [key,i] = box.dataset.sequencerKey.split(':').map(Number)
                 this.stepMatrix[key][i] = turnOn
             }
-            else if (box.dataset.sequencerRowKey) {
+            else if (box.dataset.sequencerRowKey) 
+            {
                 const key = box.dataset.sequencerRowKey
                 const mutesolo = box.innerText
                 const activate = box.classList.toggle('selected')
-                if (mutesolo === 'M') {
+                if (mutesolo === 'M') 
+                {
                     this.mutedChannel[key] = activate
                 }
-                else if (mutesolo === 'S') {
+                else if (mutesolo === 'S') 
+                {
                     this.soloChannel = activate
                         ? key
                         : undefined
@@ -239,13 +256,13 @@ export class Sequencer extends VolumeNodeContainer {
 
             mute_solo_box: {
                 const muteSoloBox = E('span')
-                const mute = E('button', { 
-                    className: 'top-bar-btn',
-                    text: 'M'
+                const mute = E('button', 
+                    { className: 'top-bar-btn'
+                    , text: 'M'
                     })
-                // const solo = E('button', { 
-                //     className: 'top-bar-btn',
-                //     text: 'S'
+                // const solo = E('button', 
+                //     { className: 'top-bar-btn'
+                //     , text: 'S'
                 //     })
                     
                 // optionsBtn.innerText = '⚙️'
@@ -270,13 +287,11 @@ export class Sequencer extends VolumeNodeContainer {
                 dial.render()
 
                 const valueText = E('span', { text: volumeTodB(value).toFixed(1) + 'dB' })
-
-                    applyStyle(valueText, {
-                        display: 'inline-block',
-                        width: '70px'
+                    applyStyle(valueText, 
+                        { display: 'inline-block'
+                        , width: '70px'
                         })
                     
-                
                 dial.attach((value : number) => {
                     const v = value ** 4.0
                     channelData[key].volume = v

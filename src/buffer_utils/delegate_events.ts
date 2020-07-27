@@ -20,27 +20,28 @@ function reverseBuffer(index : number) {
 
 function invertBuffer(index : number) {
     const arr = BufferStorage.get(index).getChannelData(0)
-    for (let i =0; i < arr.length; i++)
+    for (let i = 0; i < arr.length; i++) 
+    {
         arr[i] *= -1
-
+    }
     BufferUtils.refreshAffectedBuffers()
 }
 
-const funcMap = {
-    record:                 () => recordTo(BufferUtils.currentIndex),
-    'reverse-buffer':       () => reverseBuffer(BufferUtils.currentIndex),
-    'invert-buffer':        () => invertBuffer(BufferUtils.currentIndex),
-    'apply-buffer-formula': () => formulateBuffer(BufferUtils.currentIndex)
-}
+const funcMap = 
+    { record:                 () => recordTo(BufferUtils.currentIndex)
+    , 'reverse-buffer':       () => reverseBuffer(BufferUtils.currentIndex)
+    , 'invert-buffer':        () => invertBuffer(BufferUtils.currentIndex)
+    , 'apply-buffer-formula': () => formulateBuffer(BufferUtils.currentIndex)
+    }
 
-;(<HTMLElement>D('buffer-functions')).onclick = (e : MouseEvent) => {
+D('buffer-functions').onclick = (e : MouseEvent) => {
     const btn = e.target as HTMLElement
     ;(funcMap[btn.id as keyof typeof funcMap] || (() => void 0))()
 }
 
-D('new-buffer-length')!.oninput = () => {
+D('new-buffer-length').oninput = () => {
     const value = (D('new-buffer-length') as HTMLSelectElement).value
-    D('new-buffer-length-text')!.innerText = value
+    D('new-buffer-length-text').innerText = value
     BufferUtils.nextBufferDuration = +value
 }
 

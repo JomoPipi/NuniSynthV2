@@ -2,9 +2,7 @@ import { VolumeNodeContainer } from "./volumenode_container.js";
 export class NuniGraphAudioNode extends VolumeNodeContainer {
     constructor(ctx) {
         super(ctx);
-        this.canvas = E('canvas', {
-            className: 'nunigraph-canvas--custom',
-        });
+        this.canvas = E('canvas', { className: 'nunigraph-canvas--custom' });
         if (NuniGraphAudioNode.createController)
             this.controller = NuniGraphAudioNode.createController(this.canvas, this.volumeNode);
         else
@@ -36,13 +34,12 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
         }
         else {
             const inputNode = this.inputs[id]
-                = this.controller.g.createNewNode(NodeTypes.GAIN, {
-                    x: Math.random() * .5 + .25,
+                = this.controller.g.createNewNode(NodeTypes.GAIN, { x: Math.random() * .5 + .25,
                     y: Math.random() * .5 + .25,
                     audioParamValues: { gain: 1 },
                     audioNodeProperties: {},
                     title: `INPUT (id-${id})`,
-                    INPUT_NODE_ID: { id },
+                    INPUT_NODE_ID: { id }
                 });
             audioNode.connect(inputNode.audioNode);
         }

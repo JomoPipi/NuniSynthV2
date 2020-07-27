@@ -3,9 +3,8 @@ export function createRadioButtonGroup({ buttons, selected, className, onclick, 
         text,
         children: [E('br')],
     });
-    const btns = buttons.map((text) => box.appendChild(E('button', {
-        text,
-        className,
+    const btns = buttons.map((text) => box.appendChild(E('button', { text,
+        className
     })));
     if (typeof selected === 'number') {
         const btn = btns[selected];

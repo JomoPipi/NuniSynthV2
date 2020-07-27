@@ -16,8 +16,7 @@ const keymap = keyCodes.reduce((map, key, i) => {
 }, {});
 const held = [];
 const scale = keyCodes.map((_, i) => i * 100);
-export const KB = {
-    keyCodes,
+export const KB = { keyCodes,
     keymap,
     held,
     scale,

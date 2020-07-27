@@ -10,9 +10,9 @@ import { NuniGraph } from './model/nunigraph.js'
 import { BufferUtils } from '../buffer_utils/internal.js'
 import { NuniGraphController, ActiveControllers } from './controller/graph_controller.js'
 import { createValuesWindow } from './view/display_nodedata.js'
-import { 
-    KB, audioCtx, Sequencer, BufferNode2, 
-    MasterClock, NuniSourceNode, NuniGraphAudioNode
+import 
+    { KB, audioCtx, Sequencer, BufferNode2
+    , MasterClock, NuniSourceNode, NuniGraphAudioNode
     } from '../webaudio2/internal.js'
 
 
@@ -25,15 +25,11 @@ class Nuni extends NuniGraphController {
     constructor(canvas : HTMLCanvasElement, volumeNode : GainNode) {
         const G = new NuniGraph()
 
-        super(
-            G, 
-            D('connection-type-prompt')!,
-            new NuniGraphRenderer(
-                G, 
-                canvas,
-                ),
-            createValuesWindow
-            )
+        super
+            ( G 
+            , D('connection-type-prompt')
+            , new NuniGraphRenderer(G, canvas)
+            , createValuesWindow)
         
         
         G.nodes
@@ -56,8 +52,9 @@ GraphController.g.nodes[0].setValueOfParam('gain', 0.125)
 
 ActiveControllers.push(GraphController)
 
-let DEBUG = true
-if (DEBUG) {
+let DEBUG = false
+if (DEBUG) 
+{
     (<any>window).controller = GraphController
 }
 
@@ -68,26 +65,34 @@ Graph_Attachments: {
     const g = GraphController.g
 
     function* yeildNodes(g : NuniGraph) : Generator {
-        for (const { audioNode: an } of g.nodes) {
-            if (an instanceof NuniGraphAudioNode) {
+        for (const { audioNode: an } of g.nodes) 
+        {
+            if (an instanceof NuniGraphAudioNode) 
+            {
                 yield* yeildNodes(an.controller.g)
-            } else {
+            } 
+            else 
+            {
                 yield an
             }
         }
     }
     
     KB.attachToGraph(function*() {
-        for (const an of yeildNodes(g)) {
-            if (an instanceof NuniSourceNode) { // && an.kbMode !== 'none') {
+        for (const an of yeildNodes(g)) 
+        {
+            if (an instanceof NuniSourceNode) 
+            { // && an.kbMode !== 'none') {
                 yield an
             }
         }
     })
 
     MasterClock.setSchedule((tempo : number) => {
-        for (const an of yeildNodes(g)) {
-            if (an instanceof Sequencer) {
+        for (const an of yeildNodes(g)) 
+        {
+            if (an instanceof Sequencer) 
+            {
                 an.scheduleNotes(tempo)
             }
         }
@@ -95,8 +100,10 @@ Graph_Attachments: {
 
     BufferUtils.initBufferPresets(audioCtx)
     BufferUtils.setRefreshBufferFunc((index : number) => {
-        for (const an of yeildNodes(g)) {
-            if (an instanceof BufferNode2 && an.bufferKey === index) {
+        for (const an of yeildNodes(g)) 
+        {
+            if (an instanceof BufferNode2 && an.bufferKey === index) 
+            {
                 an.refresh()
             }
         }

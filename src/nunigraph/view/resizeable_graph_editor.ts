@@ -15,12 +15,10 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
 
     const topRow = E('div', { className: 'full' })
     const bottomRow = E('div', { className: 'full' })
-    const dragCorner = E('span',{
-        className: 'corner-drag-box'
-        })
+    const dragCorner = E('span', { className: 'corner-drag-box' })
         
-    applyStyle(topRow, {
-        height: '10px' // same as .corner-drag-box
+    applyStyle(topRow, 
+        { height: '10px' // same as .corner-drag-box
         })
     
 
@@ -54,6 +52,7 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
         window.removeEventListener('mouseup', mouseup)
         start_xy = []
     }
+    
     dragCorner.onmousedown = mousedown
 
     box.append(topRow, canvas, bottomRow)

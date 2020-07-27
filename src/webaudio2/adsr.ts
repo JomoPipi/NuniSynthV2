@@ -14,8 +14,8 @@ import { JsDial, createRadioButtonGroup } from "../UI_library/internal.js"
 
 
 interface SourceNode {
-    start : (when : number) => void;
-    stop : (when : number) => void;
+    start : (when : number) => void
+    stop : (when : number) => void
 }
 
 
@@ -37,15 +37,15 @@ const releaseTimeConstant = 10
 
 const N_ADSRs = 4
 
-const defaultADSR = () => ({
-    attack: 0.010416984558105469, 
-    decay: 0.17708349227905273, 
-    sustain: 0.2166603088378906, 
-    release: 0.3812504768371582
+const defaultADSR = () => (
+    { attack: 0.010416984558105469
+    , decay: 0.17708349227905273
+    , sustain: 0.2166603088378906
+    , release: 0.3812504768371582
     })
 
 export const ADSR_Controller = {
-    canvas: D('adsr-canvas')! as HTMLCanvasElement,
+    canvas: D('adsr-canvas') as HTMLCanvasElement,
 
     index: 0,
 
@@ -84,11 +84,9 @@ export const ADSR_Controller = {
     render: (options? : any) => {}
 }
 
-type RenderOptions = Partial<{
-    updateKnobs : boolean 
-}>
+type RenderOptions = Partial<{ updateKnobs : boolean }>
 
-{
+;{
     const adsr = ADSR_Controller
     const isAux = false // s === 'aux-'        
     const ctx = adsr.canvas.getContext('2d')!
@@ -103,8 +101,8 @@ type RenderOptions = Partial<{
         const adsrWidths = [
             attack  / sum,
             decay   / sum,
-            0.25         / sum,
-            // Release is done by  
+            0.25    / sum,
+            // Release is done by default 
         ]
         const [aw,dw,sw] = adsrWidths
 
@@ -121,7 +119,8 @@ type RenderOptions = Partial<{
             [t4, 1]
         ]
 
-        if (isAux) {
+        if (isAux) 
+        {
             // The only difference between ADSR and AD.
             // I know it's not currently being used, 
             // but I don't want to delete this.
@@ -144,7 +143,8 @@ type RenderOptions = Partial<{
         })
         ctx.closePath()
 
-        if (options.updateKnobs) {
+        if (options.updateKnobs) 
+        {
             updateKnobs()
         }
     }
@@ -153,7 +153,7 @@ type RenderOptions = Partial<{
 }
  
 
-const knobs = D('adsr-knobs')!
+const knobs = D('adsr-knobs')
 const ADSR = 'attack,decay,sustain,release'.split(',')
 const adsrDials =
     ADSR.reduce((a,s) => {
@@ -174,7 +174,7 @@ const adsrDials =
     }, {} as Indexable<JsDial>)
     
 { 
-    D('select-adsr')!.appendChild(createRadioButtonGroup({
+    D('select-adsr').appendChild(createRadioButtonGroup({
         buttons: [...'ABCD'],
         selected: 'A',
         className: 'top-bar-btn',
@@ -187,9 +187,10 @@ const adsrDials =
     }))
 }
 
-function updateKnobs() {log('executing')
+function updateKnobs() {
     const adsr = ADSR_Controller
-    for (const s of ADSR) {
+    for (const s of ADSR) 
+    {
         adsrDials[s].update((<Indexed>adsr.values[adsr.index])[s] ** .5)
     }
 }

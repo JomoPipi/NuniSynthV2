@@ -1,5 +1,4 @@
-export const scalePresets = {
-    Ionian: '200,400,500,700,900,1100',
+export const scalePresets = { Ionian: '200,400,500,700,900,1100',
     Dorian: '200,300,500,700,900,1000',
     Phrygian: '100,300,500,700,800,1000',
     Lydian: '200,400,600,700,900,1100',

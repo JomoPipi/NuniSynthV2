@@ -1,8 +1,7 @@
 import { NuniGraphNode } from './nunigraph_node.js';
 import { LZW_compress, LZW_decompress } from '../../helpers/lzw_compression.js';
 import { SubgraphSequencer, NuniAudioParam, Sequencer, NuniGraphAudioNode } from '../../webaudio2/internal.js';
-const defaultNodeSettings = () => ({
-    x: 0.5,
+const defaultNodeSettings = () => ({ x: 0.5,
     y: 0.5,
     audioParamValues: {},
     audioNodeProperties: {}
@@ -15,8 +14,7 @@ export class NuniGraph {
         this.initializeMasterGain();
     }
     initializeMasterGain() {
-        const masterGainSettings = Object.assign(defaultNodeSettings(), {
-            audioParamValues: { [NodeTypes.GAIN]: 1 },
+        const masterGainSettings = Object.assign(defaultNodeSettings(), { audioParamValues: { [NodeTypes.GAIN]: 1 },
             x: 0.5,
             y: 0.125,
             title: 'OUTPUT'
@@ -37,8 +35,7 @@ export class NuniGraph {
         const nodes = _nodes.map(({ type, x, y, audioParamValues, audioNodeProperties, INPUT_NODE_ID, title }) => {
             const newX = clamp(0, x - centerX + X, 1);
             const newY = clamp(0, y - centerY + Y, 1);
-            const settings = {
-                x: newX,
+            const settings = { x: newX,
                 y: newY,
                 audioParamValues,
                 audioNodeProperties,
@@ -53,8 +50,9 @@ export class NuniGraph {
                 const b = nodes[indexB];
                 if (b.audioNode instanceof NuniGraphAudioNode) {
                     const innerInputNode = b.audioNode.controller.g.nodes.find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === _nodes[indexA].oldId; });
-                    if (!innerInputNode)
+                    if (!innerInputNode) {
                         throw 'An input node with INPUT_NODE_ID = nodeA.id should exist inside node b';
+                    }
                     innerInputNode.INPUT_NODE_ID.id = a.id;
                     innerInputNode.title = `INPUT (id-${a.id})`;
                     retainedInputs.add(a.id);
@@ -97,8 +95,7 @@ export class NuniGraph {
         const { type, x, y, audioParamValues, audioNodeProperties, title, INPUT_NODE_ID } = copiedNode;
         const newX = clamp(0, x + 0.07, 1);
         const newY = newX === 1 ? clamp(0, y - 0.07, 1) : y;
-        const settings = {
-            x: newX,
+        const settings = { x: newX,
             y: newY,
             audioParamValues,
             audioNodeProperties,
@@ -106,9 +103,6 @@ export class NuniGraph {
         };
         if (!INPUT_NODE_ID)
             settings.title = title;
-        if (node.type === NodeTypes.B_SEQ) {
-            log('stepMatrix =', settings.audioNodeProperties.stepMatrix);
-        }
         return this.createNewNode(type, settings);
     }
     reproduceNodesAndConnections(nodes) {
@@ -196,14 +190,15 @@ export class NuniGraph {
             data.connectionType === connectionType);
         if (isDuplicate)
             return;
-        const destinationData = {
-            id: node2.id,
+        const destinationData = { id: node2.id,
             connectionType
         };
-        if (!connections || connections.length === 0)
+        if (!connections || connections.length === 0) {
             this.oneWayConnections[node1.id] = [destinationData];
-        else
+        }
+        else {
             connections.push(destinationData);
+        }
         const destination = this.prepareDestination(connectionType)(node2.audioNode);
         this.connect_audioNode_to_destination(node1, destination);
     }
@@ -240,7 +235,9 @@ export class NuniGraph {
         }
     }
     prepareDestination(connectionType) {
-        return (destination) => connectionType === 'channel' ? destination : destination[connectionType];
+        return (destination) => connectionType === 'channel'
+            ? destination
+            : destination[connectionType];
     }
     clear() {
         for (const node of [...this.nodes]) {
@@ -299,12 +296,11 @@ export class NuniGraph {
             const { id, type, x, y, audioParamValues, audioNodeProperties, title, INPUT_NODE_ID } = node;
             if (id === 0)
                 continue;
-            const settings = {
-                x,
+            const settings = { x,
                 y,
                 audioParamValues,
                 audioNodeProperties,
-                INPUT_NODE_ID,
+                INPUT_NODE_ID
             };
             if (!INPUT_NODE_ID)
                 settings.title = title;

@@ -20,8 +20,7 @@ const contextmenu = D('graph-contextmenu');
             DIRTYGLOBALS.lastControllerToOpenTheContextmenu = undefined;
         };
         const textbox = E('span', { text: NodeLabel[type] });
-        const btn = E('button', {
-            className: 'list-btn',
+        const btn = E('button', { className: 'list-btn',
             children: [textbox],
             props: { onclick: create }
         });
@@ -35,7 +34,6 @@ const contextmenu = D('graph-contextmenu');
         }
     }
 }
-;
 D('graph-undo-redo-btns').onclick = function (e) {
     const undoBtnId = 'graph-undo-button';
     const redoBtnId = 'graph-redo-button';

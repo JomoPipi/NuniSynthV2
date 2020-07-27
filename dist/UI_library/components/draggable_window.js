@@ -2,9 +2,7 @@ import { applyStyle } from "../functions/apply_style.js";
 import { rgbaColorContrast } from "../functions/colorContrast.js";
 import { UI_clamp } from "../functions/ui_clamp.js";
 export function createDraggableWindow({ text, clickCallback, closeCallback, color, content }) {
-    const box = E('div', {
-        className: 'window show'
-    });
+    const box = E('div', { className: 'window show' });
     box.style.left = '50vw';
     box.style.top = '50vh';
     const bar = E('div', { text });
@@ -12,8 +10,7 @@ export function createDraggableWindow({ text, clickCallback, closeCallback, colo
     const size = 25;
     const sizePx = `${size}px`;
     box.appendChild(bar);
-    applyStyle(bar, {
-        height: sizePx,
+    applyStyle(bar, { height: sizePx,
         width: '100%',
         background: color || '#555',
         color: rgbaColorContrast(color || '#555'),
@@ -21,8 +18,7 @@ export function createDraggableWindow({ text, clickCallback, closeCallback, colo
         paddingLeft: '5px',
         boxSizing: 'border-box'
     });
-    applyStyle(exitBtn, {
-        cursor: 'pointer',
+    applyStyle(exitBtn, { cursor: 'pointer',
         border: '0.2px solid #444',
         boxSizing: 'border-box',
         backgroundColor: 'inherit',

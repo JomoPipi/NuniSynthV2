@@ -12,10 +12,10 @@ export class BufferSequencer extends Sequencer {
         this.addInput();
     }
     addInput() {
-        this.channelData[this.nextId] = {
-            volume: 1,
-            bufferKey: 0
-        };
+        this.channelData[this.nextId] =
+            { volume: 1,
+                bufferKey: 0
+            };
         this.stepMatrix[this.nextId] = this.createStepRow();
         this.nextId++;
         this.refresh();
@@ -51,14 +51,11 @@ export class BufferSequencer extends Sequencer {
     }
     additionalRowItems(key) {
         const box = E('span');
-        const valueText = E('span', {
-            text: String.fromCharCode(65 + this.channelData[key].bufferKey)
-        });
+        const valueText = E('span', { text: String.fromCharCode(65 + this.channelData[key].bufferKey) });
         add_buffer_select: {
             ;
             ['-', '+'].forEach((op, i) => {
-                const btn = E('button', {
-                    text: op,
+                const btn = E('button', { text: op,
                     className: 'top-bar-btn'
                 });
                 btn.onclick = () => {

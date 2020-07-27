@@ -18,44 +18,83 @@ const fs = require('fs')
 
 const projectsFolderPath = userDataPath + '\\Projects'
 
-if (!fs.existsSync(projectsFolderPath)) {
-    log('created folder')
+if (!fs.existsSync(projectsFolderPath)) 
+{
+    log(`Created folder in ${projectsFolderPath}`)
     fs.mkdirSync(projectsFolderPath)
 }
 
 // const store = new Store()
-
 // store.set('unicorn', '🦄')
 // console.log(store.get('unicorn'))
 
-const defaultOptions = { 
-    defaultPath: projectsFolderPath,
-    title: ':)',
-    filters: [
-        { name: 'nuni', extensions: ['nuni'] }
-        ]
+export function saveProject() {
+    if (makeNuniFile.currentFileName) 
+    {
+        const file = makeNuniFile()
+        const filePath = projectsFolderPath + '\\' 
+            + makeNuniFile.currentFileName
+            + '.nuni'
+
+        fs.writeFileSync(filePath, file)
+    } 
+    else 
+    {
+        saveProjectAs()
     }
+}
 
-export function openExistingProject() {
-    console.log(dialog)
+const title = 'NuniSynth Project Folder'
+const filters = [{ name: 'nuni', extensions: ['nuni'] }]
+
+export function saveProjectAs() {
+
+    const options = 
+        { title
+        , filters
+        , defaultPath: projectsFolderPath 
+            + '\\'
+            + (makeNuniFile.currentFileName || 'Untitled')
+        }
+
     dialog
-        .showOpenDialog(defaultOptions)
-        .then(({ canceled, filePaths } : Indexed) => {
-
-            if (!canceled) {
-                log('filePaths[0] =',filePaths[0])
-                loadNuniFile(fs.readFileSync(filePaths[0], 'utf8'))
+        .showSaveDialog(options)
+        .then(({ canceled, filePath } : Indexed) => {
+            if (!canceled) 
+            {
+                const file = makeNuniFile()
+                fs.writeFileSync(filePath, file)
+                makeNuniFile.currentFileName = 
+                    D('project-title').textContent =
+                    filePath
+                        .replace(projectsFolderPath, '')
+                        .replace('.nuni', '')
+                        .slice(1)
             }
         })
 }
 
-export function saveProjectAs() {
+export function openExistingProject() {
+
+    const options = 
+        { title
+        , filters
+        , defaultPath: projectsFolderPath 
+        }
+
     dialog
-        .showSaveDialog(defaultOptions)
-        .then(({ canceled, filePath } : Indexed) => {
-            if (!canceled) {
-                const file = makeNuniFile()
-                fs.writeFileSync(filePath, file)
+        .showOpenDialog(options)
+        .then(({ canceled, filePaths } : Indexed) => {
+
+            if (!canceled) 
+            {
+                log('filePaths[0] =',filePaths[0])
+                loadNuniFile(fs.readFileSync(filePaths[0], 'utf8'))
+                makeNuniFile.currentFileName = 
+                    filePaths[0]
+                        .replace(projectsFolderPath, '')
+                        .replace('.nuni', '')
+                        .slice(1)
             }
         })
 }

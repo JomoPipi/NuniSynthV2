@@ -10,7 +10,7 @@ import { audioCtx } from '../webaudio2/internal.js'
 import { BufferStorage } from '../storage/general/buffer_storage.js'
 
 export function recordTo(index : number) {
-    const recordButton = D('record')!
+    const recordButton = D('record')
 
     const errStuff = (err : string) => {
         recordButton.innerText = err
@@ -18,7 +18,8 @@ export function recordTo(index : number) {
     }
 
     const isRecording = recordButton.classList.toggle('recording')
-    if (!isRecording) {
+    if (!isRecording) 
+    {
         clearTimeout(BufferUtils.lastRecorderRequestId)
         BufferUtils.stopLastRecorder()
         return;
@@ -26,14 +27,17 @@ export function recordTo(index : number) {
 
     log('recording...')
 
-    if ((<HTMLInputElement>D('record-mic')).checked) {
+    if ((<HTMLInputElement>D('record-mic')).checked) 
+    {
         navigator
             .mediaDevices
             .getUserMedia({ audio: true })
             .then(handleStream)
             .catch(errStuff)
 
-    } else {
+    } 
+    else 
+    {
         const mediaStreamDestination = 
             audioCtx.createMediaStreamDestination()
 

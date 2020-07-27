@@ -5,9 +5,9 @@
 
 
 
-import { 
-    audioCtx, OscillatorNode2 , BufferNode2, SubgraphSequencer,
-    BufferSequencer, AudioBufferCaptureNode, NuniGraphAudioNode
+import 
+    { audioCtx, OscillatorNode2 , BufferNode2, SubgraphSequencer
+    , BufferSequencer, AudioBufferCaptureNode, NuniGraphAudioNode
     } from '../../webaudio2/internal.js'
 
 
@@ -67,13 +67,13 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
         // Change display: {x,y} to just x,y later to save space on the string conversions
         // (will require changing/throwing away all currently saved graphs :/)
-        const { 
-            x, 
-            y, 
-            audioParamValues, 
-            audioNodeProperties,
-            title,
-            INPUT_NODE_ID
+        const 
+            { x
+            , y
+            , audioParamValues
+            , audioNodeProperties
+            , title
+            , INPUT_NODE_ID
             } = settings
 
         this.id = id
@@ -91,7 +91,8 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
         this.audioParamValues = audioParamValues
 
-        for (const param of AudioNodeParams[type]) {
+        for (const param of AudioNodeParams[type]) 
+        {
             const value 
                 =  audioParamValues[param] 
                 ?? DefaultParamValues[param]

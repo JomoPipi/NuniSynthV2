@@ -35,7 +35,8 @@ import { LZW_decompress } from '../../helpers/lzw_compression.js'
         , 'Metal Lead': `{"connectiăs":Ā1Č[ĀidČ6,āăąćĉnTypeČāhaĄel"}]ė4ĐĒĔ:1ėĂĦěăĞĠĢfrequencyĩ,įČ12ĳęĆĈķğġ:ģĥąĨĪė5Į"ēČ4ŊĵōĝŏĢcĤĦŕī"6řś:7ŞĚŠĸŐŒŦĩŨ7ūİ0ůŌĜŲţťŔŶė10ŹŇĲĘşžŢőŤœħƃ"1ď:đŚİĖƊŰƌĹőgainƒňƇıƉĴƜŎƞ"ƠƢŶ}ėnodeċƖņ:Ż"tƍƭơƣėxČ0.ň0ǈǉǊǊƉŃƺ.426631578947368ŝ"audĉNƴŐ{ƱǡǣĉParamValĿƷĀƮƣǏ480Ǔ4Ǿ25ǋ04ǪǢǤoǦƵProĠrĈƶČǩƱƹƉƽƬoscillator"ǂǄ.ǝėǎǅǑǓǕǗǙǛǝǟėȈǥǧȔātǃčǡnǴyseȤčǪvoǵmǨ}ɆɈuɊȋɋėpȠyƢgKeɁȔǪsȢpLaɞNSourcȓƸȖɬŅɭǩɮɱɰɳɯɵɲɶǩŨ_kbMȸ:trĿė_șųsƢġėƵtuąɜėĻĽĿŁǎȕȵǬoǮǰǲǴǶȹʒľŀłČ8ʋeʍʏƺȇʙɑȍȏɃȒǷ"ɼɾƵČʁʃƼƾʈʏɌŅƘŜėʆĢǹȥ"ȼȬǠȫǐǒǔǖǘǚǜǞǠȶȊɿɰǫȉʛǱǳǵɪǸǀČ23ǆȀǈ2875ʬȉʮȎȐʲɜȖˁ:5˃ƾțȝȟȡȣˇˉ.5ŉ"ˌȭˏȰ˒ȳ˕ʭ˘ȺȼĀĥɀɂɄ˙ɇɉɋɍ̗ɑʐ"ɔaɖnɘɚǷɝɟɡɣɥɧɩƷđɸ̮ɷ̰ɴ̱̯ɹʄʵɿʹeʄ˄ősľǯʊ"ʌʎɒ"ʡʔʤɅ˭ǭǯ˝ʞˠ͆ļʢʕĕǠ̓ʪ0͋˗Ȍ˰ʱi̷͐ʷʀʂ̺ʻƬ̾ùĩ˴Ŭƚ̼ƿƯȦǏ˩Ȫȧ̆ȯˑȲ˔ʘˮ˘͚˜ʝ˟ʳˆͳ7929Ǟ˫͚˯ʰȑ̤ͬ͟İŮͦųfȞtɃ˿ȧ19ΞΟΠΡʦ̄Ͷˎ͸ȱ˓ȴ˚ȷ͢˙˖΀˞ʟȽ͇ʣǎΈ8Ȩ3˫95··ǘ˷"QǄė΄ƻ͗Ő͙ͼάeʯ˱ΐȹͯhighpɢċʿȗƻͯ˺ȞȠȢȤͲǅȩΤǏ18˩Ǒƅ̂̇Ά̃˖̛Ƚć̏Ⱦ̒ΚɅė̖ɏ̘ϺɎɐ;ɓɕɗəɛϹ"ɞȏ̧tɤɦɨɪ[ɺ͡ŐfǴɂ̻ʼʉˇψ̜δ͔ЇsɈo̩Џ˳ϋʚ͍΁βĀО͉3ʧʩωΌǧώ͞͠ɽɿЕlЗΕĢʽġϚ˵Ɣ˸Ƭˆϣ.ʹϦϤȅΩϫ0ϭǕ̋ͽέͿЩα͐φг͜Ύ˲͊ˀŬňфųцˈͶˋȧ3ь̊2ϬǒёЧϲήʙΰ͏΃ˢǏǈˬѰд͝ΏˠɌ]}`
         } as Record<string,string>
 
-    for (const name in presets) {
+    for (const name in presets) 
+    {
         presets[name] = //presets[name]
             LZW_decompress(presets[name], true)
             // .replace(
@@ -45,17 +46,19 @@ import { LZW_decompress } from '../../helpers/lzw_compression.js'
 
     const div = D('graph-preset-list') as HTMLDivElement
  
-    for (const name in presets) {
-        const item = E('button', {
-            className: 'list-btn',
-            text: name
+    for (const name in presets) 
+    {
+        const item = E('button', 
+            { className: 'list-btn'
+            , text: name
             })
         div.appendChild(item)
     }
 
     div.onclick = function(e : MouseEvent) {
         const name = (e.target as HTMLElement).innerText
-        if (name in presets) {
+        if (name in presets) 
+        {
             GraphController.save()
             GraphController.closeAllWindows()
             GraphController.fromString(presets[name as keyof typeof presets])

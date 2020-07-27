@@ -14,8 +14,9 @@ export function makeNuniFile() {
         { graphCode: GraphController.g.toJSON()
         , values: ADSR_Controller.values
         , tempo: MasterClock.getTempo()
-    })
+        })
 }
+makeNuniFile.currentFileName = ''
 
 export function loadNuniFile(nuniFile : string) {
     GraphController.closeAllWindows()

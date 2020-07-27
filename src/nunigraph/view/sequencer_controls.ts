@@ -22,32 +22,6 @@ export function sequencerControls(an : Sequencer) {
 
     controls.appendChild(createBottomRowControls(an))
 
-    // add_or_remove_inputs: {
-    //     if (an instanceof BufferSequencer) {
-
-    //         ;['-','+'].forEach((text, i) => {
-    //             const btn = E('button', { 
-    //                 text,
-    //                 className: 'top-bar-btn'
-    //                 })
-                    
-    //             btn.onclick = () => {
-    //                 if (text === '+') {
-
-    //                     an.addInput()
-    //                 } 
-    //                 else {
-    //                     an.removeInput()
-    //                 }
-    //                 an.setupGrid()
-    //             }
-    //             controls.appendChild(btn)
-    //         })
-
-    //     }
-
-    // }
-
     return controls
 }
 
@@ -55,12 +29,14 @@ export function sequencerControls(an : Sequencer) {
 
 
 const subdivisionList = [
-    2, 4, 8, 16, 32, 64, 128,
+    1, 2, 4, 8, 16, 32, 64, 128,
     3, 6, 12, 24, 48, 96, 
-    1, 0.5, 0.25, 0.125
+    0.5, 0.25, 0.125
     ]
-for (let i = 5; i < 64; i++) {
-    if (!subdivisionList.includes(i)) {
+for (let i = 5; i < 64; i++) 
+{
+    if (!subdivisionList.includes(i)) 
+    {
         subdivisionList.push(i)
     }
 }
@@ -74,18 +50,22 @@ function createTopRowControls(an : Sequencer) {
     // const syncCheckBox = E('input')
     
     addPlayButton: {
-        const btn = E('button', { 
-            text: '▷',
-            className: 'kb-button'
+        const btn = E('button', 
+            { text: '▷'
+            , className: 'kb-button'
             })
         
         btn.classList.toggle('selected', an.isPlaying)
         btn.onclick = () => {
             const play = btn.classList.toggle('selected')
             if (play) 
+            {
                 an.play()
+            }
             else 
+            {
                 an.stop()
+            }
         }
         controls.appendChild(btn)
     }
@@ -95,9 +75,9 @@ function createTopRowControls(an : Sequencer) {
         const text = E('span', { text: an.nSteps.toString() })
         
         ;['-','+'].forEach((op, i) => {
-            const btn = E('button', { 
-                text: op,
-                className: 'top-bar-btn'
+            const btn = E('button', 
+                { text: op
+                , className: 'top-bar-btn'
                 })
                 
             btn.onclick = () => {
@@ -108,7 +88,8 @@ function createTopRowControls(an : Sequencer) {
                 an.updateSteps(v)
                 an.setupGrid()
 
-                if (an.isPlaying && an.isInSync) {
+                if (an.isPlaying && an.isInSync) 
+                {
                     an.stop()
                     an.play()
                 }
@@ -120,17 +101,23 @@ function createTopRowControls(an : Sequencer) {
     }
 
     changeSubdivision: {
-        const box = E('span')
-
-        const select = E('select', {
-            children: subdivisionList
-                .map(n => E('option', { 
-                    text: n <= 1 ? `${Math.round(1/n)} bars` : '1/' + n,
-                    className: 'list-btn' 
-                }))
-        })
         
-        select.value = an.subdiv <= 1 ? `${Math.round(1/an.subdiv)} bars` : '1/' + an.subdiv
+        const makeSubdivisionButton = (n : number) =>
+            E('option', 
+                { text: n < 1 
+                    ? `${Math.round(1/n)} bars` 
+                    : '1/' + n
+                , className: 'list-btn' 
+                })
+
+        const select = 
+            E('select', 
+            { children: subdivisionList.map(makeSubdivisionButton) })
+
+        select.value = an.subdiv <= 1 
+            ? `${Math.round(1 / an.subdiv)} bars` 
+            : '1/' + an.subdiv
+
         select.onchange = function() {
             const n = select.value.endsWith('bars') 
                 ? 1.0/+select.value.split(' ')[0]
@@ -139,31 +126,32 @@ function createTopRowControls(an : Sequencer) {
             an.subdiv = n
         }
 
+        const box = E('span')
         box.appendChild(select)
         controls.appendChild(box)
     }
 
     choose_ADSR: {
-        controls.appendChild(createRadioButtonGroup({
-            buttons: [...'ABCD'],
-            selected: String.fromCharCode(an.adsrIndex + 65),
-            className: 'top-bar-btn',
-            onclick: (data : string, index : number) => {
+        controls.appendChild(createRadioButtonGroup(
+            { buttons: [...'ABCD']
+            , selected: String.fromCharCode(an.adsrIndex + 65)
+            , className: 'top-bar-btn'
+            , onclick: (data : string, index : number) => {
                 an.adsrIndex = index
-            },
-            text: 'ADSR'
-        }))
+            }
+            , text: 'ADSR'
+            }))
     }
 
     toggleSyncPlay: {
         controls.append(createToggleButton(
             an,
             'isInSync',
-            {   text: 'sync', 
-                update: (on : boolean) =>
-                    an.noteTime = on
-                        ? (an.startTime = an.currentStep = 0)
-                        : an.ctx.currentTime
+            { text: 'sync'
+            , update: (on : boolean) =>
+                an.noteTime = on
+                    ? (an.startTime = an.currentStep = 0)
+                    : an.ctx.currentTime
             }
         ))
     }
@@ -178,21 +166,22 @@ function createTopRowControls(an : Sequencer) {
 function createBottomRowControls(an : Sequencer) {
     const row = E('div', { className: 'flex-center' })
 
-    if (an instanceof BufferSequencer) {
-        // add/remove-input buttons
+    if (an instanceof BufferSequencer) 
+    { // add/remove-input buttons
         const box = E('span')
         ;['-','+'].forEach((text, i) => {
-            const btn = E('button', { 
-                text,
-                className: 'top-bar-btn'
+            const btn = E('button', 
+                { text
+                , className: 'top-bar-btn'
                 })
                 
             btn.onclick = () => {
-                if (text === '+') {
-
+                if (text === '+') 
+                {
                     an.addInput()
                 } 
-                else {
+                else 
+                {
                     an.removeInput()
                 }
                 an.setupGrid()
@@ -206,18 +195,17 @@ function createBottomRowControls(an : Sequencer) {
     const phaseShift = createNumberDialComponent(
         an.phaseShift || 0,
         (value : number) => an.phaseShift = value, 
-        {   dial: {
-                sensitivity: 2**-10,
-                min: 0,
-                max: 1,
-                rounds: 1,
-                size: 25
-            },
-            ondblclick: () => an.phaseShift = 0
+        { dial: 
+            { sensitivity: 2**-10
+            , min: 0
+            , max: 1
+            , rounds: 1
+            , size: 25
+            }
+        , ondblclick: () => an.phaseShift = 0
         })
         
     box.appendChild(phaseShift)
-
     row.appendChild(box)
 
     return row

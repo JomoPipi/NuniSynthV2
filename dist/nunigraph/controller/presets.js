@@ -28,8 +28,7 @@ import { LZW_decompress } from '../../helpers/lzw_compression.js';
     }
     const div = D('graph-preset-list');
     for (const name in presets) {
-        const item = E('button', {
-            className: 'list-btn',
+        const item = E('button', { className: 'list-btn',
             text: name
         });
         div.appendChild(item);

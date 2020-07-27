@@ -1,8 +1,7 @@
 import { JsDial, createRadioButtonGroup } from "../UI_library/internal.js";
 const releaseTimeConstant = 10;
 const N_ADSRs = 4;
-const defaultADSR = () => ({
-    attack: 0.010416984558105469,
+const defaultADSR = () => ({ attack: 0.010416984558105469,
     decay: 0.17708349227905273,
     sustain: 0.2166603088378906,
     release: 0.3812504768371582
@@ -114,7 +113,6 @@ const adsrDials = ADSR.reduce((a, s) => {
     }));
 }
 function updateKnobs() {
-    log('executing');
     const adsr = ADSR_Controller;
     for (const s of ADSR) {
         adsrDials[s].update(adsr.values[adsr.index][s] ** .5);

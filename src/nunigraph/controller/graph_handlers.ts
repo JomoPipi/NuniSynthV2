@@ -11,11 +11,11 @@ import { LZW_decompress } from '../../helpers/lzw_compression.js'
 
 
 
-const contextmenu = D('graph-contextmenu')!
+const contextmenu = D('graph-contextmenu')
 
 // Set-up the graph contextmenu
 {
-    D('nuni-logo')!.onclick = (e : MouseEvent) =>
+    D('nuni-logo').onclick = (e : MouseEvent) =>
         GraphController.showContextMenu(e.clientX, e.clientY)
         
 
@@ -30,12 +30,13 @@ const contextmenu = D('graph-contextmenu')!
             const node = controller.g.createNewNode(type)
             const menu = contextmenu
             
-            if (menu.style.display !== 'none') {
+            if (menu.style.display !== 'none') 
+            {
                 // Place the newly created node where the contextmenu was.
                 const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = 
                     controller === GraphController 
                     ? controller.renderer.canvas
-                    : controller.renderer.canvas.parentNode.parentNode.parentNode.parentNode
+                    : controller.renderer.canvas.parentNode.parentNode.parentNode.parentNode // TODO: clean this line up...
 
                 node.x = clamp(0, (menu.offsetLeft - offsetLeft + menu.offsetWidth / 2.0) / offsetWidth, 1)
                 node.y = clamp(0, (menu.offsetTop - offsetTop + menu.offsetHeight / 2.0) / offsetHeight, 1)
@@ -48,18 +49,20 @@ const contextmenu = D('graph-contextmenu')!
         
         const textbox = E('span', { text: NodeLabel[type] })
 
-        const btn = E('button', { 
-            className: 'list-btn', 
-            children: [textbox],
-            props: { onclick: create }
+        const btn = E('button', 
+            { className: 'list-btn'
+            , children: [textbox]
+            , props: { onclick: create }
             })
             btn.style.borderLeft = `4px solid ${color}`
 
         contextmenu.appendChild(btn)
     }
 
-    for (const key in NodeTypes) {
-        if (isNaN(+key)) {
+    for (const key in NodeTypes) 
+    {
+        if (isNaN(+key)) 
+        {
             const type = NodeTypes[key as keyof typeof NodeTypes]
             append(type, NodeTypeColors[type])
         }
@@ -67,15 +70,18 @@ const contextmenu = D('graph-contextmenu')!
 }
 
 // Undo / redo btns
-;(D('graph-undo-redo-btns') as HTMLElement).onclick = function(e : MouseEvent) {
+D('graph-undo-redo-btns').onclick = function(e : MouseEvent) {
     const undoBtnId = 'graph-undo-button'
     const redoBtnId = 'graph-redo-button'
     const id = (<HTMLElement>e.target).id
     
-    if (id === undoBtnId) {
+    if (id === undoBtnId) 
+    {
         GraphController.undo()
         GraphController.renderer.render()
-    } else if (id === redoBtnId) {
+    } 
+    else if (id === redoBtnId) 
+    {
         GraphController.redo()
         GraphController.renderer.render()
     }

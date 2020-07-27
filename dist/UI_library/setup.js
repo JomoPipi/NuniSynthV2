@@ -1,4 +1,10 @@
 import { pageGroupify } from "./components/page_groupify.js";
+pageGroupify(D('tab-swapper'), [
+    'graph-tab',
+    'keyboard-tab',
+    'buffer-edit-tab',
+    'waveform-edit-tab',
+]);
 pageGroupify(D('scale-kinds'), [
     'preset-library',
     'scale-builder'

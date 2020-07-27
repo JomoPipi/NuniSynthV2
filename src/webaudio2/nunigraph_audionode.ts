@@ -23,9 +23,7 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
 
     constructor(ctx : AudioContext) {
         super(ctx)
-        this.canvas = E('canvas', {
-            className: 'nunigraph-canvas--custom',
-            })
+        this.canvas = E('canvas', { className: 'nunigraph-canvas--custom' })
         
         if (NuniGraphAudioNode.createController) 
             this.controller = NuniGraphAudioNode.createController(this.canvas, this.volumeNode)
@@ -63,24 +61,27 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
                 .g.nodes
                 .find(node => node.INPUT_NODE_ID?.id === id)
 
-        if (inputNode) {
+        if (inputNode) 
+        {
             audioNode.connect(inputNode.audioNode)
         }
-        else {
+        else 
+        {
             const inputNode 
                 = this.inputs[id]
-                = this.controller.g.createNewNode(NodeTypes.GAIN, {
-                x: Math.random() * .5 + .25, 
-                y: Math.random() * .5 + .25,
-                audioParamValues: { gain: 1 },
-                audioNodeProperties: {},
-                title: `INPUT (id-${id})`,
-                INPUT_NODE_ID: { id },
+                = this.controller.g.createNewNode(NodeTypes.GAIN, 
+                { x: Math.random() * .5 + .25 
+                , y: Math.random() * .5 + .25
+                , audioParamValues: { gain: 1 }
+                , audioNodeProperties: {}
+                , title: `INPUT (id-${id})`
+                , INPUT_NODE_ID: { id }
                 })
             
             audioNode.connect(inputNode.audioNode)
         }
-        if (this._windowIsOpen) {
+        if (this._windowIsOpen) 
+        {
             this.controller.renderer.render()
         }
     }
@@ -92,7 +93,8 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
         this.controller.g.deleteNode(inputNode as any) // NuniGraphNode
         delete this.inputs[id]
         
-        if (this._windowIsOpen) {
+        if (this._windowIsOpen)
+        {
             this.controller.renderer.render()
         }
     }

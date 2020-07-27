@@ -8,12 +8,12 @@ function reverseBuffer(index) {
 }
 function invertBuffer(index) {
     const arr = BufferStorage.get(index).getChannelData(0);
-    for (let i = 0; i < arr.length; i++)
+    for (let i = 0; i < arr.length; i++) {
         arr[i] *= -1;
+    }
     BufferUtils.refreshAffectedBuffers();
 }
-const funcMap = {
-    record: () => recordTo(BufferUtils.currentIndex),
+const funcMap = { record: () => recordTo(BufferUtils.currentIndex),
     'reverse-buffer': () => reverseBuffer(BufferUtils.currentIndex),
     'invert-buffer': () => invertBuffer(BufferUtils.currentIndex),
     'apply-buffer-formula': () => formulateBuffer(BufferUtils.currentIndex)

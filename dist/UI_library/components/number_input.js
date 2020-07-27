@@ -1,8 +1,6 @@
 export function createDraggableNumberInput(initialValue, mousedownFunc, updateFunc, manualUpdater) {
-    const valueInput = E('input', {
-        className: 'number-grab',
-        props: {
-            type: 'number',
+    const valueInput = E('input', { className: 'number-grab',
+        props: { type: 'number',
             value: initialValue
         }
     });

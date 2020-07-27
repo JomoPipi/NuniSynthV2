@@ -14,15 +14,16 @@ export class NuniGraphController {
         this.selectedNodes = [];
         this.lastMouse_MoveMsg =
             this.lastMouse_DownMsg =
-                renderer.getGraphMouseTarget({ offsetX: -Infinity, offsetY: -Infinity });
+                { type: HOVER.EMPTY };
         this.getOpenWindow = {};
         this.lastCoordsOfWindow = {};
         this.mouseHasMovedSinceLastMouseDown = false;
         this.lastMouse_DownXY = [0, 0];
         this._mouse_move = (e) => {
             const { x: offsetX, y: offsetY } = this.getMousePos(e);
-            const msg = {
-                buttons: e.buttons, offsetX, offsetY
+            const msg = { buttons: e.buttons,
+                offsetX,
+                offsetY
             };
             this.mousemove(msg);
         };
@@ -155,8 +156,7 @@ export class NuniGraphController {
             this.deleteNode(node);
         };
         const titleEditor = () => {
-            const input = E('input', {
-                className: 'title-editor',
+            const input = E('input', { className: 'title-editor',
                 props: { value: node.title || '' }
             });
             input.oninput = () => {
@@ -165,8 +165,7 @@ export class NuniGraphController {
             };
             return input;
         };
-        const dialogBox = createDraggableWindow({
-            text: `${NodeLabel[node.type]}, id: ${node.id}`,
+        const dialogBox = createDraggableWindow({ text: `${NodeLabel[node.type]}, id: ${node.id}`,
             clickCallback,
             closeCallback,
             color: node.id === 0
@@ -227,21 +226,20 @@ export class NuniGraphController {
             this.renderer.getGraphMouseTarget(e);
         const { id, node } = hoverMsg;
         this.lastMouse_DownXY = [e.offsetX, e.offsetY];
-        if ((hoverMsg.type === HOVER.EDGE || hoverMsg.type === HOVER.SELECT) &&
-            this.selectedNodes.includes(hoverMsg.node)) {
+        if ((hoverMsg.type === HOVER.EDGE || hoverMsg.type === HOVER.SELECT)
+            && this.selectedNodes.includes(hoverMsg.node)) {
             const nodes = this.selectedNodes;
-            const o = {
-                top: nodes.reduce((a, node) => Math.max(a, node.y), 0),
+            const o = { top: nodes.reduce((a, node) => Math.max(a, node.y), 0),
                 bottom: nodes.reduce((a, node) => Math.min(a, node.y), 1),
                 left: nodes.reduce((a, node) => Math.min(a, node.x), 1),
-                right: nodes.reduce((a, node) => Math.max(a, node.x), 0),
+                right: nodes.reduce((a, node) => Math.max(a, node.x), 0)
             };
-            this.lastMouse_DownMsg.bounds = {
-                U: o.top - node.y,
-                D: node.y - o.bottom,
-                L: node.x - o.left,
-                R: o.right - node.x
-            };
+            this.lastMouse_DownMsg.bounds =
+                { U: o.top - node.y,
+                    D: node.y - o.bottom,
+                    L: node.x - o.left,
+                    R: o.right - node.x
+                };
         }
         ;
         ({
@@ -300,14 +298,13 @@ export class NuniGraphController {
         if (Math.abs(x - e.offsetX) > 1 || Math.abs(y - e.offsetY) > 1) {
             this.mouseHasMovedSinceLastMouseDown = true;
         }
-        const isPressing = e.buttons === 1 &&
-            this.mouseIsDown;
+        const isPressing = e.buttons === 1 && this.mouseIsDown;
         const msg = this.renderer.getGraphMouseTarget(e);
         const { width: W, height: H } = this.renderer.canvas;
         const { selectedNodes } = this;
-        if (!this.selectionStart &&
-            selectedNodes.length &&
-            isPressing) {
+        if (!this.selectionStart
+            && selectedNodes.length
+            && isPressing) {
             const { node, bounds } = this.lastMouse_DownMsg;
             const { U, D, L, R } = bounds || { U: 0, D: 0, L: 0, R: 0 };
             const _x = node.x;
@@ -340,8 +337,7 @@ export class NuniGraphController {
             ? msg.id
             : msg.type !== HOVER.EMPTY
                 ? msg.node.id : undefined;
-        const options = {
-            x: e.offsetX,
+        const options = { x: e.offsetX,
             y: e.offsetY,
             buttons: e.buttons,
             hover_type: type,
@@ -365,9 +361,9 @@ export class NuniGraphController {
         const fromNode = renderer.fromNode;
         const msg = renderer.getGraphMouseTarget(e);
         if (!fromNode) {
-            if (!this.mouseHasMovedSinceLastMouseDown &&
-                (msg.type === HOVER.SELECT || msg.type === HOVER.EDGE) &&
-                msg.node === this.lastMouse_DownMsg.node) {
+            if (!this.mouseHasMovedSinceLastMouseDown
+                && (msg.type === HOVER.SELECT || msg.type === HOVER.EDGE)
+                && msg.node === this.lastMouse_DownMsg.node) {
                 this.toggleDialogBox(msg.node);
             }
             renderer.render({ selectedNodes });
@@ -381,8 +377,7 @@ export class NuniGraphController {
         const do_it = () => this.promptUserToSelectConnectionType(fromNode, msg.node, e.clientX, e.clientY);
         const render = () => renderer.render({ selectedNodes });
         renderer.fromNode = null;
-        ({
-            [HOVER.EDGE]: do_it,
+        ({ [HOVER.EDGE]: do_it,
             [HOVER.SELECT]: do_it,
             [HOVER.CONNECTION]: render,
             [HOVER.EMPTY]: render
@@ -479,8 +474,7 @@ export class NuniGraphController {
             };
             prompt.appendChild(btn);
         }
-        const cancel = E('button', {
-            text: 'cancel',
+        const cancel = E('button', { text: 'cancel',
             className: 'connection-type-button'
         });
         cancel.onclick = hide_it;

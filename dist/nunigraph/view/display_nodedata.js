@@ -35,15 +35,12 @@ export function createValuesWindow(node, saveCallback, deleteCallback) {
     return controls;
 }
 function warningButton(type) {
-    return E('span', {
-        text: '!',
+    return E('span', { text: '!',
         className: 'tooltip',
-        children: [E('span', {
-                text: NodeTypeWarnings[type],
+        children: [E('span', { text: NodeTypeWarnings[type],
                 className: 'tooltiptext'
             })],
-        props: { style: {
-                width: '20px',
+        props: { style: { width: '20px',
                 height: '20px',
                 float: 'right',
                 backgroundColor: ' orange'
@@ -58,11 +55,8 @@ function gainControls(node) {
     dial.value = value ** (1 / 4.0);
     dial.sensitivity = 2 ** -9;
     dial.render();
-    const valueText = E('span', {
-        text: `${volumeTodB(value).toFixed(1)}dB`
-    });
-    applyStyle(valueText, {
-        display: 'inline-block',
+    const valueText = E('span', { text: `${volumeTodB(value).toFixed(1)}dB` });
+    applyStyle(valueText, { display: 'inline-block',
         width: '70px'
     });
     dial.attach((v) => {
@@ -76,7 +70,8 @@ function gainControls(node) {
 }
 function activateKeyboardButton(an) {
     return createToggleButton(an, 'kbMode', { text: '🎹',
-        className: 'kb-button' });
+        className: 'kb-button'
+    });
 }
 function showSubtypes(node, saveCallback) {
     const subtypes = AudioNodeSubTypes[node.type];
@@ -99,8 +94,7 @@ function insertOptions(select, options) {
         options.map(type => `<option>${type}</option>`).join('');
 }
 function samplerControls(audioNode) {
-    const box = E('span', {
-        className: 'buffer-row',
+    const box = E('span', { className: 'buffer-row',
         children: [E('span', { text: 'buffer' })]
     });
     const value = E('span', { text: String.fromCharCode(65 + audioNode.bufferKey) });
@@ -120,8 +114,7 @@ function samplerControls(audioNode) {
 function exposeAudioParams(node, saveCallback) {
     const allParams = E('div');
     for (const param of AudioNodeParams[node.type]) {
-        const box = E('div', {
-            className: 'params-box',
+        const box = E('div', { className: 'params-box',
             text: param
         });
         const initialValue = node.audioParamValues[param];
