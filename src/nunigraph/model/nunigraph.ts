@@ -609,7 +609,7 @@ export class NuniGraph {
                 , INPUT_NODE_ID
                 }
 
-                if (!INPUT_NODE_ID) settings.title = title
+                if (!INPUT_NODE_ID && id !== 0) settings.title = title
 
             const newNode = new NuniGraphNode(id, type, settings)
             this.nodes.push(newNode)

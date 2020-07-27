@@ -18,11 +18,11 @@ type DraggableWindowOptions = {
     clickCallback : (box : HTMLElement) => void
     closeCallback : (box : HTMLElement) => void
     color : string
-    content? : HTMLElement
+    barContent? : HTMLElement
     }
 
 export function createDraggableWindow(
-    { text, clickCallback, closeCallback, color, content } : DraggableWindowOptions) {
+    { text, clickCallback, closeCallback, color, barContent } : DraggableWindowOptions) {
 
     const box = E('div',
         { className: 'window show' })
@@ -60,7 +60,7 @@ export function createDraggableWindow(
         , lineHeight: sizePx
         })
 
-    if (content) bar.appendChild(content)
+    if (barContent) bar.appendChild(barContent)
 
     bar.appendChild(exitBtn)
 

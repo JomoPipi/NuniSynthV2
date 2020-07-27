@@ -1,7 +1,7 @@
 import { applyStyle } from "../functions/apply_style.js";
 import { rgbaColorContrast } from "../functions/colorContrast.js";
 import { UI_clamp } from "../functions/ui_clamp.js";
-export function createDraggableWindow({ text, clickCallback, closeCallback, color, content }) {
+export function createDraggableWindow({ text, clickCallback, closeCallback, color, barContent }) {
     const box = E('div', { className: 'window show' });
     box.style.left = '50vw';
     box.style.top = '50vh';
@@ -29,8 +29,8 @@ export function createDraggableWindow({ text, clickCallback, closeCallback, colo
         textAlign: 'center',
         lineHeight: sizePx
     });
-    if (content)
-        bar.appendChild(content);
+    if (barContent)
+        bar.appendChild(barContent);
     bar.appendChild(exitBtn);
     const closeBox = () => closeCallback(box);
     exitBtn.onclick = closeBox;

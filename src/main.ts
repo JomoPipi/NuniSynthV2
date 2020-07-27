@@ -24,4 +24,9 @@ window.onload = () => {
     D('loading-screen').style.opacity = '0'
     setTimeout(() => 
         D('loading-screen').style.display = 'none', 2000)
+
+    
+    // D('scene').style.opacity = '0'
+    // setTimeout(() => 
+    //     D('scene').style.display = 'none', 2000)
 }

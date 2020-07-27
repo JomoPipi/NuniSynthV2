@@ -291,9 +291,9 @@ export class NuniGraphController {
                 , color: node.id === 0 
                     ? MasterGainColor 
                     : NodeTypeColors[node.type]
-                , content: node.type === NodeTypes.CUSTOM
-                    ? titleEditor()
-                    : undefined
+                , barContent: node.INPUT_NODE_ID || node.id === 0
+                    ? undefined
+                    : titleEditor()
                 })
 
 

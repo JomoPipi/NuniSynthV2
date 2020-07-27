@@ -20,7 +20,49 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/styles/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/styles/favicon.ico">
     
-    <script src="dist/helpers/helpers.js"         defer></script>
+    <!-- <script  src="https://lume.io/docs//global.js"></script>
+    <i-scene id="scene" class="loader" experimental-webgl disable-css="true">
+        <i-ambient-light intensity="0.3"></i-ambient-light>
+        <i-point-light
+            id="light"
+            color="white"
+            position="300 300 300"
+            size="0 0 0"
+            cast-shadow="true"
+            intensity="0.8"
+            >
+        </i-point-light>
+        <i-box id="model"
+            rotation="40 40 0"
+            align="0.5 0.5 0.5"
+            mount-point="0.5 0.5 0.5"
+            size="100 100 100"
+            color="white" COMMENT-otherwise-the-material-will-be-tinted-random-color
+            texture="https://lume.io/docs//textures/cement.jpg"
+        >
+        </i-box>
+    </i-scene>
+    
+    <script defer>
+        // defines the default names for the HTML elements
+        LUME.useDefaultNames()
+    
+        const light = document.querySelector('#light')
+    
+        document.addEventListener('pointermove', function(e) {
+            e.preventDefault()
+            light.position.x = e.clientX
+            light.position.y = e.clientY
+        })
+    
+        const el = document.querySelector('#model')
+        const Motor = LUME.Motor
+    
+        const rotate = (t) => 180 * Math.sin(0.001 * t)
+        el.rotation = (x, y, z, t) => [rotate(t), rotate(t), rotate(t)]
+    </script> -->
+
+    <script src="dist/helpers/helpers.js" defer></script>
 
     <script src="dist/nunigraph/model/nodeconfig.js" defer></script>
 
@@ -33,9 +75,8 @@
 
 </head>
 <body>
-
-
-<div id="loading-screen" class="loader">
+    
+<div id="loading-screen" style="display: hidden;" class="loader">
   <div id="loading-text" class="loading-text"> 
     WARNING: <br>
     Experimenting with synthesizers <br>
@@ -126,6 +167,16 @@
           <div class="main-tab">
 
               <div id="project-title"> </div>
+              
+              <div class="lcd-display">
+                <code> BUFFER </code>
+                <code id="buffer-info"> A -- 3 seconds </code>
+              </div>
+      
+              <div class="buffer-box">
+                <div id="buffer-container" class="buffers-list"></div>
+                <canvas id="buffer-canvas"></canvas>
+              </div>
 
               <div>
                 
@@ -318,15 +369,6 @@
       <div id="buffer-edit-tab" class="_tab_">
         <div class="main-tab">
 
-          <div class="lcd-display">
-            <code> BUFFER </code>
-            <code id="buffer-info"> A -- 3 seconds </code>
-          </div>
-  
-          <div class="buffer-box">
-            <div id="buffer-container" class="buffers-list"></div>
-            <canvas id="buffer-canvas"></canvas>
-          </div>
 
           <br>
 

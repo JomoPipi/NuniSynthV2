@@ -171,9 +171,9 @@ export class NuniGraphController {
             color: node.id === 0
                 ? MasterGainColor
                 : NodeTypeColors[node.type],
-            content: node.type === NodeTypes.CUSTOM
-                ? titleEditor()
-                : undefined
+            barContent: node.INPUT_NODE_ID || node.id === 0
+                ? undefined
+                : titleEditor()
         });
         this.getOpenWindow[node.id] = dialogBox;
         dialogBox.children[1].appendChild(this.createValuesWindow(node, () => this.save(), deleteCallBack));
