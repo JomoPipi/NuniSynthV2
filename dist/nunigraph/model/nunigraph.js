@@ -32,14 +32,16 @@ export class NuniGraph {
     pasteNodes(X, Y, _nodes, connections) {
         const centerX = _nodes.reduce((a, { x }) => a + x, 0) / _nodes.length;
         const centerY = _nodes.reduce((a, { y }) => a + y, 0) / _nodes.length;
-        const nodes = _nodes.map(({ type, x, y, audioParamValues, audioNodeProperties, INPUT_NODE_ID, title }) => {
+        const nodes = _nodes.map(({ type, oldId, x, y, audioParamValues, audioNodeProperties, INPUT_NODE_ID, title }) => {
             const newX = clamp(0, x - centerX + X, 1);
             const newY = clamp(0, y - centerY + Y, 1);
             const settings = { x: newX,
                 y: newY,
                 audioParamValues,
                 audioNodeProperties,
-                title: INPUT_NODE_ID ? undefined : title
+                title: INPUT_NODE_ID || oldId === 0
+                    ? undefined
+                    : title
             };
             return this.createNewNode(type, settings);
         });
@@ -101,7 +103,7 @@ export class NuniGraph {
             audioNodeProperties,
             INPUT_NODE_ID
         };
-        if (!INPUT_NODE_ID)
+        if (!INPUT_NODE_ID && node.id !== 0)
             settings.title = title;
         return this.createNewNode(type, settings);
     }

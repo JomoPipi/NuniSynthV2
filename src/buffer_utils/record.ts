@@ -34,7 +34,6 @@ export function recordTo(index : number) {
             .getUserMedia({ audio: true })
             .then(handleStream)
             .catch(errStuff)
-
     } 
     else 
     {

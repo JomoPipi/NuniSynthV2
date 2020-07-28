@@ -1,4 +1,4 @@
-export function UI_clamp(x, y, element, container) {
+export function UI_clamp(x, y, element, container, options = {}) {
     const [w, h, W, H, dx, dy] = [
         element.offsetWidth + 2,
         element.offsetHeight + 2,
@@ -7,9 +7,12 @@ export function UI_clamp(x, y, element, container) {
         container.offsetLeft,
         container.offsetTop,
     ];
+    const [X, Y] = options.topLeft
+        ? [x, y]
+        : [x - w / 2 + dx, y - h / 2 + dy];
     element.style.left =
-        clamp(dx, x - w / 2 + dx, W - w + dx) + 'px';
+        clamp(dx, X, W - w + dx) + 'px';
     element.style.top =
-        clamp(dy, y - h / 2 + dy, H - h + dy) + 'px';
+        clamp(dy, Y, H - h + dy) + 'px';
 }
 //# sourceMappingURL=ui_clamp.js.map

@@ -88,7 +88,9 @@ export class NuniGraph {
 
         // Make nodes
         const nodes = _nodes.map((
-            { type, x, y
+            { type
+            , oldId
+            , x, y
             , audioParamValues
             , audioNodeProperties
             , INPUT_NODE_ID, title }) => {
@@ -100,7 +102,9 @@ export class NuniGraph {
                 , y: newY
                 , audioParamValues
                 , audioNodeProperties
-                , title: INPUT_NODE_ID ? undefined : title
+                , title: INPUT_NODE_ID || oldId === 0 
+                    ? undefined 
+                    : title
                 }
 
             return this.createNewNode(type, settings)
@@ -226,7 +230,7 @@ export class NuniGraph {
             , INPUT_NODE_ID
             } as NodeCreationSettings
 
-        if (!INPUT_NODE_ID) settings.title = title
+        if (!INPUT_NODE_ID && node.id !== 0) settings.title = title
         
         return this.createNewNode(type, settings)
     }

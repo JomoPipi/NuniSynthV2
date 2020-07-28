@@ -3,7 +3,7 @@ const contextmenu = D('graph-contextmenu');
 {
     D('nuni-logo').onclick = (e) => GraphController.showContextMenu(e.clientX, e.clientY);
     const append = (type, color) => {
-        const create = () => {
+        const create = ({ pageX: x, pageY: y }) => {
             const controller = DIRTYGLOBALS.lastControllerToOpenTheContextmenu || GraphController;
             controller.save();
             const node = controller.g.createNewNode(type);
@@ -11,9 +11,9 @@ const contextmenu = D('graph-contextmenu');
             if (menu.style.display !== 'none') {
                 const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = controller === GraphController
                     ? controller.renderer.canvas
-                    : controller.renderer.canvas.parentNode.parentNode.parentNode.parentNode.parentNode;
-                node.x = clamp(0, (menu.offsetLeft - offsetLeft + menu.offsetWidth / 2.0) / offsetWidth, 1);
-                node.y = clamp(0, (menu.offsetTop - offsetTop + menu.offsetHeight / 2.0) / offsetHeight, 1);
+                    : controller.renderer.canvas.parentNode.parentNode.parentNode.parentNode;
+                node.x = clamp(0, (x - offsetLeft) / offsetWidth, 1);
+                node.y = clamp(0, (y - offsetTop) / offsetHeight, 1);
                 controller.hideContextMenu();
             }
             controller.renderer.render();

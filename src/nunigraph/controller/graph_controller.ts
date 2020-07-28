@@ -144,7 +144,7 @@ export class NuniGraphController {
     
         menu.style.zIndex = (openWindowGlobalIndexThatKeepsRising + 1).toString()
         menu.style.display = 'grid'
-        UI_clamp(x, y, menu, document.body)
+        UI_clamp(x, y, menu, document.body, { topLeft: true })
     }
 
     hideContextMenu() {

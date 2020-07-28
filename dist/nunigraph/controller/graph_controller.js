@@ -64,7 +64,7 @@ export class NuniGraphController {
         const menu = D('graph-contextmenu');
         menu.style.zIndex = (openWindowGlobalIndexThatKeepsRising + 1).toString();
         menu.style.display = 'grid';
-        UI_clamp(x, y, menu, document.body);
+        UI_clamp(x, y, menu, document.body, { topLeft: true });
     }
     hideContextMenu() {
         D('graph-contextmenu').style.display = 'none';

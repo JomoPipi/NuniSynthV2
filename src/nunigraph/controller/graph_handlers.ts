@@ -21,7 +21,7 @@ const contextmenu = D('graph-contextmenu')
 
     const append = (type : NodeTypes, color : string) => {
 
-        const create = () => {
+        const create = ({ pageX: x, pageY: y } : MouseEvent) => {
 
             const controller = DIRTYGLOBALS.lastControllerToOpenTheContextmenu || GraphController as NuniGraphController
             
@@ -36,10 +36,10 @@ const contextmenu = D('graph-contextmenu')
                 const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = 
                     controller === GraphController 
                     ? controller.renderer.canvas
-                    : controller.renderer.canvas.parentNode.parentNode.parentNode.parentNode.parentNode // TODO: clean this line up...
+                    : controller.renderer.canvas.parentNode.parentNode.parentNode.parentNode // TODO: clean this line up...
 
-                node.x = clamp(0, (menu.offsetLeft - offsetLeft + menu.offsetWidth / 2.0) / offsetWidth, 1)
-                node.y = clamp(0, (menu.offsetTop - offsetTop + menu.offsetHeight / 2.0) / offsetHeight, 1)
+                node.x = clamp(0, (x - offsetLeft) / offsetWidth, 1)
+                node.y = clamp(0, (y - offsetTop) / offsetHeight, 1)
                 controller.hideContextMenu()
             }
             

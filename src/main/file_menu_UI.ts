@@ -12,7 +12,7 @@ import
     } from '../storage/general/dialog.js'
 
 const menuItemMap =
-    { 'Open..': openExistingProject
+    { 'Saved Project': openExistingProject
     , 'Save As..': saveProjectAs
     , 'Save': saveProject
     }

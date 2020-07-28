@@ -143,7 +143,7 @@ const NodeTypeColors = {
     [NodeTypes.B_SEQ]: 'rgba(0,255,195,0.5)',
     [NodeTypes.CSN]: 'rgba(255,200,200,0.5)',
     [NodeTypes.RECORD]: 'rgba(255,200,255,1)',
-    [NodeTypes.CUSTOM]: 'rgba(255,255,255,0.5)'
+    [NodeTypes.CUSTOM]: 'rgba(255,240,255,0.5)'
 };
 const NodeTypeWarnings = {
     [NodeTypes.FILTER]: `Filters may become unstable and we won't do anything about it. If this happens the program will cease to function properly and will need to be re-started.`

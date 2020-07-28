@@ -180,7 +180,7 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } = {
     [NodeTypes.B_SEQ]:  'rgba(0,255,195,0.5)',
     [NodeTypes.CSN]:    'rgba(255,200,200,0.5)',
     [NodeTypes.RECORD]: 'rgba(255,200,255,1)',
-    [NodeTypes.CUSTOM]: 'rgba(255,255,255,0.5)'
+    [NodeTypes.CUSTOM]: 'rgba(255,240,255,0.5)'
 }
 
 const NodeTypeWarnings : { readonly [key in NodeTypes]? : string } = {
