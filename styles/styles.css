@@ -36,7 +36,7 @@ button {
   font-weight: bolder;
 }
 
-.side-margin, .main-tab {
+.side-margin {
   margin: 0% 4%;
 }
 
@@ -178,7 +178,7 @@ button {
 
 .nunigraph-container {
   border: 30px solid #3a393a;
-  border-left-width: 0px;
+  border-left-width: 10px;
   background-color: #3a393a;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
@@ -189,6 +189,8 @@ button {
   height: 100%;
   width: 100%;
   border-radius: 40px;
+  -webkit-box-shadow: 0 0 5px 10px #302f30;
+          box-shadow: 0 0 5px 10px #302f30;
 }
 
 .nunigraph-canvas--custom {
@@ -358,7 +360,7 @@ code {
   color: #5d5b5e;
 }
 
-.vert-split, .main-tab {
+.vert-split {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -709,6 +711,10 @@ code {
   width: 100%;
 }
 
+.main-tab {
+  margin: 20px;
+}
+
 a {
   color: #799d92;
 }
@@ -759,6 +765,8 @@ a {
   display: grid;
   -ms-grid-columns: 39% 61%;
       grid-template-columns: 39% 61%;
+  -ms-grid-columns: 400px auto;
+      grid-template-columns: 400px auto;
   -ms-grid-rows: 1fr;
       grid-template-rows: 1fr;
   width: 100%;

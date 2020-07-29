@@ -101,6 +101,7 @@ const adsrDials = ADSR.reduce((a, s) => {
 }, {});
 {
     D('select-adsr').appendChild(createRadioButtonGroup({
+        text: 'ADSR',
         buttons: [...'ABCD'],
         selected: 'A',
         className: 'top-bar-btn',
@@ -108,8 +109,7 @@ const adsrDials = ADSR.reduce((a, s) => {
             const adsr = ADSR_Controller;
             adsr.index = index;
             adsr.render({ updateKnobs: true });
-        },
-        text: 'ADSR'
+        }
     }));
 }
 function updateKnobs() {

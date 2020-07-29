@@ -17,6 +17,6 @@
 }
 
 .main-tab {
-    @extend .side-margin;
-    @extend .vert-split;
+    margin: 20px;
+    // @extend .vert-split;
 }

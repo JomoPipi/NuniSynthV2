@@ -45,7 +45,6 @@ button {
 
 .side-margin {
     margin: 0% 4%;
-    // box-sizing: padding-box;
 }
 .side-padding {
     padding: 0% 4%;
@@ -196,7 +195,7 @@ button {
 
 .nunigraph-container {
     border: 30px solid $color2;
-    border-left-width: 0px;
+    border-left-width: 10px;
     background-color: $color2;
     box-sizing: border-box;
 }
@@ -206,6 +205,7 @@ button {
     height: 100%;
     width: 100%;
     border-radius: 40px;
+    box-shadow: 0 0 5px 10px $color1;// #555;
 }
 
 // .nunigraph-canvas-tint {

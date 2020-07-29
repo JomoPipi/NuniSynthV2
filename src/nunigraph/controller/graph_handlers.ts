@@ -29,7 +29,7 @@ const contextmenu = D('graph-contextmenu')
             controller.save()
             const node = controller.g.createNewNode(type)
             const menu = contextmenu
-            
+
             if (menu.style.display !== 'none') 
             {
                 // Place the newly created node where the contextmenu was.

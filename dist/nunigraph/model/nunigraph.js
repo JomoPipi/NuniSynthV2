@@ -258,9 +258,10 @@ export class NuniGraph {
         };
     }
     convertNodeToNodeSettings(node) {
+        var _a;
         const nodeCopy = Object.assign(Object.assign({}, node), { audioNode: Object.assign({}, node.audioNode) });
         for (const name in nodeCopy.audioNode) {
-            if (nodeCopy.type !== NodeTypes.SGS || !SGS_MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade[name]) {
+            if (!((_a = PostConnectionTransferableAudioNodeProperties[nodeCopy.type]) === null || _a === void 0 ? void 0 : _a.includes(name))) {
                 delete nodeCopy.audioNode[name];
             }
         }
@@ -326,9 +327,10 @@ export class NuniGraph {
             }
         }
         for (const node of nodes) {
-            if (node.type === NodeTypes.SGS) {
-                const thisNode = this.nodes.find(n => n.id === node.id);
-                thisNode.audioNode.stepMatrix = node.audioNode.stepMatrix;
+            const thisNode = this.nodes.find(n => n.id === node.id);
+            const maybeArr = PostConnectionTransferableAudioNodeProperties[node.type];
+            for (const prop of maybeArr || []) {
+                thisNode.audioNode[prop] = node.audioNode[prop];
             }
         }
     }

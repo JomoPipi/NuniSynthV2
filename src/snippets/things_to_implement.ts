@@ -27,3 +27,5 @@
 // https://stackoverflow.com/questions/12738056/creating-a-10-band-equalizer-using-web-audio-api
 
 // ! YouTube Playlist "Synth Ideas"
+
+// https://codepen.io/ejones/pen/mJlCb

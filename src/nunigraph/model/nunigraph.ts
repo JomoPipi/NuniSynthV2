@@ -313,9 +313,14 @@ export class NuniGraph {
             
         for (const node of nodes) 
         {
+            // TODO: clean this up:
+            //* Use PostConnectionTransferableAudioNodeProperties.
+            //* The stepMatrix itself should not know about the input IDs
+            //* They should just be indexed and it is the audioNode that knows
+            //* How to map the input ID to its' index.
+            //* NOTE: NuniGraphAudioNode is another node that needs to be aware of its' inputs.
             if (node.audioNode instanceof Sequencer) 
             {
-                // TODO - clean this up by using config objects to know what objects to copy
                 if (node.type === NodeTypes.B_SEQ) continue;
                 
                 const matrix = node.audioNode.stepMatrix
@@ -525,7 +530,14 @@ export class NuniGraph {
         // some audioNode properties need to be taken along but not all...
         for (const name in nodeCopy.audioNode) 
         {
-            if (nodeCopy.type !== NodeTypes.SGS || !SGS_MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade[name]) 
+            // OLD
+            // if (nodeCopy.type !== NodeTypes.SGS || !SGS_MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade[name]) 
+            // {
+            //     delete nodeCopy.audioNode[name as AudioParams]
+            // }
+
+            // NEW
+            if (!(PostConnectionTransferableAudioNodeProperties[nodeCopy.type]?.includes(name)))
             {
                 delete nodeCopy.audioNode[name as AudioParams]
             }
@@ -541,6 +553,7 @@ export class NuniGraph {
         {
             // TODO: this is stupid..
             if (node.type === NodeTypes.SGS && (prop === 'stepMatrix' || prop === 'channelData')) 
+            // if (PostConnectionTransferableAudioNodeProperties[nodeCopy.type]?.includes(prop))
             {
                 continue;
             }
@@ -653,11 +666,19 @@ export class NuniGraph {
         {
             // Can't use instanceof to check if audioNode is a SubgraphSequencer
             // because those nodes were parsed with JSON.parse
-            if (node.type === NodeTypes.SGS) 
-            {
-                const thisNode = this.nodes.find(n => n.id === node.id)!
+            ///////////////////////////////////////////////////////////////////////////
+            // if (node.type === NodeTypes.SGS) 
+            // {
+            //     const thisNode = this.nodes.find(n => n.id === node.id)!
 
-                ;(<Sequencer>thisNode.audioNode).stepMatrix = node.audioNode.stepMatrix
+            //     ;(<Sequencer>thisNode.audioNode).stepMatrix = node.audioNode.stepMatrix
+            // }
+
+            const thisNode = this.nodes.find(n => n.id === node.id)!
+            const maybeArr = PostConnectionTransferableAudioNodeProperties[node.type as NodeTypes]
+            for (const prop of maybeArr || []) 
+            {
+                (<Indexed>thisNode.audioNode)[prop] = node.audioNode[prop]
             }
         }
     }
