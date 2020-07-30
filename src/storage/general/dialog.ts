@@ -31,12 +31,20 @@ if (!fs.existsSync(projectsFolderPath))
 export function saveProject() {
     if (makeNuniFile.currentFileName) 
     {
+        D('wait-cursor').classList.add('show')
+
         const file = makeNuniFile()
         const filePath = projectsFolderPath + '\\' 
             + makeNuniFile.currentFileName
             + '.nuni'
 
         fs.writeFileSync(filePath, file)
+
+        D('main-nav-menu').style.cursor = 'wait'
+        
+        setTimeout(() => {
+            D('wait-cursor').classList.remove('show')
+        }, 500)
     } 
     else 
     {

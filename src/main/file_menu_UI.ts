@@ -10,11 +10,13 @@ import
     , saveProjectAs 
     , saveProject
     } from '../storage/general/dialog.js'
+import { modularizeGraph } from '../nunigraph/controller/graph_handlers.js'
 
 const menuItemMap =
     { 'Saved Project': openExistingProject
     , 'Save As..': saveProjectAs
     , 'Save': saveProject
+    , 'Modularize': modularizeGraph
     }
 
 function getNavMenuClickTarget(e : MouseEvent) {

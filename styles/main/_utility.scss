@@ -19,6 +19,17 @@
     box-sizing: border-box;
 }
 
+.wait-cursor {
+    display: none;
+    background: transparent;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999;
+    cursor: wait;
+}
 
 .show { // Has to be at the end so that it "wins".
     display: inline-block;

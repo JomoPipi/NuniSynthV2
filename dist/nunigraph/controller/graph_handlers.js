@@ -1,7 +1,7 @@
 import { GraphController } from '../init.js';
 const contextmenu = D('graph-contextmenu');
 {
-    D('nuni-logo').onclick = (e) => GraphController.showContextMenu(e.clientX, e.clientY);
+    D('nuni-logo').onclick = (e) => GraphController.showContextMenu(e.pageX, 0);
     const append = (type, color) => {
         const create = ({ pageX: x, pageY: y }) => {
             const controller = DIRTYGLOBALS.lastControllerToOpenTheContextmenu || GraphController;
@@ -47,4 +47,24 @@ D('graph-undo-redo-btns').onclick = function (e) {
         GraphController.renderer.render();
     }
 };
+export function modularizeGraph() {
+    const { g } = GraphController;
+    const graphCode = g.toString();
+    for (const node of [...g.nodes]) {
+        if (node.id !== 0) {
+            GraphController.deleteNode(node, { noRender: true });
+        }
+    }
+    const node = g.createNewNode(NodeTypes.CUSTOM, { x: 0.5,
+        y: 0.5,
+        audioParamValues: {},
+        audioNodeProperties: { graphCode }
+    });
+    node.audioNode
+        .controller
+        .g.nodes[0]
+        .setValueOfParam('gain', 1);
+    g.makeConnection(node, g.nodes[0], 'channel');
+    GraphController.renderer.render();
+}
 //# sourceMappingURL=graph_handlers.js.map

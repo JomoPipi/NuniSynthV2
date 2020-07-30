@@ -15,8 +15,8 @@ import { createDraggableWindow, UI_clamp } from '../../UI_library/internal.js'
 
 export const ActiveControllers = [] as NuniGraphController[]
 
-type CreateValuesWindow = 
-    (node : NuniGraphNode, 
+type CreateValuesWindow = (
+    node : NuniGraphNode, 
     saveCallback : Function, 
     deleteCallBack : Function) => HTMLElement
 

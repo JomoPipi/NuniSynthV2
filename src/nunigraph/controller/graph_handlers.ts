@@ -8,6 +8,7 @@
 import { GraphController } from '../init.js'
 import { NuniGraphController } from './graph_controller.js'
 import { LZW_decompress } from '../../helpers/lzw_compression.js'
+import { NuniGraphAudioNode } from '../../webaudio2/internal.js'
 
 
 
@@ -16,8 +17,7 @@ const contextmenu = D('graph-contextmenu')
 // Set-up the graph contextmenu
 {
     D('nuni-logo').onclick = (e : MouseEvent) =>
-        GraphController.showContextMenu(e.clientX, e.clientY)
-        
+        GraphController.showContextMenu(e.pageX, 0)
 
     const append = (type : NodeTypes, color : string) => {
 
@@ -69,7 +69,7 @@ const contextmenu = D('graph-contextmenu')
     }
 }
 
-// Undo / redo btns
+// Undo / redo buttons
 D('graph-undo-redo-btns').onclick = function(e : MouseEvent) {
     const undoBtnId = 'graph-undo-button'
     const redoBtnId = 'graph-redo-button'
@@ -85,4 +85,33 @@ D('graph-undo-redo-btns').onclick = function(e : MouseEvent) {
         GraphController.redo()
         GraphController.renderer.render()
     }
+}
+
+// Modularize button
+export function modularizeGraph() {
+    const { g } = GraphController
+    const graphCode = g.toString()
+    for (const node of [...g.nodes]) 
+    {
+        if (node.id !== 0) 
+        {
+            GraphController.deleteNode(node, { noRender: true })
+        }
+    }
+
+    const node = g.createNewNode(NodeTypes.CUSTOM, 
+        { x: 0.5
+        , y: 0.5
+        , audioParamValues: {}
+        , audioNodeProperties: { graphCode } 
+        })
+    
+    ;(<NuniGraphAudioNode>node.audioNode)
+        .controller
+        .g.nodes[0]
+        .setValueOfParam('gain', 1)
+    
+    g.makeConnection(node, g.nodes[0], 'channel')
+
+    GraphController.renderer.render()
 }
