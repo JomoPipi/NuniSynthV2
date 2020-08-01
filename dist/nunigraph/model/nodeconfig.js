@@ -49,6 +49,18 @@ const SupportsInputChannels = { [NodeTypes.GAIN]: true,
     [NodeTypes.RECORD]: true,
     [NodeTypes.CUSTOM]: true
 };
+const IsAwareOfInputIDs = { [NodeTypes.GAIN]: false,
+    [NodeTypes.OSC]: false,
+    [NodeTypes.FILTER]: false,
+    [NodeTypes.PANNER]: false,
+    [NodeTypes.DELAY]: false,
+    [NodeTypes.BUFFER]: false,
+    [NodeTypes.SGS]: true,
+    [NodeTypes.B_SEQ]: false,
+    [NodeTypes.CSN]: false,
+    [NodeTypes.RECORD]: false,
+    [NodeTypes.CUSTOM]: false
+};
 const MustBeStarted = { [NodeTypes.GAIN]: false,
     [NodeTypes.OSC]: false,
     [NodeTypes.FILTER]: false,
@@ -183,7 +195,7 @@ const sliderFactor = { gain: 10 ** -2,
     playbackRate: 2 ** -6,
     offset: 10 ** -2
 };
-const Transferable_AudioNode_Properties = { type: true,
+const Transferable_AudioNodeProperties = { type: true,
     kbMode: true,
     subdiv: true,
     isInSync: true,
@@ -195,7 +207,7 @@ const Transferable_AudioNode_Properties = { type: true,
     phaseShift: true,
     channelData: true
 };
-const PostConnectionTransferableAudioNodeProperties = { [NodeTypes.SGS]: ['stepMatrix']
+const PostConnection_Transferable_InputRemappable_AudioNodeProperties = { [NodeTypes.SGS]: ['stepMatrix', 'channelData']
 };
 const TransferableNodeProperties = 'id,type,x,y,audioParamValues,audioNodeProperties,title,INPUT_NODE_ID'
     .split(',')

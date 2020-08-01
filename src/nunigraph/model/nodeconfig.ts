@@ -80,19 +80,19 @@ const SupportsInputChannels =
     , [NodeTypes.CUSTOM]: true
     }
 
-// const IsAwareOfInputIDs =
-//     { [NodeTypes.GAIN]:   false
-//     , [NodeTypes.OSC]:    false
-//     , [NodeTypes.FILTER]: false
-//     , [NodeTypes.PANNER]: false
-//     , [NodeTypes.DELAY]:  false
-//     , [NodeTypes.BUFFER]: false
-//     , [NodeTypes.SGS]:    true
-//     , [NodeTypes.B_SEQ]:  false
-//     , [NodeTypes.CSN]:    false
-//     , [NodeTypes.RECORD]: false
-//     , [NodeTypes.CUSTOM]: true
-//     }
+const IsAwareOfInputIDs =
+    { [NodeTypes.GAIN]:   false
+    , [NodeTypes.OSC]:    false
+    , [NodeTypes.FILTER]: false
+    , [NodeTypes.PANNER]: false
+    , [NodeTypes.DELAY]:  false
+    , [NodeTypes.BUFFER]: false
+    , [NodeTypes.SGS]:    true
+    , [NodeTypes.B_SEQ]:  false
+    , [NodeTypes.CSN]:    false
+    , [NodeTypes.RECORD]: false
+    , [NodeTypes.CUSTOM]: false // TODO: change this to true
+    }
 
 const MustBeStarted =
     { [NodeTypes.GAIN]:   false
@@ -272,7 +272,7 @@ interface CustomAudioNodeProperties
     phaseShift?  : number
 }
 
-const Transferable_AudioNode_Properties = 
+const Transferable_AudioNodeProperties = 
     { type        : true
     , kbMode      : true
     , subdiv      : true
@@ -286,8 +286,14 @@ const Transferable_AudioNode_Properties =
     , channelData : true
     }
 
-const PostConnectionTransferableAudioNodeProperties : { [key in NodeTypes]? : any[] } = 
-    { [NodeTypes.SGS] : ['stepMatrix']
+// const PostConnection_Transferable_AudioNodeProperties : { [key in NodeTypes]? : any[] } = 
+//     { [NodeTypes.SGS] : ['stepMatrix']
+//     }
+
+const PostConnection_Transferable_InputRemappable_AudioNodeProperties 
+: { [key in NodeTypes]? : (keyof typeof Transferable_AudioNodeProperties)[] } = 
+
+    { [NodeTypes.SGS] : ['stepMatrix', 'channelData'] 
     }
     
 type NodeCreationSettings = { 

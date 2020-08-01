@@ -11,6 +11,7 @@ import './nunigraph/controller/presets.js'
 import './nunigraph/controller/graph_handlers.js'
 import './main/resize.js'
 import './main/file_menu_UI.js'
+import './tests/copy_graph_test.js'
 
 // Turn off turn deployment
 // import './tests/copy_graph_test.js'

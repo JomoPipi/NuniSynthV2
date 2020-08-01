@@ -107,10 +107,6 @@ export class Sequencer extends VolumeNodeContainer {
         }
     }
     refresh() {
-        var _a;
-        for (const key in this.channelData) {
-            (_a = this.channelData[key].adsr) === null || _a === void 0 ? void 0 : _a.connect(this.volumeNode);
-        }
         this.setupGrid();
     }
     setupGrid() {

@@ -10,7 +10,6 @@ import { VolumeNodeContainer } from '../volumenode_container.js'
 import { applyStyle, JsDial } from '../../UI_library/internal.js'
 
 type ChannelData = {
-    adsr? : GainNode
     volume : number
     bufferKey? : number
     }
@@ -181,10 +180,10 @@ export class Sequencer extends VolumeNodeContainer {
     }
 
     refresh() {
-        for (const key in this.channelData) 
-        {
-            this.channelData[key].adsr?.connect(this.volumeNode)
-        }
+        // for (const key in this.channelData) 
+        // {
+        //     this.channelData[key].adsr?.connect(this.volumeNode)
+        // }
         this.setupGrid()
     }
 

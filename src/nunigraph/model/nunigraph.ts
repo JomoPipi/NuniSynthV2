@@ -228,8 +228,8 @@ export class NuniGraph {
 
 
 
-
-    reproduceNodesAndConnections(nodes : NuniGraphNode[]) {
+    // ctrl + s
+    reproduceNodesAndConnections(nodes : NuniGraphNode[]) { 
         
         const correspondenceMap = nodes.reduce((map,node) => {
             map[node.id] = this.reproduceNode(node)
@@ -305,7 +305,7 @@ export class NuniGraph {
         for (const node of nodes) 
         {
             // TODO: clean this up:
-            //* Use PostConnectionTransferableAudioNodeProperties.
+            //* Use PostConnection_Transferable_AudioNodeProperties.
             //* The stepMatrix itself should not know about the input IDs
             //* They should just be indexed and it is the audioNode that knows
             //* How to map the input ID to its' index.
@@ -315,14 +315,22 @@ export class NuniGraph {
                 if (node.type === NodeTypes.B_SEQ) continue;
                 
                 const matrix = node.audioNode.stepMatrix
+                const channelData = node.audioNode.channelData
                 
                 for (const id in matrix) 
                 {
                     const newId = mapToNewNode[id]?.id ?? id
+
                     mapToNewNode[node.id]
                         .audioNode
                         .stepMatrix[newId]
                         = matrix[id].slice()
+
+                    // // TODO: clean this hardcoding up
+                    // mapToNewNode[node.id]
+                    //     .audioNode
+                    //     .channelData[newId].volume
+                    //     = channelData[id].volume
                 }
             }
         }
@@ -513,19 +521,8 @@ export class NuniGraph {
 
 
     convertNodeToNodeSettings(node : NuniGraphNode) : Indexed {
-        const nodeCopy = 
-            { ...node
-            , audioNode: { ...node.audioNode }
-            }
 
-        // some audioNode properties need to be taken along but not all...
-        for (const name in nodeCopy.audioNode) 
-        {
-            if (!(PostConnectionTransferableAudioNodeProperties[nodeCopy.type]?.includes(name)))
-            {
-                delete nodeCopy.audioNode[name as AudioParams]
-            }
-        }
+        const nodeCopy = { ...node, audioNode: {} }
 
         const settings = 
             { ...JSON.parse(JSON.stringify(nodeCopy))
@@ -533,15 +530,8 @@ export class NuniGraph {
             , oldId: node.id
             }
             
-        for (const prop in Transferable_AudioNode_Properties)
+        for (const prop in Transferable_AudioNodeProperties)
         {
-            // TODO: refactor
-            if (node.type === NodeTypes.SGS && (prop === 'stepMatrix' || prop === 'channelData')) 
-            // if (PostConnectionTransferableAudioNodeProperties[nodeCopy.type]?.includes(prop))
-            {
-                continue;
-            }
-
             if (prop in node.audioNode) 
             {
                 const p = prop as keyof typeof node.audioNode
@@ -612,7 +602,7 @@ export class NuniGraph {
 
                 if (!INPUT_NODE_ID && id !== 0) settings.title = title
 
-            const newNode = new NuniGraphNode(id, type, settings)
+            const newNode = new NuniGraphNode(id, type, JSON.parse(JSON.stringify(settings)))
             this.nodes.push(newNode)
         }
         this.nextId = 
@@ -659,10 +649,21 @@ export class NuniGraph {
             // }
 
             const thisNode = this.nodes.find(n => n.id === node.id)!
-            const maybeArr = PostConnectionTransferableAudioNodeProperties[node.type as NodeTypes]
+            // const maybeArr = PostConnection_Transferable_AudioNodeProperties[node.type as NodeTypes]
+            const maybeArr = 
+            PostConnection_Transferable_InputRemappable_AudioNodeProperties[node.type as NodeTypes]
+
             for (const prop of maybeArr || []) 
             {
-                (<Indexed>thisNode.audioNode)[prop] = node.audioNode[prop]
+                log('prop =',prop)
+                if (node.audioNodeProperties[prop] || node.audioNode[prop])
+                {
+                    ;(<Indexed>thisNode.audioNode)[prop] = 
+                        node.audioNodeProperties[prop]
+                        || node.audioNode[prop] // <- legacy. TODO: remove, when graphs are transfererred.
+                } else {
+                    log('not true bitch')
+                }
             }
         }
     }

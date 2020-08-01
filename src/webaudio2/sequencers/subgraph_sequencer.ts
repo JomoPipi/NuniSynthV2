@@ -17,15 +17,12 @@ export class SubgraphSequencer extends Sequencer {
      * This creates an N-step sequencer out of
      * whatever inputs are connected to it.
      */
-
-    constructor(ctx : AudioContext) {
-        super(ctx)
-    }
+    private channelEnvelopes : Indexable<GainNode> = {}
 
     addInput({ id, audioNode } : { id : number, audioNode : Indexed }) {
 
         this.channelData[id] = { volume: 1 }
-        const adsr = this.channelData[id].adsr = new GainNode(this.ctx)
+        const adsr = this.channelEnvelopes[id] = new GainNode(this.ctx)
         adsr.gain.value = 0
         audioNode.connect(adsr)
         adsr.connect(this.volumeNode)
@@ -33,9 +30,18 @@ export class SubgraphSequencer extends Sequencer {
         this.refresh()
     }
 
+    refresh() {
+        for (const key in this.channelEnvelopes) 
+        {
+            this.channelEnvelopes[key].connect(this.volumeNode)
+        }
+        Sequencer.prototype.refresh.call(this)
+    }
+
     removeInput({ id } : { id: number }) {
 
-        this.channelData[id].adsr!.disconnect()
+        this.channelEnvelopes[id].disconnect()
+        delete this.channelEnvelopes[id]
         delete this.channelData[id]
         delete this.stepMatrix[id]
         this.refresh()
@@ -43,8 +49,9 @@ export class SubgraphSequencer extends Sequencer {
 
     playStepAtTime(id : string, time : number) {  
 
-        const { adsr, volume } = this.channelData[id]
-        const gain = adsr!.gain    
+        const { volume } = this.channelData[id]
+        const adsr = this.channelEnvelopes[id]
+        const gain = adsr.gain    
         const duration = this.tick
         ADSR_Controller.trigger(gain, time, volume, this.adsrIndex)
         ADSR_Controller.untriggerAdsr(gain, time + duration, this.adsrIndex)

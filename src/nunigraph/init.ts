@@ -52,7 +52,7 @@ GraphController.g.nodes[0].setValueOfParam('gain', 0.125)
 
 ActiveControllers.push(GraphController)
 
-let DEBUG = false
+let DEBUG = true
 if (DEBUG) 
 {
     (<any>window).controller = GraphController

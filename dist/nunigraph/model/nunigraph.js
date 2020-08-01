@@ -149,6 +149,7 @@ export class NuniGraph {
                 if (node.type === NodeTypes.B_SEQ)
                     continue;
                 const matrix = node.audioNode.stepMatrix;
+                const channelData = node.audioNode.channelData;
                 for (const id in matrix) {
                     const newId = (_b = (_a = mapToNewNode[id]) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : id;
                     mapToNewNode[node.id]
@@ -255,18 +256,9 @@ export class NuniGraph {
         };
     }
     convertNodeToNodeSettings(node) {
-        var _a;
-        const nodeCopy = Object.assign(Object.assign({}, node), { audioNode: Object.assign({}, node.audioNode) });
-        for (const name in nodeCopy.audioNode) {
-            if (!((_a = PostConnectionTransferableAudioNodeProperties[nodeCopy.type]) === null || _a === void 0 ? void 0 : _a.includes(name))) {
-                delete nodeCopy.audioNode[name];
-            }
-        }
+        const nodeCopy = Object.assign(Object.assign({}, node), { audioNode: {} });
         const settings = Object.assign(Object.assign({}, JSON.parse(JSON.stringify(nodeCopy))), { audioNodeProperties: {}, oldId: node.id });
-        for (const prop in Transferable_AudioNode_Properties) {
-            if (node.type === NodeTypes.SGS && (prop === 'stepMatrix' || prop === 'channelData')) {
-                continue;
-            }
+        for (const prop in Transferable_AudioNodeProperties) {
             if (prop in node.audioNode) {
                 const p = prop;
                 settings.audioNodeProperties[prop] =
@@ -304,7 +296,7 @@ export class NuniGraph {
             };
             if (!INPUT_NODE_ID && id !== 0)
                 settings.title = title;
-            const newNode = new NuniGraphNode(id, type, settings);
+            const newNode = new NuniGraphNode(id, type, JSON.parse(JSON.stringify(settings)));
             this.nodes.push(newNode);
         }
         this.nextId =
@@ -325,9 +317,18 @@ export class NuniGraph {
         }
         for (const node of nodes) {
             const thisNode = this.nodes.find(n => n.id === node.id);
-            const maybeArr = PostConnectionTransferableAudioNodeProperties[node.type];
+            const maybeArr = PostConnection_Transferable_InputRemappable_AudioNodeProperties[node.type];
             for (const prop of maybeArr || []) {
-                thisNode.audioNode[prop] = node.audioNode[prop];
+                log('prop =', prop);
+                if (node.audioNodeProperties[prop] || node.audioNode[prop]) {
+                    ;
+                    thisNode.audioNode[prop] =
+                        node.audioNodeProperties[prop]
+                            || node.audioNode[prop];
+                }
+                else {
+                    log('not true bitch');
+                }
             }
         }
     }
