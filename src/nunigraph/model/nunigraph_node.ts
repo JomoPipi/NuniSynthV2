@@ -83,9 +83,9 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.title = title
         this.INPUT_NODE_ID = INPUT_NODE_ID
 
-        this.audioNode = (<Indexed>audioCtx)[createAudioNode[type]]()
+        this.audioNode = (audioCtx as Indexed)[createAudioNode[type]]()
         
-        if (MustBeStarted[type]) (<ConstantSourceNode>this.audioNode).start(0)
+        if (MustBeStarted[type]) (this.audioNode as ConstantSourceNode).start(0)
 
         Object.assign(this.audioNode, audioNodeProperties)
 

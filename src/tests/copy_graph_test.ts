@@ -8,12 +8,15 @@
 import { NuniGraph } from "../nunigraph/model/nunigraph.js"
 import { GraphController } from "../nunigraph/init.js"
 import { SubgraphSequencer } from "../webaudio2/internal.js"
+import { NuniGraphNode } from "../nunigraph/model/nunigraph_node.js"
 
 
 
 
 
 
+
+export {}
 
 function cycleGraph(input : string) {
     // GraphController.save()
@@ -29,7 +32,7 @@ const tests =
     }
 
 
-export function runTests() {
+function runGraphWholeCopyTests() {
     let passed = 0, failed = 0
     for (const name in tests) 
     {
@@ -49,4 +52,31 @@ export function runTests() {
     GraphController.renderer.render()
     log(`${passed}/${passed + failed} tests passed`)
 }
-runTests()
+runGraphWholeCopyTests()
+
+const g = GraphController.g// new NuniGraph()
+;(function control_s_sgs_test() {
+    let passed = 0, failed = 0
+    log('yo?')
+    const sgs = g.createNewNode(NodeTypes.SGS, 
+        { x:0
+        , y:.5
+        , audioParamValues:{}
+        , audioNodeProperties:{} 
+        })
+
+    const osc = g.createNewNode(NodeTypes.OSC, 
+        { x:0
+        , y:.5
+        , audioParamValues:{}
+        , audioNodeProperties:{} 
+        })
+    
+    g.makeConnection(osc, sgs, 'channel')
+
+    sgs.audioNode.stepMatrix[osc.id] = [0,1,0,1,0,0,1,0].map(Boolean)
+
+    
+
+    log(`${passed}/${passed + failed} tests passed`)
+})()

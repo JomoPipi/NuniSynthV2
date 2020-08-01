@@ -27,7 +27,7 @@ export function recordTo(index : number) {
 
     log('recording...')
 
-    if ((<HTMLInputElement>D('record-mic')).checked) 
+    if ((D('record-mic') as HTMLInputElement).checked) 
     {
         navigator
             .mediaDevices

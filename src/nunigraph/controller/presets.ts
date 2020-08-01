@@ -44,7 +44,7 @@ import { LZW_decompress } from '../../helpers/lzw_compression.js'
             //     '')
     }
 
-    const div = D('graph-preset-list') as HTMLDivElement
+    const div = D('graph-preset-list')
  
     for (const name in presets) 
     {

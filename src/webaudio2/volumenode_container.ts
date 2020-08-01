@@ -21,7 +21,7 @@ export class VolumeNodeContainer {
     }
     
     connect(destination : AudioNode | AudioParam) {
-        this.volumeNode.connect(destination as any) //***
+        this.volumeNode.connect(destination as AudioNode) //***
     }
 
     disconnect(destination? : AudioNode | AudioParam) {
@@ -30,7 +30,7 @@ export class VolumeNodeContainer {
             this.volumeNode.disconnect()
             return;
         }
-        this.volumeNode.disconnect(destination as any) //***
+        this.volumeNode.disconnect(destination as AudioNode) //***
     }
 
     // *** - these need 'any' because of `tsc -w`

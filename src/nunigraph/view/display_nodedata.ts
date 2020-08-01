@@ -153,7 +153,7 @@ function activateKeyboardButton(an : NuniSourceNode) {
 
 
 function showSubtypes(node : NuniGraphNode, saveCallback: Function) : Node {
-    const subtypes = AudioNodeSubTypes[node.type] as string[]
+    const subtypes = AudioNodeSubTypes[node.type]
     const box = E('span')
     const an = node.audioNode as { type : any }
 

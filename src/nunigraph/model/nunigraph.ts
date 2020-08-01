@@ -63,7 +63,7 @@ export class NuniGraph {
 
 
 
-    createNewNode(type : NodeTypes, settings : NodeCreationSettings = defaultNodeSettings()) {
+    createNewNode<T extends NodeTypes>(type : T, settings : NodeCreationSettings = defaultNodeSettings()) {
 
         const node = new NuniGraphNode(this.nextId++, type, settings)
 
@@ -645,7 +645,7 @@ export class NuniGraph {
             // {
             //     const thisNode = this.nodes.find(n => n.id === node.id)!
 
-            //     ;(<Sequencer>thisNode.audioNode).stepMatrix = node.audioNode.stepMatrix
+            //     ;(thisNode.audioNode as Sequencer).stepMatrix = node.audioNode.stepMatrix
             // }
 
             const thisNode = this.nodes.find(n => n.id === node.id)!
@@ -658,7 +658,7 @@ export class NuniGraph {
                 log('prop =',prop)
                 if (node.audioNodeProperties[prop] || node.audioNode[prop])
                 {
-                    ;(<Indexed>thisNode.audioNode)[prop] = 
+                    ;(thisNode.audioNode as Indexed)[prop] = 
                         node.audioNodeProperties[prop]
                         || node.audioNode[prop] // <- legacy. TODO: remove, when graphs are transfererred.
                 } else {

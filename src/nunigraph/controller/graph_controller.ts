@@ -140,7 +140,7 @@ export class NuniGraphController {
 
         DIRTYGLOBALS.lastControllerToOpenTheContextmenu = this
 
-        const menu = D('graph-contextmenu') as HTMLDivElement
+        const menu = D('graph-contextmenu')
     
         menu.style.zIndex = (openWindowGlobalIndexThatKeepsRising + 1).toString()
         menu.style.display = 'grid'
@@ -462,7 +462,7 @@ export class NuniGraphController {
                 this.renderer.render()
             }
 
-        })[hoverMsg.type as HOVER]()
+        })[hoverMsg.type]()
 
         
         const deselectNodesOfOtherGraphs = () => {
@@ -613,7 +613,7 @@ export class NuniGraphController {
             , [HOVER.CONNECTION]: render
             , [HOVER.EMPTY]:      render
             }
-        )[msg.type as HOVER]()
+        )[msg.type]()
     }
 
     private keydown(e : KeyboardEvent) {

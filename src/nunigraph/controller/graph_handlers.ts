@@ -73,7 +73,7 @@ const contextmenu = D('graph-contextmenu')
 D('graph-undo-redo-btns').onclick = function(e : MouseEvent) {
     const undoBtnId = 'graph-undo-button'
     const redoBtnId = 'graph-redo-button'
-    const id = (<HTMLElement>e.target).id
+    const id = (e.target as HTMLElement).id
     
     if (id === undoBtnId) 
     {
@@ -106,7 +106,7 @@ export function modularizeGraph() {
         , audioNodeProperties: { graphCode } 
         })
     
-    ;(<NuniGraphAudioNode>node.audioNode)
+    node.audioNode
         .controller
         .g.nodes[0]
         .setValueOfParam('gain', 1)

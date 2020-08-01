@@ -47,7 +47,7 @@ apply_scale_preset: {
 
     div.onclick = function(e : MouseEvent) {
         const name = (e.target as HTMLElement).innerText
-        const P = <Indexed>scalePresets
+        const P = scalePresets as Indexed
         if (name in P) 
         {
             if (name.endsWith('EDO')) 
