@@ -22,7 +22,7 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
     private _windowIsOpen : boolean
 
     constructor(ctx : AudioContext) {
-        super(ctx)
+        super(ctx) 
         this.canvas = E('canvas', { className: 'nunigraph-canvas--custom' })
         
         if (NuniGraphAudioNode.createController) 

@@ -63,12 +63,7 @@ export class NuniGraph {
 
 
 
-    createNewNode(type : NodeTypes, settings? : NodeCreationSettings) {
-
-        if (!settings) 
-        {
-            settings = defaultNodeSettings()
-        }
+    createNewNode(type : NodeTypes, settings : NodeCreationSettings = defaultNodeSettings()) {
 
         const node = new NuniGraphNode(this.nextId++, type, settings)
 
@@ -88,12 +83,8 @@ export class NuniGraph {
 
         // Make nodes
         const nodes = _nodes.map((
-            { type
-            , oldId
-            , x, y
-            , audioParamValues
-            , audioNodeProperties
-            , INPUT_NODE_ID, title }) => {
+            { type, oldId, x, y, audioParamValues
+            , audioNodeProperties, INPUT_NODE_ID, title }) => {
 
             const newX = clamp(0, x - centerX + X, 1)
             const newY = clamp(0, y - centerY + Y, 1)
@@ -530,13 +521,6 @@ export class NuniGraph {
         // some audioNode properties need to be taken along but not all...
         for (const name in nodeCopy.audioNode) 
         {
-            // OLD
-            // if (nodeCopy.type !== NodeTypes.SGS || !SGS_MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade[name]) 
-            // {
-            //     delete nodeCopy.audioNode[name as AudioParams]
-            // }
-
-            // NEW
             if (!(PostConnectionTransferableAudioNodeProperties[nodeCopy.type]?.includes(name)))
             {
                 delete nodeCopy.audioNode[name as AudioParams]
@@ -549,9 +533,9 @@ export class NuniGraph {
             , oldId: node.id
             }
             
-        for (const prop in Transferable_AudioNode_Properties) 
+        for (const prop in Transferable_AudioNode_Properties)
         {
-            // TODO: this is stupid..
+            // TODO: refactor
             if (node.type === NodeTypes.SGS && (prop === 'stepMatrix' || prop === 'channelData')) 
             // if (PostConnectionTransferableAudioNodeProperties[nodeCopy.type]?.includes(prop))
             {

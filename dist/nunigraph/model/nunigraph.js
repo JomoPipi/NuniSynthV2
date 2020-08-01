@@ -21,10 +21,7 @@ export class NuniGraph {
         });
         this.createNewNode(NodeTypes.GAIN, masterGainSettings);
     }
-    createNewNode(type, settings) {
-        if (!settings) {
-            settings = defaultNodeSettings();
-        }
+    createNewNode(type, settings = defaultNodeSettings()) {
         const node = new NuniGraphNode(this.nextId++, type, settings);
         this.nodes.push(node);
         return node;

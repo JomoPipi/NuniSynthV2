@@ -38,8 +38,6 @@ type ConnecteeDatum =
     
 type ConnecteeData = ConnecteeDatum[]
 
-
-
 const NodeLabel = 
     { [NodeTypes.GAIN]:   'GAIN'
     , [NodeTypes.OSC]:    'OSCILLATOR'
@@ -52,7 +50,7 @@ const NodeLabel =
     , [NodeTypes.CSN]:    'CONSTANT SOURCE'
     , [NodeTypes.RECORD]: 'AUDIO CAPTURE'
     , [NodeTypes.CUSTOM]: 'MODULE'
-}
+    }
 
 const createAudioNode =
     { [NodeTypes.GAIN]:   'createGain'
@@ -66,7 +64,7 @@ const createAudioNode =
     , [NodeTypes.CSN]:    'createConstantSource'
     , [NodeTypes.RECORD]: 'createAudioBufferCaptureNode'
     , [NodeTypes.CUSTOM]: 'createCustomNode'
-}
+    }
 
 const SupportsInputChannels =
     { [NodeTypes.GAIN]:   true
@@ -80,7 +78,21 @@ const SupportsInputChannels =
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: true
     , [NodeTypes.CUSTOM]: true
-}
+    }
+
+// const IsAwareOfInputIDs =
+//     { [NodeTypes.GAIN]:   false
+//     , [NodeTypes.OSC]:    false
+//     , [NodeTypes.FILTER]: false
+//     , [NodeTypes.PANNER]: false
+//     , [NodeTypes.DELAY]:  false
+//     , [NodeTypes.BUFFER]: false
+//     , [NodeTypes.SGS]:    true
+//     , [NodeTypes.B_SEQ]:  false
+//     , [NodeTypes.CSN]:    false
+//     , [NodeTypes.RECORD]: false
+//     , [NodeTypes.CUSTOM]: true
+//     }
 
 const MustBeStarted =
     { [NodeTypes.GAIN]:   false
@@ -94,7 +106,7 @@ const MustBeStarted =
     , [NodeTypes.CSN]:    true
     , [NodeTypes.RECORD]: false
     , [NodeTypes.CUSTOM]: false
-}
+    }
 
 const HasNoAudioParams =
     { [NodeTypes.GAIN]:   false
@@ -108,7 +120,7 @@ const HasNoAudioParams =
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: true
     , [NodeTypes.CUSTOM]: true
-}
+    }
 
 const HasNoOutput =
     { [NodeTypes.GAIN]:   false
@@ -122,21 +134,21 @@ const HasNoOutput =
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: true
     , [NodeTypes.CUSTOM]: false
-}
+    }
 
 const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } =
-    { [NodeTypes.GAIN]: false
-    , [NodeTypes.OSC]:  false
+    { [NodeTypes.GAIN]:   false
+    , [NodeTypes.OSC]:    false
     , [NodeTypes.FILTER]: false
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
     , [NodeTypes.BUFFER]: false
-    , [NodeTypes.SGS]: true
-    , [NodeTypes.B_SEQ]: false
-    , [NodeTypes.CSN]: false
+    , [NodeTypes.SGS]:    true
+    , [NodeTypes.B_SEQ]:  false
+    , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: true
     , [NodeTypes.CUSTOM]: true
-}
+    }
 
 const AudioNodeParams : Record<NodeTypes,AudioParams[]> =
     { [NodeTypes.GAIN]:   ['gain']
@@ -219,7 +231,7 @@ const AudioParamRanges : { readonly [key in AudioParams] : [number,number] } =
     , delayTime:    [0, 1]
     , playbackRate: [0, 32]
     , offset:       [-1e5, 1e5]
-}
+    }
 
 const hasLinearSlider : { readonly [key in AudioParams] : boolean } = 
     { gain:         false
@@ -230,7 +242,7 @@ const hasLinearSlider : { readonly [key in AudioParams] : boolean } =
     , delayTime:    false
     , playbackRate: false
     , offset:       false
-}
+    }
 
 const sliderFactor : { readonly [key in AudioParams] : number } = 
     { gain:         10**-2
@@ -273,14 +285,6 @@ const Transferable_AudioNode_Properties =
     , phaseShift  : true
     , channelData : true
     }
-
-// TODO: get rid of this by refactoring sequencers to compose Sequencer rather than inherit
-// only SGS uses this
-// const SGS_MustBeKeptOnAudioNodeForCopyingAfterConnectionsAreMade = 
-//     'stepMatrix'
-//     .split(',')
-//     .reduce((a,prop) =>
-//         (a[prop] = true, a), <Indexed>{})
 
 const PostConnectionTransferableAudioNodeProperties : { [key in NodeTypes]? : any[] } = 
     { [NodeTypes.SGS] : ['stepMatrix']
