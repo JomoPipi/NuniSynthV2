@@ -56,17 +56,18 @@ runGraphWholeCopyTests()
 
 const g = GraphController.g// new NuniGraph()
 ;(function control_s_sgs_test() {
+    g.clear()
     let passed = 0, failed = 0
     log('yo?')
     const sgs = g.createNewNode(NodeTypes.SGS, 
-        { x:0
+        { x:.1
         , y:.5
         , audioParamValues:{}
         , audioNodeProperties:{} 
         })
 
     const osc = g.createNewNode(NodeTypes.OSC, 
-        { x:0
+        { x:.3
         , y:.5
         , audioParamValues:{}
         , audioNodeProperties:{} 
@@ -76,7 +77,9 @@ const g = GraphController.g// new NuniGraph()
 
     sgs.audioNode.stepMatrix[osc.id] = [0,1,0,1,0,0,1,0].map(Boolean)
 
-    
+    const newNodes = g.reproduceNodesAndConnections([sgs,osc])
+
+    log('newNodes =',newNodes)
 
     log(`${passed}/${passed + failed} tests passed`)
 })()

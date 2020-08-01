@@ -145,17 +145,17 @@ export class NuniGraph {
     copyThingsThatCanOnlyBeCopiedAfterConnectionsAreMade(nodes, mapToNewNode) {
         var _a, _b;
         for (const node of nodes) {
-            if (node.audioNode instanceof Sequencer) {
-                if (node.type === NodeTypes.B_SEQ)
-                    continue;
-                const matrix = node.audioNode.stepMatrix;
-                const channelData = node.audioNode.channelData;
-                for (const id in matrix) {
-                    const newId = (_b = (_a = mapToNewNode[id]) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : id;
-                    mapToNewNode[node.id]
-                        .audioNode
-                        .stepMatrix[newId]
-                        = matrix[id].slice();
+            for (const propName of PostConnection_Transferable_InputRemappable_AudioNodeProperties[node.type] || []) {
+                const an = mapToNewNode[node.id].audioNode;
+                const targetObj = an[propName];
+                const sourceObj = node.audioNode[propName];
+                for (const id in sourceObj) {
+                    const newId = (_b = (_a = mapToNewNode[id]) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : +id;
+                    targetObj[newId] = JSON.parse(JSON.stringify(sourceObj[id]));
+                    if (newId !== +id && !this.oneWayConnections[id].some(data => +data.id === +id)) {
+                        log('deleting');
+                        delete targetObj[id];
+                    }
                 }
             }
         }

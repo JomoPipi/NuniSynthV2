@@ -51,7 +51,7 @@ export class SubgraphSequencer extends Sequencer {
 
         const { volume } = this.channelData[id]
         const adsr = this.channelEnvelopes[id]
-        const gain = adsr.gain    
+        const gain = adsr.gain
         const duration = this.tick
         ADSR_Controller.trigger(gain, time, volume, this.adsrIndex)
         ADSR_Controller.untriggerAdsr(gain, time + duration, this.adsrIndex)

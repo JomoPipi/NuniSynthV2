@@ -300,40 +300,68 @@ export class NuniGraph {
 
     private copyThingsThatCanOnlyBeCopiedAfterConnectionsAreMade(
         nodes : NuniGraphNode[], 
-        mapToNewNode : Indexable<{ audioNode : Indexed, id : number }>) {
-            
+        mapToNewNode : Indexable<NuniGraphNode>) {
+
+    //* Here, we remap the inputs of the properties use them as keys
+
         for (const node of nodes) 
         {
-            // TODO: clean this up:
-            //* Use PostConnection_Transferable_AudioNodeProperties.
-            //* The stepMatrix itself should not know about the input IDs
-            //* They should just be indexed and it is the audioNode that knows
-            //* How to map the input ID to its' index.
-            //* NOTE: NuniGraphAudioNode is another node that needs to be aware of its' inputs.
-            if (node.audioNode instanceof Sequencer) 
+            for (const propName of PostConnection_Transferable_InputRemappable_AudioNodeProperties[node.type] || []) 
             {
-                if (node.type === NodeTypes.B_SEQ) continue;
-                
-                const matrix = node.audioNode.stepMatrix
-                const channelData = node.audioNode.channelData
-                
-                for (const id in matrix) 
+                const an = mapToNewNode[node.id].audioNode
+                const targetObj = an[propName as keyof typeof an] as Indexed
+                const sourceObj = node.audioNode[propName as keyof typeof node.audioNode]
+
+                for (const id in sourceObj) 
                 {
-                    const newId = mapToNewNode[id]?.id ?? id
+                    const newId = mapToNewNode[id]?.id ?? +id
+                    
+                    targetObj[newId] = JSON.parse(JSON.stringify(sourceObj[id as keyof typeof sourceObj]))
 
-                    mapToNewNode[node.id]
-                        .audioNode
-                        .stepMatrix[newId]
-                        = matrix[id].slice()
-
-                    // // TODO: clean this hardcoding up
-                    // mapToNewNode[node.id]
-                    //     .audioNode
-                    //     .channelData[newId].volume
-                    //     = channelData[id].volume
+                    // If there isn't some node, with the old id, connected to the new node
+                    if (newId !== +id && !this.oneWayConnections[id].some(data => +data.id === +id))
+                    {
+                        log('deleting')
+                        // Then we delete this entry that refers to it
+                        delete targetObj[id]
+                    }
                 }
             }
+
         }
+
+        // for (const node of nodes) 
+        // {
+        //     // TODO: clean this up:
+        //     //* Use PostConnection_Transferable_AudioNodeProperties.
+        //     //* The stepMatrix itself should not know about the input IDs
+        //     //* They should just be indexed and it is the audioNode that knows
+        //     //* How to map the input ID to its' index.
+        //     //* NOTE: NuniGraphAudioNode is another node that needs to be aware of its' inputs.
+        //     if (node.audioNode instanceof Sequencer) 
+        //     {
+        //         if (node.type === NodeTypes.B_SEQ) continue;
+                
+        //         const matrix = node.audioNode.stepMatrix
+        //         const channelData = node.audioNode.channelData
+                
+        //         for (const id in matrix) 
+        //         {
+        //             const newId = mapToNewNode[id]?.id ?? id
+
+        //             mapToNewNode[node.id]
+        //                 .audioNode
+        //                 .stepMatrix[newId]
+        //                 = matrix[id].slice()
+
+        //             // // TODO: clean this hardcoding up
+        //             // mapToNewNode[node.id]
+        //             //     .audioNode
+        //             //     .channelData[newId].volume
+        //             //     = channelData[id].volume
+        //         }
+        //     }
+        // }
     }
     /////////////////////////////////////////////////////////////////////////    /////////////////////////////////////////////////////////////////////////
 
