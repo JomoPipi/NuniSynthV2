@@ -27,6 +27,7 @@ export class NuniGraph {
         return node;
     }
     pasteNodes(X, Y, _nodes, connections) {
+        var _a, _b;
         const centerX = _nodes.reduce((a, { x }) => a + x, 0) / _nodes.length;
         const centerY = _nodes.reduce((a, { y }) => a + y, 0) / _nodes.length;
         const nodes = _nodes.map(({ type, oldId, x, y, audioParamValues, audioNodeProperties, INPUT_NODE_ID, title }) => {
@@ -73,18 +74,23 @@ export class NuniGraph {
                 }
             }
         }
+        const mapToNewNode = _nodes.reduce((a, node, i) => {
+            a[node.oldId] = nodes[i];
+            return a;
+        }, {});
         for (const i in _nodes) {
             const an = nodes[i].audioNode;
-            if (an instanceof SubgraphSequencer) {
-                const matrix = _nodes[i].audioNode.stepMatrix;
-                const matrixWithRemappedKeys = Object.keys(matrix).reduce((mat, key) => {
-                    const index = _nodes.findIndex(({ oldId }) => oldId === +key);
-                    if (index >= 0) {
-                        mat[nodes[index].id] = matrix[key];
+            const _an = _nodes[i].audioNode;
+            for (const propName of PostConnection_Transferable_InputRemappable_AudioNodeProperties[nodes[i].type] || []) {
+                const targetObj = an[propName];
+                const sourceObj = _an[propName];
+                for (const id in sourceObj) {
+                    const newId = (_b = (_a = mapToNewNode[id]) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : +id;
+                    targetObj[newId] = JSON.parse(JSON.stringify(sourceObj[id]));
+                    if (newId !== +id && !this.oneWayConnections[id].some(data => +data.id === +id)) {
+                        delete targetObj[id];
                     }
-                    return mat;
-                }, {});
-                an.stepMatrix = JSON.parse(JSON.stringify(matrixWithRemappedKeys));
+                }
             }
         }
         return nodes;
@@ -153,7 +159,7 @@ export class NuniGraph {
                     const newId = (_b = (_a = mapToNewNode[id]) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : +id;
                     targetObj[newId] = JSON.parse(JSON.stringify(sourceObj[id]));
                     if (newId !== +id && !this.oneWayConnections[id].some(data => +data.id === +id)) {
-                        log('deleting');
+                        log('happens');
                         delete targetObj[id];
                     }
                 }

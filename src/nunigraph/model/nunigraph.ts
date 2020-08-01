@@ -99,7 +99,7 @@ export class NuniGraph {
                 }
 
             return this.createNewNode(type, settings)
-        })
+        }) as NuniGraphNode[]
 
         const retainedInputs = new Set()
 
@@ -162,32 +162,60 @@ export class NuniGraph {
             }
         }
 
+// TODO: Refactor (copy-function 3/3)
 
-        // Copy subgraph sequencer 
+        const mapToNewNode = _nodes.reduce((a, node, i) => {
+            a[node.oldId] = nodes[i]
+            return a
+        }, {} as Indexable<NuniGraphNode>)
+
         for (const i in _nodes) 
         {
             const an = nodes[i].audioNode
-            if (an instanceof SubgraphSequencer) 
+            const _an = _nodes[i].audioNode
+            for (const propName of PostConnection_Transferable_InputRemappable_AudioNodeProperties[nodes[i].type] || []) 
             {
-                const matrix = _nodes[i].audioNode.stepMatrix
+                const targetObj = an[propName as keyof typeof an]  as Indexed
+                const sourceObj = _an[propName as keyof typeof _an]
 
-                // Map input id to new node id
-                const matrixWithRemappedKeys = Object.keys(matrix).reduce((mat, key) => {
-                    const index = _nodes.findIndex(({ oldId }) => oldId === +key)
+                // TODO: this is the same as: checkstring
+                for (const id in sourceObj) 
+                {
+                    const newId = mapToNewNode[id]?.id ?? +id
                     
-                    if (index >= 0) 
+                    targetObj[newId] = JSON.parse(JSON.stringify(sourceObj[id as keyof typeof sourceObj]))
+
+                    // If there isn't some node, with the old id, connected to the new node
+                    if (newId !== +id && !this.oneWayConnections[id].some(data => +data.id === +id))
                     {
-                        // The input exists and this row should be copied over
-                        // log(`remapped stepMatrix key from ${key} to ${nodes[index].id}`)
-                        mat[nodes[index].id] = matrix[key]
+                        // Then we delete this entry that refers to it
+                        delete targetObj[id]
                     }
+                }
 
-                    return mat
-                }, {} as Indexable<Boolean>)
-
-                an.stepMatrix = JSON.parse(JSON.stringify(matrixWithRemappedKeys))
             }
+            // if (an instanceof SubgraphSequencer) 
+            // {
+            //     const matrix = _nodes[i].audioNode.stepMatrix
+
+            //     // Map input id to new node id
+            //     const matrixWithRemappedKeys = Object.keys(matrix).reduce((mat, key) => {
+            //         const index = _nodes.findIndex(({ oldId }) => oldId === +key)
+                    
+            //         if (index >= 0) 
+            //         {
+            //             // The input exists and this row should be copied over
+            //             // log(`remapped stepMatrix key from ${key} to ${nodes[index].id}`)
+            //             mat[nodes[index].id] = matrix[key]
+            //         }
+
+            //         return mat
+            //     }, {} as Indexable<Boolean>)
+
+            //     an.stepMatrix = JSON.parse(JSON.stringify(matrixWithRemappedKeys))
+            // }
         }
+        
 
         return nodes
     }
@@ -312,6 +340,7 @@ export class NuniGraph {
                 const targetObj = an[propName as keyof typeof an] as Indexed
                 const sourceObj = node.audioNode[propName as keyof typeof node.audioNode]
 
+                // TODO: this is the same as: checkstring
                 for (const id in sourceObj) 
                 {
                     const newId = mapToNewNode[id]?.id ?? +id
@@ -321,47 +350,14 @@ export class NuniGraph {
                     // If there isn't some node, with the old id, connected to the new node
                     if (newId !== +id && !this.oneWayConnections[id].some(data => +data.id === +id))
                     {
-                        log('deleting')
                         // Then we delete this entry that refers to it
+                        log('happens')
                         delete targetObj[id]
                     }
                 }
             }
 
         }
-
-        // for (const node of nodes) 
-        // {
-        //     // TODO: clean this up:
-        //     //* Use PostConnection_Transferable_AudioNodeProperties.
-        //     //* The stepMatrix itself should not know about the input IDs
-        //     //* They should just be indexed and it is the audioNode that knows
-        //     //* How to map the input ID to its' index.
-        //     //* NOTE: NuniGraphAudioNode is another node that needs to be aware of its' inputs.
-        //     if (node.audioNode instanceof Sequencer) 
-        //     {
-        //         if (node.type === NodeTypes.B_SEQ) continue;
-                
-        //         const matrix = node.audioNode.stepMatrix
-        //         const channelData = node.audioNode.channelData
-                
-        //         for (const id in matrix) 
-        //         {
-        //             const newId = mapToNewNode[id]?.id ?? id
-
-        //             mapToNewNode[node.id]
-        //                 .audioNode
-        //                 .stepMatrix[newId]
-        //                 = matrix[id].slice()
-
-        //             // // TODO: clean this hardcoding up
-        //             // mapToNewNode[node.id]
-        //             //     .audioNode
-        //             //     .channelData[newId].volume
-        //             //     = channelData[id].volume
-        //         }
-        //     }
-        // }
     }
     /////////////////////////////////////////////////////////////////////////    /////////////////////////////////////////////////////////////////////////
 
