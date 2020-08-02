@@ -11,6 +11,7 @@ import
     { SubgraphSequencer, NuniAudioParam
     , Sequencer, NuniGraphAudioNode
     } from '../../webaudio2/internal.js'
+import { loadNuniFile } from '../../main/save_project.js'
 
 type Destination = AudioNode | AudioParam | NuniAudioParam
 
@@ -76,13 +77,15 @@ export class NuniGraph {
 
 
     ///////////////////////////////////////////////////////////////////////// ctrl + click paste function /////////////////////////////////////////////////////////////////////////
-    pasteNodes(X : number, Y : number, _nodes : Indexed[], connections : any[]) {
+    pasteNodes(X : number, Y : number, _nodeDataArray : Indexed[], connections : any[]) {
 
-        const centerX = _nodes.reduce((a, { x }) => a + x, 0) / _nodes.length
-        const centerY = _nodes.reduce((a, { y }) => a + y, 0) / _nodes.length
+        const nNodes = _nodeDataArray.length
+        const centerX = _nodeDataArray.reduce((a, { x }) => a + x, 0) / nNodes
+        const centerY = _nodeDataArray.reduce((a, { y }) => a + y, 0) / nNodes
+
 
         // Make nodes
-        const nodes = _nodes.map((
+        const nodeCopies = _nodeDataArray.map((
             { type, oldId, x, y, audioParamValues
             , audioNodeProperties, INPUT_NODE_ID, title }) => {
 
@@ -103,21 +106,22 @@ export class NuniGraph {
 
         const retainedInputs = new Set()
 
+
         // Make connections
-        for (const indexA in nodes) 
+        for (const indexA in nodeCopies) 
         {
-            const a = nodes[indexA]
+            const a = nodeCopies[indexA]
 
             for (const { id: indexB, connectionType } of connections[indexA]) 
             { 
-                const b = nodes[indexB]
+                const b = nodeCopies[indexB]
 
                 if (b.audioNode instanceof NuniGraphAudioNode) 
                 {
-                    // Handle the input nodes of b, again (TODO: cleanup)
+                    // Handle the input nodeCopies of b, again (TODO: cleanup)
                     const innerInputNode 
                         = b.audioNode.controller.g.nodes.find(node =>
-                            node.INPUT_NODE_ID?.id === _nodes[indexA].oldId)
+                            node.INPUT_NODE_ID?.id === _nodeDataArray[indexA].oldId)
             
                     if (!innerInputNode) 
                     {
@@ -130,15 +134,16 @@ export class NuniGraph {
                     retainedInputs.add(a.id)
         
                     b.audioNode.inputs[a.id] = innerInputNode
-                    delete b.audioNode.inputs[_nodes[indexA].oldId]
+                    delete b.audioNode.inputs[_nodeDataArray[indexA].oldId]
                 }
 
                 this.makeConnection(a, b, connectionType)
             }
         }
         
+
         // Remove dangling inputNodes from modules
-        for (const node of nodes) 
+        for (const node of nodeCopies) 
         {
             
             // Disconnect loose inputnodes
@@ -162,65 +167,63 @@ export class NuniGraph {
             }
         }
 
-// TODO: Refactor (copy-function 3/3)
-
-        const mapToNewNode = _nodes.reduce((a, node, i) => {
-            a[node.oldId] = nodes[i]
+        const mapToNewNode = _nodeDataArray.reduce((a, node, i) => {
+            a[node.oldId] = nodeCopies[i]
             return a
         }, {} as Indexable<NuniGraphNode>)
+        
 
-        for (const i in _nodes) 
+        for (const i in _nodeDataArray) 
         {
-            const an = nodes[i].audioNode
-            const _an = _nodes[i].audioNode
-            for (const propName of PostConnection_Transferable_InputRemappable_AudioNodeProperties[nodes[i].type] || []) 
+            const an = nodeCopies[i].audioNode
+            const _an = _nodeDataArray[i].audioNodeProperties
+            for (const propName of PostConnection_Transferable_InputRemappable_AudioNodeProperties[nodeCopies[i].type] || []) 
             {
-                const targetObj = an[propName as keyof typeof an]  as Indexed
+                const targetObj : Indexed = (<Indexed>an)[propName] = {}
                 const sourceObj = _an[propName as keyof typeof _an]
 
-                // TODO: this is the same as: checkstring
+                // We look through they keys of the source object
                 for (const id in sourceObj) 
                 {
-                    const newId = mapToNewNode[id]?.id ?? +id
-                    
-                    targetObj[newId] = JSON.parse(JSON.stringify(sourceObj[id as keyof typeof sourceObj]))
-
-                    // If there isn't some node, with the old id, connected to the new node
-                    if (newId !== +id && !this.oneWayConnections[id].some(data => +data.id === +id))
+                    // If the node with id ${id} got copied over
+                    const copiedInputNode = mapToNewNode[id]
+                    if (copiedInputNode) 
                     {
-                        // Then we delete this entry that refers to it
-                        delete targetObj[id]
+                        // We pass the property over and update the id
+                        targetObj[copiedInputNode.id] = JSON.parse(JSON.stringify(sourceObj[id]))
                     }
                 }
-
             }
-            // if (an instanceof SubgraphSequencer) 
-            // {
-            //     const matrix = _nodes[i].audioNode.stepMatrix
-
-            //     // Map input id to new node id
-            //     const matrixWithRemappedKeys = Object.keys(matrix).reduce((mat, key) => {
-            //         const index = _nodes.findIndex(({ oldId }) => oldId === +key)
-                    
-            //         if (index >= 0) 
-            //         {
-            //             // The input exists and this row should be copied over
-            //             // log(`remapped stepMatrix key from ${key} to ${nodes[index].id}`)
-            //             mat[nodes[index].id] = matrix[key]
-            //         }
-
-            //         return mat
-            //     }, {} as Indexable<Boolean>)
-
-            //     an.stepMatrix = JSON.parse(JSON.stringify(matrixWithRemappedKeys))
-            // }
         }
         
 
-        return nodes
+        return nodeCopies
     }
     /////////////////////////////////////////////////////////////////////////    /////////////////////////////////////////////////////////////////////////
 
+
+    // remapInputs(
+    //     sourceObj : Indexed, 
+    //     targetObj : Indexed,
+    //     mapToNewNode : Indexable<NuniGraphNode>, 
+    //     connectionList? : ConnecteeDatum[]) {
+        
+    //     for (const id in sourceObj) 
+    //     {
+    //         const connections= connectionList || this.oneWayConnections[id]
+
+    //         const newId = mapToNewNode[id]?.id ?? +id
+            
+    //         targetObj[newId] = JSON.parse(JSON.stringify(sourceObj[id as keyof typeof sourceObj]))
+
+    //         // If there isn't some node, with the old id, connected to the new node
+    //         if (newId !== +id && !connections.some((data : ConnecteeDatum) => data.id === +id))
+    //         {
+    //             // Then we delete this entry that refers to it
+    //             delete targetObj[id]
+    //         }
+    //     }
+    // }
 
 
 
@@ -331,7 +334,6 @@ export class NuniGraph {
         mapToNewNode : Indexable<NuniGraphNode>) {
 
     //* Here, we remap the inputs of the properties use them as keys
-
         for (const node of nodes) 
         {
             for (const propName of PostConnection_Transferable_InputRemappable_AudioNodeProperties[node.type] || []) 
@@ -351,7 +353,6 @@ export class NuniGraph {
                     if (newId !== +id && !this.oneWayConnections[id].some(data => +data.id === +id))
                     {
                         // Then we delete this entry that refers to it
-                        log('happens')
                         delete targetObj[id]
                     }
                 }
@@ -544,7 +545,7 @@ export class NuniGraph {
 
 
 
-    convertNodeToNodeSettings(node : NuniGraphNode) : Indexed {
+    convertNodeToNodeSettings(node : NuniGraphNode) : NodeCreationSettings & { type : NodeTypes } {
 
         const nodeCopy = { ...node, audioNode: {} }
 
