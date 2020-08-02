@@ -28,12 +28,12 @@ if (DEBUG) {
 Graph_Attachments: {
     const g = GraphController.g;
     function* yeildNodes(g) {
-        for (const { audioNode: an } of g.nodes) {
-            if (an instanceof NuniGraphAudioNode) {
-                yield* yeildNodes(an.controller.g);
+        for (const { audioNode } of g.nodes) {
+            if (audioNode instanceof NuniGraphAudioNode) {
+                yield* yeildNodes(audioNode.controller.g);
             }
             else {
-                yield an;
+                yield audioNode;
             }
         }
     }

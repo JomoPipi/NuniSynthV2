@@ -19,10 +19,7 @@ import { NuniGraphNode } from "../nunigraph/model/nunigraph_node.js"
 export {}
 
 function cycleGraph(input : string) {
-    // GraphController.save()
-    // GraphController.closeAllWindows()
     GraphController.fromString(input)
-    // GraphController.renderer.render()
     return GraphController.g.toRawString()
 }
 
@@ -49,37 +46,38 @@ function runGraphWholeCopyTests() {
             passed++
         }
     }
+    GraphController.g.clear()
     GraphController.renderer.render()
     log(`${passed}/${passed + failed} tests passed`)
 }
 runGraphWholeCopyTests()
 
-const g = GraphController.g// new NuniGraph()
-;(function control_s_sgs_test() {
-    g.clear()
-    let passed = 0, failed = 0
-    log('yo?')
-    const sgs = g.createNewNode(NodeTypes.SGS, 
-        { x:.1
-        , y:.5
-        , audioParamValues:{}
-        , audioNodeProperties:{} 
-        })
+// const g = GraphController.g// new NuniGraph()
+// ;(function control_s_sgs_test() {
+//     g.clear()
+//     let passed = 0, failed = 0
+//     log('yo?')
+//     const sgs = g.createNewNode(NodeTypes.SGS, 
+//         { x:.1
+//         , y:.5
+//         , audioParamValues:{}
+//         , audioNodeProperties:{} 
+//         })
 
-    const osc = g.createNewNode(NodeTypes.OSC, 
-        { x:.3
-        , y:.5
-        , audioParamValues:{}
-        , audioNodeProperties:{} 
-        })
+//     const osc = g.createNewNode(NodeTypes.OSC, 
+//         { x:.3
+//         , y:.5
+//         , audioParamValues:{}
+//         , audioNodeProperties:{} 
+//         })
     
-    g.makeConnection(osc, sgs, 'channel')
+//     g.makeConnection(osc, sgs, 'channel')
 
-    sgs.audioNode.stepMatrix[osc.id] = [0,1,0,1,0,0,1,0].map(Boolean)
+//     sgs.audioNode.stepMatrix[osc.id] = [0,1,0,1,0,0,1,0].map(Boolean)
 
-    const newNodes = g.reproduceNodesAndConnections([sgs,osc])
+//     const newNodes = g.reproduceNodesAndConnections([sgs,osc])
 
-    log('newNodes =',newNodes)
+//     log('newNodes =',newNodes)
 
-    log(`${passed}/${passed + failed} tests passed`)
-})()
+//     log(`${passed}/${passed + failed} tests passed`)
+// })()

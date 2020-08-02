@@ -65,15 +65,15 @@ Graph_Attachments: {
     const g = GraphController.g
 
     function* yeildNodes(g : NuniGraph) : Generator {
-        for (const { audioNode: an } of g.nodes) 
+        for (const { audioNode } of g.nodes) 
         {
-            if (an instanceof NuniGraphAudioNode) 
+            if (audioNode instanceof NuniGraphAudioNode) 
             {
-                yield* yeildNodes(an.controller.g)
+                yield* yeildNodes(audioNode.controller.g)
             } 
             else 
             {
-                yield an
+                yield audioNode
             }
         }
     }

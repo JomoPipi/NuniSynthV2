@@ -6,6 +6,7 @@ const defaultNodeSettings = () => ({ x: 0.5,
     audioParamValues: {},
     audioNodeProperties: {}
 });
+const is = (node, type) => node.type === type;
 export class NuniGraph {
     constructor() {
         this.nextId = 0;
@@ -48,7 +49,7 @@ export class NuniGraph {
             const a = nodeCopies[indexA];
             for (const { id: indexB, connectionType } of connections[indexA]) {
                 const b = nodeCopies[indexB];
-                if (b.audioNode instanceof NuniGraphAudioNode) {
+                if (is(b, NodeTypes.CUSTOM)) {
                     const innerInputNode = b.audioNode.controller.g.nodes.find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === _nodeDataArray[indexA].oldId; });
                     if (!innerInputNode) {
                         throw 'An input node with INPUT_NODE_ID = nodeA.id should exist inside node b';
@@ -63,7 +64,7 @@ export class NuniGraph {
             }
         }
         for (const node of nodeCopies) {
-            if (node.audioNode instanceof NuniGraphAudioNode) {
+            if (is(node, NodeTypes.CUSTOM)) {
                 for (const moduleNode of [...node.audioNode.controller.g.nodes]) {
                     if (moduleNode.INPUT_NODE_ID) {
                         const input_id = moduleNode.INPUT_NODE_ID.id;
@@ -135,7 +136,7 @@ export class NuniGraph {
         }
     }
     copyModuleInputNodes(a, b, nodeA, nodeB) {
-        if (b.audioNode instanceof NuniGraphAudioNode && b !== nodeB) {
+        if (is(b, NodeTypes.CUSTOM) && b !== nodeB) {
             const innerInputNode = b.audioNode.controller.g.nodes.find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === nodeA.id; });
             if (!innerInputNode)
                 throw 'An input node with INPUT_NODE_ID = nodeA.id should exist inside node b';
@@ -309,7 +310,7 @@ export class NuniGraph {
             for (const { id: id2, connectionType } of connections[id]) {
                 const nodeA = this.nodes.find(node => node.id === +id);
                 const nodeB = this.nodes.find(node => node.id === id2);
-                if (nodeB.audioNode instanceof NuniGraphAudioNode) {
+                if (is(nodeB, NodeTypes.CUSTOM)) {
                     const innerInputNode = nodeB.audioNode.controller.g.nodes.find(node => node.INPUT_NODE_ID && node.INPUT_NODE_ID.id === nodeA.id);
                     if (!(innerInputNode === null || innerInputNode === void 0 ? void 0 : innerInputNode.INPUT_NODE_ID))
                         throw 'It should be there';
@@ -323,15 +324,11 @@ export class NuniGraph {
             const thisNode = this.nodes.find(n => n.id === node.id);
             const maybeArr = PostConnection_Transferable_InputRemappable_AudioNodeProperties[node.type];
             for (const prop of maybeArr || []) {
-                log('prop =', prop);
                 if (node.audioNodeProperties[prop] || node.audioNode[prop]) {
                     ;
                     thisNode.audioNode[prop] =
                         node.audioNodeProperties[prop]
                             || node.audioNode[prop];
-                }
-                else {
-                    log('not true bitch');
                 }
             }
         }
