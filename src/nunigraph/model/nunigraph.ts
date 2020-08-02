@@ -78,6 +78,175 @@ export class NuniGraph {
 
 
 
+    deleteNode(node : NuniGraphNode) {
+        // Without this, the setTimeout could keep looping forever:
+        if (node.audioNode instanceof Sequencer) 
+        {
+            node.audioNode.stop()
+        }
+
+        // Disconnect from other audioNodes:
+        node.audioNode.disconnect()
+        this.disconnectFromSpecialNodes(node)
+
+        // Remove from this.nodes:
+        const idx = this.nodes.findIndex(_node => 
+            _node === node)
+        this.nodes.splice(idx,1)
+
+        // Remove from this.oneWayConnections:
+        delete this.oneWayConnections[node.id]
+        for (const id in this.oneWayConnections) 
+        {
+            this.oneWayConnections[id] = 
+            this.oneWayConnections[id].filter(({ id }) => id !== node.id)
+        }
+    }
+
+
+
+
+    private disconnectFromSpecialNodes(node : NuniGraphNode) { 
+        /** Motivation:
+         * Since some nodes get 
+         * disconnected in a custom way,
+         * they won't get the message when 
+         * an AudioNode calls disconnect() (with no arguments). 
+         * So This is a temporary fix, here.
+         * 
+         * A better solution may be to wrap disconnect(), or 
+         * stop using it all together.
+         *  */ 
+        // TODO: refactor into IsInputAwareObject
+        for (const { audioNode } of this.nodes) 
+        {
+            if (audioNode instanceof SubgraphSequencer && audioNode.channelData[node.id])
+            {
+                audioNode.removeInput(node)
+            } 
+            else if (audioNode instanceof NuniGraphAudioNode && audioNode.inputs[node.id]) 
+            {
+                audioNode.removeInput(node)
+            }
+        }
+    }
+
+
+
+    
+    makeConnection(node1 : NuniGraphNode, node2 : NuniGraphNode, connectionType : ConnectionType) {
+        const connections = this.oneWayConnections[node1.id]
+
+        const isDuplicate = 
+            connections?.find(data => 
+            data.id === node2.id && 
+            data.connectionType === connectionType)
+
+        if (isDuplicate) return;
+
+        const destinationData = 
+            { id: node2.id
+            , connectionType
+            }
+
+        if (!connections || connections.length === 0) 
+        {
+            this.oneWayConnections[node1.id] = [destinationData]
+        }
+        else
+        {
+            connections.push(destinationData)
+        }
+    
+        const destination = this.prepareDestination(connectionType)(node2.audioNode)
+        this.connect_audioNode_to_destination(node1, destination)
+    }
+
+
+
+
+    private prepareDestination (connectionType : ConnectionType) {
+        return (destination : Indexed) => 
+            connectionType === 'channel' 
+                ? destination 
+                : destination[connectionType] 
+    }
+
+
+
+
+    private connect_audioNode_to_destination(node1 : NuniGraphNode, destination : Destination) {
+        
+        if (destination instanceof NuniGraphAudioNode || destination instanceof SubgraphSequencer) 
+        {
+            destination.addInput(node1)
+        }
+        else if (destination instanceof NuniAudioParam) 
+        {
+            node1.audioNode.connect(destination.offset)
+        } 
+        else 
+        {
+            node1.audioNode.connect(destination as AudioNode)
+        }
+    }
+
+
+
+
+    disconnect(node1 : NuniGraphNode, node2 : NuniGraphNode, connectionType : ConnectionType) {
+        const connections = this.oneWayConnections[node1.id]
+
+        if (!connections) throw 'check what happened here'
+
+        const connectionIndex = 
+            connections.findIndex(data => 
+                data.id === node2.id &&
+                data.connectionType === connectionType)
+
+        connections.splice(connectionIndex, 1)
+
+        const destination = this.prepareDestination(connectionType)(node2.audioNode)
+        this.disconnect_audioNode_from_destination(node1, destination)
+    }
+
+
+
+
+    private disconnect_audioNode_from_destination(node1 : NuniGraphNode, destination : Destination) {
+
+    // TODO: Change this methods to disconnect_node_from_destination, and put this condition in a config object.
+        if (destination instanceof SubgraphSequencer || destination instanceof NuniGraphAudioNode) 
+        {
+            destination.removeInput(node1)
+        } 
+        else if (destination instanceof NuniAudioParam) 
+        {
+            node1.audioNode.disconnect(destination.offset)
+        } 
+        else 
+        {
+            node1.audioNode.disconnect(destination as AudioNode)
+        }
+    }
+
+
+
+
+    clear() {
+        for (const node of [...this.nodes]) 
+        {
+            if (node.id === 0) continue
+            this.deleteNode(node)
+        }
+    }
+
+
+
+    //? --------------------------------------------------------------------------------------------------------------------------------------------
+    // * NOW BEGIN ALL THE COPY-RELATED FUNCTIONS
+    //? --------------------------------------------------------------------------------------------------------------------------------------------
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
     // ! ctrl + click paste function 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
@@ -88,7 +257,7 @@ export class NuniGraph {
         const centerY = _nodeDataArray.reduce((a, { y }) => a + y, 0) / nNodes
 
 
-        // Make nodes
+        //* Make nodes
         const nodeCopies = _nodeDataArray.map((
             { type, oldId, x, y, audioParamValues
             , audioNodeProperties, INPUT_NODE_ID, title }) => {
@@ -111,7 +280,7 @@ export class NuniGraph {
         const retainedInputs = new Set()
 
 
-        // Make connections
+        //* Make connections
         for (const indexA in nodeCopies) 
         {
             const a = nodeCopies[indexA]
@@ -146,7 +315,7 @@ export class NuniGraph {
         }
         
 
-        // Remove dangling inputNodes from modules
+        //! Remove dangling inputNodes from modules
         for (const node of nodeCopies) 
         {
             
@@ -170,12 +339,12 @@ export class NuniGraph {
             }
         }
 
+        //! Copying the properties that can only be transferred after connections are made..
         const mapToNewNode = _nodeDataArray.reduce((a, node, i) => {
             a[node.oldId] = nodeCopies[i]
             return a
         }, {} as Indexable<NuniGraphNode>)
         
-
         for (const i in _nodeDataArray) 
         {
             const an = nodeCopies[i].audioNode
@@ -220,8 +389,8 @@ export class NuniGraph {
             , INPUT_NODE_ID
             } = copiedNode
 
-        const newX = clamp(0, x+0.07, 1)
-        const newY = newX === 1 ? clamp(0, y-0.07, 1) : y
+        const newX = clamp(0, x + 0.07, 1)
+        const newY = newX === 1 ? clamp(0, y - 0.07, 1) : y
         const settings = 
             { x: newX
             , y: newY
@@ -323,7 +492,6 @@ export class NuniGraph {
                 const targetObj = an[propName as keyof typeof an] as Indexed
                 const sourceObj = node.audioNode[propName as keyof typeof node.audioNode]
 
-                // TODO: this is the same as: checkstring
                 for (const id in sourceObj) 
                 {
                     const newId = mapToNewNode[id]?.id ?? +id
@@ -338,176 +506,9 @@ export class NuniGraph {
                     }
                 }
             }
-
         }
     }
     /////////////////////////////////////////////////////////////////////////    /////////////////////////////////////////////////////////////////////////
-
-
-
-
-    deleteNode(node : NuniGraphNode) {
-        // Without this, the setTimeout could keep looping forever:
-        if (node.audioNode instanceof Sequencer) 
-        {
-            node.audioNode.stop()
-        }
-
-        // Disconnect from other audioNodes:
-        node.audioNode.disconnect()
-        this.disconnectFromSpecialNodes(node)
-
-        // Remove from this.nodes:
-        const idx = this.nodes.findIndex(_node => 
-            _node === node)
-        this.nodes.splice(idx,1)
-
-        // Remove from this.oneWayConnections:
-        delete this.oneWayConnections[node.id]
-        for (const id in this.oneWayConnections) 
-        {
-            this.oneWayConnections[id] = 
-            this.oneWayConnections[id].filter(({ id }) => id !== node.id)
-        }
-    }
-
-
-
-
-    private disconnectFromSpecialNodes(node : NuniGraphNode) { 
-        /** Motivation:
-         * Since some nodes get 
-         * disconnected in a custom way,
-         * they won't get the message when 
-         * an AudioNode calls disconnect() (with no arguments). 
-         * So This is a temporary fix, here.
-         * 
-         * A better solution may be to wrap disconnect(), or 
-         * stop using it all together.
-         *  */ 
-        // TODO: refactor into IsInputAwareObject
-        for (const { audioNode } of this.nodes) 
-        {
-            if (audioNode instanceof SubgraphSequencer && audioNode.channelData[node.id])
-            {
-                audioNode.removeInput(node)
-            } 
-            else if (audioNode instanceof NuniGraphAudioNode && audioNode.inputs[node.id]) 
-            {
-                audioNode.removeInput(node)
-            }
-        }
-    }
-
-
-
-    
-    makeConnection(node1 : NuniGraphNode, node2 : NuniGraphNode, connectionType : ConnectionType) {
-        const connections = this.oneWayConnections[node1.id]
-
-        const isDuplicate = 
-            connections?.find(data => 
-            data.id === node2.id && 
-            data.connectionType === connectionType)
-
-        if (isDuplicate) return;
-
-        const destinationData = 
-            { id: node2.id
-            , connectionType
-            }
-
-        if (!connections || connections.length === 0) 
-        {
-            this.oneWayConnections[node1.id] = [destinationData]
-        }
-        else
-        {
-            connections.push(destinationData)
-        }
-    
-        const destination = this.prepareDestination(connectionType)(node2.audioNode)
-        this.connect_audioNode_to_destination(node1, destination)
-    }
-
-
-
-
-    private connect_audioNode_to_destination(node1 : NuniGraphNode, destination : Destination) {
-        
-        if (destination instanceof NuniGraphAudioNode || destination instanceof SubgraphSequencer) 
-        {
-            destination.addInput(node1)
-        }
-        else if (destination instanceof NuniAudioParam) 
-        {
-            node1.audioNode.connect(destination.offset)
-        } 
-        else 
-        {
-            node1.audioNode.connect(destination as AudioNode)
-        }
-    }
-
-
-
-
-    disconnect(node1 : NuniGraphNode, node2 : NuniGraphNode, connectionType : ConnectionType) {
-        const connections = this.oneWayConnections[node1.id]
-
-        if (!connections) throw 'check what happened here'
-
-        const connectionIndex = 
-            connections.findIndex(data => 
-                data.id === node2.id &&
-                data.connectionType === connectionType)
-
-        connections.splice(connectionIndex, 1)
-
-        const destination = this.prepareDestination(connectionType)(node2.audioNode)
-        this.disconnect_audioNode_from_destination(node1, destination)
-    }
-
-
-
-
-    private disconnect_audioNode_from_destination(node1 : NuniGraphNode, destination : Destination) {
-
-    // TODO: Change this methods to disconnect_node_from_destination, and put this condition in a config object.
-        if (destination instanceof SubgraphSequencer || destination instanceof NuniGraphAudioNode) 
-        {
-            destination.removeInput(node1)
-        } 
-        else if (destination instanceof NuniAudioParam) 
-        {
-            node1.audioNode.disconnect(destination.offset)
-        } 
-        else 
-        {
-            node1.audioNode.disconnect(destination as AudioNode)
-        }
-    }
-
-
-
-
-    private prepareDestination (connectionType : ConnectionType) {
-        return (destination : Indexed) => 
-            connectionType === 'channel' 
-                ? destination 
-                : destination[connectionType] 
-    }
-
-
-
-
-    clear() {
-        for (const node of [...this.nodes]) 
-        {
-            if (node.id === 0) continue
-            this.deleteNode(node)
-        }
-    }
 
 
 

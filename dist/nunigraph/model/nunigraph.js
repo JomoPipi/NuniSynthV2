@@ -27,6 +27,92 @@ export class NuniGraph {
         this.nodes.push(node);
         return node;
     }
+    deleteNode(node) {
+        if (node.audioNode instanceof Sequencer) {
+            node.audioNode.stop();
+        }
+        node.audioNode.disconnect();
+        this.disconnectFromSpecialNodes(node);
+        const idx = this.nodes.findIndex(_node => _node === node);
+        this.nodes.splice(idx, 1);
+        delete this.oneWayConnections[node.id];
+        for (const id in this.oneWayConnections) {
+            this.oneWayConnections[id] =
+                this.oneWayConnections[id].filter(({ id }) => id !== node.id);
+        }
+    }
+    disconnectFromSpecialNodes(node) {
+        for (const { audioNode } of this.nodes) {
+            if (audioNode instanceof SubgraphSequencer && audioNode.channelData[node.id]) {
+                audioNode.removeInput(node);
+            }
+            else if (audioNode instanceof NuniGraphAudioNode && audioNode.inputs[node.id]) {
+                audioNode.removeInput(node);
+            }
+        }
+    }
+    makeConnection(node1, node2, connectionType) {
+        const connections = this.oneWayConnections[node1.id];
+        const isDuplicate = connections === null || connections === void 0 ? void 0 : connections.find(data => data.id === node2.id &&
+            data.connectionType === connectionType);
+        if (isDuplicate)
+            return;
+        const destinationData = { id: node2.id,
+            connectionType
+        };
+        if (!connections || connections.length === 0) {
+            this.oneWayConnections[node1.id] = [destinationData];
+        }
+        else {
+            connections.push(destinationData);
+        }
+        const destination = this.prepareDestination(connectionType)(node2.audioNode);
+        this.connect_audioNode_to_destination(node1, destination);
+    }
+    prepareDestination(connectionType) {
+        return (destination) => connectionType === 'channel'
+            ? destination
+            : destination[connectionType];
+    }
+    connect_audioNode_to_destination(node1, destination) {
+        if (destination instanceof NuniGraphAudioNode || destination instanceof SubgraphSequencer) {
+            destination.addInput(node1);
+        }
+        else if (destination instanceof NuniAudioParam) {
+            node1.audioNode.connect(destination.offset);
+        }
+        else {
+            node1.audioNode.connect(destination);
+        }
+    }
+    disconnect(node1, node2, connectionType) {
+        const connections = this.oneWayConnections[node1.id];
+        if (!connections)
+            throw 'check what happened here';
+        const connectionIndex = connections.findIndex(data => data.id === node2.id &&
+            data.connectionType === connectionType);
+        connections.splice(connectionIndex, 1);
+        const destination = this.prepareDestination(connectionType)(node2.audioNode);
+        this.disconnect_audioNode_from_destination(node1, destination);
+    }
+    disconnect_audioNode_from_destination(node1, destination) {
+        if (destination instanceof SubgraphSequencer || destination instanceof NuniGraphAudioNode) {
+            destination.removeInput(node1);
+        }
+        else if (destination instanceof NuniAudioParam) {
+            node1.audioNode.disconnect(destination.offset);
+        }
+        else {
+            node1.audioNode.disconnect(destination);
+        }
+    }
+    clear() {
+        for (const node of [...this.nodes]) {
+            if (node.id === 0)
+                continue;
+            this.deleteNode(node);
+        }
+    }
     pasteNodes(X, Y, _nodeDataArray, connections) {
         const nNodes = _nodeDataArray.length;
         const centerX = _nodeDataArray.reduce((a, { x }) => a + x, 0) / nNodes;
@@ -163,92 +249,6 @@ export class NuniGraph {
                     }
                 }
             }
-        }
-    }
-    deleteNode(node) {
-        if (node.audioNode instanceof Sequencer) {
-            node.audioNode.stop();
-        }
-        node.audioNode.disconnect();
-        this.disconnectFromSpecialNodes(node);
-        const idx = this.nodes.findIndex(_node => _node === node);
-        this.nodes.splice(idx, 1);
-        delete this.oneWayConnections[node.id];
-        for (const id in this.oneWayConnections) {
-            this.oneWayConnections[id] =
-                this.oneWayConnections[id].filter(({ id }) => id !== node.id);
-        }
-    }
-    disconnectFromSpecialNodes(node) {
-        for (const { audioNode } of this.nodes) {
-            if (audioNode instanceof SubgraphSequencer && audioNode.channelData[node.id]) {
-                audioNode.removeInput(node);
-            }
-            else if (audioNode instanceof NuniGraphAudioNode && audioNode.inputs[node.id]) {
-                audioNode.removeInput(node);
-            }
-        }
-    }
-    makeConnection(node1, node2, connectionType) {
-        const connections = this.oneWayConnections[node1.id];
-        const isDuplicate = connections === null || connections === void 0 ? void 0 : connections.find(data => data.id === node2.id &&
-            data.connectionType === connectionType);
-        if (isDuplicate)
-            return;
-        const destinationData = { id: node2.id,
-            connectionType
-        };
-        if (!connections || connections.length === 0) {
-            this.oneWayConnections[node1.id] = [destinationData];
-        }
-        else {
-            connections.push(destinationData);
-        }
-        const destination = this.prepareDestination(connectionType)(node2.audioNode);
-        this.connect_audioNode_to_destination(node1, destination);
-    }
-    connect_audioNode_to_destination(node1, destination) {
-        if (destination instanceof NuniGraphAudioNode || destination instanceof SubgraphSequencer) {
-            destination.addInput(node1);
-        }
-        else if (destination instanceof NuniAudioParam) {
-            node1.audioNode.connect(destination.offset);
-        }
-        else {
-            node1.audioNode.connect(destination);
-        }
-    }
-    disconnect(node1, node2, connectionType) {
-        const connections = this.oneWayConnections[node1.id];
-        if (!connections)
-            throw 'check what happened here';
-        const connectionIndex = connections.findIndex(data => data.id === node2.id &&
-            data.connectionType === connectionType);
-        connections.splice(connectionIndex, 1);
-        const destination = this.prepareDestination(connectionType)(node2.audioNode);
-        this.disconnect_audioNode_from_destination(node1, destination);
-    }
-    disconnect_audioNode_from_destination(node1, destination) {
-        if (destination instanceof SubgraphSequencer || destination instanceof NuniGraphAudioNode) {
-            destination.removeInput(node1);
-        }
-        else if (destination instanceof NuniAudioParam) {
-            node1.audioNode.disconnect(destination.offset);
-        }
-        else {
-            node1.audioNode.disconnect(destination);
-        }
-    }
-    prepareDestination(connectionType) {
-        return (destination) => connectionType === 'channel'
-            ? destination
-            : destination[connectionType];
-    }
-    clear() {
-        for (const node of [...this.nodes]) {
-            if (node.id === 0)
-                continue;
-            this.deleteNode(node);
         }
     }
     toRawString() {
