@@ -33,9 +33,7 @@ function runGraphWholeCopyTests() {
     {
         const code1 = tests[name as keyof typeof tests]
 
-        GraphController.g.fromString(code1)
-        
-        const code2 = GraphController.g.toRawString()
+        const code2 = cycleGraph(cycleGraph(code1))
 
         if (code1 !== code2) 
         { 
@@ -80,7 +78,7 @@ const g = GraphController.g // new NuniGraph()
 
     const [sgs2,osc2] = g.reproduceNodesAndConnections([sgs,osc]) as 
         [NuniGraphNode<NodeTypes.SGS>, NuniGraphNode<NodeTypes.OSC>]
-    
+
     const tests = 
         { 'id remapped correctly': JSON.stringify(sgs2.audioNode.stepMatrix[osc2.id]) === JSON.stringify(row)
         , 'id remapped correctly 2': JSON.stringify(sgs2.audioNode.channelData[osc2.id].volume) === JSON.stringify(vol)
@@ -98,6 +96,17 @@ const g = GraphController.g // new NuniGraph()
             failed++
             throw `failed test: ${name}`
         }
+    }  
+    
+    const code1 = g.toString()
+    const code2 = cycleGraph(cycleGraph(code1))
+
+    if (code1 !== code2) 
+    { 
+        console.warn(`Failed to copy correctly`)
+        failed++
+    } else {
+        passed++
     }
 
     g.clear()

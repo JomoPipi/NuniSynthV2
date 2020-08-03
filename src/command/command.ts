@@ -5,11 +5,11 @@
 
 
 
-// /**
-//  * The Provider of undo/redo functionality
-//  */
+/**
+ * The Provider of undo/redo functionality
+ */
 
-// class Invoker<T> {
+// class _Invoker<T> {
 //     oldModel  : T;
 //     curModel  : T;
 //     actions   : Action<T>[];

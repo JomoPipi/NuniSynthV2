@@ -119,7 +119,7 @@ function createBottomRowControls(an) {
         });
         row.appendChild(box);
     }
-    const box = E('span', { text: 'p-shift' });
+    const box = E('span', { text: 'phase shift' });
     const phaseShift = createNumberDialComponent(an.phaseShift || 0, (value) => an.phaseShift = value, { dial: { sensitivity: 2 ** -10,
             min: 0,
             max: 1,
@@ -130,6 +130,34 @@ function createBottomRowControls(an) {
     });
     box.appendChild(phaseShift);
     row.appendChild(box);
+    stepShift: {
+        const box = E('span', { text: 'step shift',
+            children: [
+                E('button', { text: '<',
+                    className: 'top-bar-btn'
+                }),
+                E('button', { text: '>',
+                    className: 'top-bar-btn'
+                })
+            ]
+        });
+        box.onclick = (e) => {
+            const op = e.target.textContent;
+            if (!'<>'.includes(op))
+                return;
+            for (const id in an.stepMatrix) {
+                const row = an.stepMatrix[id];
+                if (op === '<') {
+                    row.push(row.shift());
+                }
+                else {
+                    row.unshift(row.pop());
+                }
+            }
+            an.setupGrid();
+        };
+        row.appendChild(box);
+    }
     return row;
 }
 //# sourceMappingURL=sequencer_controls.js.map
