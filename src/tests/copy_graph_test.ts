@@ -5,9 +5,7 @@
 
 
 
-import { NuniGraph } from "../nunigraph/model/nunigraph.js"
 import { GraphController } from "../nunigraph/init.js"
-import { SubgraphSequencer } from "../webaudio2/internal.js"
 import { NuniGraphNode } from "../nunigraph/model/nunigraph_node.js"
 
 
@@ -39,7 +37,8 @@ function runGraphWholeCopyTests() {
         
         const code2 = GraphController.g.toRawString()
 
-        if (code1 !== code2) { 
+        if (code1 !== code2) 
+        { 
             console.warn(`Failed test: ${name}`)
             failed++
         } else {
@@ -52,32 +51,55 @@ function runGraphWholeCopyTests() {
 }
 runGraphWholeCopyTests()
 
-// const g = GraphController.g// new NuniGraph()
-// ;(function control_s_sgs_test() {
-//     g.clear()
-//     let passed = 0, failed = 0
-//     log('yo?')
-//     const sgs = g.createNewNode(NodeTypes.SGS, 
-//         { x:.1
-//         , y:.5
-//         , audioParamValues:{}
-//         , audioNodeProperties:{} 
-//         })
 
-//     const osc = g.createNewNode(NodeTypes.OSC, 
-//         { x:.3
-//         , y:.5
-//         , audioParamValues:{}
-//         , audioNodeProperties:{} 
-//         })
+
+
+const g = GraphController.g // new NuniGraph()
+;(function control_s_sgs_test() {
+    g.clear()
+    let passed = 0, failed = 0
     
-//     g.makeConnection(osc, sgs, 'channel')
+    const sgs = g.createNewNode(NodeTypes.SGS, 
+        { x: .1
+        , y: .5
+        , audioParamValues:{}
+        , audioNodeProperties:{} 
+        })
 
-//     sgs.audioNode.stepMatrix[osc.id] = [0,1,0,1,0,0,1,0].map(Boolean)
+    const osc = g.createNewNode(NodeTypes.OSC, 
+        { x: .3
+        , y: .5
+        , audioParamValues:{}
+        , audioNodeProperties:{} 
+        })
+    
+    g.makeConnection(osc, sgs, 'channel')
 
-//     const newNodes = g.reproduceNodesAndConnections([sgs,osc])
+    const vol = sgs.audioNode.channelData[osc.id].volume = 0.5
+    const row = sgs.audioNode.stepMatrix[osc.id] = [0,1,0,1,0,0,1,0].map(Boolean)
 
-//     log('newNodes =',newNodes)
+    const [sgs2,osc2] = g.reproduceNodesAndConnections([sgs,osc]) as 
+        [NuniGraphNode<NodeTypes.SGS>, NuniGraphNode<NodeTypes.OSC>]
+    
+    const tests = 
+        { 'id remapped correctly': JSON.stringify(sgs2.audioNode.stepMatrix[osc2.id]) === JSON.stringify(row)
+        , 'id remapped correctly 2': JSON.stringify(sgs2.audioNode.channelData[osc2.id].volume) === JSON.stringify(vol)
+        }
 
-//     log(`${passed}/${passed + failed} tests passed`)
-// })()
+    let name : keyof typeof tests
+    for (name in tests) 
+    {
+        if (tests[name])
+        {
+            passed++
+        }
+        else
+        {
+            failed++
+            throw `failed test: ${name}`
+        }
+    }
+
+    g.clear()
+    log(`${passed}/${passed + failed} tests passed`)
+})()

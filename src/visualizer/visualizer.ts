@@ -130,7 +130,8 @@ export function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : An
 //         let x = 0, isClipping = false
 //         ctx.beginPath()
 //         ctx.moveTo(0,h2)
-//         for (let i = 1; i < bufferLength; i++) {
+        // for (let i = 1; i < bufferLength; i++) 
+        // {
 //             const sliceWidth = W / bufferLength
 //             const value = fbc_array[i]
 //             if (value === 255) isClipping = true

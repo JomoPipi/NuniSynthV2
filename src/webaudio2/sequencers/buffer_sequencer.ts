@@ -31,7 +31,8 @@ export class BufferSequencer extends Sequencer {
     // setPattern(matrix : Indexable<boolean[]>) {
     //     this.stepMatrix = {}
     //     this.nextId = 0
-    //     for (const key in matrix) {
+    //     for (const key in matrix) 
+    //     {
     //         this.addInput(matrix[key])
     //     }
     //     this.refresh()

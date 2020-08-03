@@ -25,7 +25,8 @@
 //     execute(action : Action<T>) {
 //         this.curModel = action.execute(this.curModel)
 //         this.actions.push(action)
-//         if (this.actions.length === this.undoLimit+1) {
+//         if (this.actions.length === this.undoLimit+1) 
+//         {
 //             const head = this.actions.shift()!
 //             this.oldModel = head.execute(this.oldModel)
 //             this.actions.unshift(head)
@@ -33,7 +34,8 @@
 //     }
 //     undo() {
 //         const action = this.actions.pop()
-//         if (action?.inverse) {
+//         if (action?.inverse) 
+//         {
 //             this.curModel = action.inverse(this.curModel)
 //         } else {
 //             this.curModel = this.actions.reduce((model : T, action) => 

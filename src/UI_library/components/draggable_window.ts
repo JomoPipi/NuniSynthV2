@@ -87,11 +87,11 @@ function addDragFunction(bar : HTMLElement, box : HTMLElement, clickCallback : F
     const mousedown = function(e : MouseEvent) {
         if (e.target === bar) 
         {
-            coords = [
-                e.clientX, 
-                e.clientY,
-                box.offsetLeft + box.offsetWidth/2, 
-                box.offsetTop + box.offsetHeight/2
+            coords = 
+                [ e.clientX 
+                , e.clientY
+                , box.offsetLeft + box.offsetWidth/2 
+                , box.offsetTop + box.offsetHeight/2
                 ]
         }
 
@@ -103,14 +103,15 @@ function addDragFunction(bar : HTMLElement, box : HTMLElement, clickCallback : F
 
     const mousemove = function(e : MouseEvent) {
 
-        if (coords.length) 
+        if (coords.length)
         {
             const [x, y, bx, by] = coords
             UI_clamp(
                 e.clientX + bx - x,
                 e.clientY + by - y,
                 box,
-                document.body)
+                document.body,
+                { disableClamp: 2 })
         }
     }
 

@@ -34,7 +34,8 @@ export class UndoRedoModule {
     }
 
     tryInput(e : KeyboardEvent) {
-        if (e.ctrlKey && e.keyCode === 90) {
+        if (e.ctrlKey && e.keyCode === 90) 
+        {
             e.shiftKey ? 
                 this.redo() :
                 this.undo() 
@@ -46,7 +47,8 @@ export class UndoRedoModule {
         const [a,b] = ((a,b) => redo ? [b,a] : [a,b])(this.undos, this.redos)
         const lastState = a.pop()
 
-        if (lastState) {
+        if (lastState) 
+        {
             b.push(this.getState())
             this.setState(lastState)
         }

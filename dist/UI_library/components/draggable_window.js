@@ -47,12 +47,12 @@ function addDragFunction(bar, box, clickCallback) {
     };
     const mousedown = function (e) {
         if (e.target === bar) {
-            coords = [
-                e.clientX,
-                e.clientY,
-                box.offsetLeft + box.offsetWidth / 2,
-                box.offsetTop + box.offsetHeight / 2
-            ];
+            coords =
+                [e.clientX,
+                    e.clientY,
+                    box.offsetLeft + box.offsetWidth / 2,
+                    box.offsetTop + box.offsetHeight / 2
+                ];
         }
         window.addEventListener('mousemove', mousemove);
         window.addEventListener('mouseup', mouseup);
@@ -61,7 +61,7 @@ function addDragFunction(bar, box, clickCallback) {
     const mousemove = function (e) {
         if (coords.length) {
             const [x, y, bx, by] = coords;
-            UI_clamp(e.clientX + bx - x, e.clientY + by - y, box, document.body);
+            UI_clamp(e.clientX + bx - x, e.clientY + by - y, box, document.body, { disableClamp: 2 });
         }
     };
     box.onmousedown = mousedown;

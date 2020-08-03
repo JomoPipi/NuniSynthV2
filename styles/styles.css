@@ -18,6 +18,7 @@ body, html {
   -moz-user-select: none;
        user-select: none;
   /* Standard syntax */
+  overflow: hidden;
 }
 
 select {

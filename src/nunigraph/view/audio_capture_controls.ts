@@ -48,10 +48,9 @@ export function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
     }
     
     choose_recording_length: {
-        const lengthText = E('span', { text: '2s' })
 
         const value = audioNode.recordingLength
-        lengthText.innerText = value + 's'
+        const lengthText = E('span', { text: value + 's' })
         const lengthSlider = E('input', 
             { props: 
                 { type: 'range'
@@ -60,10 +59,10 @@ export function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
                 , step: 0.1
                 , value: audioNode.recordingLength.toString()
                 , oninput: () => {
-                    const value = lengthSlider.value
-                    lengthText.innerText = value + 's'
-                    audioNode.recordingLength = +value
-                }
+                        const value = lengthSlider.value
+                        lengthText.innerText = value + 's'
+                        audioNode.recordingLength = +value
+                    }
                 }
             })
 

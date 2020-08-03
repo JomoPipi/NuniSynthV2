@@ -29,7 +29,8 @@ const tempoComponent = createNumberDialComponent(
 export const MasterClock = {
 
     setSchedule: (scheduleNotes : (tempo : number) => void) => {
-        if (activated) {
+        if (activated) 
+        {
             throw 'MasterClock already has a schedule.'
         }
         activated = true

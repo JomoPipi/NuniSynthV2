@@ -7,7 +7,10 @@
 
 type ClampOptions = {
     topLeft? : boolean
+    disableClamp? : 0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15
     }
+
+const UP = 1, DOWN = 2, LEFT = 4, RIGHT = 8
 
 export function UI_clamp(
     x : number, y : number, 
@@ -20,6 +23,9 @@ export function UI_clamp(
      * staying inside the container.
      */
 
+    const { topLeft } = options
+    const disabled = options.disableClamp || 0
+
     const [w, h, W, H, dx, dy] = [
         element.offsetWidth+2, 
         element.offsetHeight+2,
@@ -29,13 +35,18 @@ export function UI_clamp(
         container.offsetTop,
         ]
     
-    const [X, Y] = options.topLeft 
+    const [X, Y] = topLeft 
         ? [x, y]
         : [x-w/2+dx, y-h/2+dy]
 
-    element.style.left = 
-        clamp(dx, X, W-w+dx) + 'px'
+    const minX = disabled & LEFT  ? -Infinity : dx
+    const minY = disabled & UP    ? -Infinity : dy
+    const maxX = disabled & RIGHT ?  Infinity : W-w+dx
+    const maxY = disabled & DOWN  ?  Infinity : H-h+dy
 
-    element.style.top = 
-        clamp(dy, Y, H-h+dy) + 'px'
+    element.style.left =
+        clamp(minX, X, maxX) + 'px'
+
+    element.style.top =
+        clamp(minY, Y, maxY) + 'px'
 }

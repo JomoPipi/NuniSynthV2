@@ -71,10 +71,11 @@ export class NuniGraphController {
     }
     getMousePos(e) {
         const rect = this.renderer.canvas.getBoundingClientRect();
-        return {
+        const obj = {
             x: e.clientX - rect.left,
             y: e.clientY - rect.top
         };
+        return obj;
     }
     selectNode(node) {
         var _a;
@@ -86,25 +87,6 @@ export class NuniGraphController {
         this.selectedNodes = [];
         for (const key in this.getOpenWindow) {
             this.getOpenWindow[key].classList.remove('selected2');
-        }
-    }
-    closeWindow(id) {
-        const node = this.g.nodes.find(({ id: _id }) => _id === id);
-        if (!node)
-            throw 'figure out what to do from here';
-        if (node.audioNode instanceof NuniGraphAudioNode) {
-            const controller = node.audioNode.controller;
-            const index = ActiveControllers.indexOf(controller);
-            if (index >= 0) {
-                ActiveControllers.splice(index, 1);
-                node.audioNode.deactivateWindow();
-            }
-        }
-        const nodeWindow = this.getOpenWindow[id];
-        if (nodeWindow) {
-            this.lastCoordsOfWindow[id] = [nodeWindow.offsetLeft, nodeWindow.offsetTop];
-            D('node-windows').removeChild(nodeWindow);
-            delete this.getOpenWindow[id];
         }
     }
     closeAllWindows() {
@@ -189,6 +171,25 @@ export class NuniGraphController {
             const canvas = this.renderer.canvas;
             const placeUnder = node.y < .25 ? -1 : 1;
             UI_clamp(node.x * canvas.offsetWidth, node.y * canvas.offsetHeight - dialogBox.offsetHeight * placeUnder, dialogBox, container);
+        }
+    }
+    closeWindow(id) {
+        const node = this.g.nodes.find(({ id: _id }) => _id === id);
+        if (!node)
+            throw 'figure out what to do from here';
+        if (node.audioNode instanceof NuniGraphAudioNode) {
+            const controller = node.audioNode.controller;
+            const index = ActiveControllers.indexOf(controller);
+            if (index >= 0) {
+                ActiveControllers.splice(index, 1);
+                node.audioNode.deactivateWindow();
+            }
+        }
+        const nodeWindow = this.getOpenWindow[id];
+        if (nodeWindow) {
+            this.lastCoordsOfWindow[id] = [nodeWindow.offsetLeft, nodeWindow.offsetTop];
+            D('node-windows').removeChild(nodeWindow);
+            delete this.getOpenWindow[id];
         }
     }
     getNodesInBox(x, y) {

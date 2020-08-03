@@ -20,9 +20,8 @@ export function audioCaptureNodeControls(audioNode) {
         controls.appendChild(box);
     }
     choose_recording_length: {
-        const lengthText = E('span', { text: '2s' });
         const value = audioNode.recordingLength;
-        lengthText.innerText = value + 's';
+        const lengthText = E('span', { text: value + 's' });
         const lengthSlider = E('input', { props: { type: 'range',
                 min: 0.1,
                 max: 20,

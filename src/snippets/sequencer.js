@@ -47,7 +47,8 @@ var SampleBank = (function(A) {
   }
   
   function _handleSampleLoad(key, buffer) {
-    if (!buffer) {
+    if (!buffer) 
+    {
       console.error('Unable to decode audio file', url);
       return;
     }

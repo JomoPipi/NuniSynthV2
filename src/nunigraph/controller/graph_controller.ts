@@ -97,6 +97,9 @@ export class NuniGraphController {
         this._keydown = (e : KeyboardEvent) => this.keydown(e)
     }
 
+
+
+
     fromString(graphCode : string) {
         for (const id in this.renderer.connectionsCache) 
         {
@@ -105,10 +108,13 @@ export class NuniGraphController {
         this.g.fromString(graphCode)
     }
 
+
+
+
     activateEventHandlers() {
-        window.addEventListener('mousemove', this._mouse_move)
-        window.addEventListener('mouseup', this._mouseup)
-        window.addEventListener('keydown', this._keydown)
+        window.addEventListener('mousemove',    this._mouse_move)
+        window.addEventListener('mouseup',      this._mouseup)
+        window.addEventListener('keydown',      this._keydown)
         this.renderer.canvas.onmousedown = e => this.mousedown(e)
 
         // Right-click options
@@ -118,13 +124,19 @@ export class NuniGraphController {
         }
     }
 
+
+
+    
     deactivateEventHandlers() {
         window.removeEventListener('mousemove', this._mouse_move)
-        window.removeEventListener('mouseup', this._mouseup)
-        window.removeEventListener('keydown', this._keydown)
+        window.removeEventListener('mouseup',   this._mouseup)
+        window.removeEventListener('keydown',   this._keydown)
         this.renderer.canvas.onmousedown = null
         this.renderer.canvas.oncontextmenu = null
     }
+
+
+
 
     save() {
         // this.undoRedoModule.save()
@@ -135,6 +147,9 @@ export class NuniGraphController {
     redo() {
         // this.undoRedoModule.redo()
     }
+
+
+
 
     showContextMenu(x : number, y : number) {
 
@@ -147,17 +162,27 @@ export class NuniGraphController {
         UI_clamp(x, y, menu, document.body, { topLeft: true })
     }
 
+
+
+
     hideContextMenu() {
         D('graph-contextmenu').style.display = 'none'
     }
 
+
+
+
     private getMousePos(e : MouseEvent) {
         const rect = this.renderer.canvas.getBoundingClientRect();
-        return {
+        const obj = {
             x: e.clientX - rect.left,
             y: e.clientY - rect.top
         }
+        return obj
     }
+
+
+
 
     selectNode (node : NuniGraphNode) {
         this.unselectNodes()
@@ -165,6 +190,9 @@ export class NuniGraphController {
         this.selectedNodes = [node]
         this.getOpenWindow[node.id]?.classList.add('selected2')
     }
+
+
+
 
     unselectNodes() {
         this.selectedNodes = []
@@ -174,29 +202,8 @@ export class NuniGraphController {
         }
     }
 
-    private closeWindow(id : number) {
 
-        const node = this.g.nodes.find(({ id: _id }) => _id === id)!
-        if (!node) throw 'figure out what to do from here'
-        if (node.audioNode instanceof NuniGraphAudioNode) 
-        {
-            const controller = node.audioNode.controller
-            const index = ActiveControllers.indexOf(controller)
-            if (index >= 0) 
-            {
-                ActiveControllers.splice(index, 1)
-                node.audioNode.deactivateWindow()
-            }
-        }
 
-        const nodeWindow = this.getOpenWindow[id]
-        if (nodeWindow) 
-        {
-            this.lastCoordsOfWindow[id] = [nodeWindow.offsetLeft, nodeWindow.offsetTop]
-            D('node-windows').removeChild(nodeWindow)
-            delete this.getOpenWindow[id]
-        }
-    }
 
     closeAllWindows() {
         for (const nodeId in this.getOpenWindow) 
@@ -204,6 +211,9 @@ export class NuniGraphController {
             this.closeWindow(+nodeId)
         }
     }
+
+
+
 
     deleteNode(node : NuniGraphNode, options = {} as DeleteNodeOptions) {
         
@@ -224,6 +234,9 @@ export class NuniGraphController {
             this.renderer.render()
         }
     }
+
+
+
 
     private openWindow(node : NuniGraphNode) {
 
@@ -330,6 +343,34 @@ export class NuniGraphController {
 
 
 
+
+    private closeWindow(id : number) {
+
+        const node = this.g.nodes.find(({ id: _id }) => _id === id)!
+        if (!node) throw 'figure out what to do from here'
+        if (node.audioNode instanceof NuniGraphAudioNode) 
+        {
+            const controller = node.audioNode.controller
+            const index = ActiveControllers.indexOf(controller)
+            if (index >= 0) 
+            {
+                ActiveControllers.splice(index, 1)
+                node.audioNode.deactivateWindow()
+            }
+        }
+
+        const nodeWindow = this.getOpenWindow[id]
+        if (nodeWindow) 
+        {
+            this.lastCoordsOfWindow[id] = [nodeWindow.offsetLeft, nodeWindow.offsetTop]
+            D('node-windows').removeChild(nodeWindow)
+            delete this.getOpenWindow[id]
+        }
+    }
+
+
+
+
     private getNodesInBox(x : number, y : number) {
         const { width: W, height: H } = this.renderer.canvas
         if (!this.mouseIsDown) 
@@ -353,6 +394,9 @@ export class NuniGraphController {
         return this.selectedNodes
     }
 
+
+
+
     private toggleDialogBox(node : NuniGraphNode) {
         if (!this.getOpenWindow[node.id]) 
         {
@@ -364,6 +408,9 @@ export class NuniGraphController {
             this.closeWindow(node.id)
         }
     }
+
+
+
 
     private mousedown(e : MouseEvent) {
         
@@ -478,6 +525,9 @@ export class NuniGraphController {
         deselectNodesOfOtherGraphs()
     }
 
+
+
+
     private mousemove(e : MouseEvent) {
 
         const [x,y] = this.lastMouse_DownXY
@@ -556,6 +606,9 @@ export class NuniGraphController {
         this.renderer.render(options)
     }
 
+
+
+
     private mouseup(e : MouseEvent) {
 
         if (e.ctrlKey && e.target === this.renderer.canvas) 
@@ -616,24 +669,31 @@ export class NuniGraphController {
         )[msg.type]()
     }
 
+
+
+
     private keydown(e : KeyboardEvent) {
         // undo/redo with keyboard disabled, for now
-        // if (this.undoRedoModule.tryInput(e)) {
+        // if (this.undoRedoModule.tryInput(e)) 
+        // {
 
         //     // SGS doesn't support window staying open throughout undo/redo
         //     this.closeAllWindows()
 
-        //     // Close the ones that shouldn't be there anymore
-        //     // const IDs = new Set(this.g.nodes.map(node => node.id))
-        //     // for (const nodeId in this.getOpenWindow) {
-        //     //     if (!IDs.has(+nodeId)) {
-        //     //         this.closeWindow(+nodeId)
-        //     //     }
-        //     // }
+            // // Close the ones that shouldn't be there anymore
+            // // const IDs = new Set(this.g.nodes.map(node => node.id))
+            // // for (const nodeId in this.getOpenWindow) 
+            // // {
+            // //     if (!IDs.has(+nodeId)) 
+            // //     {
+            // //         this.closeWindow(+nodeId)
+            //  //     }
+            // // }
         //     this.renderer.render()
         // }
 
-        // for (const { audioNode } of this.g.nodes) {
+        // for (const { audioNode } of this.g.nodes) 
+        // {
         //     if (audioNode instanceof NuniGraphAudioNode && 
         //         audioNode.windowIsOpen &&
         //         audioNode.controller.selectedNodes.length > 0) {
@@ -727,6 +787,9 @@ export class NuniGraphController {
             }
         }
     }
+
+
+
 
     private promptUserToSelectConnectionType(
         node1 : NuniGraphNode, node2 : NuniGraphNode, x : number, y : number) {
