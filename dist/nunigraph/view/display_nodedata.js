@@ -114,14 +114,25 @@ function samplerControls(audioNode) {
 function exposeAudioParams(node, saveCallback) {
     const allParams = E('div');
     for (const param of AudioNodeParams[node.type]) {
-        const box = E('div', { className: 'params-box',
-            text: param
-        });
         const initialValue = node.audioParamValues[param];
+        const isGain = param === 'gain';
+        const to_dB = (n) => `gain (${volumeTodB(Math.abs(n)).toFixed(2)} dB)`;
+        const text = E('span', { text: isGain
+                ? to_dB(initialValue)
+                : param
+        });
+        const box = E('div', { className: 'params-box',
+            children: [text]
+        });
         const mousedownFunc = () => {
             return node.audioParamValues[param];
         };
-        const updateFunc = (newValue) => node.setValueOfParam(param, newValue);
+        const updateFunc = isGain
+            ? (newValue) => {
+                text.textContent = to_dB(newValue);
+                node.setValueOfParam(param, newValue);
+            }
+            : (newValue) => node.setValueOfParam(param, newValue);
         const settings = { amount: sliderFactor[param],
             min: AudioParamRanges[param][0],
             max: AudioParamRanges[param][1],

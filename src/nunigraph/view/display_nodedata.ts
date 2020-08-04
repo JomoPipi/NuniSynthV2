@@ -228,19 +228,33 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
     const allParams = E('div')
     for (const param of AudioNodeParams[node.type]) 
     {
-        const box = E('div', 
-            { className: 'params-box'
-            , text: param
+        const initialValue = node.audioParamValues[param]
+        const isGain = param === 'gain' // TODO: get rid of hardcoding
+        const to_dB = (n : number) => 
+            `gain (${volumeTodB(Math.abs(n)).toFixed(2)} dB)`
+
+        const text = E('span', 
+            { text: isGain 
+            ? to_dB(initialValue)
+            : param 
             })
 
-        const initialValue = node.audioParamValues[param]
+        const box = E('div', 
+            { className: 'params-box'
+            , children: [text]
+            })
 
         const mousedownFunc = () => {
             return node.audioParamValues[param]
         }
 
-        const updateFunc = (newValue : number) =>
-            node.setValueOfParam(param, newValue)
+        const updateFunc = isGain
+            ? (newValue : number) => {
+                text.textContent = to_dB(newValue)
+                node.setValueOfParam(param, newValue)
+            }
+            : (newValue : number) =>
+                node.setValueOfParam(param, newValue)
         
         const settings = 
             { amount: sliderFactor[param]

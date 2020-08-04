@@ -5,8 +5,9 @@
 
 
 
-import { AudioBufferCaptureNode } from "../../webaudio2/internal.js";
+import { AudioBufferCaptureNode, MasterClock } from "../../webaudio2/internal.js";
 import { BufferUtils } from "../../buffer_utils/internal.js";
+import { createSubdivSelect } from "./dialogbox_components.js";
 
 
 
@@ -18,7 +19,7 @@ export function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
     const controls = E('div')
 
     choose_buffer_index: {
-        const box = E('div', { text: 'WRITE TO BUFFER: ' })
+        const box = E('span', { text: 'WRITE TO BUFFER: ' })
         
         const value = E('span', { text: 'A' })
         
@@ -50,8 +51,9 @@ export function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
     choose_recording_length: {
 
         const value = audioNode.recordingLength
+        const subdivSelect = createSubdivSelect(audioNode, updateSlider)
         const lengthText = E('span', { text: value + 's' })
-        const lengthSlider = E('input', 
+        const lengthSlider = E('input',
             { props: 
                 { type: 'range'
                 , min: 0.1
@@ -62,11 +64,19 @@ export function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
                         const value = lengthSlider.value
                         lengthText.innerText = value + 's'
                         audioNode.recordingLength = +value
+                        subdivSelect.value = '-'
+                        audioNode.subdiv = 0
                     }
                 }
             })
 
-        const box = E('div', { children: [lengthSlider, lengthText] })
+        function updateSlider(value : number) {
+            const length = (60 * 4 / MasterClock.getTempo()) / audioNode.subdiv
+            lengthText.textContent = length + 's'
+            lengthSlider.value = length.toString()
+        }
+
+        const box = E('div', { children: [lengthSlider, lengthText, subdivSelect] })
         controls.appendChild(box)
     }
 

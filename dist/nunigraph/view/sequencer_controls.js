@@ -1,5 +1,6 @@
 import { BufferSequencer } from '../../webaudio2/internal.js';
 import { createToggleButton, createRadioButtonGroup, createNumberDialComponent } from '../../UI_library/internal.js';
+import { createSubdivSelect } from './dialogbox_components.js';
 export function sequencerControls(an) {
     const controls = E('div');
     controls.style.minWidth = '400px';
@@ -8,16 +9,6 @@ export function sequencerControls(an) {
     controls.appendChild(an.HTMLGrid);
     controls.appendChild(createBottomRowControls(an));
     return controls;
-}
-const subdivisionList = [
-    1, 2, 4, 8, 16, 32, 64, 128,
-    3, 6, 12, 24, 48, 96,
-    0.5, 0.25, 0.125
-];
-for (let i = 5; i < 64; i++) {
-    if (!subdivisionList.includes(i)) {
-        subdivisionList.push(i);
-    }
 }
 function createTopRowControls(an) {
     const controls = E('div', { className: 'flat-grid flex-center' });
@@ -60,24 +51,7 @@ function createTopRowControls(an) {
         controls.appendChild(box);
     }
     changeSubdivision: {
-        const makeSubdivisionButton = (n) => E('option', { text: n < 1
-                ? `${Math.round(1 / n)} bars`
-                : '1/' + n,
-            className: 'list-btn'
-        });
-        const select = E('select', { children: subdivisionList.map(makeSubdivisionButton) });
-        select.value = an.subdiv <= 1
-            ? `${Math.round(1 / an.subdiv)} bars`
-            : '1/' + an.subdiv;
-        select.onchange = function () {
-            const n = select.value.endsWith('bars')
-                ? 1.0 / +select.value.split(' ')[0]
-                : +select.value.split('/')[1];
-            an.subdiv = n;
-        };
-        const box = E('span');
-        box.appendChild(select);
-        controls.appendChild(box);
+        controls.appendChild(createSubdivSelect(an));
     }
     choose_ADSR: {
         controls.appendChild(createRadioButtonGroup({ buttons: [...'ABCD'],

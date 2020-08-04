@@ -105,6 +105,8 @@ class BufferUtily {
             const btn = e.target as HTMLButtonElement
             const [_,n] = btn.id.split('-').map(Number)
 
+            if (isNaN(n)) { log('went here'); return }
+
             // Disable the previous step
             document.getElementById(`buff-${this.currentIndex}`)
                 ?.classList.remove('selected2')

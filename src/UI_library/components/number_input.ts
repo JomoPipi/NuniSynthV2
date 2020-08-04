@@ -27,7 +27,7 @@ export function createDraggableNumberInput(
         })
 
     let startX : number,
-        startY : number, 
+        startY : number,
         startValue : number
 
     const mousedown = function(e : MouseEvent) {

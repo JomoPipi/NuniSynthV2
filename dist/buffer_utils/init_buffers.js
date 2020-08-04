@@ -62,6 +62,10 @@ class BufferUtily {
             var _a, _b;
             const btn = e.target;
             const [_, n] = btn.id.split('-').map(Number);
+            if (isNaN(n)) {
+                log('went here');
+                return;
+            }
             (_a = document.getElementById(`buff-${this.currentIndex}`)) === null || _a === void 0 ? void 0 : _a.classList.remove('selected2');
             (_b = document.getElementById(`buff-${n}`)) === null || _b === void 0 ? void 0 : _b.classList.add('selected2');
             this.currentIndex = n;
