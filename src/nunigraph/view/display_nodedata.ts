@@ -14,7 +14,11 @@ import
     { NuniSourceNode, BufferNode2, Sequencer
     , AudioBufferCaptureNode, NuniGraphAudioNode 
     } from '../../webaudio2/internal.js'
-import { createDraggableNumberInput, createToggleButton, applyStyle, JsDial } from '../../UI_library/internal.js'
+import 
+    { createDraggableNumberInput
+    , createToggleButton
+    , applyStyle, JsDial
+    } from '../../UI_library/internal.js'
 
 
 
@@ -231,56 +235,28 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
 
         const initialValue = node.audioParamValues[param]
 
-        const updateFunc = 
-            createUpdateParamFunc(node,param)
-
         const mousedownFunc = () => {
-            saveCallback()
             return node.audioParamValues[param]
         }
 
-        const manualUpdater = (x:number) => {
-            saveCallback()
-            node.setValueOfParam(param, x)
-        }
+        const updateFunc = (newValue : number) =>
+            node.setValueOfParam(param, newValue)
         
+        const settings = 
+            { amount: sliderFactor[param]
+            , min: AudioParamRanges[param][0]
+            , max: AudioParamRanges[param][1]
+            , isLinear: hasLinearSlider[param]
+            }
+
         box.appendChild(
             createDraggableNumberInput(
                 initialValue, 
                 mousedownFunc, 
-                updateFunc, 
-                manualUpdater))
-        
-        // const [min,max] = AudioParamRanges[param]
-        // box.appendChild(createNumberDialComponent(
-        //     initialValue,
-        //     manualUpdater, {
-        //         dial: 
-        //         { min
-        //         , max
-        //         , sensitivity: 4
-        //         }
-        //     }
-        // ))
+                updateFunc,
+                settings))
 
         allParams.appendChild(box)
     }
     return allParams
-}
-
-
-
-
-function createUpdateParamFunc(node : NuniGraphNode, param : AudioParams) {
-    return (delta : number, value : number) : string => {
-
-        const amount    = sliderFactor[param]
-        const [min,max] = AudioParamRanges[param]
-        const useLinear = hasLinearSlider[param] || value === 0
-        const factor    = useLinear ? delta : delta * value
-        const newValue  = clamp(min, value + factor * amount, max)
-
-        node.setValueOfParam(param, newValue)
-        return newValue.toPrecision(5)
-    }
 }

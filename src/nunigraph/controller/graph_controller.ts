@@ -286,7 +286,7 @@ export class NuniGraphController {
         const titleEditor = () => {
             const input = E('input', 
                 { className: 'title-editor'
-                , props: { value: node.title||'' }
+                , props: { value: node.title || '' }
                 })
 
             input.oninput = () => {
@@ -611,6 +611,7 @@ export class NuniGraphController {
 
     private mouseup(e : MouseEvent) {
 
+        // Ctrl + click
         if (e.ctrlKey && e.target === this.renderer.canvas) 
         {
             const X = e.offsetX / this.renderer.canvas.width
@@ -764,7 +765,7 @@ export class NuniGraphController {
 
             if (e.keyCode === 67) 
             {
-                // copy - flash the copied nodes
+                // Copy - flash the copied nodes
                 requestAnimationFrame(() => {
                     this.renderer.render()
 
@@ -775,7 +776,7 @@ export class NuniGraphController {
             }
             else if (e.keyCode === 88) 
             { 
-                // cut - delete nodes
+                // Cut - delete nodes
                 for (const node of nodesToCopy) 
                 {
                     if (node.id !== 0) 

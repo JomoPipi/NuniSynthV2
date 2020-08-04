@@ -212,7 +212,7 @@ const ConnectionTypeColors : { readonly [key in ConnectionType] : string } =
     }
 
 const DefaultParamValues : { readonly [key in AudioParams] : number } = 
-    { gain:         0.5
+    { gain:         1
     , frequency:    440
     , detune:       0
     , Q:            1
@@ -285,10 +285,6 @@ const Transferable_AudioNodeProperties =
     , phaseShift  : true
     , channelData : true
     }
-
-// const PostConnection_Transferable_AudioNodeProperties : { [key in NodeTypes]? : any[] } = 
-//     { [NodeTypes.SGS] : ['stepMatrix']
-//     }
 
 const PostConnection_Transferable_InputRemappable_AudioNodeProperties 
 : { [key in NodeTypes]? : (keyof typeof Transferable_AudioNodeProperties)[] } = 

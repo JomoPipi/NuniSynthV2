@@ -7,8 +7,6 @@
 
 import { GraphController } from '../init.js'
 import { NuniGraphController } from './graph_controller.js'
-import { LZW_decompress } from '../../helpers/lzw_compression.js'
-import { NuniGraphAudioNode } from '../../webaudio2/internal.js'
 
 
 
@@ -21,7 +19,7 @@ const contextmenu = D('graph-contextmenu')
 
     const append = (type : NodeTypes, color : string) => {
 
-        const create = ({ pageX: x, pageY: y } : MouseEvent) => {
+        const create = (e : MouseEvent) => {
 
             const controller = DIRTYGLOBALS.lastControllerToOpenTheContextmenu || GraphController as NuniGraphController
             
@@ -38,8 +36,11 @@ const contextmenu = D('graph-contextmenu')
                     ? controller.renderer.canvas
                     : controller.renderer.canvas.parentNode.parentNode.parentNode.parentNode // TODO: clean this line up...
 
-                node.x = clamp(0, (x - offsetLeft) / offsetWidth, 1)
-                node.y = clamp(0, (y - offsetTop) / offsetHeight, 1)
+                // ? Using e.pageX and e.pageY instead of contextmenu.offsetLeft/offsetTop
+                // ? results in the node being created directly under the cursor. 
+                // ? Consult with others to see what they prefer.
+                node.x = clamp(0, (contextmenu.offsetLeft - offsetLeft) / offsetWidth, 1)
+                node.y = clamp(0, (contextmenu.offsetTop - offsetTop) / offsetHeight, 1)
                 controller.hideContextMenu()
             }
             

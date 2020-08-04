@@ -159,7 +159,7 @@ const ConnectionTypeColors = { channel: 'gray',
     playbackRate: 'cyan',
     offset: 'rgb(255,200,200)'
 };
-const DefaultParamValues = { gain: 0.5,
+const DefaultParamValues = { gain: 1,
     frequency: 440,
     detune: 0,
     Q: 1,

@@ -118,29 +118,18 @@ function exposeAudioParams(node, saveCallback) {
             text: param
         });
         const initialValue = node.audioParamValues[param];
-        const updateFunc = createUpdateParamFunc(node, param);
         const mousedownFunc = () => {
-            saveCallback();
             return node.audioParamValues[param];
         };
-        const manualUpdater = (x) => {
-            saveCallback();
-            node.setValueOfParam(param, x);
+        const updateFunc = (newValue) => node.setValueOfParam(param, newValue);
+        const settings = { amount: sliderFactor[param],
+            min: AudioParamRanges[param][0],
+            max: AudioParamRanges[param][1],
+            isLinear: hasLinearSlider[param]
         };
-        box.appendChild(createDraggableNumberInput(initialValue, mousedownFunc, updateFunc, manualUpdater));
+        box.appendChild(createDraggableNumberInput(initialValue, mousedownFunc, updateFunc, settings));
         allParams.appendChild(box);
     }
     return allParams;
-}
-function createUpdateParamFunc(node, param) {
-    return (delta, value) => {
-        const amount = sliderFactor[param];
-        const [min, max] = AudioParamRanges[param];
-        const useLinear = hasLinearSlider[param] || value === 0;
-        const factor = useLinear ? delta : delta * value;
-        const newValue = clamp(min, value + factor * amount, max);
-        node.setValueOfParam(param, newValue);
-        return newValue.toPrecision(5);
-    };
 }
 //# sourceMappingURL=display_nodedata.js.map
