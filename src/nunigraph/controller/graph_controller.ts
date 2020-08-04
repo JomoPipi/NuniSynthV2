@@ -324,20 +324,20 @@ export class NuniGraphController {
         if (node.id in this.lastCoordsOfWindow) 
         {
             const [x,y] = this.lastCoordsOfWindow[node.id]
-            dialogBox.style.left = x+'px'
-            dialogBox.style.top = y+'px'
-        } 
-        else 
+            dialogBox.style.left = x + 'px'
+            dialogBox.style.top  = y + 'px'
+        }
+        else
         {
-            // Place it over the node
-            const container = D('nunigraph-stuff')
+            // Place it close the node
             const canvas = this.renderer.canvas
-            const placeUnder = node.y < .25 ? -1 : 1
+            const { left, top } = canvas.getBoundingClientRect()
+            const placeUnder = node.y < .3 ? -1 : 1
             UI_clamp(
-                node.x * canvas.offsetWidth, 
-                node.y * canvas.offsetHeight - dialogBox.offsetHeight * placeUnder,
-                dialogBox, 
-                container)
+                node.x * canvas.offsetWidth + left,
+                node.y * canvas.offsetHeight + top - dialogBox.offsetHeight * placeUnder,
+                dialogBox,
+                document.body)
         }
     }
 

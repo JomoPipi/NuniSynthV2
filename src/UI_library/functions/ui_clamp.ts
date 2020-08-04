@@ -23,26 +23,24 @@ export function UI_clamp(
      * staying inside the container.
      */
 
-    const { topLeft } = options
-    const disabled = options.disableClamp || 0
-
-    const [w, h, W, H, dx, dy] = [
-        element.offsetWidth+2, 
-        element.offsetHeight+2,
-        container.offsetWidth, 
-        container.offsetHeight,
-        container.offsetLeft,
-        container.offsetTop,
+    const [w, h, W, H, dx, dy] = 
+        [ element.offsetWidth+2
+        , element.offsetHeight+2
+        , container.offsetWidth
+        , container.offsetHeight
+        , container.offsetLeft
+        , container.offsetTop
         ]
     
-    const [X, Y] = topLeft 
+    const [X, Y] = options.topLeft 
         ? [x, y]
         : [x-w/2+dx, y-h/2+dy]
 
-    const minX = disabled & LEFT  ? -Infinity : dx
-    const minY = disabled & UP    ? -Infinity : dy
-    const maxX = disabled & RIGHT ?  Infinity : W-w+dx
-    const maxY = disabled & DOWN  ?  Infinity : H-h+dy
+    const disable = options.disableClamp || 0
+    const minX = disable & LEFT  ? -Infinity : dx
+    const minY = disable & UP    ? -Infinity : dy
+    const maxX = disable & RIGHT ?  Infinity : W-w+dx
+    const maxY = disable & DOWN  ?  Infinity : H-h+dy
 
     element.style.left =
         clamp(minX, X, maxX) + 'px'

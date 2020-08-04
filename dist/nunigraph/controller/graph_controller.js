@@ -167,10 +167,10 @@ export class NuniGraphController {
             dialogBox.style.top = y + 'px';
         }
         else {
-            const container = D('nunigraph-stuff');
             const canvas = this.renderer.canvas;
-            const placeUnder = node.y < .25 ? -1 : 1;
-            UI_clamp(node.x * canvas.offsetWidth, node.y * canvas.offsetHeight - dialogBox.offsetHeight * placeUnder, dialogBox, container);
+            const { left, top } = canvas.getBoundingClientRect();
+            const placeUnder = node.y < .3 ? -1 : 1;
+            UI_clamp(node.x * canvas.offsetWidth + left, node.y * canvas.offsetHeight + top - dialogBox.offsetHeight * placeUnder, dialogBox, document.body);
         }
     }
     closeWindow(id) {
