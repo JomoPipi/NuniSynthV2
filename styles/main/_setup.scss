@@ -246,6 +246,7 @@ button {
 }
 
 .window {
+    -webkit-app-region: no-drag;
     display: none;
     position: absolute;
     background: #171717;

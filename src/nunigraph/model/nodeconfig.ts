@@ -39,17 +39,17 @@ type ConnecteeDatum =
 type ConnecteeData = ConnecteeDatum[]
 
 const NodeLabel = 
-    { [NodeTypes.GAIN]:   'GAIN'
-    , [NodeTypes.OSC]:    'OSCILLATOR'
-    , [NodeTypes.FILTER]: 'FILTER'
-    , [NodeTypes.PANNER]: 'PANNER'
-    , [NodeTypes.DELAY]:  'DELAY'
-    , [NodeTypes.BUFFER]: 'BUFFER'
-    , [NodeTypes.SGS]:    'SUBGRAPH SEQUENCER'
-    , [NodeTypes.B_SEQ]:  'BUFFER SEQUENCER'
-    , [NodeTypes.CSN]:    'CONSTANT SOURCE'
-    , [NodeTypes.RECORD]: 'AUDIO CAPTURE'
-    , [NodeTypes.CUSTOM]: 'MODULE'
+    { [NodeTypes.GAIN]:   'Gain'
+    , [NodeTypes.OSC]:    'Oscillator'
+    , [NodeTypes.FILTER]: 'Filter'
+    , [NodeTypes.PANNER]: 'Panner'
+    , [NodeTypes.DELAY]:  'Delay'
+    , [NodeTypes.BUFFER]: 'Sample'
+    , [NodeTypes.SGS]:    'Channel Sequencer'
+    , [NodeTypes.B_SEQ]:  'Sample Sequencer'
+    , [NodeTypes.CSN]:    'Number Value'
+    , [NodeTypes.RECORD]: 'Recorder'
+    , [NodeTypes.CUSTOM]: 'Module'
     }
 
 const createAudioNode =
@@ -201,7 +201,7 @@ const NodeTypeWarnings : { readonly [key in NodeTypes]? : string } =
 
 const ConnectionTypeColors : { readonly [key in ConnectionType] : string } =
     { channel:      'gray'
-    , frequency:    'blue'
+    , frequency:    'rgb(50, 50, 255)'
     , gain:         'red'
     , detune:       'green'
     , Q:            'violet'

@@ -13,17 +13,17 @@ var NodeTypes;
     NodeTypes["RECORD"] = "audio-capture";
     NodeTypes["CUSTOM"] = "module";
 })(NodeTypes || (NodeTypes = {}));
-const NodeLabel = { [NodeTypes.GAIN]: 'GAIN',
-    [NodeTypes.OSC]: 'OSCILLATOR',
-    [NodeTypes.FILTER]: 'FILTER',
-    [NodeTypes.PANNER]: 'PANNER',
-    [NodeTypes.DELAY]: 'DELAY',
-    [NodeTypes.BUFFER]: 'BUFFER',
-    [NodeTypes.SGS]: 'SUBGRAPH SEQUENCER',
-    [NodeTypes.B_SEQ]: 'BUFFER SEQUENCER',
-    [NodeTypes.CSN]: 'CONSTANT SOURCE',
-    [NodeTypes.RECORD]: 'AUDIO CAPTURE',
-    [NodeTypes.CUSTOM]: 'MODULE'
+const NodeLabel = { [NodeTypes.GAIN]: 'Gain',
+    [NodeTypes.OSC]: 'Oscillator',
+    [NodeTypes.FILTER]: 'Filter',
+    [NodeTypes.PANNER]: 'Panner',
+    [NodeTypes.DELAY]: 'Delay',
+    [NodeTypes.BUFFER]: 'Sample',
+    [NodeTypes.SGS]: 'Channel Sequencer',
+    [NodeTypes.B_SEQ]: 'Sample Sequencer',
+    [NodeTypes.CSN]: 'Number Value',
+    [NodeTypes.RECORD]: 'Recorder',
+    [NodeTypes.CUSTOM]: 'Module'
 };
 const createAudioNode = { [NodeTypes.GAIN]: 'createGain',
     [NodeTypes.OSC]: 'createOscillator2',
@@ -150,7 +150,7 @@ const NodeTypeColors = { [NodeTypes.GAIN]: 'rgba(255,0,0,0.5)',
 const NodeTypeWarnings = { [NodeTypes.FILTER]: `Filters may become unstable and we won't do anything about it. If this happens the program will cease to function properly and will need to be re-started.`
 };
 const ConnectionTypeColors = { channel: 'gray',
-    frequency: 'blue',
+    frequency: 'rgb(50, 50, 255)',
     gain: 'red',
     detune: 'green',
     Q: 'violet',
