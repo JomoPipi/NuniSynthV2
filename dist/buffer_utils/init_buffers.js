@@ -31,8 +31,8 @@ class BufferUtily {
             `${String.fromCharCode(65 + n)} -- ${buff.duration} seconds`;
         drawBuffer(buff, bufferDrawCanvas);
     }
-    refreshAffectedBuffers() {
-        this.refreshFunc(this.currentIndex);
+    refreshAffectedBuffers(n) {
+        this.refreshFunc(n !== null && n !== void 0 ? n : this.currentIndex);
     }
     setRefreshBufferFunc(f) {
         this.refreshFunc = f;

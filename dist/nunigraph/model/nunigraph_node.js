@@ -12,8 +12,8 @@ export class NuniGraphNode {
         this.audioNode = audioCtx[createAudioNode[type]]();
         if (MustBeStarted[type])
             this.audioNode.start(0);
-        Object.assign(this.audioNode, audioNodeProperties);
-        this.audioParamValues = audioParamValues;
+        Object.assign(this.audioNode, JSON.parse(JSON.stringify(audioNodeProperties)));
+        this.audioParamValues = JSON.parse(JSON.stringify(audioParamValues));
         for (const param of AudioNodeParams[type]) {
             const value = (_a = audioParamValues[param]) !== null && _a !== void 0 ? _a : DefaultParamValues[param];
             this.setValueOfParam(param, value);

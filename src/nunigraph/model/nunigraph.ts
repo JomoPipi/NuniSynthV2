@@ -264,7 +264,7 @@ export class NuniGraph {
 
             const newX = clamp(0, x - centerX + X, 1)
             const newY = clamp(0, y - centerY + Y, 1)
-            const settings = 
+            const settings =
                 { x: newX
                 , y: newY
                 , audioParamValues

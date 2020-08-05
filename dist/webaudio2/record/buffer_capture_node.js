@@ -18,23 +18,25 @@ export class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
             BufferUtils.stopLastRecorder();
             return;
         }
-        const time = this.ctx.currentTime;
-        const startTime = this.sync
-            ? ((time / 4 | 0) + 1) * 4
-            : time;
-        const delta = startTime - time;
-        setTimeout(() => recordButton.classList.add('recording'), 1000 * delta);
         const errStuff = (err) => {
             recordButton.innerText = err;
             recordButton.style.backgroundColor = 'orange';
         };
         const mediaRecorder = new MediaRecorder(this.stream);
-        mediaRecorder.start(startTime);
+        const time = this.ctx.currentTime;
+        const startTime = this.sync
+            ? ((time / 4 | 0) + 1) * 4
+            : time;
+        const delta = startTime - time;
         const audioChunks = [];
-        mediaRecorder.addEventListener('dataavailable', (event) => {
-            audioChunks.push(event.data);
-        });
-        const length = this.subdiv === 0
+        setTimeout(() => {
+            recordButton.classList.add('recording');
+            mediaRecorder.start();
+            mediaRecorder.addEventListener('dataavailable', (event) => {
+                audioChunks.push(event.data);
+            });
+        }, 1000 * delta);
+        const recordLength = this.subdiv === 0
             ? this.recordingLength
             : (60 * 4 / MasterClock.getTempo()) / this.subdiv;
         mediaRecorder.addEventListener('stop', () => {
@@ -43,10 +45,10 @@ export class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
                 this.ctx.decodeAudioData(arraybuffer)
                     .then((audiobuffer) => {
                     const rate = this.ctx.sampleRate;
-                    const buffer = this.ctx.createBuffer(1, length * rate, rate);
+                    const buffer = this.ctx.createBuffer(1, recordLength * rate, rate);
                     buffer.copyToChannel(audiobuffer.getChannelData(0), 0);
                     BufferStorage.set(this.bufferKey, buffer);
-                    BufferUtils.refreshAffectedBuffers();
+                    BufferUtils.refreshAffectedBuffers(this.bufferKey);
                     recordButton.classList.remove('recording');
                     BufferUtils.updateBufferUI();
                 })

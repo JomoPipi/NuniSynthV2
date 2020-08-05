@@ -62,8 +62,8 @@ class BufferUtily {
         drawBuffer(buff, bufferDrawCanvas)
     }
 
-    refreshAffectedBuffers() {
-        this.refreshFunc(this.currentIndex)
+    refreshAffectedBuffers(n? : number) {
+        this.refreshFunc(n ?? this.currentIndex)
     }
 
     setRefreshBufferFunc(f : Function) {

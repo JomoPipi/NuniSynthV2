@@ -87,13 +87,13 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         
         if (MustBeStarted[type]) (this.audioNode as ConstantSourceNode).start(0)
 
-        Object.assign(this.audioNode, audioNodeProperties)
+        Object.assign(this.audioNode, JSON.parse(JSON.stringify(audioNodeProperties)))
 
-        this.audioParamValues = audioParamValues
+        this.audioParamValues = JSON.parse(JSON.stringify(audioParamValues))
 
         for (const param of AudioNodeParams[type]) 
         {
-            const value 
+            const value
                 =  audioParamValues[param] 
                 ?? DefaultParamValues[param]
             this.setValueOfParam(param, value)
