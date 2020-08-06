@@ -30,7 +30,7 @@ $pink-lavender: rgba(239, 195, 230, 1);
 $lavender-blush: rgba(240, 230, 239, 1);
 $periwinkle-crayola: rgba(184, 190, 221, 1);
 
-$color0:rgb(32, 30, 32);
+$color0:rgb(45, 42, 45);
 $color1: rgb(48, 47, 48);
 $color2: rgb(58, 57, 58);
 $color3: rgb(68, 64, 68);
@@ -39,7 +39,16 @@ $color4a: lighten($color: $color4, $amount: 15%);
 $color5: rgb(154, 151, 163);
 $color6: rgb(255, 255, 255);
 
-$canvas-bg: $color0;
+// $color0:rgb(32, 30, 32);
+// $color1: rgb(48, 47, 48);
+// $color2: rgb(58, 57, 58);
+// $color3: rgb(68, 64, 68);
+// $color4: rgb(93, 91, 94);
+// $color4a: lighten($color: $color4, $amount: 15%);
+// $color5: rgb(154, 151, 163);
+// $color6: rgb(255, 255, 255);
+
+$canvas-bg: radial-gradient(circle, $color0 34%, rgb(13, 15, 15) 100%); 
 
 $ui-bg: $color1;
 

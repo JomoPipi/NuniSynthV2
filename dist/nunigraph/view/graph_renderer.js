@@ -1,3 +1,4 @@
+import { snapToGrid } from './snap_to_grid.js';
 export var HOVER;
 (function (HOVER) {
     HOVER[HOVER["EDGE"] = 0] = "EDGE";
@@ -5,11 +6,6 @@ export var HOVER;
     HOVER[HOVER["CONNECTION"] = 2] = "CONNECTION";
     HOVER[HOVER["EMPTY"] = 3] = "EMPTY";
 })(HOVER || (HOVER = {}));
-const snapToGridBtn = D('snap-to-grid-btn');
-let snapToGrid = false;
-snapToGridBtn.onclick = () => {
-    snapToGrid = snapToGridBtn.classList.toggle('selected');
-};
 export class NuniGraphRenderer {
     constructor(g, canvas) {
         this.fromNode = null;
@@ -237,7 +233,7 @@ export class NuniGraphRenderer {
         const innerOptions = Object.assign(Object.assign({}, options), { H, W, selectedNodes: selectedNodes || [] });
         ctx.font = '15px Arial';
         ctx.clearRect(0, 0, W, H);
-        if (snapToGrid) {
+        if (snapToGrid.isEnabled) {
             const snapNodes = buttons === 0;
             this.drawGridLines(H, W, snapNodes, selectedNodes);
         }

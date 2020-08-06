@@ -186,6 +186,15 @@ const hasLinearSlider = { gain: false,
     playbackRate: false,
     offset: false
 };
+const isSubdividable = { gain: false,
+    frequency: true,
+    detune: false,
+    Q: false,
+    pan: false,
+    delayTime: true,
+    playbackRate: false,
+    offset: false
+};
 const sliderFactor = { gain: 10 ** -2,
     frequency: 2 ** -7,
     detune: 1.0,

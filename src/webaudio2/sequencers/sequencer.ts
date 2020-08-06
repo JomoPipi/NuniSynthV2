@@ -196,7 +196,7 @@ export class Sequencer extends VolumeNodeContainer {
         {
             const row = E('div', { className: 'flex-center' })
 
-            row.appendChild(rowOptions(this.additionalRowItems(key), key))
+            row.appendChild(rowOptions(this.additionalRowItems(+key), key))
 
             this.HTMLBoxes[key] = {}
             for (let i = 0; i < nSteps; i++) 
@@ -251,7 +251,7 @@ export class Sequencer extends VolumeNodeContainer {
 
         function rowOptions(items : HTMLElement, key : string) {
             const box = E('span')//, { className: 'flat-grid' })
-            box.style.width = '200px'
+            // box.style.width = '200px'
 
             mute_solo_box: {
                 const muteSoloBox = E('span')
@@ -311,7 +311,7 @@ export class Sequencer extends VolumeNodeContainer {
         }
     }
 
-    additionalRowItems(key : string) {
+    additionalRowItems(key : number) {
         // Override this function in a child class.
         return E('span')
     }

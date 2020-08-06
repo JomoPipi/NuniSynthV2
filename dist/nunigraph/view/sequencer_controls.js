@@ -75,23 +75,14 @@ function createTopRowControls(an) {
 function createBottomRowControls(an) {
     const row = E('div', { className: 'flex-center' });
     if (an instanceof BufferSequencer) {
-        const box = E('span');
-        ['-', '+'].forEach((text, i) => {
-            const btn = E('button', { text,
-                className: 'top-bar-btn'
-            });
-            btn.onclick = () => {
-                if (text === '+') {
-                    an.addInput();
-                }
-                else {
-                    an.removeInput();
-                }
-                an.setupGrid();
-            };
-            box.appendChild(btn);
+        const btn = E('button', { text: '+',
+            className: 'top-bar-btn'
         });
-        row.appendChild(box);
+        btn.onclick = () => {
+            an.addInput();
+            an.setupGrid();
+        };
+        row.appendChild(btn);
     }
     const box = E('span', { text: 'phase shift' });
     const phaseShift = createNumberDialComponent(an.phaseShift || 0, (value) => an.phaseShift = value, { dial: { sensitivity: 2 ** -10,

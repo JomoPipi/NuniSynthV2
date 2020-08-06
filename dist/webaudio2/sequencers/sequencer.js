@@ -116,7 +116,7 @@ export class Sequencer extends VolumeNodeContainer {
         const { nSteps, channelData, mutedChannel } = this;
         for (const key in channelData) {
             const row = E('div', { className: 'flex-center' });
-            row.appendChild(rowOptions(this.additionalRowItems(key), key));
+            row.appendChild(rowOptions(this.additionalRowItems(+key), key));
             this.HTMLBoxes[key] = {};
             for (let i = 0; i < nSteps; i++) {
                 const box = E('span');
@@ -162,7 +162,6 @@ export class Sequencer extends VolumeNodeContainer {
         };
         function rowOptions(items, key) {
             const box = E('span');
-            box.style.width = '200px';
             mute_solo_box: {
                 const muteSoloBox = E('span');
                 const mute = E('button', { className: 'top-bar-btn',

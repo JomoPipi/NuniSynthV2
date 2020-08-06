@@ -59,7 +59,7 @@ a {
 
 .main-top-bar {
     -webkit-app-region: drag;
-    background: $color1;
+    background: $color3;
     // linear-gradient($color1,darken($color1, 4%));
     box-sizing: border-box;
 
@@ -83,10 +83,11 @@ a {
 }
 
 .menu-nav {
+    $c: $color3;
 
     margin: 0px;
     height: 100%;
-    background-color: $color1;
+    background-color: $c;
     
     ul {
         padding: 0;
@@ -97,7 +98,7 @@ a {
         
     ul li {
         display:inline-block;
-        background-color: $color1;
+        background-color: $c;
 
 
         /* Change this in order to change the Dropdown symbol */

@@ -12,13 +12,14 @@ import { audioCaptureNodeControls } from './audio_capture_controls.js'
 import { createResizeableGraphEditor } from './resizeable_graph_editor.js'
 import 
     { NuniSourceNode, BufferNode2, Sequencer
-    , AudioBufferCaptureNode, NuniGraphAudioNode 
+    , AudioBufferCaptureNode, NuniGraphAudioNode, MasterClock 
     } from '../../webaudio2/internal.js'
 import 
     { createDraggableNumberInput
     , createToggleButton
     , applyStyle, JsDial
     } from '../../UI_library/internal.js'
+import { createSubdivSelect } from './dialogbox_components.js'
 
 
 
@@ -239,14 +240,12 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
             : param 
             })
 
+        const textBox = E('span', { children: [text] })
+
         const box = E('div', 
             { className: 'params-box'
-            , children: [text]
+            , children: [textBox]
             })
-
-        const mousedownFunc = () => {
-            return node.audioParamValues[param]
-        }
 
         const updateFunc = isGain
             ? (newValue : number) => {
@@ -255,6 +254,10 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
             }
             : (newValue : number) =>
                 node.setValueOfParam(param, newValue)
+
+        const mousedownFunc = () => {
+            return node.audioParamValues[param]
+        }
         
         const settings = 
             { amount: sliderFactor[param]
@@ -263,14 +266,32 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
             , isLinear: hasLinearSlider[param]
             }
 
-        box.appendChild(
+        const numberInput = 
             createDraggableNumberInput(
                 initialValue, 
                 mousedownFunc, 
                 updateFunc,
-                settings))
+                settings)
+
+        box.appendChild(numberInput)
 
         allParams.appendChild(box)
+
+        
+        if (isSubdividable[param]) {
+            const subdiv = { subdiv: 0 }
+            const subdivSelect = createSubdivSelect(subdiv, updateParam)
+
+            textBox.appendChild(subdivSelect)
+
+            function updateParam(value : number) {
+                const newValue = param === 'frequency'
+                    ? value / (60 * 4 / MasterClock.getTempo()) // Frequency
+                    : (60 * 4 / MasterClock.getTempo() / value) // Time Interval
+                numberInput.value = newValue.toString()
+                updateFunc(newValue)
+            }
+        }
     }
     return allParams
 }

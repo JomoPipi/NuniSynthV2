@@ -244,6 +244,17 @@ const hasLinearSlider : { readonly [key in AudioParams] : boolean } =
     , offset:       false
     }
 
+const isSubdividable : { readonly [key in AudioParams] : boolean } = 
+    { gain:         false
+    , frequency:    true
+    , detune:       false
+    , Q:            false
+    , pan:          false
+    , delayTime:    true
+    , playbackRate: false
+    , offset:       false
+    }
+
 const sliderFactor : { readonly [key in AudioParams] : number } = 
     { gain:         10**-2
     , frequency:    2**-7

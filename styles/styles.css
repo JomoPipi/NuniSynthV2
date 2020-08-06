@@ -108,7 +108,7 @@ button {
 
 .info-menu {
   border: 3px solid blue;
-  background-color: #201e20;
+  background-color: #2d2a2d;
   width: 400px;
   height: 400px;
   margin-top: 5%;
@@ -140,7 +140,7 @@ button {
 }
 
 #info-menu-buttons .active-info-button {
-  background-color: #201e20;
+  background-color: #2d2a2d;
   border-right: none;
   outline: none;
 }
@@ -186,7 +186,7 @@ button {
 }
 
 .nunigraph-canvas {
-  background-color: #201e20;
+  background: radial-gradient(circle, #2d2a2d 34%, #0d0f0f 100%);
   height: 100%;
   width: 100%;
   border-radius: 40px;
@@ -195,7 +195,7 @@ button {
 }
 
 .nunigraph-canvas--custom {
-  background-color: #201e20;
+  background: radial-gradient(circle, #2d2a2d 34%, #0d0f0f 100%);
   width: 100%;
 }
 
@@ -433,13 +433,13 @@ code {
 .note-box {
   background: -webkit-gradient(linear, left top, left bottom, from(#9a97a3), to(#302f30));
   background: linear-gradient(#9a97a3, #302f30);
-  border: 2px solid #201e20;
+  border: 2px solid #2d2a2d;
 }
 
 .note-box-halfway {
-  background: -webkit-gradient(linear, left top, left bottom, from(#9a97a3), to(#201e20));
-  background: linear-gradient(#9a97a3, #201e20);
-  border: 2px solid #201e20;
+  background: -webkit-gradient(linear, left top, left bottom, from(#9a97a3), to(#2d2a2d));
+  background: linear-gradient(#9a97a3, #2d2a2d);
+  border: 2px solid #2d2a2d;
 }
 
 .smaller-text {
@@ -486,8 +486,8 @@ code {
 }
 
 ::-webkit-scrollbar-track {
-  background: -webkit-gradient(linear, left top, left bottom, from(#302f30), to(#201e20));
-  background: linear-gradient(#302f30, #201e20);
+  background: -webkit-gradient(linear, left top, left bottom, from(#302f30), to(#2d2a2d));
+  background: linear-gradient(#302f30, #2d2a2d);
   border-radius: 5x;
 }
 
@@ -628,7 +628,7 @@ code {
 }
 
 .lcd-display {
-  background: #201e20;
+  background: #2d2a2d;
   padding: 10px;
   margin: 10px 0px;
   color: #cefcff;
@@ -759,7 +759,7 @@ a {
 }
 
 .top-bar {
-  background: #201e20;
+  background: #2d2a2d;
 }
 
 .the-two-panels {
@@ -777,7 +777,7 @@ a {
 
 .main-top-bar {
   -webkit-app-region: drag;
-  background: #302f30;
+  background: #444044;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
 }
@@ -803,7 +803,7 @@ a {
 .menu-nav {
   margin: 0px;
   height: 100%;
-  background-color: #302f30;
+  background-color: #444044;
   /* Hide Dropdowns by Default */
   /* Display Dropdowns on Hover */
   /* Fisrt Tier Dropdown */
@@ -819,7 +819,7 @@ a {
 
 .menu-nav ul li {
   display: inline-block;
-  background-color: #302f30;
+  background-color: #444044;
   /* Change this in order to change the Dropdown symbol */
 }
 
@@ -1021,7 +1021,7 @@ a {
   position: absolute;
   top: 0;
   left: 0;
-  background-color: #201e20;
+  background-color: #2d2a2d;
   z-index: 5;
   -webkit-transition: opacity 0.5s ease-in-out;
   transition: opacity 0.5s ease-in-out;

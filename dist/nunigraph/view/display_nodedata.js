@@ -2,8 +2,9 @@ import { sequencerControls } from './sequencer_controls.js';
 import { BufferUtils } from '../../buffer_utils/internal.js';
 import { audioCaptureNodeControls } from './audio_capture_controls.js';
 import { createResizeableGraphEditor } from './resizeable_graph_editor.js';
-import { NuniSourceNode, BufferNode2, Sequencer, AudioBufferCaptureNode, NuniGraphAudioNode } from '../../webaudio2/internal.js';
+import { NuniSourceNode, BufferNode2, Sequencer, AudioBufferCaptureNode, NuniGraphAudioNode, MasterClock } from '../../webaudio2/internal.js';
 import { createDraggableNumberInput, createToggleButton, applyStyle, JsDial } from '../../UI_library/internal.js';
+import { createSubdivSelect } from './dialogbox_components.js';
 export function createValuesWindow(node, saveCallback, deleteCallback) {
     const controls = E('div');
     controls.appendChild(showSubtypes(node, saveCallback));
@@ -121,25 +122,39 @@ function exposeAudioParams(node, saveCallback) {
                 ? to_dB(initialValue)
                 : param
         });
+        const textBox = E('span', { children: [text] });
         const box = E('div', { className: 'params-box',
-            children: [text]
+            children: [textBox]
         });
-        const mousedownFunc = () => {
-            return node.audioParamValues[param];
-        };
         const updateFunc = isGain
             ? (newValue) => {
                 text.textContent = to_dB(newValue);
                 node.setValueOfParam(param, newValue);
             }
             : (newValue) => node.setValueOfParam(param, newValue);
+        const mousedownFunc = () => {
+            return node.audioParamValues[param];
+        };
         const settings = { amount: sliderFactor[param],
             min: AudioParamRanges[param][0],
             max: AudioParamRanges[param][1],
             isLinear: hasLinearSlider[param]
         };
-        box.appendChild(createDraggableNumberInput(initialValue, mousedownFunc, updateFunc, settings));
+        const numberInput = createDraggableNumberInput(initialValue, mousedownFunc, updateFunc, settings);
+        box.appendChild(numberInput);
         allParams.appendChild(box);
+        if (isSubdividable[param]) {
+            const subdiv = { subdiv: 0 };
+            const subdivSelect = createSubdivSelect(subdiv, updateParam);
+            textBox.appendChild(subdivSelect);
+            function updateParam(value) {
+                const newValue = param === 'frequency'
+                    ? value / (60 * 4 / MasterClock.getTempo())
+                    : (60 * 4 / MasterClock.getTempo() / value);
+                numberInput.value = newValue.toString();
+                updateFunc(newValue);
+            }
+        }
     }
     return allParams;
 }

@@ -126,28 +126,18 @@ function createBottomRowControls(an : Sequencer) {
     const row = E('div', { className: 'flex-center' })
 
     if (an instanceof BufferSequencer) 
-    { // add/remove-input buttons
-        const box = E('span')
-        ;['-','+'].forEach((text, i) => {
-            const btn = E('button', 
-                { text
-                , className: 'top-bar-btn'
-                })
-                
-            btn.onclick = () => {
-                if (text === '+') 
-                {
-                    an.addInput()
-                } 
-                else 
-                {
-                    an.removeInput()
-                }
-                an.setupGrid()
-            }
-            box.appendChild(btn)
-        })
-        row.appendChild(box)
+    { // add new row
+        const btn = E('button', 
+            { text: '+'
+            , className: 'top-bar-btn'
+            })
+            
+        btn.onclick = () => {
+            an.addInput()
+            an.setupGrid()
+        }
+        
+        row.appendChild(btn)
     }
 
     const box = E('span', { text: 'phase shift' })

@@ -20,12 +20,9 @@ export class BufferSequencer extends Sequencer {
         this.nextId++;
         this.refresh();
     }
-    removeInput() {
-        if (this.nextId === 0)
-            return;
-        const id = --this.nextId;
-        delete this.channelData[id];
-        delete this.stepMatrix[id];
+    removeInput(key) {
+        delete this.channelData[key];
+        delete this.stepMatrix[key];
         this.refresh();
     }
     createSource(id) {
@@ -66,6 +63,13 @@ export class BufferSequencer extends Sequencer {
                 box.appendChild(btn);
             });
             box.appendChild(valueText);
+        }
+        delete_row_select: {
+            const deleteNodeBtn = E('button', { text: '🗑️',
+                className: 'top-bar-btn'
+            });
+            deleteNodeBtn.onclick = () => this.removeInput(key);
+            box.append(deleteNodeBtn);
         }
         return box;
     }

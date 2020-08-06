@@ -7,6 +7,7 @@
 
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { NuniGraph } from '../model/nunigraph.js'
+import { snapToGrid } from './snap_to_grid.js'
 
 export enum HOVER { EDGE, SELECT, CONNECTION, EMPTY }
 
@@ -37,12 +38,6 @@ type ConnectionsCache = {
         connectionType : ConnectionType 
         } 
     }
-
-const snapToGridBtn = D('snap-to-grid-btn')
-let snapToGrid = false
-snapToGridBtn.onclick = () => {
-    snapToGrid = snapToGridBtn.classList.toggle('selected')
-}
 
 export class NuniGraphRenderer {
 
@@ -424,12 +419,12 @@ export class NuniGraphRenderer {
             , selectionStart
             , selectedNodes
             } = options as GraphRenderOptions
-        const innerOptions = { ...options, H, W, selectedNodes: selectedNodes||[] }
+        const innerOptions = { ...options, H, W, selectedNodes: selectedNodes || [] }
 
         ctx.font = '15px Arial'
         ctx.clearRect(0,0,W,H)
         
-        if (snapToGrid) 
+        if (snapToGrid.isEnabled) 
         {
             const snapNodes = buttons === 0
             this.drawGridLines(H, W, snapNodes, selectedNodes)
