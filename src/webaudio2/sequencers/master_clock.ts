@@ -46,7 +46,6 @@ MasterClock.setTempo(120)
 
 D('tempo-input-container').appendChild(tempoComponent)
 
-
 function startScheduling(scheduleNotes : (tempo : number) => void) {
 
     if (!isPaused) scheduleNotes(_tempo)

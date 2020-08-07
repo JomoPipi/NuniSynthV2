@@ -171,26 +171,7 @@ export class NuniGraph {
                 ? destination 
                 : destination[connectionType] 
     }
-
-
-
-
-    private connect_audioNode_to_destination(node1 : NuniGraphNode, destination : Destination) {
-        
-        if (destination instanceof NuniGraphAudioNode || destination instanceof SubgraphSequencer) 
-        {
-            destination.addInput(node1)
-        }
-        else if (destination instanceof NuniAudioParam) 
-        {
-            node1.audioNode.connect(destination.offset)
-        } 
-        else 
-        {
-            node1.audioNode.connect(destination as AudioNode)
-        }
-    }
-
+    
 
 
 
@@ -208,6 +189,25 @@ export class NuniGraph {
 
         const destination = this.prepareDestination(connectionType)(node2.audioNode)
         this.disconnect_audioNode_from_destination(node1, destination)
+    }
+
+
+
+    
+    private connect_audioNode_to_destination(node1 : NuniGraphNode, destination : Destination) {
+        
+        if (destination instanceof NuniGraphAudioNode || destination instanceof SubgraphSequencer) 
+        {
+            destination.addInput(node1)
+        }
+        else if (destination instanceof NuniAudioParam) 
+        {
+            node1.audioNode.connect(destination.offset)
+        } 
+        else 
+        {
+            node1.audioNode.connect(destination as AudioNode)
+        }
     }
 
 
