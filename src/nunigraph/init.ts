@@ -14,7 +14,7 @@ import
     { KB, audioCtx, Sequencer, BufferNode2
     , MasterClock, NuniSourceNode, NuniGraphAudioNode
     } from '../webaudio2/internal.js'
-
+import { snapToGrid } from './view/snap_to_grid.js'
 
     
     
@@ -52,6 +52,8 @@ GraphController.g.nodes[0].setValueOfParam('gain', 0.125)
 
 ActiveControllers.push(GraphController)
 
+snapToGrid.attach(() => ActiveControllers.forEach(c => c.renderer.render()))
+
 let DEBUG = true
 if (DEBUG) 
 {
@@ -60,7 +62,7 @@ if (DEBUG)
 
 Graph_Attachments: {
 
-    // break Graph_Attachments
+    // break Graph_Attachments // <- comment this in for testing
 
     const g = GraphController.g
 

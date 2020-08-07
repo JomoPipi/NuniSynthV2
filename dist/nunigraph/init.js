@@ -4,6 +4,7 @@ import { BufferUtils } from '../buffer_utils/internal.js';
 import { NuniGraphController, ActiveControllers } from './controller/graph_controller.js';
 import { createValuesWindow } from './view/display_nodedata.js';
 import { KB, audioCtx, Sequencer, BufferNode2, MasterClock, NuniSourceNode, NuniGraphAudioNode } from '../webaudio2/internal.js';
+import { snapToGrid } from './view/snap_to_grid.js';
 class Nuni extends NuniGraphController {
     constructor(canvas, volumeNode) {
         const G = new NuniGraph();
@@ -21,6 +22,7 @@ export const GraphController = new Nuni(D('nunigraph-canvas'), audioCtx.volume);
 GraphController.activateEventHandlers();
 GraphController.g.nodes[0].setValueOfParam('gain', 0.125);
 ActiveControllers.push(GraphController);
+snapToGrid.attach(() => ActiveControllers.forEach(c => c.renderer.render()));
 let DEBUG = true;
 if (DEBUG) {
     window.controller = GraphController;
