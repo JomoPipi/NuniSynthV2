@@ -113,7 +113,7 @@ function samplerControls(audioNode) {
     return box;
 }
 function exposeAudioParams(node, saveCallback) {
-    const allParams = E('div');
+    const allParams = E('div', { className: 'audioparams-container' });
     for (const param of AudioNodeParams[node.type]) {
         const initialValue = node.audioParamValues[param];
         const isGain = param === 'gain';
@@ -123,9 +123,7 @@ function exposeAudioParams(node, saveCallback) {
                 : param
         });
         const textBox = E('span', { children: [text] });
-        const box = E('div', { className: 'params-box',
-            children: [textBox]
-        });
+        const box = E('div', { className: 'params-box' });
         const updateFunc = isGain
             ? (newValue) => {
                 text.textContent = to_dB(newValue);
@@ -141,12 +139,12 @@ function exposeAudioParams(node, saveCallback) {
             isLinear: hasLinearSlider[param]
         };
         const numberInput = createDraggableNumberInput(initialValue, mousedownFunc, updateFunc, settings);
-        box.appendChild(numberInput);
+        box.append(numberInput, textBox);
         allParams.appendChild(box);
         if (isSubdividable[param]) {
             const subdiv = { subdiv: 0 };
             const subdivSelect = createSubdivSelect(subdiv, updateParam);
-            textBox.appendChild(subdivSelect);
+            textBox.append(E('br'), subdivSelect);
             function updateParam(value) {
                 const newValue = param === 'frequency'
                     ? value / (60 * 4 / MasterClock.getTempo())

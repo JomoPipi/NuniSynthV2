@@ -60,7 +60,7 @@ export function createDraggableWindow(
         , lineHeight: sizePx
         })
 
-    if (barContent) bar.appendChild(barContent)
+    if (barContent) bar.append(barContent)
 
     bar.appendChild(exitBtn)
 

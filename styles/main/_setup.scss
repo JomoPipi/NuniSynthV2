@@ -263,19 +263,6 @@ button {
     grid-template-columns: 0.5fr 0.25fr 0.25fr 0.25fr 0.5fr;
 }
 
-.params-box {
-    @extend .some-margin;
-    display: grid;
-    grid-template-columns: 39% 61%;
-    box-sizing: border-box;
-}
-// .params-box2 {
-//     @extend .some-margin;
-//     display: grid;
-//     grid-template-columns: 61% 39%;
-//     box-sizing: border-box;
-// }
-
 
 
 

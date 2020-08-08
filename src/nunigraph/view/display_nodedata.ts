@@ -31,8 +31,8 @@ export function createValuesWindow(
     saveCallback : Function,
     deleteCallback : Function) {
 
-    const controls = E('div')
-
+    const controls = E('div')//, { className: 'side-margin' })
+    
     controls.appendChild(showSubtypes(node, saveCallback))
 
     if (NodeTypeWarnings[node.type]) 
@@ -226,26 +226,24 @@ function samplerControls(audioNode : BufferNode2) {
 
 
 function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node {
-    const allParams = E('div')
+    const allParams = E('div', { className: 'audioparams-container' })
     for (const param of AudioNodeParams[node.type]) 
     {
         const initialValue = node.audioParamValues[param]
         const isGain = param === 'gain' // TODO: get rid of hardcoding
-        const to_dB = (n : number) => 
+        const to_dB = (n : number) => // ''
             `gain (${volumeTodB(Math.abs(n)).toFixed(2)} dB)`
 
         const text = E('span', 
             { text: isGain 
-            ? to_dB(initialValue)
-            : param 
+                ? to_dB(initialValue)
+                : param 
             })
 
         const textBox = E('span', { children: [text] })
 
-        const box = E('div', 
-            { className: 'params-box'
-            , children: [textBox]
-            })
+        // const box = E('div', { className: 'flat-grid some-margin' })
+        const box = E('div', { className: 'params-box' })
 
         const updateFunc = isGain
             ? (newValue : number) => {
@@ -273,7 +271,7 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
                 updateFunc,
                 settings)
 
-        box.appendChild(numberInput)
+        box.append(numberInput, textBox)
 
         allParams.appendChild(box)
 
@@ -282,7 +280,7 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
             const subdiv = { subdiv: 0 }
             const subdivSelect = createSubdivSelect(subdiv, updateParam)
 
-            textBox.appendChild(subdivSelect)
+            textBox.append(E('br'), subdivSelect)
 
             function updateParam(value : number) {
                 const newValue = param === 'frequency'

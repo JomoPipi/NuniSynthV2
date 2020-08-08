@@ -30,7 +30,7 @@ export function createDraggableWindow({ text, clickCallback, closeCallback, colo
         lineHeight: sizePx
     });
     if (barContent)
-        bar.appendChild(barContent);
+        bar.append(barContent);
     bar.appendChild(exitBtn);
     const closeBox = () => closeCallback(box);
     exitBtn.onclick = closeBox;

@@ -235,15 +235,6 @@ button {
       grid-template-columns: 0.5fr 0.25fr 0.25fr 0.25fr 0.5fr;
 }
 
-.params-box {
-  display: -ms-grid;
-  display: grid;
-  -ms-grid-columns: 39% 61%;
-      grid-template-columns: 39% 61%;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-}
-
 #buffer-canvas {
   width: 100%;
   border: 1px solid #302f30;
@@ -290,7 +281,7 @@ code {
   display: none;
 }
 
-.some-margin, .buffer-row, .params-box {
+.some-margin, .buffer-row {
   margin: 10px;
 }
 
@@ -605,14 +596,38 @@ code {
   pointer-events: auto;
 }
 
+.audioparams-container {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 5px 10px;
+}
+
+.params-box {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-rows: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+  width: 120px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  -ms-grid-row-align: center;
+      align-self: center;
+  -ms-grid-column-align: center;
+      justify-self: center;
+}
+
 .number-grab {
   font: 1em Roboto;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.1em;
   background: -webkit-gradient(linear, left top, left bottom, from(#3a393a), to(#111));
   background: linear-gradient(#3a393a, #111);
   color: #9a97a3;
-  border: 1px solid #444044;
   padding: 10px;
+  width: 120px;
+  width: inherit;
   cursor: -webkit-grab;
   cursor: grab;
 }
@@ -620,6 +635,39 @@ code {
 .number-grab:active {
   cursor: -webkit-grabbing;
   cursor: grabbing;
+  background: linear-gradient(-45deg, #2b0a00, #300012, #002838, #00362a);
+  background-size: 400% 400%;
+  -webkit-animation: gradient 5s ease infinite;
+          animation: gradient 5s ease infinite;
+}
+
+.number-grab:hover {
+  background: -webkit-gradient(linear, left top, left bottom, from(#444044), to(#222));
+  background: linear-gradient(#444044, #222);
+}
+
+@-webkit-keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .kb-button {

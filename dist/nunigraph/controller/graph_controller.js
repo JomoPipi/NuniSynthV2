@@ -139,7 +139,9 @@ export class NuniGraphController {
         };
         const titleEditor = () => {
             const input = E('input', { className: 'title-editor',
-                props: { value: node.title || '' }
+                props: { value: node.title || '',
+                    size: 10
+                }
             });
             input.oninput = () => {
                 node.title = input.value;
@@ -153,7 +155,7 @@ export class NuniGraphController {
             color: node.id === 0
                 ? MasterGainColor
                 : NodeTypeColors[node.type],
-            barContent: node.INPUT_NODE_ID || node.id === 0
+            barContent: node.type !== NodeTypes.CUSTOM
                 ? undefined
                 : titleEditor()
         });

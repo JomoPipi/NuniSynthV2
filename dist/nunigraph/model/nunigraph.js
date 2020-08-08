@@ -74,6 +74,16 @@ export class NuniGraph {
             ? destination
             : destination[connectionType];
     }
+    disconnect(node1, node2, connectionType) {
+        const connections = this.oneWayConnections[node1.id];
+        if (!connections)
+            throw 'check what happened here';
+        const connectionIndex = connections.findIndex(data => data.id === node2.id &&
+            data.connectionType === connectionType);
+        connections.splice(connectionIndex, 1);
+        const destination = this.prepareDestination(connectionType)(node2.audioNode);
+        this.disconnect_audioNode_from_destination(node1, destination);
+    }
     connect_audioNode_to_destination(node1, destination) {
         if (destination instanceof NuniGraphAudioNode || destination instanceof SubgraphSequencer) {
             destination.addInput(node1);
@@ -84,16 +94,6 @@ export class NuniGraph {
         else {
             node1.audioNode.connect(destination);
         }
-    }
-    disconnect(node1, node2, connectionType) {
-        const connections = this.oneWayConnections[node1.id];
-        if (!connections)
-            throw 'check what happened here';
-        const connectionIndex = connections.findIndex(data => data.id === node2.id &&
-            data.connectionType === connectionType);
-        connections.splice(connectionIndex, 1);
-        const destination = this.prepareDestination(connectionType)(node2.audioNode);
-        this.disconnect_audioNode_from_destination(node1, destination);
     }
     disconnect_audioNode_from_destination(node1, destination) {
         if (destination instanceof SubgraphSequencer || destination instanceof NuniGraphAudioNode) {
