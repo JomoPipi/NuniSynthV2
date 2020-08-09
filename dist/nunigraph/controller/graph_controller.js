@@ -155,7 +155,7 @@ export class NuniGraphController {
             color: node.id === 0
                 ? MasterGainColor
                 : NodeTypeColors[node.type],
-            barContent: node.type !== NodeTypes.CUSTOM
+            barContent: node.INPUT_NODE_ID || node.id === 0
                 ? undefined
                 : titleEditor()
         });

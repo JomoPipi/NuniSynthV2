@@ -54,7 +54,7 @@ export class BufferSequencer extends Sequencer {
         this.refresh()
     }
 
-    createSource(id : string) {
+    createSource(id : number) {
 
         const { bufferKey } = this.channelData[id]
         const src = this.ctx.createBufferSource()
@@ -68,7 +68,7 @@ export class BufferSequencer extends Sequencer {
         return src
     }
 
-    playStepAtTime(id : string, time : number) { // }, duration : number) {
+    playStepAtTime(id : number, time : number) { // }, duration : number) {
 
         const duration = this.tick
 

@@ -4,22 +4,23 @@ import { applyStyle, JsDial } from '../../UI_library/internal.js';
 export class Sequencer extends VolumeNodeContainer {
     constructor(ctx) {
         super(ctx);
-        this.ctx = ctx;
         this.nSteps = 8;
+        this.subdiv = 8;
         this.currentStep = 0;
         this.startTime = 0;
         this.noteTime = 0;
-        this.subdiv = 8;
         this.phaseShift = 0;
+        this.adsrIndex = 0;
+        this.soloChannel = -1;
+        this.ctx = ctx;
+        this.tick = (60 * 4 / MasterClock.getTempo()) / this.subdiv;
+        this.HTMLGrid = createBeatGrid();
+        this.isInSync = true;
+        this.isPlaying = true;
+        this.windowIsOpen = false;
         this.stepMatrix = {};
         this.mutedChannel = {};
-        this.isPlaying = true;
-        this.tick = (60 * 4 / MasterClock.getTempo()) / this.subdiv;
-        this.windowIsOpen = false;
-        this.HTMLGrid = createBeatGrid();
         this.HTMLBoxes = {};
-        this.isInSync = true;
-        this.adsrIndex = 0;
         this.channelData = {};
     }
     updateTempo(tempo) {
@@ -79,19 +80,27 @@ export class Sequencer extends VolumeNodeContainer {
         this.noteTime += this.tick;
     }
     playStepsAtTime(time, updateBox) {
-        var _a, _b;
         const boxIsVisible = this.HTMLGrid.offsetParent != null;
-        for (const key in this.channelData) {
+        const playRow = (key) => {
+            var _a, _b;
             const stepIsActive = this.stepMatrix[key][this.currentStep];
-            if (!this.mutedChannel[key] && (!this.soloChannel || this.soloChannel === key)) {
+            if (!this.mutedChannel[key]) {
                 if (boxIsVisible && updateBox) {
                     (_a = this.HTMLBoxes[key][this.currentStep]) === null || _a === void 0 ? void 0 : _a.classList.add('highlighted');
                     const lastStep = (this.currentStep + this.nSteps - 1) % this.nSteps;
                     (_b = this.HTMLBoxes[key][lastStep]) === null || _b === void 0 ? void 0 : _b.classList.remove('highlighted');
                 }
-                if (stepIsActive && (this.soloChannel == undefined || this.soloChannel === key)) {
+                if (stepIsActive) {
                     this.playStepAtTime(key, time + this.phaseShift);
                 }
+            }
+        };
+        if (this.soloChannel >= 0) {
+            playRow(this.soloChannel);
+        }
+        else {
+            for (const key in this.channelData) {
+                playRow(+key);
             }
         }
     }
@@ -114,6 +123,7 @@ export class Sequencer extends VolumeNodeContainer {
         this.HTMLBoxes = {};
         const grid = this.HTMLGrid;
         const { nSteps, channelData, mutedChannel } = this;
+        const soloButtons = [];
         for (const key in channelData) {
             const row = E('div', { className: 'flex-center' });
             row.appendChild(rowOptions(this.additionalRowItems(+key), key));
@@ -147,16 +157,21 @@ export class Sequencer extends VolumeNodeContainer {
                 this.stepMatrix[key][i] = turnOn;
             }
             else if (box.dataset.sequencerRowKey) {
-                const key = box.dataset.sequencerRowKey;
+                const key = +box.dataset.sequencerRowKey;
                 const mutesolo = box.innerText;
                 const activate = box.classList.toggle('selected');
                 if (mutesolo === 'M') {
                     this.mutedChannel[key] = activate;
                 }
                 else if (mutesolo === 'S') {
+                    for (const button of soloButtons) {
+                        if (button !== e.target) {
+                            button.classList.remove('selected');
+                        }
+                    }
                     this.soloChannel = activate
                         ? key
-                        : undefined;
+                        : -1;
                 }
             }
         };
@@ -167,9 +182,14 @@ export class Sequencer extends VolumeNodeContainer {
                 const mute = E('button', { className: 'top-bar-btn',
                     text: 'M'
                 });
-                mute.dataset.sequencerRowKey = key;
+                const solo = E('button', { className: 'top-bar-btn',
+                    text: 'S'
+                });
+                mute.dataset.sequencerRowKey =
+                    solo.dataset.sequencerRowKey = key;
                 mute.classList.toggle('selected', mutedChannel[key] === true);
-                muteSoloBox.append(items, mute);
+                muteSoloBox.append(items, mute, solo);
+                soloButtons.push(solo);
                 box.appendChild(muteSoloBox);
             }
             add_volume_knob: {

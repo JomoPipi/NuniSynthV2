@@ -19,44 +19,38 @@ export class Sequencer extends VolumeNodeContainer {
      * This creates an N-step sequencer out of
      * whatever inputs are connected to it.
      */
+    nSteps = 8
+    subdiv = 8
+    currentStep = 0
+    startTime = 0
+    noteTime = 0
+    phaseShift = 0
+    adsrIndex = 0
+    soloChannel = -1
+    
     readonly ctx : AudioContext
-    nSteps : number
-    currentStep : number
-    startTime : number
-    noteTime : number
-    subdiv : number
-    phaseShift : number
+    protected tick : number
+    HTMLGrid : HTMLElement
+    isInSync : boolean
+    isPlaying : boolean
+    windowIsOpen : boolean
     stepMatrix : Indexable<boolean[]>
     mutedChannel : Indexable<boolean>
-    soloChannel? : string
-    isPlaying : boolean
-    protected tick : number
-    windowIsOpen : boolean
-    HTMLGrid : HTMLElement
     protected HTMLBoxes : Indexable<Indexable<HTMLElement>>
-    isInSync : boolean
-    adsrIndex : number
     channelData : Indexable<ChannelData>
     // controls : SequencerControls
 
     constructor(ctx : AudioContext) {
         super(ctx)
         this.ctx = ctx
-        this.nSteps = 8
-        this.currentStep = 0
-        this.startTime = 0
-        this.noteTime = 0
-        this.subdiv = 8
-        this.phaseShift = 0
+        this.tick = (60*4 / MasterClock.getTempo()) / this.subdiv
+        this.HTMLGrid = createBeatGrid()
+        this.isInSync = true
+        this.isPlaying = true
+        this.windowIsOpen = false
         this.stepMatrix = {}
         this.mutedChannel = {}
-        this.isPlaying = true
-        this.tick = (60*4 / MasterClock.getTempo()) / this.subdiv
-        this.windowIsOpen = false
-        this.HTMLGrid = createBeatGrid()
         this.HTMLBoxes = {}
-        this.isInSync = true
-        this.adsrIndex = 0
         this.channelData = {}
         // this.controls = new SequencerControls(this)
     }
@@ -135,10 +129,9 @@ export class Sequencer extends VolumeNodeContainer {
     playStepsAtTime(time : number, updateBox : boolean) {
         const boxIsVisible = this.HTMLGrid.offsetParent != null
 
-        for (const key in this.channelData) 
-        {
+        const playRow = (key : number) => {
             const stepIsActive = this.stepMatrix[key][this.currentStep]
-            if (!this.mutedChannel[key] && (!this.soloChannel || this.soloChannel === key)) 
+            if (!this.mutedChannel[key]) 
             {
                 if (boxIsVisible && updateBox) 
                 {
@@ -153,15 +146,26 @@ export class Sequencer extends VolumeNodeContainer {
                 //     this.controls.highlight(key,this.currentStep)
                 // }
 
-                if (stepIsActive && (this.soloChannel == undefined || this.soloChannel === key)) 
+                if (stepIsActive) 
                 {
                     this.playStepAtTime(key, time + this.phaseShift)
                 }
             }
         }
+
+        if (this.soloChannel >= 0) 
+        {
+            playRow(this.soloChannel)
+        }
+        else {
+            for (const key in this.channelData)
+            {
+                playRow(+key)
+            }
+        }
     }
 
-    playStepAtTime(key : string, time : number) { // , duration : number) {
+    playStepAtTime(key : number, time : number) { // , duration : number) {
         throw 'Implement this in a concrete class.'
     }
 
@@ -180,10 +184,6 @@ export class Sequencer extends VolumeNodeContainer {
     }
 
     refresh() {
-        // for (const key in this.channelData) 
-        // {
-        //     this.channelData[key].adsr?.connect(this.volumeNode)
-        // }
         this.setupGrid()
     }
 
@@ -192,6 +192,8 @@ export class Sequencer extends VolumeNodeContainer {
         this.HTMLBoxes = {}
         const grid = this.HTMLGrid
         const { nSteps, channelData, mutedChannel } = this
+        const soloButtons : HTMLButtonElement[] = []
+
         for (const key in channelData) 
         {
             const row = E('div', { className: 'flex-center' })
@@ -217,7 +219,6 @@ export class Sequencer extends VolumeNodeContainer {
                     })
                 box.classList.toggle('selected', this.stepMatrix[key][i])
                 box.dataset.sequencerKey = `${key}:${i}`
-                // row.style.border = '1px solid red'
                 row.style.height = '35px' // 50 + 'px'
                 row.appendChild(box)
             }
@@ -233,7 +234,7 @@ export class Sequencer extends VolumeNodeContainer {
             }
             else if (box.dataset.sequencerRowKey) 
             {
-                const key = box.dataset.sequencerRowKey
+                const key = +box.dataset.sequencerRowKey
                 const mutesolo = box.innerText
                 const activate = box.classList.toggle('selected')
                 if (mutesolo === 'M') 
@@ -242,9 +243,17 @@ export class Sequencer extends VolumeNodeContainer {
                 }
                 else if (mutesolo === 'S') 
                 {
+                    // Deselect the other solo buttons
+                    for (const button of soloButtons) 
+                    {
+                        if (button !== e.target) 
+                        {
+                            button.classList.remove('selected')
+                        }
+                    }
                     this.soloChannel = activate
                         ? key
-                        : undefined
+                        : -1
                 }
             }
         }
@@ -259,16 +268,17 @@ export class Sequencer extends VolumeNodeContainer {
                     { className: 'top-bar-btn'
                     , text: 'M'
                     })
-                // const solo = E('button', 
-                //     { className: 'top-bar-btn'
-                //     , text: 'S'
-                //     })
+                const solo = E('button', 
+                    { className: 'top-bar-btn'
+                    , text: 'S'
+                    })
                     
                 // optionsBtn.innerText = '⚙️'
-                mute.dataset.sequencerRowKey = key
-                // solo.dataset.sequencerRowKey = key
+                mute.dataset.sequencerRowKey =
+                solo.dataset.sequencerRowKey = key
                 mute.classList.toggle('selected', mutedChannel[key] === true)
-                muteSoloBox.append(items, mute)//, solo)
+                muteSoloBox.append(items, mute, solo)
+                soloButtons.push(solo)
 
                 box.appendChild(muteSoloBox)
             }

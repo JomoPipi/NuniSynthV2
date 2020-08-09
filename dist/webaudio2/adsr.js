@@ -1,5 +1,15 @@
 import { JsDial, createRadioButtonGroup } from "../UI_library/internal.js";
 const releaseTimeConstant = 10;
+const waveArray = new Float32Array(9);
+waveArray[0] = 0.5;
+waveArray[1] = 1;
+waveArray[2] = 0.5;
+waveArray[3] = 0;
+waveArray[4] = 0.5;
+waveArray[5] = 6;
+waveArray[6] = 0.5;
+waveArray[7] = 0;
+waveArray[8] = 0.5;
 const N_ADSRs = 4;
 const defaultADSR = () => ({ attack: 0.010416984558105469,
     decay: 0.17708349227905273,

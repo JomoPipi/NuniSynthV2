@@ -625,6 +625,9 @@ code {
   background: -webkit-gradient(linear, left top, left bottom, from(#3a393a), to(#111));
   background: linear-gradient(#3a393a, #111);
   color: #9a97a3;
+  border: 1px solid #2d2a2d;
+  border-right-color: #5d5b5e;
+  border-bottom-color: #5d5b5e;
   padding: 10px;
   width: 120px;
   width: inherit;

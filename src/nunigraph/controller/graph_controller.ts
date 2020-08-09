@@ -307,8 +307,8 @@ export class NuniGraphController {
                 , color: node.id === 0 
                     ? MasterGainColor 
                     : NodeTypeColors[node.type]
-                // , barContent: node.INPUT_NODE_ID || node.id === 0 // Allow titles for all (except certain) nodes
-                , barContent: node.type !== NodeTypes.CUSTOM // Allow titles only for modules
+                , barContent: node.INPUT_NODE_ID || node.id === 0 // Allow titles for all (except certain) nodes
+                // , barContent: node.type !== NodeTypes.CUSTOM // Allow titles only for modules
                     ? undefined
                     : titleEditor()
                 })

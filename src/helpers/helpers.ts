@@ -31,6 +31,7 @@ type AllElements = {
     input  : HTMLInputElement
     select : HTMLSelectElement
     canvas : HTMLCanvasElement
+    button : HTMLButtonElement
 }
 
 type CreatedElement<T extends string> = 

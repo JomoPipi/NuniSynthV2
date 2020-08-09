@@ -117,7 +117,9 @@ $number-grab-width: 120px;
     letter-spacing: 0.1em;
     background: linear-gradient($color2, #111);  
     color: $color5;
-    // border: 1px solid $color3;
+    border: 1px solid $color0;
+    border-right-color: $color4;
+    border-bottom-color: $color4;
     padding: 10px;
     width: $number-grab-width;
     width: inherit;
@@ -131,6 +133,7 @@ $number-grab-width: 120px;
         background-size: 400% 400%;
         animation: gradient 5s ease infinite;
     }
+    
     &:hover {
         background: linear-gradient($color3, #222);  
     }
