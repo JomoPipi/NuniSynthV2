@@ -47,7 +47,7 @@ export class SubgraphSequencer extends Sequencer {
         this.refresh()
     }
 
-    playStepAtTime(id : string, time : number) {  
+    playStepAtTime(id : number, time : number) {  
 
         const { volume } = this.channelData[id]
         const adsr = this.channelEnvelopes[id]
