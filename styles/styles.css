@@ -194,7 +194,7 @@ button {
           box-shadow: 0 0 5px 10px #302f30;
 }
 
-.nunigraph-canvas--custom {
+.nunigraph-canvas--module {
   background: radial-gradient(circle, #2d2a2d 34%, #0d0f0f 100%);
   width: 100%;
 }
@@ -437,6 +437,145 @@ code {
   font-size: .75em;
 }
 
+.shadow-knob {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  margin: 2px;
+  border-radius: 100%;
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.7))), url("images/shadow-knob.png");
+  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7)), url("images/shadow-knob.png");
+  background-size: 100% 100%;
+  pointer-events: none;
+}
+
+.shadow-knob2 {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  margin: 2px;
+  border-radius: 100%;
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.7))), url("images/shadow-knob2.jfif");
+  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7)), url("images/shadow-knob2.jfif");
+  background-size: 100% 100%;
+  pointer-events: none;
+}
+
+.js-dial {
+  cursor: pointer;
+  position: absolute;
+  display: inline-block;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  border: 2px solid #838185;
+  background-image: url("images/knob.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  opacity: .4;
+  pointer-events: auto;
+}
+
+.draggable-window-bar {
+  height: 25px;
+  width: 100%;
+  cursor: move;
+  padding-left: 5px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.draggable-window-bar .exit-button {
+  cursor: pointer;
+  border: 0.2px solid #444;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  background-color: inherit;
+  color: inherit;
+  height: 25px;
+  width: 25px;
+  float: right;
+  text-Align: center;
+  line-height: 25px;
+}
+
+.draggable-window-bar .exit-button:hover {
+  background-color: rgba(255, 0, 0, 0.5);
+}
+
+.number-dial-input::-webkit-outer-spin-button,
+.number-dial-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.number-dial-input {
+  background-color: #302f30;
+  width: 60px;
+  color: #9a97a3;
+  display: block;
+}
+
+.number-dial-component {
+  display: inline-block;
+  text-align: start;
+}
+
+.number-grab {
+  font: 1em Roboto;
+  letter-spacing: 0.1em;
+  background: -webkit-gradient(linear, left top, left bottom, from(#3a393a), to(#111));
+  background: linear-gradient(#3a393a, #111);
+  color: #9a97a3;
+  border: 1px solid #2d2a2d;
+  border-right-color: #5d5b5e;
+  border-bottom-color: #5d5b5e;
+  padding: 10px;
+  width: inherit;
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+
+.number-grab:active {
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+  background: linear-gradient(-45deg, #2b0a00, #300012, #002838, #00362a);
+  background-size: 400% 400%;
+  -webkit-animation: gradient 5s ease infinite;
+          animation: gradient 5s ease infinite;
+}
+
+.number-grab:hover {
+  background: -webkit-gradient(linear, left top, left bottom, from(#444044), to(#222));
+  background: linear-gradient(#444044, #222);
+}
+
+@-webkit-keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .apply-btn {
   margin: 5px;
   padding: 0px 5px;
@@ -500,24 +639,6 @@ code {
   background-color: #444;
 }
 
-.number-dial-input::-webkit-outer-spin-button,
-.number-dial-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.number-dial-input {
-  background-color: #302f30;
-  width: 60px;
-  color: #9a97a3;
-  display: block;
-}
-
-.number-dial-component {
-  display: inline-block;
-  text-align: start;
-}
-
 .title-editor {
   background-color: transparent;
   color: inherit;
@@ -555,47 +676,6 @@ code {
   background-color: #f00;
 }
 
-.shadow-knob {
-  display: inline-block;
-  width: 40px;
-  height: 40px;
-  margin: 2px;
-  border-radius: 100%;
-  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.7))), url("images/shadow-knob.png");
-  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7)), url("images/shadow-knob.png");
-  background-size: 100% 100%;
-  pointer-events: none;
-}
-
-.shadow-knob2 {
-  display: inline-block;
-  width: 40px;
-  height: 40px;
-  margin: 2px;
-  border-radius: 100%;
-  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.7))), url("images/shadow-knob2.jfif");
-  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7)), url("images/shadow-knob2.jfif");
-  background-size: 100% 100%;
-  pointer-events: none;
-}
-
-.js-dial {
-  cursor: pointer;
-  position: absolute;
-  display: inline-block;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  width: 40px;
-  height: 40px;
-  border-radius: 100%;
-  border: 2px solid #838185;
-  background-image: url("images/knob.png");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  opacity: .4;
-  pointer-events: auto;
-}
-
 .audioparams-container {
   display: -ms-grid;
   display: grid;
@@ -617,60 +697,6 @@ code {
       align-self: center;
   -ms-grid-column-align: center;
       justify-self: center;
-}
-
-.number-grab {
-  font: 1em Roboto;
-  letter-spacing: 0.1em;
-  background: -webkit-gradient(linear, left top, left bottom, from(#3a393a), to(#111));
-  background: linear-gradient(#3a393a, #111);
-  color: #9a97a3;
-  border: 1px solid #2d2a2d;
-  border-right-color: #5d5b5e;
-  border-bottom-color: #5d5b5e;
-  padding: 10px;
-  width: 120px;
-  width: inherit;
-  cursor: -webkit-grab;
-  cursor: grab;
-}
-
-.number-grab:active {
-  cursor: -webkit-grabbing;
-  cursor: grabbing;
-  background: linear-gradient(-45deg, #2b0a00, #300012, #002838, #00362a);
-  background-size: 400% 400%;
-  -webkit-animation: gradient 5s ease infinite;
-          animation: gradient 5s ease infinite;
-}
-
-.number-grab:hover {
-  background: -webkit-gradient(linear, left top, left bottom, from(#444044), to(#222));
-  background: linear-gradient(#444044, #222);
-}
-
-@-webkit-keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
 }
 
 .kb-button {
@@ -837,7 +863,7 @@ a {
   -webkit-app-region: no-drag;
 }
 
-.no-drag {
+.no-drag, .menu-nav ul li {
   -webkit-app-region: no-drag;
 }
 

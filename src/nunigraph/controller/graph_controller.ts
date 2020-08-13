@@ -46,7 +46,7 @@ export class NuniGraphController {
     private createValuesWindow : CreateValuesWindow
     // private copiedNodes? : string
 
-    // we need this variable in order to be able to tell if
+    // We need this variable in order to be able to tell if
     // we should toggle the dialog box or not.
     private mouseHasMovedSinceLastMouseDown : boolean
 
@@ -252,7 +252,7 @@ export class NuniGraphController {
 
 
 
-        // CUSTOM NODE STUFF - make it an active controller
+        // MODULE NODE STUFF - make it an active controller
         if (node.audioNode instanceof NuniGraphAudioNode) 
         {
             const controller = node.audioNode.controller
@@ -267,7 +267,7 @@ export class NuniGraphController {
         const clickCallback = (box : HTMLElement) => {
             moveTheWindowToTheTop(box)
 
-            if (node.type !== NodeTypes.CUSTOM) 
+            if (node.type !== NodeTypes.MODULE) 
             {
                 this.selectNode(node)
             }
@@ -308,7 +308,7 @@ export class NuniGraphController {
                     ? MasterGainColor 
                     : NodeTypeColors[node.type]
                 , barContent: node.INPUT_NODE_ID || node.id === 0 // Allow titles for all (except certain) nodes
-                // , barContent: node.type !== NodeTypes.CUSTOM // Allow titles only for modules
+                // , barContent: node.type !== NodeTypes.MODULE // Allow titles only for modules
                     ? undefined
                     : titleEditor()
                 })

@@ -125,7 +125,7 @@ export class NuniGraphController {
         }
         const clickCallback = (box) => {
             moveTheWindowToTheTop(box);
-            if (node.type !== NodeTypes.CUSTOM) {
+            if (node.type !== NodeTypes.MODULE) {
                 this.selectNode(node);
             }
             this.renderer.render({ selectedNodes: [node] });

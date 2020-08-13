@@ -3,7 +3,7 @@ import { BufferUtils } from '../../buffer_utils/internal.js';
 import { audioCaptureNodeControls } from './audio_capture_controls.js';
 import { createResizeableGraphEditor } from './resizeable_graph_editor.js';
 import { NuniSourceNode, BufferNode2, Sequencer, AudioBufferCaptureNode, NuniGraphAudioNode, MasterClock } from '../../webaudio2/internal.js';
-import { createDraggableNumberInput, createToggleButton, applyStyle, JsDial } from '../../UI_library/internal.js';
+import { createDraggableNumberInput, createToggleButton, JsDial } from '../../UI_library/internal.js';
 import { createSubdivSelect } from './dialogbox_components.js';
 export function createValuesWindow(node, saveCallback, deleteCallback) {
     const controls = E('div');
@@ -57,9 +57,6 @@ function gainControls(node) {
     dial.sensitivity = 2 ** -9;
     dial.render();
     const valueText = E('span', { text: `${volumeTodB(value).toFixed(1)}dB` });
-    applyStyle(valueText, { display: 'inline-block',
-        width: '70px'
-    });
     dial.attach((v) => {
         const value = v ** 4.0;
         node.setValueOfParam('gain', value);

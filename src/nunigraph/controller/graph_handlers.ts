@@ -100,7 +100,7 @@ export function modularizeGraph() {
         }
     }
 
-    const node = g.createNewNode(NodeTypes.CUSTOM, 
+    const node = g.createNewNode(NodeTypes.MODULE, 
         { x: 0.5
         , y: 0.5
         , audioParamValues: {}

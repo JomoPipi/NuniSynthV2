@@ -1,0 +1,148 @@
+
+
+
+
+
+
+
+.shadow-knob {
+    display: inline-block;
+
+    width: 40px;
+    height: 40px;
+    margin: 2px;
+
+    border-radius: 100%;
+    background: 
+        linear-gradient(
+            rgba(0, 0, 0, 0),
+            rgba(0, 0, 0, 0.7)
+        ),
+        url('images/shadow-knob.png');
+    background-size: 100% 100%;
+    pointer-events: none;
+}
+.shadow-knob2 {
+    display: inline-block;
+
+    width: 40px;
+    height: 40px;
+    margin: 2px;
+
+    border-radius: 100%;
+    background: 
+        linear-gradient(
+            rgba(0, 0, 0, 0),
+            rgba(0, 0, 0, 0.7)
+        ),
+        url('images/shadow-knob2.jfif');
+    background-size: 100% 100%;
+    pointer-events: none;
+}
+.js-dial {
+    cursor: pointer;
+    position: absolute;
+    display: inline-block;
+    box-sizing: border-box;
+
+    width: 40px;
+    height: 40px;
+
+    border-radius: 100%;
+
+    border: 2px solid $color4a;
+    background-image: url('images/knob.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    opacity: .4;
+    pointer-events: auto;
+}
+
+
+
+
+.draggable-window-bar {
+    $sizePx: 25px;
+
+    height: $sizePx;
+    width: 100%;
+    cursor: move;
+    padding-left: 5px;
+    box-sizing: border-box;
+
+    .exit-button {
+        cursor: pointer;
+        border: 0.2px solid #444;
+        box-sizing: border-box;
+        background-color: inherit;
+        color: inherit;
+        height: $sizePx;
+        width: $sizePx;
+        float: right;
+        text-Align: center;
+        line-height: $sizePx;
+
+        &:hover {
+            background-color: rgba(255,0,0,0.5);
+        }
+    }
+}
+
+
+
+
+.number-dial-input::-webkit-outer-spin-button,
+.number-dial-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.number-dial-input {
+    background-color: $color1;
+    width: 60px;
+    color: $color5; 
+    display: block;
+}
+.number-dial-component {
+    display: inline-block;
+    text-align: start;
+}
+
+
+
+
+.number-grab {
+    font: 1em Roboto;
+    letter-spacing: 0.1em;
+    background: linear-gradient($color2, #111);  
+    color: $color5;
+    border: 1px solid $color0;
+    border-right-color: $color4;
+    border-bottom-color: $color4;
+    padding: 10px;
+    width: inherit;
+    cursor: grab;
+    
+    &:active {
+        cursor: grabbing;
+
+        background:
+            linear-gradient(-45deg, #2b0a00, #300012, #002838, #00362a);
+        background-size: 400% 400%;
+        animation: gradient 5s ease infinite;
+    }
+    
+    &:hover {
+        background: linear-gradient($color3, #222);  
+    }
+}
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}

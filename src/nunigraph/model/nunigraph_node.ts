@@ -24,7 +24,7 @@ type AudioNodeMap = {
     [NodeTypes.B_SEQ]:  BufferSequencer
     [NodeTypes.CSN]:    ConstantSourceNode
     [NodeTypes.RECORD]: AudioBufferCaptureNode
-    [NodeTypes.CUSTOM]: NuniGraphAudioNode
+    [NodeTypes.MODULE]: NuniGraphAudioNode
 }
 
 // NON GENERIC:

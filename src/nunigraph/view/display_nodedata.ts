@@ -17,7 +17,7 @@ import
 import 
     { createDraggableNumberInput
     , createToggleButton
-    , applyStyle, JsDial
+    , JsDial
     } from '../../UI_library/internal.js'
 import { createSubdivSelect } from './dialogbox_components.js'
 
@@ -124,11 +124,6 @@ function gainControls(node : NuniGraphNode) {
 
     const valueText = E('span', 
         { text: `${volumeTodB(value).toFixed(1)}dB` })
-
-        applyStyle(valueText, 
-            { display: 'inline-block'
-            , width: '70px'
-            })
     
     dial.attach((v : number) => {
         const value = v ** 4.0

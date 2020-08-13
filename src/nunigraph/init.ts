@@ -79,6 +79,10 @@ Graph_Attachments: {
             }
         }
     }
+    if (DEBUG) 
+    {
+        (<any>window).getNodes = () => [...yeildNodes(g)]
+    }
     
     KB.attachToGraph(function*() {
         for (const an of yeildNodes(g)) 

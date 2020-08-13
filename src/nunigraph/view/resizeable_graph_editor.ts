@@ -6,7 +6,6 @@
 
 
 import { NuniGraphAudioNode } from "../../webaudio2/internal.js"
-import { applyStyle } from "../../UI_library/internal.js"
 
 export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
     const box = E('div')
@@ -17,9 +16,8 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
     const bottomRow = E('div', { className: 'full' })
     const dragCorner = E('span', { className: 'corner-drag-box' })
         
-    applyStyle(topRow, 
-        { height: '10px' // same as .corner-drag-box
-        })
+        // same as corner-drag-box
+        topRow.style.height = '10px' // TODO: clean up
     
 
     bottomRow.appendChild(dragCorner)

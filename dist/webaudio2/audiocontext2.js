@@ -29,7 +29,7 @@ class AudioContext2 extends AudioContext {
     createAudioBufferCaptureNode() {
         return new AudioBufferCaptureNode(this);
     }
-    createCustomNode() {
+    createNuniGraphAudioNode() {
         return new NuniGraphAudioNode(this);
     }
 }

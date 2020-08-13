@@ -12,7 +12,6 @@ export * from './components/number_input.js'
 export * from './components/page_groupify.js'
 export * from './components/radio_group.js'
 export * from './components/toggle_button.js'
-export * from './functions/apply_style.js'
 export * from './functions/colorContrast.js'
 export * from './functions/ui_clamp.js'
 

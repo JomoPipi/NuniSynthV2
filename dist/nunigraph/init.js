@@ -39,6 +39,9 @@ Graph_Attachments: {
             }
         }
     }
+    if (DEBUG) {
+        window.getNodes = () => [...yeildNodes(g)];
+    }
     KB.attachToGraph(function* () {
         for (const an of yeildNodes(g)) {
             if (an instanceof NuniSourceNode) {

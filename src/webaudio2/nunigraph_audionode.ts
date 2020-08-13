@@ -24,7 +24,7 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
 
     constructor(ctx : AudioContext) {
         super(ctx) 
-        this.canvas = E('canvas', { className: 'nunigraph-canvas--custom' })
+        this.canvas = E('canvas', { className: 'nunigraph-canvas--module' })
         
         if (NuniGraphAudioNode.createController) 
             this.controller = NuniGraphAudioNode.createController(this.canvas, this.volumeNode)

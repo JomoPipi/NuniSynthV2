@@ -1,0 +1,72 @@
+
+<!-- saved from url=(0014)about:internet -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> ART </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="ctx" height="1030" width="791"></canvas>
+    <script>
+        const canvas = document.getElementById('ctx')
+        const ctx = canvas.getContext('2d')
+        const sin = x => Math.sin(x)+1
+        const cos = x => Math.cos(x)+1
+
+        const circle = (x, y, r) => {
+            ctx.arc(x, y, r, 0, 7)
+        }
+
+        const ellipse = (x, y, rX, rY, rot) => {
+            ctx.ellipse(x, y, rX, rY, rot, 0, 7)
+        }
+
+        const H = canvas.height = window.innerHeight
+        const W = canvas.width = window.innerWidth
+
+        let T = 0
+        function render() 
+        {
+            ctx.clearRect(0, 0, W, H)
+            console.log(H,W)
+            T++
+            const t = sin(T/50) * (H+W) / 2
+            // ctx.moveTo(W/2, H/2)
+            for (let i = 1; i <= (cos(t/40)+1) * 2 + 1; i++) 
+            {
+                for (let j = 1; j <= sin(T/40) * 20 + 1; j++) 
+                {
+                    const k = (sin(i*t/30)+1) * (sin(T*j/30)+1) * 40
+                    ctx.beginPath()
+                    ellipse(
+                        W/2, 
+                        H/2, 
+                        i * (cos(T/30) + 1) * 20, 
+                        j * (sin(t/j) + 1) * 20, 
+                        T / (i*i + 300))
+
+                    const R = (i + j + k) % 256
+                    const G = (i * i + j) % 256 
+                    const B = (i * j * k) % 256
+
+                    ctx.fillStyle = `rgb(${R},${G},${B})`
+                    // ctx.stroke()
+                    ctx.fill()
+                }
+            }
+            ctx.closePath()
+            ctx.moveTo(W/2, H/2)
+            requestAnimationFrame(render)
+        }
+
+        render()
+ 
+    </script>
+
+</body></html>

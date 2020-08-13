@@ -55,7 +55,7 @@ export function modularizeGraph() {
             GraphController.deleteNode(node, { noRender: true });
         }
     }
-    const node = g.createNewNode(NodeTypes.CUSTOM, { x: 0.5,
+    const node = g.createNewNode(NodeTypes.MODULE, { x: 0.5,
         y: 0.5,
         audioParamValues: {},
         audioNodeProperties: { graphCode }

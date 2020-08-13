@@ -12,16 +12,15 @@ const E = (x, settings = {}) => {
     const { text, className, children, props } = settings;
     if (text)
         element.innerText = text;
-    if (className)
+    if (className) {
         for (const name of className.split(' ')) {
             element.classList.add(name);
         }
-    for (const child of children || []) {
-        element.appendChild(child);
     }
-    for (const prop in props || {}) {
-        element[prop] = props[prop];
+    if (children) {
+        element.append(...children);
     }
+    Object.assign(element, props);
     return element;
 };
 const distance = (x, y, x2, y2) => ((x - x2) ** 2 + (y - y2) ** 2) ** 0.5;

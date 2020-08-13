@@ -97,6 +97,7 @@ a {
     }
         
     ul li {
+        @extend .no-drag;
         display:inline-block;
         background-color: $c;
 

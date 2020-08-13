@@ -1,6 +1,6 @@
 import { MasterClock } from './master_clock.js';
 import { VolumeNodeContainer } from '../volumenode_container.js';
-import { applyStyle, JsDial } from '../../UI_library/internal.js';
+import { JsDial } from '../../UI_library/internal.js';
 export class Sequencer extends VolumeNodeContainer {
     constructor(ctx) {
         super(ctx);
@@ -139,9 +139,8 @@ export class Sequencer extends VolumeNodeContainer {
                         ? '-halfway'
                         : ''));
                 const boxSize = clamp(10, 100 / nSteps ** 0.5, 35);
-                applyStyle(box, { width: `${boxSize / PHI}px`,
-                    height: `35px`
-                });
+                box.style.width = `${boxSize / PHI}px`;
+                box.style.height = '35px';
                 box.classList.toggle('selected', this.stepMatrix[key][i]);
                 box.dataset.sequencerKey = `${key}:${i}`;
                 row.style.height = '35px';
@@ -203,9 +202,6 @@ export class Sequencer extends VolumeNodeContainer {
                 dial.size = 30;
                 dial.render();
                 const valueText = E('span', { text: volumeTodB(value).toFixed(1) + 'dB' });
-                applyStyle(valueText, { display: 'inline-block',
-                    width: '70px'
-                });
                 dial.attach((value) => {
                     const v = value ** 4.0;
                     channelData[key].volume = v;

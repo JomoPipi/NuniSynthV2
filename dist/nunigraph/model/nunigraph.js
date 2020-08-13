@@ -135,7 +135,7 @@ export class NuniGraph {
             const a = nodeCopies[indexA];
             for (const { id: indexB, connectionType } of connections[indexA]) {
                 const b = nodeCopies[indexB];
-                if (is(b, NodeTypes.CUSTOM)) {
+                if (is(b, NodeTypes.MODULE)) {
                     const innerInputNode = b.audioNode.controller.g.nodes.find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === _nodeDataArray[indexA].oldId; });
                     if (!innerInputNode) {
                         throw 'An input node with INPUT_NODE_ID = nodeA.id should exist inside node b';
@@ -150,7 +150,7 @@ export class NuniGraph {
             }
         }
         for (const node of nodeCopies) {
-            if (is(node, NodeTypes.CUSTOM)) {
+            if (is(node, NodeTypes.MODULE)) {
                 for (const moduleNode of [...node.audioNode.controller.g.nodes]) {
                     if (moduleNode.INPUT_NODE_ID) {
                         const input_id = moduleNode.INPUT_NODE_ID.id;
@@ -222,7 +222,7 @@ export class NuniGraph {
         }
     }
     copyModuleInputNodes(a, b, nodeA, nodeB) {
-        if (is(b, NodeTypes.CUSTOM) && b !== nodeB) {
+        if (is(b, NodeTypes.MODULE) && b !== nodeB) {
             const innerInputNode = b.audioNode.controller.g.nodes.find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === nodeA.id; });
             if (!innerInputNode)
                 throw 'An input node with INPUT_NODE_ID = nodeA.id should exist inside node b';
@@ -310,7 +310,7 @@ export class NuniGraph {
             for (const { id: id2, connectionType } of connections[id]) {
                 const nodeA = this.nodes.find(node => node.id === +id);
                 const nodeB = this.nodes.find(node => node.id === id2);
-                if (is(nodeB, NodeTypes.CUSTOM)) {
+                if (is(nodeB, NodeTypes.MODULE)) {
                     const innerInputNode = nodeB.audioNode.controller.g.nodes.find(node => node.INPUT_NODE_ID && node.INPUT_NODE_ID.id === nodeA.id);
                     if (!(innerInputNode === null || innerInputNode === void 0 ? void 0 : innerInputNode.INPUT_NODE_ID))
                         throw 'It should be there';

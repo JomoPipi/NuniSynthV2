@@ -11,7 +11,9 @@ type Indexed = { [param : string] : any }
 
 interface Indexable<T> { [param : string] : T }
 
-
+type Immutable<Type> = {
+    readonly [Key in keyof Type] : Immutable<Type[Key]>
+}
 
 
 const log = console.log
@@ -44,7 +46,7 @@ type ElementSettings = {
     className? : string
     children? : HTMLElement[]
     props? : Indexed
-    }
+}
 
 const E = <T extends string>(x : T, settings : ElementSettings = {}) => {
     const element = document.createElement(x) as CreatedElement<T>
@@ -54,20 +56,19 @@ const E = <T extends string>(x : T, settings : ElementSettings = {}) => {
     if (text) element.innerText = text
 
     if (className)
+    {
         for (const name of className.split(' ')) 
         {
             element.classList.add(name)
         }
-    
-    for (const child of children || [])
-    {
-        element.appendChild(child)
     }
     
-    for (const prop in props || {}) 
+    if (children)
     {
-        (<Indexed>element)[prop] = props![prop]
+        element.append(...children)
     }
+    
+    Object.assign(element, props)
 
     return element
 }

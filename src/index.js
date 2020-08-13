@@ -5,7 +5,7 @@
 
 
 
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, contentTracing } = require('electron')
 const path = require('path')
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -55,6 +55,17 @@ app.on('activate', () => {
   }
 })
 
+// app.whenReady().then(() => {
+//   (async () => {
+//     await contentTracing.startRecording({
+//       include_categories: ['*']
+//     })
+//     console.log('Tracing started')
+//     await new Promise(resolve => setTimeout(resolve, 5000))
+//     const path = await contentTracing.stopRecording()
+//     console.log('Tracing data recorded to ' + path)
+//   })()
+// })
 
 
 

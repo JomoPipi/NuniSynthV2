@@ -17,7 +17,7 @@ enum NodeTypes
     B_SEQ = 'buffer-sequencer',
     CSN = 'constant-source',
     RECORD = 'audio-capture',
-    CUSTOM = 'module'
+    MODULE = 'module'
 }
 
 type AudioParams 
@@ -49,7 +49,7 @@ const NodeLabel =
     , [NodeTypes.B_SEQ]:  'Sample Sequencer'
     , [NodeTypes.CSN]:    'Number Value'
     , [NodeTypes.RECORD]: 'Recorder'
-    , [NodeTypes.CUSTOM]: 'Module'
+    , [NodeTypes.MODULE]: 'Module'
     }
 
 const createAudioNode =
@@ -63,7 +63,7 @@ const createAudioNode =
     , [NodeTypes.B_SEQ]:  'createBufferSequencer'
     , [NodeTypes.CSN]:    'createConstantSource'
     , [NodeTypes.RECORD]: 'createAudioBufferCaptureNode'
-    , [NodeTypes.CUSTOM]: 'createCustomNode'
+    , [NodeTypes.MODULE]: 'createNuniGraphAudioNode'
     }
 
 const SupportsInputChannels =
@@ -77,7 +77,7 @@ const SupportsInputChannels =
     , [NodeTypes.B_SEQ]:  false
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: true
-    , [NodeTypes.CUSTOM]: true
+    , [NodeTypes.MODULE]: true
     }
 
 const IsAwareOfInputIDs =
@@ -91,7 +91,7 @@ const IsAwareOfInputIDs =
     , [NodeTypes.B_SEQ]:  false
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: false
-    , [NodeTypes.CUSTOM]: false // TODO: change this to true
+    , [NodeTypes.MODULE]: false // TODO: change this to true
     }
 
 const MustBeStarted =
@@ -105,7 +105,7 @@ const MustBeStarted =
     , [NodeTypes.B_SEQ]:  false
     , [NodeTypes.CSN]:    true
     , [NodeTypes.RECORD]: false
-    , [NodeTypes.CUSTOM]: false
+    , [NodeTypes.MODULE]: false
     }
 
 const HasNoAudioParams =
@@ -119,7 +119,7 @@ const HasNoAudioParams =
     , [NodeTypes.B_SEQ]:  true
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: true
-    , [NodeTypes.CUSTOM]: true
+    , [NodeTypes.MODULE]: true
     }
 
 const HasNoOutput =
@@ -133,7 +133,7 @@ const HasNoOutput =
     , [NodeTypes.B_SEQ]:  false
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: true
-    , [NodeTypes.CUSTOM]: false
+    , [NodeTypes.MODULE]: false
     }
 
 const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } =
@@ -147,7 +147,7 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.B_SEQ]:  false
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: true
-    , [NodeTypes.CUSTOM]: true
+    , [NodeTypes.MODULE]: true
     }
 
 const AudioNodeParams : Record<NodeTypes,AudioParams[]> =
@@ -161,7 +161,7 @@ const AudioNodeParams : Record<NodeTypes,AudioParams[]> =
     , [NodeTypes.B_SEQ]:  ['playbackRate','detune']
     , [NodeTypes.CSN]:    ['offset']
     , [NodeTypes.RECORD]: []
-    , [NodeTypes.CUSTOM]: []
+    , [NodeTypes.MODULE]: []
     }
 
 const AudioNodeSubTypes = 
@@ -177,7 +177,7 @@ const AudioNodeSubTypes =
     , [NodeTypes.B_SEQ]:  []
     , [NodeTypes.CSN]:    []
     , [NodeTypes.RECORD]: []
-    , [NodeTypes.CUSTOM]: []
+    , [NodeTypes.MODULE]: []
     }
 
 const MasterGainColor = '#555'
@@ -192,7 +192,7 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.B_SEQ]:  'rgba(0,255,195,0.5)'
     , [NodeTypes.CSN]:    'rgba(255,200,200,0.5)'
     , [NodeTypes.RECORD]: 'rgba(255,200,255,1)'
-    , [NodeTypes.CUSTOM]: 'rgba(255,240,255,0.5)'
+    , [NodeTypes.MODULE]: 'rgba(255,240,255,0.5)'
     }
 
 const NodeTypeWarnings : { readonly [key in NodeTypes]? : string } = 
@@ -298,7 +298,7 @@ const Transferable_AudioNodeProperties =
     }
 
 const PostConnection_Transferable_InputRemappable_AudioNodeProperties 
-: { [key in NodeTypes]? : (keyof typeof Transferable_AudioNodeProperties)[] } = 
+: Immutable<{ [key in NodeTypes]? : (keyof typeof Transferable_AudioNodeProperties)[] }> = 
 
     { [NodeTypes.SGS] : ['stepMatrix', 'channelData'] 
     }
@@ -309,7 +309,7 @@ type NodeCreationSettings = {
     audioParamValues : Indexable<number>   // Uses draggable number inputs
     audioNodeProperties : CustomAudioNodeProperties
     title? : string
-    INPUT_NODE_ID? : { id : number },
+    INPUT_NODE_ID? : { id : number }
 }
 
 const TransferableNodeProperties = 
