@@ -9,7 +9,7 @@ import { NuniGraphRenderer } from './view/graph_renderer.js'
 import { NuniGraph } from './model/nunigraph.js'
 import { BufferUtils } from '../buffer_utils/internal.js'
 import { NuniGraphController, ActiveControllers } from './controller/graph_controller.js'
-import { createValuesWindow } from './view/display_nodedata.js'
+
 import 
     { KB, audioCtx, Sequencer, BufferNode2
     , MasterClock, NuniSourceNode, NuniGraphAudioNode
@@ -28,8 +28,7 @@ class Nuni extends NuniGraphController {
         super
             ( G 
             , D('connection-type-prompt')
-            , new NuniGraphRenderer(G, canvas)
-            , createValuesWindow)
+            , new NuniGraphRenderer(G, canvas))
         
         
         G.nodes

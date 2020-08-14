@@ -21,7 +21,6 @@ export function previewScale() {
     {
         const cents = KB.scale[KB.keymap[key]]
         if (cents > 2400) return;
-
         const speed = 0.1
         for (const an of KB.connectedNodes()) 
         {
@@ -51,3 +50,5 @@ export function previewScale() {
     // * prevents bug that may happen when user switches 
     // modes while the scale is being previewed.
 }
+
+
