@@ -5,16 +5,16 @@
 
 
 
-import { NuniGraphController, ActiveControllers } from "./graph_controller";
-import { NuniGraphNode } from "../model/nunigraph_node";
-import { NuniGraphAudioNode } from "../../webaudio2/internal";
-import { createDraggableWindow, UI_clamp } from "../../UI_library/internal";
+import { NuniGraphController, ActiveControllers } from "./graph_controller.js"; // TODO: get rid of this circular dep
+import { NuniGraphNode } from "../model/nunigraph_node.js";
+import { NuniGraphAudioNode } from "../../webaudio2/internal.js";
+import { createDraggableWindow, UI_clamp } from "../../UI_library/internal.js";
 import { createValuesWindow } from "../view/display_nodedata.js";
 
 
 
 
-let openWindowGlobalIndexThatKeepsRising = 0
+export let openWindowGlobalIndexThatKeepsRising = 0
 
 const lastCoordsOfWindow : Record<number, [number, number]> = {}
 

@@ -11,8 +11,8 @@ import { NuniGraphAudioNode } from '../../webaudio2/internal.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { NuniGraph } from '../model/nunigraph.js'
 import { clipboard } from './clipboard.js'
-import { createDraggableWindow, UI_clamp } from '../../UI_library/internal.js'
-import { openWindow, closeWindow } from './window_toggler.js'
+import { UI_clamp } from '../../UI_library/internal.js'
+import { openWindow, closeWindow, openWindowGlobalIndexThatKeepsRising } from './window_toggler.js'
 
 export const ActiveControllers = [] as NuniGraphController[]
 
@@ -80,7 +80,7 @@ export class NuniGraphController {
         this.lastMouse_MoveMsg = 
             this.lastMouse_DownMsg = 
             { type: HOVER.EMPTY }
-        // this.getOpenWindow = {}
+        this.getOpenWindow = {}
         this.lastCoordsOfWindow = {}
 
         this.mouseHasMovedSinceLastMouseDown = false
@@ -210,7 +210,7 @@ export class NuniGraphController {
     closeAllWindows() {
         for (const nodeId in this.getOpenWindow) 
         {
-            this.closeWindow(+nodeId)
+            closeWindow(this, +nodeId)
         }
     }
 
@@ -225,7 +225,7 @@ export class NuniGraphController {
         if (!force && node.INPUT_NODE_ID) return; // This can only be deleted from its' outer scope.
         
         this.connectionTypePrompt.classList.remove('show')
-        this.closeWindow(node.id)
+        closeWindow(this, node.id)
         this.renderer.removeFromConnectionsCache(node.id)
         this.g.deleteNode(node)
         this.unselectNodes()
@@ -499,8 +499,7 @@ export class NuniGraphController {
 
                     if (!inputNode) throw 'error, this should be here'
 
-                    to.audioNode.controller.closeWindow(
-                        inputNode.id)
+                    closeWindow(to.audioNode.controller, inputNode.id)
                 }
 
                 this.g.disconnect(this.renderer.fromNode, to, connectionType)

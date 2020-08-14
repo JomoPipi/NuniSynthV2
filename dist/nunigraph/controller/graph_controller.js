@@ -2,7 +2,7 @@ import { HOVER } from '../view/graph_renderer.js';
 import { NuniGraphAudioNode } from '../../webaudio2/internal.js';
 import { clipboard } from './clipboard.js';
 import { UI_clamp } from '../../UI_library/internal.js';
-import { openWindow, closeWindow } from './window_toggler.js';
+import { openWindow, closeWindow, openWindowGlobalIndexThatKeepsRising } from './window_toggler.js';
 export const ActiveControllers = [];
 export class NuniGraphController {
     constructor(g, prompt, renderer) {
@@ -14,6 +14,7 @@ export class NuniGraphController {
         this.lastMouse_MoveMsg =
             this.lastMouse_DownMsg =
                 { type: HOVER.EMPTY };
+        this.getOpenWindow = {};
         this.lastCoordsOfWindow = {};
         this.mouseHasMovedSinceLastMouseDown = false;
         this.lastMouse_DownXY = [0, 0];
@@ -89,7 +90,7 @@ export class NuniGraphController {
     }
     closeAllWindows() {
         for (const nodeId in this.getOpenWindow) {
-            this.closeWindow(+nodeId);
+            closeWindow(this, +nodeId);
         }
     }
     deleteNode(node, options = {}) {
@@ -97,7 +98,7 @@ export class NuniGraphController {
         if (!force && node.INPUT_NODE_ID)
             return;
         this.connectionTypePrompt.classList.remove('show');
-        this.closeWindow(node.id);
+        closeWindow(this, node.id);
         this.renderer.removeFromConnectionsCache(node.id);
         this.g.deleteNode(node);
         this.unselectNodes();
@@ -186,7 +187,7 @@ export class NuniGraphController {
                     const inputNode = to.audioNode.controller.g.nodes.find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === fromId; });
                     if (!inputNode)
                         throw 'error, this should be here';
-                    to.audioNode.controller.closeWindow(inputNode.id);
+                    closeWindow(to.audioNode.controller, inputNode.id);
                 }
                 this.g.disconnect(this.renderer.fromNode, to, connectionType);
             },
