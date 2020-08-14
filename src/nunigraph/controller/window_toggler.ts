@@ -5,7 +5,9 @@
 
 
 
-import { NuniGraphController, ActiveControllers } from "./graph_controller.js"; // TODO: get rid of this circular dep
+// import { NuniGraphController } from './controller_interface.js'
+// TODO: get rid of thess circular deps
+import { ActiveControllers, NuniGraphController } from "./graph_controller.js"; 
 import { NuniGraphNode } from "../model/nunigraph_node.js";
 import { NuniGraphAudioNode } from "../../webaudio2/internal.js";
 import { createDraggableWindow, UI_clamp } from "../../UI_library/internal.js";
@@ -14,9 +16,7 @@ import { createValuesWindow } from "../view/display_nodedata.js";
 
 
 
-export let openWindowGlobalIndexThatKeepsRising = 0
-
-const lastCoordsOfWindow : Record<number, [number, number]> = {}
+let openWindowGlobalIndexThatKeepsRising = 0
 
 export function openWindow(graphController : NuniGraphController, node : NuniGraphNode) {
 
@@ -105,9 +105,9 @@ export function openWindow(graphController : NuniGraphController, node : NuniGra
     D('node-windows').appendChild(dialogBox)
     moveTheWindowToTheTop(dialogBox)
 
-    if (node.id in lastCoordsOfWindow) 
+    if (node.id in graphController.lastNodeWindowPosition) 
     {
-        const [x,y] = lastCoordsOfWindow[node.id]
+        const [x,y] = graphController.lastNodeWindowPosition[node.id]
         dialogBox.style.left = x + 'px'
         dialogBox.style.top  = y + 'px'
     }
@@ -146,8 +146,22 @@ export function closeWindow(graphController : NuniGraphController, id : number) 
     const nodeWindow = graphController.getOpenWindow[id]
     if (nodeWindow) 
     {
-        lastCoordsOfWindow[id] = [nodeWindow.offsetLeft, nodeWindow.offsetTop]
+        graphController.lastNodeWindowPosition[id] = [nodeWindow.offsetLeft, nodeWindow.offsetTop]
         D('node-windows').removeChild(nodeWindow)
         delete graphController.getOpenWindow[id]
     }
+}
+
+
+
+
+export function showContextMenu(graphController : NuniGraphController, x : number, y : number) {
+
+    DIRTYGLOBALS.lastControllerToOpenTheContextmenu = graphController
+
+    const menu = D('graph-contextmenu')
+
+    menu.style.zIndex = (openWindowGlobalIndexThatKeepsRising + 1).toString()
+    menu.style.display = 'grid'
+    UI_clamp(x, y, menu, document.body, { topLeft: true })
 }

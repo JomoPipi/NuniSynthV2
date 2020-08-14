@@ -7,6 +7,7 @@
 
 import { GraphController } from '../init.js'
 import { NuniGraphController } from './graph_controller.js'
+import { showContextMenu } from './window_toggler.js'
 
 
 
@@ -15,7 +16,7 @@ const contextmenu = D('graph-contextmenu')
 // Set-up the graph contextmenu
 {
     D('nuni-logo').onclick = (e : MouseEvent) =>
-        GraphController.showContextMenu(e.pageX, 0)
+        showContextMenu(GraphController, e.pageX, 0)
 
     const append = (type : NodeTypes, color : string) => {
 

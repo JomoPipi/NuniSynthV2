@@ -2,7 +2,7 @@ import { HOVER } from '../view/graph_renderer.js';
 import { NuniGraphAudioNode } from '../../webaudio2/internal.js';
 import { clipboard } from './clipboard.js';
 import { UI_clamp } from '../../UI_library/internal.js';
-import { openWindow, closeWindow, openWindowGlobalIndexThatKeepsRising } from './window_toggler.js';
+import { openWindow, closeWindow, showContextMenu } from './window_toggler.js';
 export const ActiveControllers = [];
 export class NuniGraphController {
     constructor(g, prompt, renderer) {
@@ -15,7 +15,7 @@ export class NuniGraphController {
             this.lastMouse_DownMsg =
                 { type: HOVER.EMPTY };
         this.getOpenWindow = {};
-        this.lastCoordsOfWindow = {};
+        this.lastNodeWindowPosition = {};
         this.mouseHasMovedSinceLastMouseDown = false;
         this.lastMouse_DownXY = [0, 0];
         this._mouse_move = (e) => {
@@ -42,7 +42,7 @@ export class NuniGraphController {
         this.renderer.canvas.onmousedown = e => this.mousedown(e);
         this.renderer.canvas.oncontextmenu = (e) => {
             e.preventDefault();
-            this.showContextMenu(e.clientX, e.clientY);
+            showContextMenu(this, e.clientX, e.clientY);
         };
     }
     deactivateEventHandlers() {
@@ -57,13 +57,6 @@ export class NuniGraphController {
     undo() {
     }
     redo() {
-    }
-    showContextMenu(x, y) {
-        DIRTYGLOBALS.lastControllerToOpenTheContextmenu = this;
-        const menu = D('graph-contextmenu');
-        menu.style.zIndex = (openWindowGlobalIndexThatKeepsRising + 1).toString();
-        menu.style.display = 'grid';
-        UI_clamp(x, y, menu, document.body, { topLeft: true });
     }
     hideContextMenu() {
         D('graph-contextmenu').style.display = 'none';

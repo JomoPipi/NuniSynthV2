@@ -1,7 +1,8 @@
 import { GraphController } from '../init.js';
+import { showContextMenu } from './window_toggler.js';
 const contextmenu = D('graph-contextmenu');
 {
-    D('nuni-logo').onclick = (e) => GraphController.showContextMenu(e.pageX, 0);
+    D('nuni-logo').onclick = (e) => showContextMenu(GraphController, e.pageX, 0);
     const append = (type, color) => {
         const create = (e) => {
             const controller = DIRTYGLOBALS.lastControllerToOpenTheContextmenu || GraphController;

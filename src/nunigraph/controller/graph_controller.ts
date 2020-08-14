@@ -5,28 +5,21 @@
 
 
 
-// import { UndoRedoModule } from '../../helpers/simple_undo_redo.js'
 import { NuniGraphRenderer, HOVER } from '../view/graph_renderer.js'
 import { NuniGraphAudioNode } from '../../webaudio2/internal.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { NuniGraph } from '../model/nunigraph.js'
 import { clipboard } from './clipboard.js'
 import { UI_clamp } from '../../UI_library/internal.js'
-import { openWindow, closeWindow, openWindowGlobalIndexThatKeepsRising } from './window_toggler.js'
+import { openWindow, closeWindow, showContextMenu } from './window_toggler.js'
 
 export const ActiveControllers = [] as NuniGraphController[]
-
-type CreateValuesWindow = (
-    node : NuniGraphNode, 
-    saveCallback : Function, 
-    deleteCallBack : Function) => HTMLElement
 
 type DeleteNodeOptions = {
     force? : boolean
     noRender? : boolean
     }
-
-// let openWindowGlobalIndexThatKeepsRising = 0
+    
 
 export class NuniGraphController {
 /**
@@ -42,9 +35,8 @@ export class NuniGraphController {
     private lastMouse_MoveMsg : { type : HOVER } & Indexed
     private selectionStart? : [number,number]
     getOpenWindow : Indexable<HTMLElement> // [node.id]:nodeValuesWindow
-    private lastCoordsOfWindow : Indexable<[number,number]>
+    lastNodeWindowPosition : Record<number, [number,number]>
     // private undoRedoModule : UndoRedoModule
-    // private createValuesWindow : CreateValuesWindow
     // private copiedNodes? : string
 
     // We need this variable in order to be able to tell if
@@ -81,7 +73,7 @@ export class NuniGraphController {
             this.lastMouse_DownMsg = 
             { type: HOVER.EMPTY }
         this.getOpenWindow = {}
-        this.lastCoordsOfWindow = {}
+        this.lastNodeWindowPosition = {}
 
         this.mouseHasMovedSinceLastMouseDown = false
         this.lastMouse_DownXY = [0,0]
@@ -122,7 +114,8 @@ export class NuniGraphController {
         // Right-click options
         this.renderer.canvas.oncontextmenu = (e : MouseEvent) => {
             e.preventDefault()
-            this.showContextMenu(e.clientX, e.clientY)
+            // this.showContextMenu(e.clientX, e.clientY)
+            showContextMenu(this, e.clientX, e.clientY)
         }
     }
 
@@ -148,20 +141,6 @@ export class NuniGraphController {
     }
     redo() {
         // this.undoRedoModule.redo()
-    }
-
-
-
-
-    showContextMenu(x : number, y : number) {
-
-        DIRTYGLOBALS.lastControllerToOpenTheContextmenu = this
-
-        const menu = D('graph-contextmenu')
-    
-        menu.style.zIndex = (openWindowGlobalIndexThatKeepsRising + 1).toString()
-        menu.style.display = 'grid'
-        UI_clamp(x, y, menu, document.body, { topLeft: true })
     }
 
 
@@ -196,7 +175,7 @@ export class NuniGraphController {
 
 
 
-    unselectNodes() {
+    private unselectNodes() {
         this.selectedNodes = []
         for (const key in this.getOpenWindow) 
         {
@@ -236,143 +215,6 @@ export class NuniGraphController {
             this.renderer.render()
         }
     }
-
-
-
-
-    // private openWindow(node : NuniGraphNode) {
-
-    //     const moveTheWindowToTheTop = (box : HTMLElement) => {
-    //         box.style.zIndex = (++openWindowGlobalIndexThatKeepsRising).toString()
-    //     }
-
-    //     if (this.getOpenWindow[node.id]) 
-    //     {
-    //         moveTheWindowToTheTop(this.getOpenWindow[node.id])
-    //         return;
-    //     }
-
-
-
-    //     // MODULE NODE STUFF - make it an active controller
-    //     if (node.audioNode instanceof NuniGraphAudioNode) 
-    //     {
-    //         const controller = node.audioNode.controller
-    //         if (ActiveControllers.includes(controller)) throw 'This shouldn\'t have happened'
-    //         ActiveControllers.push(controller)
-    //         node.audioNode.activateWindow()
-    //     }
-
-
-
-
-    //     const clickCallback = (box : HTMLElement) => {
-    //         moveTheWindowToTheTop(box)
-
-    //         if (node.type !== NodeTypes.MODULE) 
-    //         {
-    //             this.selectNode(node)
-    //         }
-    //         this.renderer.render({ selectedNodes: [node] })
-    //     }
-
-    //     const closeCallback = () => {
-    //         this.closeWindow(node.id)
-    //     }
-
-    //     const deleteCallBack = () => {  
-    //         this.save()
-    //         this.deleteNode(node)
-    //     }
-
-    //     const titleEditor = () => {
-    //         const input = E('input', 
-    //             { className: 'title-editor'
-    //             , props: 
-    //                 { value: node.title || ''
-    //                 , size: 10
-    //                 }
-    //             })
-
-    //         input.oninput = () => {
-    //             node.title = input.value
-    //             this.renderer.render()
-    //         }
-    //         return input
-    //     }
-
-    //     const dialogBox =
-    //         createDraggableWindow(
-    //             { text: `${NodeLabel[node.type]}, id: ${node.id}`
-    //             , clickCallback
-    //             , closeCallback
-    //             , color: node.id === 0 
-    //                 ? MasterGainColor 
-    //                 : NodeTypeColors[node.type]
-    //             , barContent: node.INPUT_NODE_ID || node.id === 0 // Allow titles for all (except certain) nodes
-    //             // , barContent: node.type !== NodeTypes.MODULE // Allow titles only for modules
-    //                 ? undefined
-    //                 : titleEditor()
-    //             })
-
-
-    //     this.getOpenWindow[node.id] = dialogBox
-
-    //     dialogBox.children[1].appendChild(
-    //         this.createValuesWindow(
-    //             node, 
-    //             () => this.save(),
-    //             deleteCallBack))
-        
-    //     D('node-windows').appendChild(dialogBox)
-    //     moveTheWindowToTheTop(dialogBox)
-
-    //     if (node.id in this.lastCoordsOfWindow) 
-    //     {
-    //         const [x,y] = this.lastCoordsOfWindow[node.id]
-    //         dialogBox.style.left = x + 'px'
-    //         dialogBox.style.top  = y + 'px'
-    //     }
-    //     else
-    //     {
-    //         // Place it close the node
-    //         const canvas = this.renderer.canvas
-    //         const { left, top } = canvas.getBoundingClientRect()
-    //         const placeUnder = node.y < .3 ? -1 : 1
-    //         UI_clamp(
-    //             node.x * canvas.offsetWidth + left,
-    //             node.y * canvas.offsetHeight + top - dialogBox.offsetHeight * placeUnder,
-    //             dialogBox,
-    //             document.body)
-    //     }
-    // }
-
-
-
-
-    // private closeWindow(id : number) {
-
-    //     const node = this.g.nodes.find(({ id: _id }) => _id === id)!
-    //     if (!node) throw 'figure out what to do from here'
-    //     if (node.audioNode instanceof NuniGraphAudioNode) 
-    //     {
-    //         const controller = node.audioNode.controller
-    //         const index = ActiveControllers.indexOf(controller)
-    //         if (index >= 0) 
-    //         {
-    //             ActiveControllers.splice(index, 1)
-    //             node.audioNode.deactivateWindow()
-    //         }
-    //     }
-
-    //     const nodeWindow = this.getOpenWindow[id]
-    //     if (nodeWindow) 
-    //     {
-    //         this.lastCoordsOfWindow[id] = [nodeWindow.offsetLeft, nodeWindow.offsetTop]
-    //         D('node-windows').removeChild(nodeWindow)
-    //         delete this.getOpenWindow[id]
-    //     }
-    // }
 
 
 
