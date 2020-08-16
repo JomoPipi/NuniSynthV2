@@ -71,8 +71,8 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
             const inputNode 
                 = this.inputs[id]
                 = this.controller.g.createNewNode(NodeTypes.GAIN, 
-                { x: Math.random() * .5 + .25 
-                , y: Math.random() * .5 + .25
+                { x: Math.random() < 0.5 ? 0.05 : 0.95
+                , y: Math.random()
                 , audioParamValues: { gain: 1 }
                 , audioNodeProperties: {}
                 , title: `INPUT (id-${id})`

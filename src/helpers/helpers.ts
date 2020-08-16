@@ -94,10 +94,12 @@ const volumeTodB = (volume : number) =>
     20 * Math.log10(volume)
 
 
-interface DIRTYGLOBALINTERFACE {
-    lastControllerToOpenTheContextmenu? : Indexed
+interface DIRTYGLOBALS {
+    lastControllerToOpenTheContextmenu : Indexed // unknown
 }
 
 const ISMAC = navigator.platform.toUpperCase().indexOf('MAC') >= 0
 
-const DIRTYGLOBALS : DIRTYGLOBALINTERFACE = {}
+const DIRTYGLOBALS : DIRTYGLOBALS = {
+    lastControllerToOpenTheContextmenu: {}
+}

@@ -6,8 +6,6 @@
 
 
 import { GraphController } from '../init.js'
-import { NuniGraphController } from './graph_controller.js'
-import { showContextMenu } from './window_toggler.js'
 
 
 
@@ -16,13 +14,15 @@ const contextmenu = D('graph-contextmenu')
 // Set-up the graph contextmenu
 {
     D('nuni-logo').onclick = (e : MouseEvent) =>
-        showContextMenu(GraphController, e.pageX, 0)
+        GraphController.showContextMenu(e.pageX, 0)
 
     const append = (type : NodeTypes, color : string) => {
 
         const create = (e : MouseEvent) => {
 
-            const controller = DIRTYGLOBALS.lastControllerToOpenTheContextmenu || GraphController as NuniGraphController
+            const controller 
+                = (DIRTYGLOBALS.lastControllerToOpenTheContextmenu 
+                || GraphController)// as any // as NuniGraphController
             
 
             controller.save()
@@ -46,7 +46,7 @@ const contextmenu = D('graph-contextmenu')
             }
             
             controller.renderer.render()
-            DIRTYGLOBALS.lastControllerToOpenTheContextmenu = undefined
+            DIRTYGLOBALS.lastControllerToOpenTheContextmenu = GraphController
         }
         
         const textbox = E('span', { text: NodeLabel[type] })

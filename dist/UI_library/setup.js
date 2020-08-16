@@ -12,6 +12,10 @@ pageGroupify(D('scale-kinds'), [
 {
     const container = D('info-menu-container');
     const infoBtns = [...document.querySelectorAll('._info-menu-button_')];
+    D('info-button').onclick = () => {
+        const showMenu = container.classList.toggle('show');
+        container.onclick = showMenu ? clickInsideContainer : null;
+    };
     function clickInsideContainer(e) {
         const clickedElement = e.target;
         if (clickedElement === container) {

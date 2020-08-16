@@ -1,11 +1,11 @@
 import { GraphController } from '../init.js';
-import { showContextMenu } from './window_toggler.js';
 const contextmenu = D('graph-contextmenu');
 {
-    D('nuni-logo').onclick = (e) => showContextMenu(GraphController, e.pageX, 0);
+    D('nuni-logo').onclick = (e) => GraphController.showContextMenu(e.pageX, 0);
     const append = (type, color) => {
         const create = (e) => {
-            const controller = DIRTYGLOBALS.lastControllerToOpenTheContextmenu || GraphController;
+            const controller = (DIRTYGLOBALS.lastControllerToOpenTheContextmenu
+                || GraphController);
             controller.save();
             const node = controller.g.createNewNode(type);
             const menu = contextmenu;
@@ -18,7 +18,7 @@ const contextmenu = D('graph-contextmenu');
                 controller.hideContextMenu();
             }
             controller.renderer.render();
-            DIRTYGLOBALS.lastControllerToOpenTheContextmenu = undefined;
+            DIRTYGLOBALS.lastControllerToOpenTheContextmenu = GraphController;
         };
         const textbox = E('span', { text: NodeLabel[type] });
         const btn = E('button', { className: 'list-btn',

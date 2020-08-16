@@ -32,5 +32,7 @@ const twoThirdsPi = TAU / 3.0;
 const dBToVolume = (dB) => 10 ** (0.05 * dB);
 const volumeTodB = (volume) => 20 * Math.log10(volume);
 const ISMAC = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-const DIRTYGLOBALS = {};
+const DIRTYGLOBALS = {
+    lastControllerToOpenTheContextmenu: {}
+};
 //# sourceMappingURL=helpers.js.map
