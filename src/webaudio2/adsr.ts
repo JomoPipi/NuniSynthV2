@@ -135,10 +135,20 @@ type RenderOptions = Partial<{ updateKnobs : boolean }>
             ctx.beginPath()
             ctx.moveTo(lastX, lastY)
             ctx.strokeStyle = '#8a8,#a88,#88a,#a8a'.split(',')[i]
-            ctx.lineTo(
-                lastX = x * (W - margin * 2) + margin, 
-                lastY = y * (H - margin * 2) + margin 
-            )
+
+            lastX = x * (W - margin * 2) + margin, 
+            lastY = y * (H - margin * 2) + margin
+            ctx.lineTo(lastX, lastY)
+            
+            // ctx.quadraticCurveTo(lastX, lastY, lastX, lastY)
+            // ctx.bezierCurveTo(
+            //     lastX, 
+            //     lastY, 
+            //     lastX, 
+            //     lastY, 
+            //     lastX, 
+            //     lastY)
+
             ctx.stroke() 
             ctx.closePath()
         })

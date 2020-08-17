@@ -227,7 +227,7 @@ export class NuniGraphController {
         this.mouseIsDown = true;
         const hoverMsg = this.lastMouse_DownMsg =
             this.renderer.getGraphMouseTarget(e);
-        const { id, node } = hoverMsg;
+        const { id, node } = hoverMsg && {};
         this.lastMouse_DownXY = [e.offsetX, e.offsetY];
         if ((hoverMsg.type === HOVER.EDGE || hoverMsg.type === HOVER.SELECT)
             && this.selectedNodes.includes(hoverMsg.node)) {

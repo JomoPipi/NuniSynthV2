@@ -5,7 +5,7 @@
 
 
 
-import { NuniGraphRenderer, HOVER } from '../view/graph_renderer.js'
+import { NuniGraphRenderer, HOVER, HoverResponse } from '../view/graph_renderer.js'
 import { NuniGraphAudioNode } from '../../webaudio2/internal.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { NuniGraph } from '../model/nunigraph.js'
@@ -422,7 +422,7 @@ export class NuniGraphController {
         const hoverMsg = 
             this.lastMouse_DownMsg = 
             this.renderer.getGraphMouseTarget(e)
-        const { id, node } = hoverMsg
+        const { connectionId, node } = hoverMsg
 
         this.lastMouse_DownXY = [e.offsetX, e.offsetY]
 
@@ -470,7 +470,7 @@ export class NuniGraphController {
                 this.selectedNodes = []
                 
                 const cache = this.renderer.connectionsCache
-                const { fromId, toId, connectionType } = cache[id!]
+                const { fromId, toId, connectionType } = cache[connectionId!]
 
                 this.save()
                 this.unselectNodes()
@@ -481,7 +481,7 @@ export class NuniGraphController {
                 const to = 
                     this.g.nodes.find(node => node.id === toId)!
 
-                delete cache[id!]
+                delete cache[connectionId!]
 
                 // We have to close this inputNode's window if it's open.
                 if (to.audioNode instanceof NuniGraphAudioNode) 
@@ -588,7 +588,7 @@ export class NuniGraphController {
         this.lastMouse_MoveMsg = msg
 
         const hover_id = msg.type === HOVER.CONNECTION 
-            ? msg.id
+            ? msg.connectionId
             : msg.type !== HOVER.EMPTY
             ? msg.node.id : undefined
 

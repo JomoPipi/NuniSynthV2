@@ -12,10 +12,10 @@ import { snapToGrid } from './snap_to_grid.js'
 export enum HOVER { EDGE, SELECT, CONNECTION, EMPTY }
 
 export type HoverResponse 
-    = { type : HOVER.SELECT, node : NuniGraphNode, id? : null }
-    | { type : HOVER.EDGE, node : NuniGraphNode, id? : null }
-    | { type : HOVER.CONNECTION, node? : null, id : string }
-    | { type : HOVER.EMPTY, node? : null, id? : null }
+    = { type : HOVER.SELECT, node : NuniGraphNode, connectionId? : never }
+    | { type : HOVER.EDGE, node : NuniGraphNode, connectionId? : never }
+    | { type : HOVER.CONNECTION, node? : null, connectionId : string }
+    | { type : HOVER.EMPTY, node? : null, connectionId? : never }
 
 type GraphRenderOptions = {
     H : number
@@ -493,12 +493,12 @@ export class NuniGraphRenderer {
         }
         
         // Check if any connection-triangles were clicked:
-        for (const id in connectionsCache) 
+        for (const connectionId in connectionsCache) 
         {
-            const { x:X, y:Y } = connectionsCache[id]
+            const { x:X, y:Y } = connectionsCache[connectionId]
             if (distance(x, y, X, Y) < triangleRadius) 
             {
-                return { type: HOVER.CONNECTION, id }
+                return { type: HOVER.CONNECTION, connectionId }
             }
         }
         
