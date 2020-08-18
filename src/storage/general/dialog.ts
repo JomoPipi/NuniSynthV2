@@ -72,8 +72,9 @@ export function saveProjectAs() {
             {
                 const file = makeNuniFile()
                 fs.writeFileSync(filePath, file)
+
                 makeNuniFile.currentFileName = 
-                    D('project-title').textContent =
+                D('project-title').textContent =
                     filePath
                         .replace(projectsFolderPath, '')
                         .replace('.nuni', '')
@@ -96,8 +97,9 @@ export function openExistingProject() {
 
             if (!canceled) 
             {
-                log('filePaths[0] =',filePaths[0])
                 loadNuniFile(fs.readFileSync(filePaths[0], 'utf8'))
+
+                D('project-title').textContent =
                 makeNuniFile.currentFileName = 
                     filePaths[0]
                         .replace(projectsFolderPath, '')

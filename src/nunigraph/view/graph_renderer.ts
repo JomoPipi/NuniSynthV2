@@ -356,8 +356,8 @@ export class NuniGraphRenderer {
         canvas.style.cursor = 
             isSelect || (fromNode && isEdge) 
             ? buttons === 1 ? 'grabbing' : 'grab'
-            : isEdge ? 'crosshair'
-            : ' '
+            : fromNode || isEdge ? 'pointer'
+            : 'default'
 
         for (const node of nodes) 
         {

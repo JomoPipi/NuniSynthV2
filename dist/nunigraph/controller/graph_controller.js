@@ -227,7 +227,7 @@ export class NuniGraphController {
         this.mouseIsDown = true;
         const hoverMsg = this.lastMouse_DownMsg =
             this.renderer.getGraphMouseTarget(e);
-        const { id, node } = hoverMsg && {};
+        const { connectionId, node } = hoverMsg;
         this.lastMouse_DownXY = [e.offsetX, e.offsetY];
         if ((hoverMsg.type === HOVER.EDGE || hoverMsg.type === HOVER.SELECT)
             && this.selectedNodes.includes(hoverMsg.node)) {
@@ -263,13 +263,13 @@ export class NuniGraphController {
             [HOVER.CONNECTION]: () => {
                 this.selectedNodes = [];
                 const cache = this.renderer.connectionsCache;
-                const { fromId, toId, connectionType } = cache[id];
+                const { fromId, toId, connectionType } = cache[connectionId];
                 this.save();
                 this.unselectNodes();
                 this.renderer.fromNode =
                     this.g.nodes.find(node => node.id === fromId);
                 const to = this.g.nodes.find(node => node.id === toId);
-                delete cache[id];
+                delete cache[connectionId];
                 if (to.audioNode instanceof NuniGraphAudioNode) {
                     const inputNode = to.audioNode.controller.g.nodes.find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === fromId; });
                     if (!inputNode)
@@ -337,7 +337,7 @@ export class NuniGraphController {
         }
         this.lastMouse_MoveMsg = msg;
         const hover_id = msg.type === HOVER.CONNECTION
-            ? msg.id
+            ? msg.connectionId
             : msg.type !== HOVER.EMPTY
                 ? msg.node.id : undefined;
         const options = { x: e.offsetX,

@@ -83,7 +83,6 @@ function updateKeys(keydown : boolean) {
         } 
         else 
         {
-            // TODO: implement key-hold, or something.
             log('keyCode =', key)
         }
     }

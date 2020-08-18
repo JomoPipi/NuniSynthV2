@@ -199,8 +199,8 @@ export class NuniGraphRenderer {
         canvas.style.cursor =
             isSelect || (fromNode && isEdge)
                 ? buttons === 1 ? 'grabbing' : 'grab'
-                : isEdge ? 'crosshair'
-                    : ' ';
+                : fromNode || isEdge ? 'pointer'
+                    : 'default';
         for (const node of nodes) {
             const [X, Y] = [node.x * W, node.y * H];
             const isTarget = node.id === hover_id;
@@ -271,10 +271,10 @@ export class NuniGraphRenderer {
                 }
             }
         }
-        for (const id in connectionsCache) {
-            const { x: X, y: Y } = connectionsCache[id];
+        for (const connectionId in connectionsCache) {
+            const { x: X, y: Y } = connectionsCache[connectionId];
             if (distance(x, y, X, Y) < triangleRadius) {
-                return { type: HOVER.CONNECTION, id };
+                return { type: HOVER.CONNECTION, connectionId };
             }
         }
         return { type: HOVER.EMPTY };

@@ -169,7 +169,6 @@ export class NuniGraphController {
 
     selectNode (node : NuniGraphNode) {
         this.unselectNodes()
-
         this.selectedNodes = [node]
         this.getOpenWindow[node.id]?.classList.add('selected2')
     }
@@ -583,7 +582,7 @@ export class NuniGraphController {
             && !isPressing
             && !this.selectionStart) 
         {
-            return; 
+            return;
         }
         this.lastMouse_MoveMsg = msg
 
