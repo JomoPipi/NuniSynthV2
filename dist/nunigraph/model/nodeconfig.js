@@ -49,18 +49,6 @@ const SupportsInputChannels = { [NodeTypes.GAIN]: true,
     [NodeTypes.RECORD]: true,
     [NodeTypes.MODULE]: true
 };
-const IsAwareOfInputIDs = { [NodeTypes.GAIN]: false,
-    [NodeTypes.OSC]: false,
-    [NodeTypes.FILTER]: false,
-    [NodeTypes.PANNER]: false,
-    [NodeTypes.DELAY]: false,
-    [NodeTypes.BUFFER]: false,
-    [NodeTypes.SGS]: true,
-    [NodeTypes.B_SEQ]: false,
-    [NodeTypes.CSN]: false,
-    [NodeTypes.RECORD]: false,
-    [NodeTypes.MODULE]: false
-};
 const MustBeStarted = { [NodeTypes.GAIN]: false,
     [NodeTypes.OSC]: false,
     [NodeTypes.FILTER]: false,

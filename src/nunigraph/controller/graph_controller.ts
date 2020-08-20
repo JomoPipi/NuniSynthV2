@@ -529,6 +529,7 @@ export class NuniGraphController {
     private mousemove(e : MouseEvent) {
 
         const [x,y] = this.lastMouse_DownXY
+        let showConnectionInsertionMacroLine = false
 
         // FULLSCREEEN ADD AN EXTRA MOUSEMOVE EVENT, AND FUCKS WITH THE COORDINATES >:(
         if (Math.abs(x - e.offsetX) > 1 || Math.abs(y - e.offsetY) > 1) 
@@ -570,6 +571,11 @@ export class NuniGraphController {
                 n.x += dx
                 n.y += dy
             }
+
+            if (selectedNodes.length === 1 && SupportsInputChannels[selectedNodes[0].type])
+            {
+                showConnectionInsertionMacroLine = true
+            }
         }
         
         // Avoid re-rendering when it's not necessary
@@ -599,6 +605,7 @@ export class NuniGraphController {
             , hover_id
             , selectionStart: this.selectionStart
             , selectedNodes: this.getNodesInBox(e.offsetX, e.offsetY)
+            , showConnectionInsertionMacroLine
             }
 
         this.renderer.render(options)
@@ -608,6 +615,21 @@ export class NuniGraphController {
 
 
     private mouseup(e : MouseEvent) {
+
+        if (this.renderer.lastDottedLine) 
+        {
+            // We insert the selected node. Output : `connectionType`, input : `channel`.
+            const [node] = this.selectedNodes
+            const [fromId, toId, connectionType] = this.renderer.lastDottedLine.split(':')
+
+            const fromNode = this.g.nodes.find(({ id }) => id === +fromId)
+            const toNode = this.g.nodes.find(({ id }) => id === +toId)
+            
+            console.log('TODO - node insertion macro. Preserve the connection data (channel sequencer & modules')
+            //** - for input-aware nodes, we sneakily rename the represented gain node and change the connections manually...*/
+            //? Can it be done the same way for both of those input-aware nodes?
+        }
+
 
         // Ctrl + click
         if (e.ctrlKey && e.target === this.renderer.canvas) 

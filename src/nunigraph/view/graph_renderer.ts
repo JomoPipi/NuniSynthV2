@@ -27,6 +27,7 @@ type GraphRenderOptions = {
     hover_id? : number | string // could be node id or connection id
     selectionStart? : [number,number]
     selectedNodes : NuniGraphNode[]
+    showConnectionInsertionMacroLine? : boolean
     }
 
 type ConnectionsCache = {
@@ -42,6 +43,7 @@ type ConnectionsCache = {
 export class NuniGraphRenderer {
 
     fromNode : NuniGraphNode | null
+    lastDottedLine : string = ''
     private readonly g : NuniGraph
     readonly canvas : HTMLCanvasElement
     private readonly ctx : CanvasRenderingContext2D
@@ -135,7 +137,7 @@ export class NuniGraphRenderer {
         ctx.closePath()
     }
 
-    private directedLine(x1 : number, y1 : number, x2 : number, y2 : number, 
+    private directedLine(x1 : number, y1 : number, x2 : number, y2 : number, dotted : boolean,
         cacheOptions? : 
             { fromId : number
             , toId : number 
@@ -185,8 +187,19 @@ export class NuniGraphRenderer {
                 ctx.fillStyle = 'orange' 
             }
         }
+
+        if (dotted)
+        {
+            ctx.setLineDash([3, 8])
+        }
         
         this.line(x,y,X,Y)
+
+        if (dotted)
+        {
+            ctx.setLineDash([1,0])
+        }
+
         this.drawDirectionTriangle(X, Y, angle, x >= X)
     }
 
@@ -264,7 +277,17 @@ export class NuniGraphRenderer {
     }
 
     private drawNodeConnections(
-        nodes : NuniGraphNode[], { H, W, x, y } : GraphRenderOptions) {
+        nodes : NuniGraphNode[], 
+        { H
+        , W
+        , x
+        , y
+        , showConnectionInsertionMacroLine
+        , selectedNodes: [node] 
+
+        } : GraphRenderOptions) {
+
+        let macroHinted = showConnectionInsertionMacroLine
 
         const { ctx, connectionLineWidth, nodeRadius, g } = this
         ctx.lineWidth = connectionLineWidth
@@ -282,10 +305,10 @@ export class NuniGraphRenderer {
                     
                     const a = nodes.find(node => node.id === fromId)!
                     const b = nodes.find(node => node.id === toId)!
-                    const [xa,ya] = [ a.x*W, a.y*H ]    // node a coords
-                    const [xb,yb] = [ b.x*W, b.y*H ]    // node b coords
-                    const mP = -(xa-xb)/(ya-yb)         // slope of perpendicular line
-                    const shift = nodeRadius / 2.0      // gap between parallel connections
+                    const [xa,ya] = [a.x*W, a.y*H]    // node a coords
+                    const [xb,yb] = [b.x*W, b.y*H]    // node b coords
+                    const mP = -(xa-xb)/(ya-yb)       // slope of perpendicular line
+                    const shift = nodeRadius / 2.0    // gap between parallel connections
                     const theta = Math.atan(mP)
                     const dy2 = Math.sin(theta) * shift  
                     const dx2 = Math.cos(theta) * shift
@@ -295,7 +318,37 @@ export class NuniGraphRenderer {
                     
                     ctx.strokeStyle = ConnectionTypeColors[connectionType]
 
-                    this.directedLine(x1,y1,x2,y2, { fromId, toId, connectionType, x, y })
+                    // Check for connection - insertion macro
+                    let dotted = false
+                    if (macroHinted && x && y && toId !== node.id && fromId !== node.id)
+                    {
+                        const m = (y2-y1) / (x2-x1 || 1e-8)
+                        const b = y1 - m * x1
+                        const _y = m * x + b
+                        const margin = 10
+                        const verticalLine = Math.abs(x1 - x2) < margin * 4
+                        const distanceFromLine = Math.abs(verticalLine ? (x1+x2)/2 - x : _y - y)
+                        const [_x1, _x2] = [x1, x2].sort((a,b) => a-b)
+                        const [_y1, _y2] = [y1, y2].sort((a,b) => a-b)
+                        const between = verticalLine 
+                            ? _y1 - margin < y && y < _y2 + margin
+                            : _x1 - margin < x && x < _x2 + margin
+                        const touchingTheLine = distanceFromLine < margin && between
+
+                        if (touchingTheLine)
+                        {
+                            macroHinted = false
+                            dotted = true
+                        }
+                    }
+                    this.lastDottedLine
+                        = dotted
+                        ? `${fromId}:${toId}:${connectionType}`
+                        : ''
+
+
+                    // Draw line
+                    this.directedLine(x1,y1,x2,y2, dotted, { fromId, toId, connectionType, x, y })
                 })
             }
         }
@@ -444,7 +497,7 @@ export class NuniGraphRenderer {
             const [X,Y] = [fromNode.x*W, fromNode.y*H]
             ctx.lineWidth = connectionLineWidth
             ctx.strokeStyle = 'white'
-            this.directedLine(X, Y, x!, y!)
+            this.directedLine(X, Y, x!, y!, false)
         }
     }
 

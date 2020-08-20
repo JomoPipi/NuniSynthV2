@@ -8,6 +8,7 @@ export var HOVER;
 })(HOVER || (HOVER = {}));
 export class NuniGraphRenderer {
     constructor(g, canvas) {
+        this.lastDottedLine = '';
         this.fromNode = null;
         this.g = g;
         this.canvas = canvas;
@@ -65,7 +66,7 @@ export class NuniGraphRenderer {
         ctx.stroke();
         ctx.closePath();
     }
-    directedLine(x1, y1, x2, y2, cacheOptions) {
+    directedLine(x1, y1, x2, y2, dotted, cacheOptions) {
         const { ctx, nodeRadius, nodeLineWidth, connectionsCache, triangleRadius } = this;
         ctx.fillStyle = 'cyan';
         const delta = nodeRadius + nodeLineWidth;
@@ -88,7 +89,13 @@ export class NuniGraphRenderer {
                 ctx.fillStyle = 'orange';
             }
         }
+        if (dotted) {
+            ctx.setLineDash([3, 8]);
+        }
         this.line(x, y, X, Y);
+        if (dotted) {
+            ctx.setLineDash([1, 0]);
+        }
         this.drawDirectionTriangle(X, Y, angle, x >= X);
     }
     drawGridLines(H, W, snapNodes, selectedNodes) {
@@ -138,7 +145,8 @@ export class NuniGraphRenderer {
     getParallelConnectionGroups(fromId) {
         return this.g.oneWayConnections[fromId].reduce((groups, v) => (Object.assign(Object.assign({}, groups), { [v.id]: [...(groups[v.id] || []), v] })), {});
     }
-    drawNodeConnections(nodes, { H, W, x, y }) {
+    drawNodeConnections(nodes, { H, W, x, y, showConnectionInsertionMacroLine, selectedNodes: [node] }) {
+        let macroHinted = showConnectionInsertionMacroLine;
         const { ctx, connectionLineWidth, nodeRadius, g } = this;
         ctx.lineWidth = connectionLineWidth;
         for (const id1 in g.oneWayConnections) {
@@ -161,7 +169,30 @@ export class NuniGraphRenderer {
                     const [x1, x2] = [xa + dx2 * I, xb + dx2 * I];
                     const [y1, y2] = [ya + dy2 * I, yb + dy2 * I];
                     ctx.strokeStyle = ConnectionTypeColors[connectionType];
-                    this.directedLine(x1, y1, x2, y2, { fromId, toId, connectionType, x, y });
+                    let dotted = false;
+                    if (macroHinted && x && y && toId !== node.id && fromId !== node.id) {
+                        const m = (y2 - y1) / (x2 - x1 || 1e-8);
+                        const b = y1 - m * x1;
+                        const _y = m * x + b;
+                        const margin = 10;
+                        const verticalLine = Math.abs(x1 - x2) < margin * 4;
+                        const distanceFromLine = Math.abs(verticalLine ? (x1 + x2) / 2 - x : _y - y);
+                        const [_x1, _x2] = [x1, x2].sort((a, b) => a - b);
+                        const [_y1, _y2] = [y1, y2].sort((a, b) => a - b);
+                        const between = verticalLine
+                            ? _y1 - margin < y && y < _y2 + margin
+                            : _x1 - margin < x && x < _x2 + margin;
+                        const touchingTheLine = distanceFromLine < margin && between;
+                        if (touchingTheLine) {
+                            macroHinted = false;
+                            dotted = true;
+                        }
+                    }
+                    this.lastDottedLine
+                        = dotted
+                            ? `${fromId}:${toId}:${connectionType}`
+                            : '';
+                    this.directedLine(x1, y1, x2, y2, dotted, { fromId, toId, connectionType, x, y });
                 });
             }
         }
@@ -247,7 +278,7 @@ export class NuniGraphRenderer {
             const [X, Y] = [fromNode.x * W, fromNode.y * H];
             ctx.lineWidth = connectionLineWidth;
             ctx.strokeStyle = 'white';
-            this.directedLine(X, Y, x, y);
+            this.directedLine(X, Y, x, y, false);
         }
     }
     getGraphMouseTarget({ offsetX: x, offsetY: y }) {

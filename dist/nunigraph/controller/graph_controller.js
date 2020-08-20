@@ -298,6 +298,7 @@ export class NuniGraphController {
     }
     mousemove(e) {
         const [x, y] = this.lastMouse_DownXY;
+        let showConnectionInsertionMacroLine = false;
         if (Math.abs(x - e.offsetX) > 1 || Math.abs(y - e.offsetY) > 1) {
             this.mouseHasMovedSinceLastMouseDown = true;
         }
@@ -324,6 +325,9 @@ export class NuniGraphController {
                 n.x += dx;
                 n.y += dy;
             }
+            if (selectedNodes.length === 1 && SupportsInputChannels[selectedNodes[0].type]) {
+                showConnectionInsertionMacroLine = true;
+            }
         }
         const { type: lastType } = this.lastMouse_MoveMsg;
         const { type } = msg;
@@ -346,11 +350,19 @@ export class NuniGraphController {
             hover_type: type,
             hover_id,
             selectionStart: this.selectionStart,
-            selectedNodes: this.getNodesInBox(e.offsetX, e.offsetY)
+            selectedNodes: this.getNodesInBox(e.offsetX, e.offsetY),
+            showConnectionInsertionMacroLine
         };
         this.renderer.render(options);
     }
     mouseup(e) {
+        if (this.renderer.lastDottedLine) {
+            const [node] = this.selectedNodes;
+            const [fromId, toId, connectionType] = this.renderer.lastDottedLine.split(':');
+            const fromNode = this.g.nodes.find(({ id }) => id === +fromId);
+            const toNode = this.g.nodes.find(({ id }) => id === +toId);
+            console.log('TODO - node insertion macro. Preserve the connection data (channel sequencer & modules');
+        }
         if (e.ctrlKey && e.target === this.renderer.canvas) {
             const X = e.offsetX / this.renderer.canvas.width;
             const Y = e.offsetY / this.renderer.canvas.height;
