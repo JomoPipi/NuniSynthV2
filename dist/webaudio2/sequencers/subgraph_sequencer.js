@@ -35,5 +35,11 @@ export class SubgraphSequencer extends Sequencer {
         ADSR_Controller.trigger(gain, time, volume, this.adsrIndex);
         ADSR_Controller.untriggerAdsr(gain, time + duration, this.adsrIndex);
     }
+    replaceInput({ id, audioNode }, newNode) {
+        this.addInput(newNode);
+        this.channelData[newNode.id] = this.channelData[id];
+        this.stepMatrix[newNode.id] = this.stepMatrix[id];
+        this.removeInput({ id, audioNode });
+    }
 }
 //# sourceMappingURL=subgraph_sequencer.js.map

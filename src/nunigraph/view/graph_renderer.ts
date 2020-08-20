@@ -30,14 +30,14 @@ type GraphRenderOptions = {
     showConnectionInsertionMacroLine? : boolean
     }
 
-type ConnectionsCache = {
-    [connectionId : string] : { 
+type ConnectionsCache = 
+    { [connectionId : string] : { 
         x : number
         y : number
         fromId : number
         toId : number
         connectionType : ConnectionType 
-        } 
+        }
     }
 
 export class NuniGraphRenderer {
@@ -56,6 +56,13 @@ export class NuniGraphRenderer {
     private triangleSize : number
     // private zoom : number
     readonly connectionsCache : ConnectionsCache
+    clearConnectionsCache() {
+        for (const id in this.connectionsCache) 
+        {
+            delete this.connectionsCache[id]
+        }
+    }
+
 
     constructor(
         g : NuniGraph, 
@@ -291,6 +298,7 @@ export class NuniGraphRenderer {
 
         const { ctx, connectionLineWidth, nodeRadius, g } = this
         ctx.lineWidth = connectionLineWidth
+        let found = false
         for (const id1 in g.oneWayConnections) 
         {
             const fromId = +id1
@@ -341,11 +349,13 @@ export class NuniGraphRenderer {
                             dotted = true
                         }
                     }
-                    this.lastDottedLine
-                        = dotted
-                        ? `${fromId}:${toId}:${connectionType}`
-                        : ''
-
+                    if (!found)
+                    {
+                        this.lastDottedLine
+                            = dotted
+                            ? (found = true, `${fromId}:${toId}:${connectionType}`)
+                            : ''
+                    }
 
                     // Draw line
                     this.directedLine(x1,y1,x2,y2, dotted, { fromId, toId, connectionType, x, y })

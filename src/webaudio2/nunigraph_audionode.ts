@@ -13,8 +13,10 @@ import { VolumeNodeContainer } from "./volumenode_container.js"
 
 
 
+interface NuniNode { id : number, audioNode : Indexed }
 
 export class NuniGraphAudioNode extends VolumeNodeContainer {
+
     static createController? : (canvas : HTMLCanvasElement, vol : GainNode) => NuniGraphController
 
     canvas : HTMLCanvasElement
@@ -54,8 +56,7 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
     }
 
     
-    addInput(
-        { id, audioNode } : { id : number, audioNode : Indexed }) {
+    addInput({ id, audioNode } : NuniNode) {
 
         const inputNode 
             = this.controller
@@ -87,7 +88,7 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
         }
     }
 
-    removeInput({ id } : { id : number }) {
+    removeInput({ id } : NuniNode) {
         const inputNode = this.inputs[id]
         inputNode.audioNode.disconnect()
         this.controller.renderer.removeFromConnectionsCache(inputNode.id)
@@ -95,6 +96,33 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
         delete this.inputs[id]
         
         if (this._windowIsOpen)
+        {
+            this.controller.renderer.render()
+        }
+    }
+
+    replaceInput({ id, audioNode } : NuniNode, newNode : NuniNode) {
+        const inputNode 
+            = this.controller
+                .g.nodes
+                .find(node => node.INPUT_NODE_ID?.id === id)
+
+        if (inputNode) 
+        {
+            audioNode.disconnect(inputNode.audioNode)
+            newNode.audioNode.connect(inputNode.audioNode)
+
+            inputNode.title = `INPUT (id-${newNode.id})`
+            inputNode.INPUT_NODE_ID!.id = newNode.id
+
+            this.inputs[newNode.id] = this.inputs[id]
+            delete this.inputs[id]
+        }
+        else
+        {
+            throw 'inputNode should be there'
+        }
+        if (this._windowIsOpen) 
         {
             this.controller.renderer.render()
         }

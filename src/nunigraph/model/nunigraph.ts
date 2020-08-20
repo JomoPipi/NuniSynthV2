@@ -178,7 +178,7 @@ export class NuniGraph {
     disconnect(node1 : NuniGraphNode, node2 : NuniGraphNode, connectionType : ConnectionType) {
         const connections = this.oneWayConnections[node1.id]
 
-        if (!connections) throw 'check what happened here'
+        if (!connections) throw 'Check what happened here'
 
         const connectionIndex = 
             connections.findIndex(data => 
@@ -674,5 +674,70 @@ export class NuniGraph {
 
     fromString(s : string) {
         return this.fromRawString(LZW_decompress(s))
+    }
+
+
+
+
+    insertNodeIntoConnection(node : NuniGraphNode, fromNode : NuniGraphNode, toNode : NuniGraphNode, connection_type : ConnectionType) {
+        /* The idea here is to insert the node without having to actually disconnect fromNode from toNode.
+        Why does this matter? Because of those pesky input-aware nodes (channel sequencers and modules at this time)
+        whose states change when disconnecting the node. */
+
+        if (IsAwareOfInputIDs[toNode.type])
+        {
+        // Go around the disconnect and makeConnection functions..
+
+            // Remove the connection from the connection list
+            for (const key in this.oneWayConnections[fromNode.id]) 
+            {
+                const { id, connectionType } = this.oneWayConnections[fromNode.id][key]
+                if (id === toNode.id && connectionType === connection_type)
+                {
+                    this.oneWayConnections[fromNode.id].splice(+key, 1)
+                }
+            }
+
+            // Update connections so that node connects to toNode, and prevent duplicate connections
+            const connectionsOfNode = 
+            this.oneWayConnections[node.id] = 
+                (this.oneWayConnections[node.id] || [])
+
+            const connectionAlreadyExists = 
+                connectionsOfNode.some(({ id, connectionType }) => 
+                    id === toNode.id && connectionType === connection_type)
+
+            if (!connectionAlreadyExists)
+            {
+                connectionsOfNode.push(
+                    { id: toNode.id
+                    , connectionType: connection_type 
+                    })
+            }
+            else
+            {
+                log('prevented a duplicate')
+            }
+            
+            const an = toNode.audioNode as SubgraphSequencer | NuniGraphAudioNode
+
+            if (connectionAlreadyExists)
+            {
+                an.removeInput(fromNode)
+            }
+            else 
+            {
+                an.replaceInput(fromNode, node)
+            }
+
+            // Connect fromNode to node the normal way:
+            this.makeConnection(fromNode, node, 'channel')
+        }
+        else
+        {
+            this.disconnect(fromNode, toNode, connection_type)
+            this.makeConnection(fromNode, node, 'channel')
+            this.makeConnection(node, toNode, connection_type)
+        }
     }
 }

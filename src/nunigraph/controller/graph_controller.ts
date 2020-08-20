@@ -97,10 +97,7 @@ export class NuniGraphController {
 
 
     fromString(graphCode : string) {
-        for (const id in this.renderer.connectionsCache) 
-        {
-            delete this.renderer.connectionsCache[id]
-        }
+        this.renderer.clearConnectionsCache()
         this.g.fromString(graphCode)
     }
 
@@ -470,7 +467,7 @@ export class NuniGraphController {
                 
                 const cache = this.renderer.connectionsCache
                 const { fromId, toId, connectionType } = cache[connectionId!]
-
+                log('fromId,toId',fromId,toId)
                 this.save()
                 this.unselectNodes()
 
@@ -618,16 +615,21 @@ export class NuniGraphController {
 
         if (this.renderer.lastDottedLine) 
         {
+            if (this.selectedNodes.length !== 1) throw 'Hey. What gives?'
+
             // We insert the selected node. Output : `connectionType`, input : `channel`.
             const [node] = this.selectedNodes
             const [fromId, toId, connectionType] = this.renderer.lastDottedLine.split(':')
 
             const fromNode = this.g.nodes.find(({ id }) => id === +fromId)
             const toNode = this.g.nodes.find(({ id }) => id === +toId)
+
+            if (!fromNode || !toNode) throw 'Problem here'
             
-            console.log('TODO - node insertion macro. Preserve the connection data (channel sequencer & modules')
+            // console.log('TODO - node insertion macro. Preserve the connection data (channel sequencer & modules')
             //** - for input-aware nodes, we sneakily rename the represented gain node and change the connections manually...*/
             //? Can it be done the same way for both of those input-aware nodes?
+            this.insertNode(node, fromNode, toNode, connectionType as ConnectionType)
         }
 
 
@@ -688,6 +690,16 @@ export class NuniGraphController {
             , [HOVER.EMPTY]:      render
             }
         )[msg.type]()
+    }
+
+
+
+
+    insertNode(node : NuniGraphNode, fromNode : NuniGraphNode, toNode : NuniGraphNode, connectionType : ConnectionType) {
+        
+        this.renderer.clearConnectionsCache()
+        this.g.insertNodeIntoConnection(node, fromNode, toNode, connectionType)
+        this.renderer.render()
     }
 
 

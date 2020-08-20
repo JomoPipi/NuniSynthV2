@@ -57,5 +57,24 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
             this.controller.renderer.render();
         }
     }
+    replaceInput({ id, audioNode }, newNode) {
+        const inputNode = this.controller
+            .g.nodes
+            .find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === id; });
+        if (inputNode) {
+            audioNode.disconnect(inputNode.audioNode);
+            newNode.audioNode.connect(inputNode.audioNode);
+            inputNode.title = `INPUT (id-${newNode.id})`;
+            inputNode.INPUT_NODE_ID.id = newNode.id;
+            this.inputs[newNode.id] = this.inputs[id];
+            delete this.inputs[id];
+        }
+        else {
+            throw 'inputNode should be there';
+        }
+        if (this._windowIsOpen) {
+            this.controller.renderer.render();
+        }
+    }
 }
 //# sourceMappingURL=nunigraph_audionode.js.map

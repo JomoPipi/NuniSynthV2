@@ -31,9 +31,7 @@ export class NuniGraphController {
         this._keydown = (e) => this.keydown(e);
     }
     fromString(graphCode) {
-        for (const id in this.renderer.connectionsCache) {
-            delete this.renderer.connectionsCache[id];
-        }
+        this.renderer.clearConnectionsCache();
         this.g.fromString(graphCode);
     }
     activateEventHandlers() {
@@ -264,6 +262,7 @@ export class NuniGraphController {
                 this.selectedNodes = [];
                 const cache = this.renderer.connectionsCache;
                 const { fromId, toId, connectionType } = cache[connectionId];
+                log('fromId,toId', fromId, toId);
                 this.save();
                 this.unselectNodes();
                 this.renderer.fromNode =
@@ -357,11 +356,15 @@ export class NuniGraphController {
     }
     mouseup(e) {
         if (this.renderer.lastDottedLine) {
+            if (this.selectedNodes.length !== 1)
+                throw 'Hey. What gives?';
             const [node] = this.selectedNodes;
             const [fromId, toId, connectionType] = this.renderer.lastDottedLine.split(':');
             const fromNode = this.g.nodes.find(({ id }) => id === +fromId);
             const toNode = this.g.nodes.find(({ id }) => id === +toId);
-            console.log('TODO - node insertion macro. Preserve the connection data (channel sequencer & modules');
+            if (!fromNode || !toNode)
+                throw 'Problem here';
+            this.insertNode(node, fromNode, toNode, connectionType);
         }
         if (e.ctrlKey && e.target === this.renderer.canvas) {
             const X = e.offsetX / this.renderer.canvas.width;
@@ -397,6 +400,11 @@ export class NuniGraphController {
             [HOVER.CONNECTION]: render,
             [HOVER.EMPTY]: render
         })[msg.type]();
+    }
+    insertNode(node, fromNode, toNode, connectionType) {
+        this.renderer.clearConnectionsCache();
+        this.g.insertNodeIntoConnection(node, fromNode, toNode, connectionType);
+        this.renderer.render();
     }
     keydown(e) {
         if (e.keyCode === 46 || (ISMAC && e.keyCode === 8)) {

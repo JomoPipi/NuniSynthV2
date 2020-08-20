@@ -22,6 +22,11 @@ export class NuniGraphRenderer {
         this.triangleSize = this.innerEdgeBoundary;
         this.connectionsCache = {};
     }
+    clearConnectionsCache() {
+        for (const id in this.connectionsCache) {
+            delete this.connectionsCache[id];
+        }
+    }
     removeFromConnectionsCache(id) {
         for (const connectionId in this.connectionsCache) {
             const { fromId, toId } = this.connectionsCache[connectionId];
@@ -149,6 +154,7 @@ export class NuniGraphRenderer {
         let macroHinted = showConnectionInsertionMacroLine;
         const { ctx, connectionLineWidth, nodeRadius, g } = this;
         ctx.lineWidth = connectionLineWidth;
+        let found = false;
         for (const id1 in g.oneWayConnections) {
             const fromId = +id1;
             const idGroups = this.getParallelConnectionGroups(fromId);
@@ -188,10 +194,12 @@ export class NuniGraphRenderer {
                             dotted = true;
                         }
                     }
-                    this.lastDottedLine
-                        = dotted
-                            ? `${fromId}:${toId}:${connectionType}`
-                            : '';
+                    if (!found) {
+                        this.lastDottedLine
+                            = dotted
+                                ? (found = true, `${fromId}:${toId}:${connectionType}`)
+                                : '';
+                    }
                     this.directedLine(x1, y1, x2, y2, dotted, { fromId, toId, connectionType, x, y });
                 });
             }
