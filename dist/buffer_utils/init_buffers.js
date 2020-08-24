@@ -1,5 +1,5 @@
 import { drawBuffer } from './draw_buffer.js';
-import { BufferStorage } from '../storage/general/buffer_storage.js';
+import { BufferStorage } from '../storage/buffer_storage.js';
 const presets = (i, channel) => ([
     Math.sin(i / 32.0) + Math.sin(i / 512.0),
     Math.sin(i / Math.sqrt(i / 3.0)) - Math.cos(i ** 0.3),

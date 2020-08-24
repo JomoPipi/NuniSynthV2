@@ -1,5 +1,5 @@
 import { BufferUtils } from '../../buffer_utils/init_buffers.js';
-import { BufferStorage } from '../../storage/general/buffer_storage.js';
+import { BufferStorage } from '../../storage/buffer_storage.js';
 import { MasterClock } from '../sequencers/master_clock.js';
 export class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
     constructor(ctx) {

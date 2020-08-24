@@ -9,7 +9,7 @@ import
     { openExistingProject
     , saveProjectAs 
     , saveProject
-    } from '../storage/general/dialog.js'
+    } from '../storage/dialog.js'
 import { modularizeGraph } from '../nunigraph/controller/graph_handlers.js'
 
 const menuItemMap =

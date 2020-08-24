@@ -6,7 +6,7 @@
 
 
 import { drawBuffer } from './draw_buffer.js'
-import { BufferStorage } from '../storage/general/buffer_storage.js'
+import { BufferStorage } from '../storage/buffer_storage.js'
 
 
 

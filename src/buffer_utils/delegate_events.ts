@@ -8,7 +8,7 @@
 import { BufferUtils } from "./init_buffers.js"
 import { recordTo } from "./record.js"
 import { formulateBuffer } from "./buffer_formula.js"
-import { BufferStorage } from "../storage/general/buffer_storage.js"
+import { BufferStorage } from "../storage/buffer_storage.js"
 
 
 // const bufferEditContent = `<div class="main-tab">

@@ -7,7 +7,7 @@
 
 import { NuniSourceNode } from './nuni_source_node.js'
 import { NuniAudioParam } from '../nuni_audioparam.js'
-import { BufferStorage } from '../../storage/general/buffer_storage.js'
+import { BufferStorage } from '../../storage/buffer_storage.js'
 
 export class BufferNode2 extends NuniSourceNode {
     /**

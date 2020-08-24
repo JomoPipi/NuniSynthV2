@@ -1,6 +1,6 @@
 import { BufferUtils } from './init_buffers.js';
 import { audioCtx } from '../webaudio2/internal.js';
-import { BufferStorage } from '../storage/general/buffer_storage.js';
+import { BufferStorage } from '../storage/buffer_storage.js';
 const formulaInput = D('buffer-formula');
 const errorMsgText = D('buffer-formula-error-msg');
 export function formulateBuffer(index) {

@@ -7,7 +7,7 @@
 
 // File System Dialog
 
-import { makeNuniFile, loadNuniFile } from "../../main/save_project.js"
+import { makeNuniFile, loadNuniFile } from "./save_project.js"
 
 // const Store = require('electron-store').remote
 const { dialog } = require('electron').remote

@@ -15,4 +15,4 @@ export * from './components/toggle_button.js'
 export * from './functions/colorContrast.js'
 export * from './functions/ui_clamp.js'
 
-import './setup.js'
+import '../UI_setup/setup_pages.js'

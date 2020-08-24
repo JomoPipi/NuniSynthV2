@@ -1,7 +1,7 @@
 import { ADSR_Controller } from "../adsr.js";
 import { Sequencer } from "./sequencer.js";
 import { NuniAudioParam } from "../nuni_audioparam.js";
-import { BufferStorage } from "../../storage/general/buffer_storage.js";
+import { BufferStorage } from "../../storage/buffer_storage.js";
 import { BufferUtils } from "../../buffer_utils/init_buffers.js";
 export class BufferSequencer extends Sequencer {
     constructor(ctx) {

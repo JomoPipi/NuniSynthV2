@@ -1,7 +1,7 @@
 import { BufferUtils } from "./init_buffers.js";
 import { recordTo } from "./record.js";
 import { formulateBuffer } from "./buffer_formula.js";
-import { BufferStorage } from "../storage/general/buffer_storage.js";
+import { BufferStorage } from "../storage/buffer_storage.js";
 function reverseBuffer(index) {
     BufferStorage.get(index).getChannelData(0).reverse();
     BufferUtils.refreshAffectedBuffers();
