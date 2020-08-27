@@ -5,7 +5,7 @@
 
 
 
-export class XYSlider {
+export class XYPad {
 
     canvas : HTMLCanvasElement
     W : number

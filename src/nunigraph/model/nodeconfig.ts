@@ -166,7 +166,7 @@ const AudioNodeParams : Record<NodeTypes,AudioParams[]> =
 
 const AudioNodeSubTypes = 
     { [NodeTypes.GAIN]:   []
-    , [NodeTypes.OSC]:    ['sine','square','triangle','sawtooth']
+    , [NodeTypes.OSC]:    ['sine','square','triangle','sawtooth','custom']
     , [NodeTypes.FILTER]: 
         ["lowpass", "highpass", "bandpass", "lowshelf"
         ,"highshelf", "peaking", "notch", "allpass"]
