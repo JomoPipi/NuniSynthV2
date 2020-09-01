@@ -8,7 +8,7 @@
 export class VolumeNodeContainer {
     
     /**
-     * Methods that NuniSourceNode and SubgraphSequencer need.
+     * Methods that NuniSourceNode and GateSequencer need.
      */
 
     ctx : AudioContext

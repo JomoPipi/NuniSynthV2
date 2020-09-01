@@ -23,6 +23,8 @@ type DeleteNodeOptions = {
     noRender? : boolean
     }
 
+const dialogBoxesContainer = D('node-windows')
+
 export class NuniGraphController {
 /**
  *  Manipulates the graph and its' view
@@ -219,14 +221,14 @@ export class NuniGraphController {
 
     private getNodesInBox(x : number, y : number) {
         const { width: W, height: H } = this.renderer.canvas
-        if (!this.mouseIsDown) 
+
+        if (!this.mouseIsDown || !this.selectionStart) 
         {
             return this.selectedNodes
         }
-        if (this.selectionStart) 
-        {
-            const [X,Y] = this.selectionStart
-            return this.selectedNodes = 
+
+        const [X,Y] = this.selectionStart
+        return this.selectedNodes = 
             this.g.nodes.filter(node => {
                 const [startX, endX] = [x!, X].sort((a,b)=>a-b)
                 const [startY, endY] = [y!, Y].sort((a,b)=>a-b)
@@ -236,8 +238,6 @@ export class NuniGraphController {
 
                 return isInside(node.x*W, node.y*H)
             })
-        }
-        return this.selectedNodes
     }
 
 
@@ -259,19 +259,14 @@ export class NuniGraphController {
     
     openWindow(node : NuniGraphNode) {
 
-        const moveTheWindowToTheTop = (box : HTMLElement) => {
-            box.style.zIndex = (++openWindowGlobalIndexThatKeepsRising).toString()
-        }
-
+        // If window is already open, move it to the top
         if (this.getOpenWindow[node.id]) 
         {
             moveTheWindowToTheTop(this.getOpenWindow[node.id])
             return;
         }
 
-
-
-        // MODULE NODE STUFF - make it an active controller
+        // If this is a module, mark it as active.
         if (node.audioNode instanceof NuniGraphAudioNode) 
         {
             const controller = node.audioNode.controller
@@ -280,44 +275,8 @@ export class NuniGraphController {
             node.audioNode.activateWindow()
         }
 
-
-
-
-        const clickCallback = (box : HTMLElement) => {
-            moveTheWindowToTheTop(box)
-
-            if (node.type !== NodeTypes.MODULE) 
-            {
-                this.selectNode(node)
-            }
-            this.renderer.render({ selectedNodes: [node] })
-        }
-
-        const closeCallback = () => {
-            this.closeWindow(node.id)
-        }
-
-        const deleteCallBack = () => {  
-            this.save()
-            this.deleteNode(node)
-        }
-
-        const titleEditor = () => {
-            const input = E('input', 
-                { className: 'title-editor'
-                , props: 
-                    { value: node.title || ''
-                    , size: 10
-                    }
-                })
-
-            input.oninput = () => {
-                node.title = input.value
-                this.renderer.render()
-            }
-            return input
-        }
-
+        
+        // Create dialogBox:
         const dialogBox =
             createDraggableWindow(
                 { text: `${NodeLabel[node.type]}, id: ${node.id}`
@@ -331,8 +290,6 @@ export class NuniGraphController {
                     ? undefined
                     : titleEditor()
                 })
-
-
         this.getOpenWindow[node.id] = dialogBox
 
         dialogBox.children[1].appendChild(
@@ -340,19 +297,22 @@ export class NuniGraphController {
                 node, 
                 () => this.save(),
                 deleteCallBack))
-        
-        D('node-windows').appendChild(dialogBox)
-        moveTheWindowToTheTop(dialogBox)
 
+        dialogBoxesContainer.appendChild(dialogBox)
+
+
+        // Place diaglogBox:
+        moveTheWindowToTheTop(dialogBox)
         if (node.id in this.lastNodeWindowPosition) 
         {
+            // Place it where it was:
             const [x,y] = this.lastNodeWindowPosition[node.id]
             dialogBox.style.left = x + 'px'
             dialogBox.style.top  = y + 'px'
         }
         else
         {
-            // Place it close the node
+            // Place it close to the node:
             const canvas = this.renderer.canvas
             const { left, top } = canvas.getBoundingClientRect()
             const placeUnder = node.y < .3 ? -1 : 1
@@ -362,6 +322,48 @@ export class NuniGraphController {
                 dialogBox,
                 document.body)
         }
+
+
+        const _this = this
+
+        function moveTheWindowToTheTop(box : HTMLElement) {
+            box.style.zIndex = (++openWindowGlobalIndexThatKeepsRising).toString()
+        }
+
+        function closeCallback() {
+            _this.closeWindow(node.id)
+        }
+
+        function deleteCallBack() {  
+            _this.save()
+            _this.deleteNode(node)
+        }
+
+        function clickCallback(box : HTMLElement) {
+            moveTheWindowToTheTop(box)
+
+            if (node.type !== NodeTypes.MODULE) 
+            {
+                _this.selectNode(node)
+            }
+            _this.renderer.render({ selectedNodes: [node] })
+        }
+
+        function titleEditor() {
+            const input = E('input', 
+                { className: 'title-editor'
+                , props: 
+                    { value: node.title || ''
+                    , size: 10
+                    }
+                })
+
+            input.oninput = () => {
+                node.title = input.value
+                _this.renderer.render()
+            }
+            return input
+        }
     }
 
 
@@ -370,7 +372,8 @@ export class NuniGraphController {
     closeWindow(id : number) {
 
         const node = this.g.nodes.find(({ id: _id }) => _id === id)!
-        if (!node) throw 'figure out what to do from here'
+        if (!node) throw 'Figure out what to do from here'
+
         if (node.audioNode instanceof NuniGraphAudioNode) 
         {
             const controller = node.audioNode.controller
@@ -386,7 +389,7 @@ export class NuniGraphController {
         if (nodeWindow) 
         {
             this.lastNodeWindowPosition[id] = [nodeWindow.offsetLeft, nodeWindow.offsetTop]
-            D('node-windows').removeChild(nodeWindow)
+            dialogBoxesContainer.removeChild(nodeWindow)
             delete this.getOpenWindow[id]
         }
     }
@@ -467,7 +470,7 @@ export class NuniGraphController {
                 
                 const cache = this.renderer.connectionsCache
                 const { fromId, toId, connectionType } = cache[connectionId!]
-                log('fromId,toId',fromId,toId)
+                
                 this.save()
                 this.unselectNodes()
 
@@ -529,10 +532,14 @@ export class NuniGraphController {
         let showConnectionInsertionMacroLine = false
 
         // FULLSCREEEN ADD AN EXTRA MOUSEMOVE EVENT, AND FUCKS WITH THE COORDINATES >:(
-        if (Math.abs(x - e.offsetX) > 1 || Math.abs(y - e.offsetY) > 1) 
-        {
-            this.mouseHasMovedSinceLastMouseDown = true
-        }
+        // if (Math.abs(x - e.offsetX) > 1 || Math.abs(y - e.offsetY) > 1) 
+        // {
+        //     this.mouseHasMovedSinceLastMouseDown = true
+        // }
+        
+        // @ts-ignore // TODO: find out when TypeScript will support ||=
+        this.mouseHasMovedSinceLastMouseDown |= 
+            (Math.abs(x - e.offsetX) > 1 || Math.abs(y - e.offsetY) > 1)
 
         const isPressing = 
             e.buttons === 1 && this.mouseIsDown
@@ -569,10 +576,14 @@ export class NuniGraphController {
                 n.y += dy
             }
 
-            if (selectedNodes.length === 1 && SupportsInputChannels[selectedNodes[0].type])
-            {
-                showConnectionInsertionMacroLine = true
-            }
+            // @ts-ignore
+            showConnectionInsertionMacroLine |=
+                selectedNodes.length === 1 && SupportsInputChannels[selectedNodes[0].type]
+
+            // if (selectedNodes.length === 1 && SupportsInputChannels[selectedNodes[0].type])
+            // {
+            //     showConnectionInsertionMacroLine = true
+            // }
         }
         
         // Avoid re-rendering when it's not necessary
@@ -626,7 +637,6 @@ export class NuniGraphController {
 
             if (!fromNode || !toNode) throw 'Problem here'
             
-            // console.log('TODO - node insertion macro. Preserve the connection data (channel sequencer & modules')
             //** - for input-aware nodes, we sneakily rename the represented gain node and change the connections manually...*/
             //? Can it be done the same way for both of those input-aware nodes?
             this.insertNode(node, fromNode, toNode, connectionType as ConnectionType)
@@ -737,7 +747,7 @@ export class NuniGraphController {
         // }
         
         // 46 for Windows, 8 for Apple
-        if (e.keyCode === 46 || (ISMAC && e.keyCode === 8)) 
+        if (e.keyCode === 46 || (ISMAC && e.keyCode === 8))
         {
             if (this.selectedNodes.length) 
             {

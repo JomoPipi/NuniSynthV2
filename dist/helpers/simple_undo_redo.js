@@ -17,9 +17,9 @@ export class UndoRedoModule {
     }
     tryInput(e) {
         if (e.ctrlKey && e.keyCode === 90) {
-            e.shiftKey ?
-                this.redo() :
-                this.undo();
+            e.shiftKey
+                ? this.redo()
+                : this.undo();
             return true;
         }
     }

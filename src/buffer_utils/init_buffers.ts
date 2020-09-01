@@ -73,7 +73,7 @@ class BufferUtily {
     initBufferPresets(ctx : AudioContext) {
         const _seconds = 0.1
         
-        const div = D('buffer-container')
+        const bufferContainer = D('buffer-container')
 
         for (let n = 0; n < this.nBuffers; n++) 
         {
@@ -84,7 +84,7 @@ class BufferUtily {
                 , className: 'list-btn'
                 , props: { id: `buff-${n}` }
                 })
-            div.appendChild(btn)
+            bufferContainer.appendChild(btn)
 
             const buffer = ctx.createBuffer(2, ctx.sampleRate * seconds, ctx.sampleRate)
             for (let channel = 0; channel < buffer.numberOfChannels; channel++) 
@@ -101,7 +101,7 @@ class BufferUtily {
         
         D('buff-0').classList.add('selected2')
 
-        div.onclick = (e : MouseEvent) =>{
+        bufferContainer.onclick = (e : MouseEvent) =>{
             const btn = e.target as HTMLButtonElement
             const [_,n] = btn.id.split('-').map(Number)
 

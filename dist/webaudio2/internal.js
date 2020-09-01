@@ -1,8 +1,8 @@
 export { audioCtx } from './audiocontext2.js';
 export { BufferNode2 } from './note_in/buffer2.js';
 export { OscillatorNode2 } from './note_in/oscillator2.js';
-export { SubgraphSequencer } from './sequencers/subgraph_sequencer.js';
-export { BufferSequencer } from './sequencers/buffer_sequencer.js';
+export { GateSequencer } from './sequencers/subgraph_sequencer.js';
+export { SampleSequencer } from './sequencers/buffer_sequencer.js';
 export { graphVisualEqualizer } from '../visualizer/global_visualizer.js';
 export { AudioBufferCaptureNode } from './record/buffer_capture_node.js';
 export { NuniGraphAudioNode } from './nunigraph_audionode.js';

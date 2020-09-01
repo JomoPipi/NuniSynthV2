@@ -10,8 +10,7 @@ const D = (id) => {
 const E = (x, settings = {}) => {
     const element = document.createElement(x);
     const { text, className, children, props } = settings;
-    if (text)
-        element.innerText = text;
+    element.innerText = text || '';
     if (className) {
         for (const name of className.split(' ')) {
             element.classList.add(name);

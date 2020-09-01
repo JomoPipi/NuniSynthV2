@@ -58,7 +58,7 @@ export function formulateBuffer(index : number) {
                     }
                 }
             `)
-        } 
+        }
         catch (e) 
         {
             return e

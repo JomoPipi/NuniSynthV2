@@ -1,6 +1,6 @@
 import { ADSR_Controller } from '../adsr.js';
 import { Sequencer } from './sequencer.js';
-export class SubgraphSequencer extends Sequencer {
+export class GateSequencer extends Sequencer {
     constructor() {
         super(...arguments);
         this.channelEnvelopes = {};

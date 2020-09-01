@@ -27,18 +27,17 @@ export class Sequencer extends VolumeNodeContainer {
     phaseShift = 0
     adsrIndex = 0
     soloChannel = -1
+    mutedChannel : Indexable<boolean>
+    isInSync : boolean
+    stepMatrix : Indexable<boolean[]>
     
     readonly ctx : AudioContext
     protected tick : number
     HTMLGrid : HTMLElement
-    isInSync : boolean
     isPlaying : boolean
     windowIsOpen : boolean
-    stepMatrix : Indexable<boolean[]>
-    mutedChannel : Indexable<boolean>
     protected HTMLBoxes : Indexable<Indexable<HTMLElement>>
     channelData : Indexable<ChannelData>
-    // controls : SequencerControls
 
     constructor(ctx : AudioContext) {
         super(ctx)
@@ -81,14 +80,9 @@ export class Sequencer extends VolumeNodeContainer {
         const m = this.stepMatrix 
         for (const key in m) 
         {
-            if (m[key].length < nSteps) 
-            { // We add steps
-                m[key] = m[key].concat(Array(nSteps - m[key].length).fill(0))
-            } 
-            else 
-            { // We remove steps
-                m[key] = m[key].slice(0, nSteps)
-            }
+            m[key] = m[key]
+                .concat(Array(Math.max(0, nSteps - m[key].length)).fill(0))
+                .slice(0, nSteps)
         }
         this.nSteps = nSteps
     }
@@ -130,7 +124,7 @@ export class Sequencer extends VolumeNodeContainer {
         const boxIsVisible = this.HTMLGrid.offsetParent != null
 
         const playRow = (key : number) => {
-            const stepIsActive = this.stepMatrix[key][this.currentStep]
+            
             if (!this.mutedChannel[key]) 
             {
                 if (boxIsVisible && updateBox) 
@@ -140,13 +134,7 @@ export class Sequencer extends VolumeNodeContainer {
                     const lastStep = (this.currentStep + this.nSteps - 1) % this.nSteps
                     this.HTMLBoxes[key][lastStep]?.classList.remove('highlighted')
                 }
-
-                // if (this.controls.offsetParent != null && updateBox) 
-                // {
-                //     this.controls.highlight(key,this.currentStep)
-                // }
-
-                if (stepIsActive) 
+                if (this.stepMatrix[key][this.currentStep]) 
                 {
                     this.playStepAtTime(key, time + this.phaseShift)
                 }
@@ -207,9 +195,9 @@ export class Sequencer extends VolumeNodeContainer {
                 this.HTMLBoxes[key][i] = box
                 box.classList.add('note-box'
                     + (i === 0 
-                    || i === nSteps/2 
-                    || i === nSteps/4 
-                    || i === 3*nSteps/4 
+                    || i === nSteps / 2 
+                    || i === nSteps / 4
+                    || i === nSteps * 3 / 4 
                     ? '-halfway' 
                     : ''))
                 const boxSize = clamp(10, 100 / nSteps**0.5, 35)

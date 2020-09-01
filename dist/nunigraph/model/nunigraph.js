@@ -1,6 +1,6 @@
 import { NuniGraphNode } from './nunigraph_node.js';
 import { LZW_compress, LZW_decompress } from '../../helpers/lzw_compression.js';
-import { SubgraphSequencer, NuniAudioParam, Sequencer, NuniGraphAudioNode } from '../../webaudio2/internal.js';
+import { GateSequencer, NuniAudioParam, Sequencer, NuniGraphAudioNode } from '../../webaudio2/internal.js';
 const defaultNodeSettings = () => ({ x: 0.5,
     y: 0.5,
     audioParamValues: {},
@@ -42,8 +42,8 @@ export class NuniGraph {
         }
     }
     disconnectFromSpecialNodes(node) {
-        for (const { audioNode } of this.nodes) {
-            if (audioNode instanceof SubgraphSequencer && audioNode.channelData[node.id]) {
+        for (const { audioNode, type } of this.nodes) {
+            if (audioNode instanceof GateSequencer && audioNode.channelData[node.id]) {
                 audioNode.removeInput(node);
             }
             else if (audioNode instanceof NuniGraphAudioNode && audioNode.inputs[node.id]) {
@@ -85,7 +85,7 @@ export class NuniGraph {
         this.disconnect_audioNode_from_destination(node1, destination);
     }
     connect_audioNode_to_destination(node1, destination) {
-        if (destination instanceof NuniGraphAudioNode || destination instanceof SubgraphSequencer) {
+        if (destination instanceof NuniGraphAudioNode || destination instanceof GateSequencer) {
             destination.addInput(node1);
         }
         else if (destination instanceof NuniAudioParam) {
@@ -96,7 +96,7 @@ export class NuniGraph {
         }
     }
     disconnect_audioNode_from_destination(node1, destination) {
-        if (destination instanceof SubgraphSequencer || destination instanceof NuniGraphAudioNode) {
+        if (destination instanceof GateSequencer || destination instanceof NuniGraphAudioNode) {
             destination.removeInput(node1);
         }
         else if (destination instanceof NuniAudioParam) {

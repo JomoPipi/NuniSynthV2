@@ -8,7 +8,7 @@
 import { NuniGraphNode } from './nunigraph_node.js'
 import { LZW_compress, LZW_decompress } from '../../helpers/lzw_compression.js'
 import 
-    { SubgraphSequencer, NuniAudioParam
+    { GateSequencer, NuniAudioParam
     , Sequencer, NuniGraphAudioNode
     } from '../../webaudio2/internal.js'
 
@@ -117,10 +117,16 @@ export class NuniGraph {
          * A better solution may be to wrap disconnect(), or 
          * stop using it all together.
          *  */ 
-        // TODO: refactor into IsInputAwareObject
-        for (const { audioNode } of this.nodes) 
+        
+        for (const { audioNode, type } of this.nodes) 
         {
-            if (audioNode instanceof SubgraphSequencer && audioNode.channelData[node.id])
+            // TODO: refactor into IsInputAwareObject
+            // if (IsAwareOfInputIDs[type])
+            // {
+            //     audioNode.removeInput(node)
+            // }
+
+            if (audioNode instanceof GateSequencer && audioNode.channelData[node.id])
             {
                 audioNode.removeInput(node)
             } 
@@ -196,7 +202,7 @@ export class NuniGraph {
     
     private connect_audioNode_to_destination(node1 : NuniGraphNode, destination : Destination) {
         
-        if (destination instanceof NuniGraphAudioNode || destination instanceof SubgraphSequencer) 
+        if (destination instanceof NuniGraphAudioNode || destination instanceof GateSequencer) 
         {
             destination.addInput(node1)
         }
@@ -216,7 +222,7 @@ export class NuniGraph {
     private disconnect_audioNode_from_destination(node1 : NuniGraphNode, destination : Destination) {
 
     // TODO: Change this methods to disconnect_node_from_destination, and put this condition in a config object.
-        if (destination instanceof SubgraphSequencer || destination instanceof NuniGraphAudioNode) 
+        if (destination instanceof GateSequencer || destination instanceof NuniGraphAudioNode) 
         {
             destination.removeInput(node1)
         } 
@@ -719,7 +725,7 @@ export class NuniGraph {
                 log('prevented a duplicate')
             }
             
-            const an = toNode.audioNode as SubgraphSequencer | NuniGraphAudioNode
+            const an = toNode.audioNode as GateSequencer | NuniGraphAudioNode
 
             if (connectionAlreadyExists)
             {

@@ -7,8 +7,8 @@
 
 import { BufferNode2 } from './note_in/buffer2.js'
 import { OscillatorNode2 } from './note_in/oscillator2.js'
-import { SubgraphSequencer } from './sequencers/subgraph_sequencer.js'
-import { BufferSequencer } from './sequencers/buffer_sequencer.js'
+import { GateSequencer } from './sequencers/subgraph_sequencer.js'
+import { SampleSequencer } from './sequencers/buffer_sequencer.js'
 import { graphVisualEqualizer } from '../visualizer/global_visualizer.js'
 import { AudioBufferCaptureNode } from './record/buffer_capture_node.js'
 import { NuniGraphAudioNode } from './nunigraph_audionode.js'
@@ -45,12 +45,12 @@ class AudioContext2 extends AudioContext {
         return new OscillatorNode2(this) 
     }
 
-    createSubgraphSequencer() {
-        return new SubgraphSequencer(this)
+    createGateSequencer() {
+        return new GateSequencer(this)
     }
 
-    createBufferSequencer() {
-        return new BufferSequencer(this)
+    createSampleSequencer() {
+        return new SampleSequencer(this)
     }
 
     createAudioBufferCaptureNode() {

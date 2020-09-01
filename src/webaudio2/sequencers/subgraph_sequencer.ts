@@ -11,7 +11,7 @@ import { Sequencer } from './sequencer.js'
 
 interface NuniNode { id : number, audioNode : Indexed }
 
-export class SubgraphSequencer extends Sequencer {
+export class GateSequencer extends Sequencer {
 
     /**
      * This creates an N-step sequencer out of

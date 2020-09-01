@@ -39,14 +39,14 @@ class BufferUtily {
     }
     initBufferPresets(ctx) {
         const _seconds = 0.1;
-        const div = D('buffer-container');
+        const bufferContainer = D('buffer-container');
         for (let n = 0; n < this.nBuffers; n++) {
             const seconds = n === 0 ? 4 : _seconds;
             const btn = E('button', { text: String.fromCharCode(65 + n),
                 className: 'list-btn',
                 props: { id: `buff-${n}` }
             });
-            div.appendChild(btn);
+            bufferContainer.appendChild(btn);
             const buffer = ctx.createBuffer(2, ctx.sampleRate * seconds, ctx.sampleRate);
             for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
                 const nowBuffering = buffer.getChannelData(channel);
@@ -58,7 +58,7 @@ class BufferUtily {
         }
         this.updateBufferUI();
         D('buff-0').classList.add('selected2');
-        div.onclick = (e) => {
+        bufferContainer.onclick = (e) => {
             var _a, _b;
             const btn = e.target;
             const [_, n] = btn.id.split('-').map(Number);

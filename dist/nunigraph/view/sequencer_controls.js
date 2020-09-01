@@ -1,4 +1,4 @@
-import { BufferSequencer } from '../../webaudio2/internal.js';
+import { SampleSequencer } from '../../webaudio2/internal.js';
 import { createToggleButton, createRadioButtonGroup, createNumberDialComponent } from '../../UI_library/internal.js';
 import { createSubdivSelect } from './dialogbox_components.js';
 export function sequencerControls(an) {
@@ -56,16 +56,12 @@ function createTopRowControls(an) {
     choose_ADSR: {
         controls.appendChild(createRadioButtonGroup({ buttons: [...'ABCD'],
             selected: String.fromCharCode(an.adsrIndex + 65),
-            className: 'top-bar-btn',
-            onclick: (data, index) => {
+            className: 'top-bar-btn', onclick: (data, index) => {
                 an.adsrIndex = index;
-            },
-            text: 'ADSR'
-        }));
+            }, text: 'ADSR' }));
     }
     toggleSyncPlay: {
-        controls.append(createToggleButton(an, 'isInSync', { text: 'sync',
-            update: (on) => an.noteTime = on
+        controls.append(createToggleButton(an, 'isInSync', { text: 'sync', update: (on) => an.noteTime = on
                 ? (an.startTime = an.currentStep = 0)
                 : an.ctx.currentTime
         }));
@@ -74,7 +70,7 @@ function createTopRowControls(an) {
 }
 function createBottomRowControls(an) {
     const row = E('div', { className: 'flex-center' });
-    if (an instanceof BufferSequencer) {
+    if (an instanceof SampleSequencer) {
         const btn = E('button', { text: '+',
             className: 'top-bar-btn'
         });

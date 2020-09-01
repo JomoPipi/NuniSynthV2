@@ -5,7 +5,7 @@
 
 
 
-import { Sequencer, BufferSequencer } from '../../webaudio2/internal.js'
+import { Sequencer, SampleSequencer } from '../../webaudio2/internal.js'
 import { createToggleButton, createRadioButtonGroup, createNumberDialComponent } from '../../UI_library/internal.js'
 import { createSubdivSelect } from './dialogbox_components.js'
 
@@ -125,7 +125,7 @@ function createTopRowControls(an : Sequencer) {
 function createBottomRowControls(an : Sequencer) {
     const row = E('div', { className: 'flex-center' })
 
-    if (an instanceof BufferSequencer) 
+    if (an instanceof SampleSequencer) 
     { // add new row
         const btn = E('button', 
             { text: '+'

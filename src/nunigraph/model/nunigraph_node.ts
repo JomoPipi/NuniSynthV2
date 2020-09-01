@@ -6,8 +6,8 @@
 
 
 import 
-    { audioCtx, OscillatorNode2 , BufferNode2, SubgraphSequencer
-    , BufferSequencer, AudioBufferCaptureNode, NuniGraphAudioNode
+    { audioCtx, OscillatorNode2 , BufferNode2, GateSequencer
+    , SampleSequencer, AudioBufferCaptureNode, NuniGraphAudioNode
     } from '../../webaudio2/internal.js'
 
 
@@ -20,8 +20,8 @@ type AudioNodeMap = {
     [NodeTypes.PANNER]: StereoPannerNode
     [NodeTypes.DELAY]:  DelayNode
     [NodeTypes.BUFFER]: BufferNode2
-    [NodeTypes.SGS]:    SubgraphSequencer
-    [NodeTypes.B_SEQ]:  BufferSequencer
+    [NodeTypes.SGS]:    GateSequencer
+    [NodeTypes.B_SEQ]:  SampleSequencer
     [NodeTypes.CSN]:    ConstantSourceNode
     [NodeTypes.RECORD]: AudioBufferCaptureNode
     [NodeTypes.MODULE]: NuniGraphAudioNode
@@ -85,7 +85,8 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
         this.audioNode = (audioCtx as Indexed)[createAudioNode[type]]()
         
-        if (MustBeStarted[type]) (this.audioNode as ConstantSourceNode).start(0)
+        // TODO: Maybe start it during on tempo tick?
+        if (MustBeStarted[type]) (this.audioNode as any).start(0)
 
         Object.assign(this.audioNode, JSON.parse(JSON.stringify(audioNodeProperties)))
 

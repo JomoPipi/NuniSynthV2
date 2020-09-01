@@ -6,14 +6,15 @@
 
 
 import { XYPad } from '../UI_library/components/xypad.js'
-import { audioCtx } from '../webaudio2/internal.js'
 
 
 const slider = D('n-waveform-slider') as HTMLInputElement
 const container = D('waveform-test')
 const pads = [new XYPad(E('canvas'), 100)]
 
-;(slider.oninput = drawPads)()
+;(slider.oninput = () => {
+    drawPads()
+})()
 
 function drawPads() {
     container.innerHTML = ''
@@ -24,23 +25,17 @@ function drawPads() {
         pads.push(new XYPad(canvas, 100))
         container.appendChild(canvas)
     }
+    log('length =',pads.length)
 }
 
-container.onclick = function(e : MouseEvent) {
-    if (e.target instanceof HTMLCanvasElement) 
-    {
-        newWaveform()
-    }
-}
-
-export const waveform = { wave: 'sine' as PeriodicWave }
-function newWaveform() {
+export function createPeriodicWave(ctx : AudioContext) {
 
     const n = pads.length
     const real = new Float32Array(n)
     const imag = new Float32Array(n)
     const { H, W } = pads[0]
 
+    log('n =',n)
     for (let i = 0; i < n; i++)
     {
         const [x,y] = pads[i].point
@@ -48,8 +43,8 @@ function newWaveform() {
         const Y = 2*y/H - 1
         real[i] = X
         imag[i] = Y
+        log('xy =',X,Y)
     }
     
-    waveform.wave = audioCtx.createPeriodicWave(real, imag)
+    return ctx.createPeriodicWave(real, imag)
 }
-

@@ -17,6 +17,8 @@ export function drawBuffer(buff : AudioBuffer, canvas : OffscreenCanvas) {
     }
 
     worker.postMessage({ buffer: buff.getChannelData(0) })
-
-    // worker.terminate() // Is there any harm in keeping idle workers alive?
 }
+
+// function resizeBuffer() {
+//     worker.postMessage({ resize: true })
+// }

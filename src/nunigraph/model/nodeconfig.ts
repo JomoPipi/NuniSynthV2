@@ -45,7 +45,7 @@ const NodeLabel =
     , [NodeTypes.PANNER]: 'Panner'
     , [NodeTypes.DELAY]:  'Delay'
     , [NodeTypes.BUFFER]: 'Sample'
-    , [NodeTypes.SGS]:    'Channel Sequencer'
+    , [NodeTypes.SGS]:    'Gate Sequencer'
     , [NodeTypes.B_SEQ]:  'Sample Sequencer'
     , [NodeTypes.CSN]:    'Number Value'
     , [NodeTypes.RECORD]: 'Recorder'
@@ -59,8 +59,8 @@ const createAudioNode =
     , [NodeTypes.PANNER]: 'createStereoPanner'
     , [NodeTypes.DELAY]:  'createDelay'
     , [NodeTypes.BUFFER]: 'createBuffer2'
-    , [NodeTypes.SGS]:    'createSubgraphSequencer'
-    , [NodeTypes.B_SEQ]:  'createBufferSequencer'
+    , [NodeTypes.SGS]:    'createGateSequencer'
+    , [NodeTypes.B_SEQ]:  'createSampleSequencer'
     , [NodeTypes.CSN]:    'createConstantSource'
     , [NodeTypes.RECORD]: 'createAudioBufferCaptureNode'
     , [NodeTypes.MODULE]: 'createNuniGraphAudioNode'
@@ -91,7 +91,7 @@ const IsAwareOfInputIDs =
     , [NodeTypes.B_SEQ]:  false
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: false
-    , [NodeTypes.MODULE]: true  // TODO: change this to true
+    , [NodeTypes.MODULE]: true
     }
 
 const MustBeStarted =

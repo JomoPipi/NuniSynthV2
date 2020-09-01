@@ -53,7 +53,7 @@ const E = <T extends string>(x : T, settings : ElementSettings = {}) => {
     
     const { text, className, children, props } = settings
 
-    if (text) element.innerText = text
+    element.innerText = text || ''
 
     if (className)
     {

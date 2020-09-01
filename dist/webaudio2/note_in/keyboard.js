@@ -19,11 +19,8 @@ const scale = keyCodes.map((_, i) => i * 100);
 export const KB = { keyCodes,
     keymap,
     held,
-    scale,
-    mode: 'poly',
-    nVoices: 10,
-    attachToGraph,
-    connectedNodes: function* () { yield* []; }
+    scale, mode: 'poly', nVoices: 10,
+    attachToGraph, connectedNodes: function* () { yield* []; }
 };
 function attachToGraph(getNodes) {
     KB.connectedNodes = getNodes;

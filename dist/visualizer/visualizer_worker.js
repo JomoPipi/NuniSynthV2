@@ -35,4 +35,5 @@ function drawFrequencySpectrum(e) {
     ctx.strokeStyle = isClipping ? 'red' : gradient;
     ctx.stroke();
 }
+export {};
 //# sourceMappingURL=visualizer_worker.js.map

@@ -42,12 +42,9 @@ export class Sequencer extends VolumeNodeContainer {
     updateSteps(nSteps) {
         const m = this.stepMatrix;
         for (const key in m) {
-            if (m[key].length < nSteps) {
-                m[key] = m[key].concat(Array(nSteps - m[key].length).fill(0));
-            }
-            else {
-                m[key] = m[key].slice(0, nSteps);
-            }
+            m[key] = m[key]
+                .concat(Array(Math.max(0, nSteps - m[key].length)).fill(0))
+                .slice(0, nSteps);
         }
         this.nSteps = nSteps;
     }
@@ -83,14 +80,13 @@ export class Sequencer extends VolumeNodeContainer {
         const boxIsVisible = this.HTMLGrid.offsetParent != null;
         const playRow = (key) => {
             var _a, _b;
-            const stepIsActive = this.stepMatrix[key][this.currentStep];
             if (!this.mutedChannel[key]) {
                 if (boxIsVisible && updateBox) {
                     (_a = this.HTMLBoxes[key][this.currentStep]) === null || _a === void 0 ? void 0 : _a.classList.add('highlighted');
                     const lastStep = (this.currentStep + this.nSteps - 1) % this.nSteps;
                     (_b = this.HTMLBoxes[key][lastStep]) === null || _b === void 0 ? void 0 : _b.classList.remove('highlighted');
                 }
-                if (stepIsActive) {
+                if (this.stepMatrix[key][this.currentStep]) {
                     this.playStepAtTime(key, time + this.phaseShift);
                 }
             }
@@ -135,7 +131,7 @@ export class Sequencer extends VolumeNodeContainer {
                     + (i === 0
                         || i === nSteps / 2
                         || i === nSteps / 4
-                        || i === 3 * nSteps / 4
+                        || i === nSteps * 3 / 4
                         ? '-halfway'
                         : ''));
                 const boxSize = clamp(10, 100 / nSteps ** 0.5, 35);

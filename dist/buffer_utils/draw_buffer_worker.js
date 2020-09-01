@@ -28,4 +28,5 @@ onmessage = function ({ data: { canvas, buffer } }) {
         ctx.restore();
     }
 };
+export {};
 //# sourceMappingURL=draw_buffer_worker.js.map
