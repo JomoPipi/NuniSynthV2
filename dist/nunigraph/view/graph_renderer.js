@@ -89,18 +89,15 @@ export class NuniGraphRenderer {
                 connectionsCache[c_id] || { fromId, toId, connectionType };
             data.x = X - dx * z * W / 3.0;
             data.y = Y - dy * z * W / 3.0;
-            if (x && y &&
-                distance(x, y, data.x, data.y) < triangleRadius) {
+            const isHoveringOverTriangle = distance(x, y, data.x, data.y) < triangleRadius;
+            if (isHoveringOverTriangle)
                 ctx.fillStyle = 'orange';
-            }
         }
-        if (dotted) {
+        if (dotted)
             ctx.setLineDash([3, 8]);
-        }
         this.line(x, y, X, Y);
-        if (dotted) {
+        if (dotted)
             ctx.setLineDash([1, 0]);
-        }
         this.drawDirectionTriangle(X, Y, angle, x >= X);
     }
     drawGridLines(H, W, snapNodes, selectedNodes) {
@@ -148,7 +145,10 @@ export class NuniGraphRenderer {
         ctx.translate(-x, -y);
     }
     getParallelConnectionGroups(fromId) {
-        return this.g.oneWayConnections[fromId].reduce((groups, v) => (Object.assign(Object.assign({}, groups), { [v.id]: [...(groups[v.id] || []), v] })), {});
+        return this.g.oneWayConnections[fromId].reduce((groups, v) => ({
+            ...groups,
+            [v.id]: [...(groups[v.id] || []), v]
+        }), {});
     }
     drawNodeConnections(nodes, { H, W, x, y, showConnectionInsertionMacroLine, selectedNodes: [node] }) {
         let macroHinted = showConnectionInsertionMacroLine;
@@ -269,7 +269,7 @@ export class NuniGraphRenderer {
         const W = canvas.width = canvas.offsetWidth;
         const H = canvas.height = canvas.offsetHeight;
         const { x, y, buttons, selectionStart, selectedNodes } = options;
-        const innerOptions = Object.assign(Object.assign({}, options), { H, W, selectedNodes: selectedNodes || [] });
+        const innerOptions = { ...options, H, W, selectedNodes: selectedNodes || [] };
         ctx.font = '15px Arial';
         ctx.clearRect(0, 0, W, H);
         if (snapToGrid.isEnabled) {

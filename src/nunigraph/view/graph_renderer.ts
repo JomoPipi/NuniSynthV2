@@ -187,25 +187,16 @@ export class NuniGraphRenderer {
             data.x = X - dx * z * W / 3.0
             data.y = Y - dy * z * W / 3.0
 
-            if (x && y && 
-                distance(x, y, data.x,data.y) < triangleRadius) 
-            {
-            // Highlight the connection arrow because the user is hovering over it
-                ctx.fillStyle = 'orange' 
-            }
+            const isHoveringOverTriangle = distance(x!, y!, data.x,data.y) < triangleRadius
+            
+            if (isHoveringOverTriangle) ctx.fillStyle = 'orange'
         }
 
-        if (dotted)
-        {
-            ctx.setLineDash([3, 8])
-        }
+        if (dotted) ctx.setLineDash([3, 8])
         
         this.line(x,y,X,Y)
 
-        if (dotted)
-        {
-            ctx.setLineDash([1,0])
-        }
+        if (dotted) ctx.setLineDash([1,0])
 
         this.drawDirectionTriangle(X, Y, angle, x >= X)
     }

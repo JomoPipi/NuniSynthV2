@@ -220,5 +220,5 @@ const PostConnection_Transferable_InputRemappable_AudioNodeProperties = { [NodeT
 };
 const TransferableNodeProperties = 'id,type,x,y,audioParamValues,audioNodeProperties,title,INPUT_NODE_ID'
     .split(',')
-    .reduce((acc, prop) => (Object.assign(Object.assign({}, acc), { [prop]: true })), {});
+    .reduce((acc, prop) => ({ ...acc, [prop]: true }), {});
 //# sourceMappingURL=nodeconfig.js.map

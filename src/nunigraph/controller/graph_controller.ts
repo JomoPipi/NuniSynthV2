@@ -530,15 +530,8 @@ export class NuniGraphController {
 
         const [x,y] = this.lastMouse_DownXY
         let showConnectionInsertionMacroLine = false
-
-        // FULLSCREEEN ADD AN EXTRA MOUSEMOVE EVENT, AND FUCKS WITH THE COORDINATES >:(
-        // if (Math.abs(x - e.offsetX) > 1 || Math.abs(y - e.offsetY) > 1) 
-        // {
-        //     this.mouseHasMovedSinceLastMouseDown = true
-        // }
         
-        // @ts-ignore // TODO: find out when TypeScript will support ||=
-        this.mouseHasMovedSinceLastMouseDown |= 
+        this.mouseHasMovedSinceLastMouseDown ||= 
             (Math.abs(x - e.offsetX) > 1 || Math.abs(y - e.offsetY) > 1)
 
         const isPressing = 
@@ -576,14 +569,8 @@ export class NuniGraphController {
                 n.y += dy
             }
 
-            // @ts-ignore
-            showConnectionInsertionMacroLine |=
+            showConnectionInsertionMacroLine ||=
                 selectedNodes.length === 1 && SupportsInputChannels[selectedNodes[0].type]
-
-            // if (selectedNodes.length === 1 && SupportsInputChannels[selectedNodes[0].type])
-            // {
-            //     showConnectionInsertionMacroLine = true
-            // }
         }
         
         // Avoid re-rendering when it's not necessary

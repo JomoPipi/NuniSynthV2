@@ -126,6 +126,8 @@ export class NuniGraph {
             //     audioNode.removeInput(node)
             // }
 
+
+            // TODO: merge the duplicate if-bodies in a clean way
             if (audioNode instanceof GateSequencer && audioNode.channelData[node.id])
             {
                 audioNode.removeInput(node)
@@ -443,8 +445,9 @@ export class NuniGraph {
                 if (!nodeA || !nodeB) throw 'Something is wrong here'
                 const a = mapToNewNode[nodeA.id] || nodeA
                 const b = mapToNewNode[nodeB.id] || nodeB
+                const connectionDoesntExist = a !== nodeA || b !== nodeB
 
-                if (a !== nodeA || b !== nodeB) 
+                if (connectionDoesntExist) 
                 {
                     this.copyModuleInputNodes(a, b, nodeA, nodeB)
                     this.makeConnection(a, b, connectionType)
@@ -468,7 +471,9 @@ export class NuniGraph {
                     node.INPUT_NODE_ID?.id === nodeA.id)
     
             if (!innerInputNode) 
+            {
                 throw 'An input node with INPUT_NODE_ID = nodeA.id should exist inside node b'
+            }
 
             innerInputNode.INPUT_NODE_ID!.id = a.id
             innerInputNode.title = `INPUT (id-${a.id})`
@@ -489,7 +494,7 @@ export class NuniGraph {
         nodes : NuniGraphNode[], 
         mapToNewNode : Indexable<NuniGraphNode>) {
 
-    //* Here, we remap the inputs of the properties use them as keys
+        //* Here, we remap the inputs of the properties use them as keys
         for (const node of nodes) 
         {
             for (const propName of PostConnection_Transferable_InputRemappable_AudioNodeProperties[node.type] || []) 
@@ -605,7 +610,7 @@ export class NuniGraph {
                 , INPUT_NODE_ID
                 } = node
 
-            // We already copied the master gain
+            // We've already copied the master gain
             if (id === 0) continue
             
             const settings : NodeCreationSettings = 
@@ -616,7 +621,7 @@ export class NuniGraph {
                 , INPUT_NODE_ID
                 }
 
-                if (!INPUT_NODE_ID && id !== 0) settings.title = title
+            if (!INPUT_NODE_ID) settings.title = title
 
             const newNode = new NuniGraphNode(id, type, JSON.parse(JSON.stringify(settings)))
             this.nodes.push(newNode)

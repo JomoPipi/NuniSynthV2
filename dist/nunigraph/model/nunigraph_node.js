@@ -1,7 +1,6 @@
 import { audioCtx } from '../../webaudio2/internal.js';
 export class NuniGraphNode {
     constructor(id, type, settings) {
-        var _a;
         const { x, y, audioParamValues, audioNodeProperties, title, INPUT_NODE_ID } = settings;
         this.id = id;
         this.type = type;
@@ -15,7 +14,8 @@ export class NuniGraphNode {
         Object.assign(this.audioNode, JSON.parse(JSON.stringify(audioNodeProperties)));
         this.audioParamValues = JSON.parse(JSON.stringify(audioParamValues));
         for (const param of AudioNodeParams[type]) {
-            const value = (_a = audioParamValues[param]) !== null && _a !== void 0 ? _a : DefaultParamValues[param];
+            const value = audioParamValues[param]
+                ?? DefaultParamValues[param];
             this.setValueOfParam(param, value);
         }
     }

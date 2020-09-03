@@ -11,7 +11,7 @@ export function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : An
     analyser.minDecibels = -90
     
     const bufferLength = analyser.frequencyBinCount
-    const worker = new Worker('dist/visualizer/visualizer_worker.js')
+    const worker = new Worker('dist/visualizer/visualizer_worker.js', { type: 'module' })
 
     canvas.width = canvas.offsetWidth
     canvas.height = canvas.offsetHeight

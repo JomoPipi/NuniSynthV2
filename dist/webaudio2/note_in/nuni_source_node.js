@@ -46,10 +46,9 @@ export class NuniSourceNode extends VolumeNodeContainer {
         src.stop(stopTime);
     }
     update(keydown, key, when) {
-        var _a;
         if (!this.kbMode)
             return;
-        const time = when !== null && when !== void 0 ? when : this.ctx.currentTime;
+        const time = when ?? this.ctx.currentTime;
         if (keydown) {
             this.beginPlayingNote(key, time);
             this.stopLastNSources.push(this.playingKeys[key]);
@@ -58,7 +57,7 @@ export class NuniSourceNode extends VolumeNodeContainer {
             }
         }
         else {
-            (_a = this.playingKeys[key]) === null || _a === void 0 ? void 0 : _a.stop(time);
+            this.playingKeys[key]?.stop(time);
             delete this.playingKeys[key];
         }
     }

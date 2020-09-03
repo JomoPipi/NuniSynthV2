@@ -27,19 +27,19 @@ export const ADSR_Controller = {
         gain.setTargetAtTime(volume * sustain ** 2, time + attack, decay);
     },
     triggerSource: function (source, gain, time, volume, index) {
-        const { attack, decay, sustain } = this.values[index !== null && index !== void 0 ? index : this.index];
+        const { attack, decay, sustain } = this.values[index ?? this.index];
         gain.cancelScheduledValues(time);
         gain.setTargetAtTime(volume, time, attack);
         gain.setTargetAtTime(volume * sustain ** 2, time + attack, decay);
         source.start(time);
     },
     untriggerAdsr: function (gain, time, index) {
-        const { release } = this.values[index !== null && index !== void 0 ? index : this.index];
+        const { release } = this.values[index ?? this.index];
         gain.cancelScheduledValues(time);
         gain.setTargetAtTime(0, time, release);
     },
     untriggerAndGetStopTime: function (gain, time, index) {
-        const { release } = this.values[index !== null && index !== void 0 ? index : this.index];
+        const { release } = this.values[index ?? this.index];
         gain.cancelScheduledValues(time);
         gain.setTargetAtTime(0, time, release);
         return time + release * releaseTimeConstant;

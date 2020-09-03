@@ -79,12 +79,11 @@ export class Sequencer extends VolumeNodeContainer {
     playStepsAtTime(time, updateBox) {
         const boxIsVisible = this.HTMLGrid.offsetParent != null;
         const playRow = (key) => {
-            var _a, _b;
             if (!this.mutedChannel[key]) {
                 if (boxIsVisible && updateBox) {
-                    (_a = this.HTMLBoxes[key][this.currentStep]) === null || _a === void 0 ? void 0 : _a.classList.add('highlighted');
+                    this.HTMLBoxes[key][this.currentStep]?.classList.add('highlighted');
                     const lastStep = (this.currentStep + this.nSteps - 1) % this.nSteps;
-                    (_b = this.HTMLBoxes[key][lastStep]) === null || _b === void 0 ? void 0 : _b.classList.remove('highlighted');
+                    this.HTMLBoxes[key][lastStep]?.classList.remove('highlighted');
                 }
                 if (this.stepMatrix[key][this.currentStep]) {
                     this.playStepAtTime(key, time + this.phaseShift);

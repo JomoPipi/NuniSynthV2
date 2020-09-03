@@ -2,7 +2,7 @@ export function renderVisualiserCanvas(canvas, analyser) {
     analyser.fftSize = 2048;
     analyser.minDecibels = -90;
     const bufferLength = analyser.frequencyBinCount;
-    const worker = new Worker('dist/visualizer/visualizer_worker.js');
+    const worker = new Worker('dist/visualizer/visualizer_worker.js', { type: 'module' });
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
     const offscreen = canvas.transferControlToOffscreen();

@@ -70,10 +70,9 @@ export class NuniGraphController {
         return obj;
     }
     selectNode(node) {
-        var _a;
         this.unselectNodes();
         this.selectedNodes = [node];
-        (_a = this.getOpenWindow[node.id]) === null || _a === void 0 ? void 0 : _a.classList.add('selected2');
+        this.getOpenWindow[node.id]?.classList.add('selected2');
     }
     unselectNodes() {
         this.selectedNodes = [];
@@ -268,7 +267,7 @@ export class NuniGraphController {
                 const to = this.g.nodes.find(node => node.id === toId);
                 delete cache[connectionId];
                 if (to.audioNode instanceof NuniGraphAudioNode) {
-                    const inputNode = to.audioNode.controller.g.nodes.find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === fromId; });
+                    const inputNode = to.audioNode.controller.g.nodes.find(node => node.INPUT_NODE_ID?.id === fromId);
                     if (!inputNode)
                         throw 'error, this should be here';
                     to.audioNode.controller.closeWindow(inputNode.id);
@@ -320,9 +319,7 @@ export class NuniGraphController {
                 n.x += dx;
                 n.y += dy;
             }
-            if (selectedNodes.length === 1 && SupportsInputChannels[selectedNodes[0].type]) {
-                showConnectionInsertionMacroLine = true;
-            }
+            showConnectionInsertionMacroLine || (showConnectionInsertionMacroLine = selectedNodes.length === 1 && SupportsInputChannels[selectedNodes[0].type]);
         }
         const { type: lastType } = this.lastMouse_MoveMsg;
         const { type } = msg;

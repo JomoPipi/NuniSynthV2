@@ -53,7 +53,7 @@ export class NuniGraph {
     }
     makeConnection(node1, node2, connectionType) {
         const connections = this.oneWayConnections[node1.id];
-        const isDuplicate = connections === null || connections === void 0 ? void 0 : connections.find(data => data.id === node2.id &&
+        const isDuplicate = connections?.find(data => data.id === node2.id &&
             data.connectionType === connectionType);
         if (isDuplicate)
             return;
@@ -136,7 +136,7 @@ export class NuniGraph {
             for (const { id: indexB, connectionType } of connections[indexA]) {
                 const b = nodeCopies[indexB];
                 if (is(b, NodeTypes.MODULE)) {
-                    const innerInputNode = b.audioNode.controller.g.nodes.find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === _nodeDataArray[indexA].oldId; });
+                    const innerInputNode = b.audioNode.controller.g.nodes.find(node => node.INPUT_NODE_ID?.id === _nodeDataArray[indexA].oldId);
                     if (!innerInputNode) {
                         throw 'An input node with INPUT_NODE_ID = nodeA.id should exist inside node b';
                     }
@@ -214,7 +214,8 @@ export class NuniGraph {
                     throw 'Something is wrong here';
                 const a = mapToNewNode[nodeA.id] || nodeA;
                 const b = mapToNewNode[nodeB.id] || nodeB;
-                if (a !== nodeA || b !== nodeB) {
+                const connectionDoesntExist = a !== nodeA || b !== nodeB;
+                if (connectionDoesntExist) {
                     this.copyModuleInputNodes(a, b, nodeA, nodeB);
                     this.makeConnection(a, b, connectionType);
                 }
@@ -223,9 +224,10 @@ export class NuniGraph {
     }
     copyModuleInputNodes(a, b, nodeA, nodeB) {
         if (is(b, NodeTypes.MODULE) && b !== nodeB) {
-            const innerInputNode = b.audioNode.controller.g.nodes.find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === nodeA.id; });
-            if (!innerInputNode)
+            const innerInputNode = b.audioNode.controller.g.nodes.find(node => node.INPUT_NODE_ID?.id === nodeA.id);
+            if (!innerInputNode) {
                 throw 'An input node with INPUT_NODE_ID = nodeA.id should exist inside node b';
+            }
             innerInputNode.INPUT_NODE_ID.id = a.id;
             innerInputNode.title = `INPUT (id-${a.id})`;
             b.audioNode.inputs[a.id] = innerInputNode;
@@ -235,14 +237,13 @@ export class NuniGraph {
         }
     }
     copyThingsThatCanOnlyBeCopiedAfterConnectionsAreMade(nodes, mapToNewNode) {
-        var _a, _b;
         for (const node of nodes) {
             for (const propName of PostConnection_Transferable_InputRemappable_AudioNodeProperties[node.type] || []) {
                 const an = mapToNewNode[node.id].audioNode;
                 const targetObj = an[propName];
                 const sourceObj = node.audioNode[propName];
                 for (const id in sourceObj) {
-                    const newId = (_b = (_a = mapToNewNode[id]) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : +id;
+                    const newId = mapToNewNode[id]?.id ?? +id;
                     targetObj[newId] = JSON.parse(JSON.stringify(sourceObj[id]));
                     if (newId !== +id && !this.oneWayConnections[id].some(data => +data.id === +id)) {
                         delete targetObj[id];
@@ -261,8 +262,11 @@ export class NuniGraph {
         };
     }
     convertNodeToNodeSettings(node) {
-        const nodeCopy = Object.assign(Object.assign({}, node), { audioNode: {} });
-        const settings = Object.assign(Object.assign({}, JSON.parse(JSON.stringify(nodeCopy))), { audioNodeProperties: {}, oldId: node.id });
+        const nodeCopy = { ...node, audioNode: {} };
+        const settings = { ...JSON.parse(JSON.stringify(nodeCopy)),
+            audioNodeProperties: {},
+            oldId: node.id
+        };
         for (const prop in Transferable_AudioNodeProperties) {
             if (prop in node.audioNode) {
                 const p = prop;
@@ -299,7 +303,7 @@ export class NuniGraph {
                 audioNodeProperties,
                 INPUT_NODE_ID
             };
-            if (!INPUT_NODE_ID && id !== 0)
+            if (!INPUT_NODE_ID)
                 settings.title = title;
             const newNode = new NuniGraphNode(id, type, JSON.parse(JSON.stringify(settings)));
             this.nodes.push(newNode);
@@ -312,7 +316,7 @@ export class NuniGraph {
                 const nodeB = this.nodes.find(node => node.id === id2);
                 if (is(nodeB, NodeTypes.MODULE)) {
                     const innerInputNode = nodeB.audioNode.controller.g.nodes.find(node => node.INPUT_NODE_ID && node.INPUT_NODE_ID.id === nodeA.id);
-                    if (!(innerInputNode === null || innerInputNode === void 0 ? void 0 : innerInputNode.INPUT_NODE_ID))
+                    if (!innerInputNode?.INPUT_NODE_ID)
                         throw 'It should be there';
                     innerInputNode.title = `INPUT (id-${nodeA.id})`;
                     nodeB.audioNode.inputs[nodeA.id] = innerInputNode;

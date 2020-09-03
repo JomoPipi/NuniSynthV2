@@ -42,6 +42,7 @@ export function createValuesWindow(
 
     if (node.audioNode instanceof NuniGraphAudioNode) 
     {
+        // TODO: Don't style in JS
         controls.style.margin = '0 0'
         controls.appendChild(createResizeableGraphEditor(node.audioNode))
     }

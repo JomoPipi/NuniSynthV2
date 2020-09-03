@@ -28,7 +28,7 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
     addInput({ id, audioNode }) {
         const inputNode = this.controller
             .g.nodes
-            .find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === id; });
+            .find(node => node.INPUT_NODE_ID?.id === id);
         if (inputNode) {
             audioNode.connect(inputNode.audioNode);
         }
@@ -60,7 +60,7 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
     replaceInput({ id, audioNode }, newNode) {
         const inputNode = this.controller
             .g.nodes
-            .find(node => { var _a; return ((_a = node.INPUT_NODE_ID) === null || _a === void 0 ? void 0 : _a.id) === id; });
+            .find(node => node.INPUT_NODE_ID?.id === id);
         if (inputNode) {
             audioNode.disconnect(inputNode.audioNode);
             newNode.audioNode.connect(inputNode.audioNode);

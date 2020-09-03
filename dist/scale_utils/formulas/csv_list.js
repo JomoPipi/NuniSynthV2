@@ -15,7 +15,7 @@ export const setScaleFromCSV = (_ => {
         return 1200 * Math.log2(+a / +b) || 0;
     }
     return function (input) {
-        const values = (input !== null && input !== void 0 ? input : valueInput.value)
+        const values = (input ?? valueInput.value)
             .split(',')
             .map(s => s.trim())
             .sort((a, b) => toCents(a) - toCents(b));
