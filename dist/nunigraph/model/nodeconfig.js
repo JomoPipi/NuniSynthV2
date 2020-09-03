@@ -73,17 +73,17 @@ const MustBeStarted = { [NodeTypes.GAIN]: false,
     [NodeTypes.RECORD]: false,
     [NodeTypes.MODULE]: false
 };
-const HasNoAudioParams = { [NodeTypes.GAIN]: false,
-    [NodeTypes.OSC]: false,
-    [NodeTypes.FILTER]: false,
-    [NodeTypes.PANNER]: false,
-    [NodeTypes.DELAY]: false,
-    [NodeTypes.BUFFER]: false,
-    [NodeTypes.SGS]: true,
-    [NodeTypes.B_SEQ]: true,
-    [NodeTypes.CSN]: false,
-    [NodeTypes.RECORD]: true,
-    [NodeTypes.MODULE]: true
+const HasAudioParams = { [NodeTypes.GAIN]: true,
+    [NodeTypes.OSC]: true,
+    [NodeTypes.FILTER]: true,
+    [NodeTypes.PANNER]: true,
+    [NodeTypes.DELAY]: true,
+    [NodeTypes.BUFFER]: true,
+    [NodeTypes.SGS]: false,
+    [NodeTypes.B_SEQ]: false,
+    [NodeTypes.CSN]: true,
+    [NodeTypes.RECORD]: false,
+    [NodeTypes.MODULE]: false
 };
 const HasNoOutput = { [NodeTypes.GAIN]: false,
     [NodeTypes.OSC]: false,

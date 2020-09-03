@@ -35,7 +35,10 @@ const contextmenu = D('graph-contextmenu')
                 const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = 
                     controller === GraphController 
                     ? controller.renderer.canvas
-                    : controller.renderer.canvas.parentNode.parentNode.parentNode.parentNode // TODO: clean this line up...
+                    : controller.renderer.canvas
+                        .parentNode.parentNode
+                        .parentNode.parentNode
+                        .parentNode // TODO: clean this line up...
 
                 // ? Using e.pageX and e.pageY instead of contextmenu.offsetLeft/offsetTop
                 // ? results in the node being created directly under the cursor. 

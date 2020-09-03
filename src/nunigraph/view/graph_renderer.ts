@@ -357,7 +357,7 @@ export class NuniGraphRenderer {
 
     private getNodeColor(node : NuniGraphNode, H : number, W : number, highlight : boolean) {
         const { nodeRadius, ctx } = this
-        if (HasNoAudioParams[node.type]) 
+        if (!HasAudioParams[node.type]) 
         {
 
             const c2 = highlight ? 'pink' : 'black'

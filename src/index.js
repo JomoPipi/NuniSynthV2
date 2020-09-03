@@ -23,6 +23,7 @@ const createWindow = () => {
       { nodeIntegration: true
       , preload: './preload.js'
       , enableRemoteModule: true
+      // , devTools: false // TODO : uncomment for production
       }
     , icon: __dirname + '/../styles/icon.ico'
     , frame: false

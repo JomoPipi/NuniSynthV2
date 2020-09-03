@@ -12,7 +12,10 @@ const contextmenu = D('graph-contextmenu');
             if (menu.style.display !== 'none') {
                 const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = controller === GraphController
                     ? controller.renderer.canvas
-                    : controller.renderer.canvas.parentNode.parentNode.parentNode.parentNode;
+                    : controller.renderer.canvas
+                        .parentNode.parentNode
+                        .parentNode.parentNode
+                        .parentNode;
                 node.x = clamp(0, (contextmenu.offsetLeft - offsetLeft) / offsetWidth, 1);
                 node.y = clamp(0, (contextmenu.offsetTop - offsetTop) / offsetHeight, 1);
                 controller.hideContextMenu();

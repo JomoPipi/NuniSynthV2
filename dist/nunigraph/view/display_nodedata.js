@@ -30,7 +30,7 @@ export function createValuesWindow(node, saveCallback, deleteCallback) {
     if (node.id === 0) {
         controls.appendChild(gainControls(node));
     }
-    else if (node.type !== NodeTypes.B_SEQ) {
+    else if (HasAudioParams[node.type] && node.type !== NodeTypes.B_SEQ) {
         controls.appendChild(exposeAudioParams(node, saveCallback));
     }
     return controls;

@@ -61,14 +61,29 @@
     }
 }
 
-.corner-drag-box {
-    float: right;
-    width: 10px;
-    height: 10px;
-    cursor: nwse-resize;
-    background-color: #444;
+.resizeable-window-bottom-row {
+    display: grid;
+    grid-template-columns: 5px auto 5px;
+    cursor: s-resize;
+    height: 5px;
 }
 
+.nwse-corner-drag-box {
+    cursor: nwse-resize;
+}
+
+.draggable-row {
+    display: grid;
+    grid-template-columns: 5px auto 5px;
+}
+
+.ew-edge-drag {
+    cursor: ew-resize;
+}
+
+.nesw-corner-drag-box {
+    cursor: nesw-resize;
+}
 
 .title-editor {
     background-color: transparent;

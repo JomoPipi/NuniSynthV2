@@ -635,12 +635,32 @@ code {
   cursor: pointer;
 }
 
-.corner-drag-box {
-  float: right;
-  width: 10px;
-  height: 10px;
+.resizeable-window-bottom-row {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 5px auto 5px;
+      grid-template-columns: 5px auto 5px;
+  cursor: s-resize;
+  height: 5px;
+}
+
+.nwse-corner-drag-box {
   cursor: nwse-resize;
-  background-color: #444;
+}
+
+.draggable-row {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 5px auto 5px;
+      grid-template-columns: 5px auto 5px;
+}
+
+.ew-edge-drag {
+  cursor: ew-resize;
+}
+
+.nesw-corner-drag-box {
+  cursor: nesw-resize;
 }
 
 .title-editor {
