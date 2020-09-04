@@ -603,7 +603,9 @@ export class NuniGraphController {
             , showConnectionInsertionMacroLine
             }
 
-        this.renderer.render(options)
+        console.log('x =',e.offsetX, 'y =',e.offsetY)
+        const f = (x : typeof options) => (console.log('x',x), x)
+        this.renderer.render(f(options))
     }
 
 

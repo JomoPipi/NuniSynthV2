@@ -21,11 +21,10 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
     const dragCornernesw = E('div', { className: 'nesw-corner-drag-box' })
     const bottomMiddleEdge = E('span')
         
-
     bottomRow.append(dragCornernesw, bottomMiddleEdge, dragCorner)
 
     const NONE = 0, VERTICAL = 1, HORIZONTAL = 2
-    let xy = [] as number[], wh = [] as number[]
+    let xy : number[], wh : number[]
     let resizeDirection = 0
     let doLeft = false
 
@@ -43,8 +42,11 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
             ? VERTICAL
             : NONE
 
+        if (resizeDirection === NONE) return;
+
         xy = [e.clientX, e.clientY]
         wh = [canvas.offsetWidth, canvas.offsetHeight]
+
         window.addEventListener('mousemove', mousemove)
         window.addEventListener('mouseup', mouseup)
     }

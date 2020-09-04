@@ -195,7 +195,7 @@ export class NuniGraphRenderer {
         if (dotted) ctx.setLineDash([3, 8])
         
         this.line(x,y,X,Y)
-
+        
         if (dotted) ctx.setLineDash([1,0])
 
         this.drawDirectionTriangle(X, Y, angle, x >= X)
@@ -496,6 +496,7 @@ export class NuniGraphRenderer {
         if (fromNode) 
         { // draw the connection currently being made
             const [X,Y] = [fromNode.x*W, fromNode.y*H]
+            console.log('drawing the line', X, Y, x, y)
             ctx.lineWidth = connectionLineWidth
             ctx.strokeStyle = 'white'
             this.directedLine(X, Y, x!, y!, false)

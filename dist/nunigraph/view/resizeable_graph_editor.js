@@ -12,7 +12,7 @@ export function createResizeableGraphEditor(audioNode) {
     const bottomMiddleEdge = E('span');
     bottomRow.append(dragCornernesw, bottomMiddleEdge, dragCorner);
     const NONE = 0, VERTICAL = 1, HORIZONTAL = 2;
-    let xy = [], wh = [];
+    let xy, wh;
     let resizeDirection = 0;
     let doLeft = false;
     function mousedown(e) {
@@ -26,6 +26,8 @@ export function createResizeableGraphEditor(audioNode) {
                     : e.target === bottomMiddleEdge
                         ? VERTICAL
                         : NONE;
+        if (resizeDirection === NONE)
+            return;
         xy = [e.clientX, e.clientY];
         wh = [canvas.offsetWidth, canvas.offsetHeight];
         window.addEventListener('mousemove', mousemove);
