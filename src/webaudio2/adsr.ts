@@ -35,17 +35,44 @@ waveArray[6] = 0.5;
 waveArray[7] = 0;
 waveArray[8] = 0.5;
 
+var createLogarithmicBuffer = function createLogarithmicBuffer(direction = 1, base? : number, length? : number) {
+    base = base || 10,
+    length = length || 100
+    const curve = new Float32Array(length)
+    let percent = 0,
+        index,
+        i;
+
+    for (i = 0; i < length; i++) {
+        //index for the curve array.
+        //direction positive for fade in, negative for fade out
+        index = direction > 0 ? i : length - 1 - i;
+
+        percent = i / length;
+        curve[index] = Math.log(1 + base*percent) / Math.log(1 + base);
+    }
+
+    return curve;
+};
+const logarUp = createLogarithmicBuffer(1)
+const logarDown = createLogarithmicBuffer(-1)
+
 const N_ADSRs = 4
+
+type CurveType = 'linear' | 'logarithmic' | 'exponential' | 'S'
 
 const defaultADSR = () => (
     { attack: 0.010416984558105469
     , decay: 0.17708349227905273
     , sustain: 0.2166603088378906
     , release: 0.3812504768371582
+    , curve: 'exponential' as CurveType
     })
 
+const canvas = D('adsr-canvas') as HTMLCanvasElement
+
 export const ADSR_Controller = {
-    canvas: D('adsr-canvas') as HTMLCanvasElement,
+    canvas,
 
     index: 0,
 
@@ -53,11 +80,30 @@ export const ADSR_Controller = {
         [...Array(N_ADSRs)].map(defaultADSR),
 
     trigger: function(gain : AudioParam, time : number, volume : number, adsrIndex : number) {
-        const { attack, decay, sustain } = this.values[adsrIndex]
-        gain.cancelScheduledValues(time)                                  // Cancel existing triggers
-        gain.setTargetAtTime(volume, time, attack)                        // Attack phase
-        gain.setTargetAtTime(volume * sustain ** 2, time + attack, decay) // Decay phase
-        // gain.setValueCurveAtTime(waveArray, time, 0.2)
+        const { attack, decay, sustain, curve } = this.values[adsrIndex]
+        gain.cancelScheduledValues(time)           
+        
+        if (curve === 'linear')
+        {
+            gain.linearRampToValueAtTime(0.01, time)
+            gain.linearRampToValueAtTime(volume, attack + time)
+            gain.linearRampToValueAtTime(volume * sustain ** 2, time + attack + decay)
+        }
+        else if (curve === 'exponential')
+        {
+            gain.exponentialRampToValueAtTime(0.01, time)
+            gain.exponentialRampToValueAtTime(volume, attack + time)
+            gain.exponentialRampToValueAtTime(volume * sustain ** 2, time + attack + decay)
+        }
+        else if (curve === 'logarithmic') {
+            gain.setValueCurveAtTime(logarUp, time, attack)
+            gain.setValueCurveAtTime(logarDown, time + attack, decay)
+        }
+        else
+        {
+            gain.setTargetAtTime(volume, time, attack)                        // Attack phase
+            gain.setTargetAtTime(volume * sustain ** 2, time + attack, decay) // Decay phase
+        }
     },
 
     
@@ -83,6 +129,13 @@ export const ADSR_Controller = {
     },
 
     render: (options? : any) => {}
+}
+
+canvas.onclick = () => {
+    const adsr = ADSR_Controller.values[ADSR_Controller.index]
+    const next = { linear: 'logarithmic', logarithmic: 'exponential', exponential: 'S', S: 'linear' }
+    adsr.curve = next[adsr.curve] as CurveType
+    ADSR_Controller.render()
 }
 
 type RenderOptions = Partial<{ updateKnobs : boolean }>
@@ -154,7 +207,11 @@ type RenderOptions = Partial<{ updateKnobs : boolean }>
         })
         ctx.closePath()
 
-        if (options.updateKnobs) 
+        ctx.fillStyle = 'white'
+        ctx.font = '20px arial'
+        ctx.fillText(ADSR_Controller.values[ADSR_Controller.index].curve, W - 110, 20)
+
+        if (options.updateKnobs)
         {
             updateKnobs()
         }

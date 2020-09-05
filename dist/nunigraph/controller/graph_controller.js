@@ -345,9 +345,7 @@ export class NuniGraphController {
             selectedNodes: this.getNodesInBox(e.offsetX, e.offsetY),
             showConnectionInsertionMacroLine
         };
-        console.log('x =', e.offsetX, 'y =', e.offsetY);
-        const f = (x) => (console.log('x', x), x);
-        this.renderer.render(f(options));
+        this.renderer.render(options);
     }
     mouseup(e) {
         if (this.renderer.lastDottedLine) {

@@ -12,6 +12,7 @@ var NodeTypes;
     NodeTypes["CSN"] = "constant-source";
     NodeTypes["RECORD"] = "audio-capture";
     NodeTypes["MODULE"] = "module";
+    NodeTypes["ENV"] = "envelope";
 })(NodeTypes || (NodeTypes = {}));
 const NodeLabel = { [NodeTypes.GAIN]: 'Gain',
     [NodeTypes.OSC]: 'Oscillator',
@@ -23,7 +24,8 @@ const NodeLabel = { [NodeTypes.GAIN]: 'Gain',
     [NodeTypes.B_SEQ]: 'Sample Sequencer',
     [NodeTypes.CSN]: 'Number Value',
     [NodeTypes.RECORD]: 'Recorder',
-    [NodeTypes.MODULE]: 'Module'
+    [NodeTypes.MODULE]: 'Module',
+    [NodeTypes.ENV]: 'Envelope'
 };
 const createAudioNode = { [NodeTypes.GAIN]: 'createGain',
     [NodeTypes.OSC]: 'createOscillator2',
@@ -35,7 +37,8 @@ const createAudioNode = { [NodeTypes.GAIN]: 'createGain',
     [NodeTypes.B_SEQ]: 'createSampleSequencer',
     [NodeTypes.CSN]: 'createConstantSource',
     [NodeTypes.RECORD]: 'createAudioBufferCaptureNode',
-    [NodeTypes.MODULE]: 'createNuniGraphAudioNode'
+    [NodeTypes.MODULE]: 'createNuniGraphAudioNode',
+    [NodeTypes.ENV]: 'createEnvelopeNode'
 };
 const SupportsInputChannels = { [NodeTypes.GAIN]: true,
     [NodeTypes.OSC]: false,
@@ -47,7 +50,8 @@ const SupportsInputChannels = { [NodeTypes.GAIN]: true,
     [NodeTypes.B_SEQ]: false,
     [NodeTypes.CSN]: false,
     [NodeTypes.RECORD]: true,
-    [NodeTypes.MODULE]: true
+    [NodeTypes.MODULE]: true,
+    [NodeTypes.ENV]: true
 };
 const IsAwareOfInputIDs = { [NodeTypes.GAIN]: false,
     [NodeTypes.OSC]: false,
@@ -59,7 +63,8 @@ const IsAwareOfInputIDs = { [NodeTypes.GAIN]: false,
     [NodeTypes.B_SEQ]: false,
     [NodeTypes.CSN]: false,
     [NodeTypes.RECORD]: false,
-    [NodeTypes.MODULE]: true
+    [NodeTypes.MODULE]: true,
+    [NodeTypes.ENV]: false
 };
 const MustBeStarted = { [NodeTypes.GAIN]: false,
     [NodeTypes.OSC]: false,
@@ -71,7 +76,8 @@ const MustBeStarted = { [NodeTypes.GAIN]: false,
     [NodeTypes.B_SEQ]: false,
     [NodeTypes.CSN]: true,
     [NodeTypes.RECORD]: false,
-    [NodeTypes.MODULE]: false
+    [NodeTypes.MODULE]: false,
+    [NodeTypes.ENV]: false
 };
 const HasAudioParams = { [NodeTypes.GAIN]: true,
     [NodeTypes.OSC]: true,
@@ -83,7 +89,8 @@ const HasAudioParams = { [NodeTypes.GAIN]: true,
     [NodeTypes.B_SEQ]: false,
     [NodeTypes.CSN]: true,
     [NodeTypes.RECORD]: false,
-    [NodeTypes.MODULE]: false
+    [NodeTypes.MODULE]: false,
+    [NodeTypes.ENV]: false
 };
 const HasNoOutput = { [NodeTypes.GAIN]: false,
     [NodeTypes.OSC]: false,
@@ -95,7 +102,8 @@ const HasNoOutput = { [NodeTypes.GAIN]: false,
     [NodeTypes.B_SEQ]: false,
     [NodeTypes.CSN]: false,
     [NodeTypes.RECORD]: true,
-    [NodeTypes.MODULE]: false
+    [NodeTypes.MODULE]: false,
+    [NodeTypes.ENV]: false
 };
 const OpensDialogBoxWhenConnectedTo = { [NodeTypes.GAIN]: false,
     [NodeTypes.OSC]: false,
@@ -107,7 +115,8 @@ const OpensDialogBoxWhenConnectedTo = { [NodeTypes.GAIN]: false,
     [NodeTypes.B_SEQ]: false,
     [NodeTypes.CSN]: false,
     [NodeTypes.RECORD]: true,
-    [NodeTypes.MODULE]: true
+    [NodeTypes.MODULE]: true,
+    [NodeTypes.ENV]: false
 };
 const AudioNodeParams = { [NodeTypes.GAIN]: ['gain'],
     [NodeTypes.OSC]: ['frequency', 'detune'],
@@ -119,7 +128,8 @@ const AudioNodeParams = { [NodeTypes.GAIN]: ['gain'],
     [NodeTypes.B_SEQ]: ['playbackRate', 'detune'],
     [NodeTypes.CSN]: ['offset'],
     [NodeTypes.RECORD]: [],
-    [NodeTypes.MODULE]: []
+    [NodeTypes.MODULE]: [],
+    [NodeTypes.ENV]: []
 };
 const AudioNodeSubTypes = { [NodeTypes.GAIN]: [],
     [NodeTypes.OSC]: ['sine', 'square', 'triangle', 'sawtooth', 'custom'],
@@ -132,7 +142,8 @@ const AudioNodeSubTypes = { [NodeTypes.GAIN]: [],
     [NodeTypes.B_SEQ]: [],
     [NodeTypes.CSN]: [],
     [NodeTypes.RECORD]: [],
-    [NodeTypes.MODULE]: []
+    [NodeTypes.MODULE]: [],
+    [NodeTypes.ENV]: []
 };
 const MasterGainColor = '#555';
 const NodeTypeColors = { [NodeTypes.GAIN]: 'rgba(255,0,0,0.5)',
@@ -145,7 +156,8 @@ const NodeTypeColors = { [NodeTypes.GAIN]: 'rgba(255,0,0,0.5)',
     [NodeTypes.B_SEQ]: 'rgba(0,255,195,0.5)',
     [NodeTypes.CSN]: 'rgba(255,200,200,0.5)',
     [NodeTypes.RECORD]: 'rgba(255,200,255,1)',
-    [NodeTypes.MODULE]: 'rgba(255,240,255,0.5)'
+    [NodeTypes.MODULE]: 'rgba(255,240,255,0.5)',
+    [NodeTypes.ENV]: 'rgba(105,100,255,0.5)'
 };
 const NodeTypeWarnings = { [NodeTypes.FILTER]: `Filters may become unstable and we won't do anything about it. If this happens the program will cease to function properly and will need to be re-started.`
 };

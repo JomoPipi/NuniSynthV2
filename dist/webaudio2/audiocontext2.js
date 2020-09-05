@@ -5,6 +5,7 @@ import { SampleSequencer } from './sequencers/buffer_sequencer.js';
 import { graphVisualEqualizer } from '../visualizer/global_visualizer.js';
 import { AudioBufferCaptureNode } from './record/buffer_capture_node.js';
 import { NuniGraphAudioNode } from './nunigraph_audionode.js';
+import { Envelope } from './envelope/envelope.js';
 class AudioContext2 extends AudioContext {
     constructor() {
         super();
@@ -31,6 +32,9 @@ class AudioContext2 extends AudioContext {
     }
     createNuniGraphAudioNode() {
         return new NuniGraphAudioNode(this);
+    }
+    createEnvelopeNode() {
+        return new Envelope(this);
     }
 }
 export const audioCtx = new AudioContext2();

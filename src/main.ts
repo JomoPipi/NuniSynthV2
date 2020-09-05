@@ -19,7 +19,8 @@ import './tests/copy_graph_test.js'
 
 log('o-O-__-O-o-_.._-o-O-__-O-oo-O-__-O-o-_.._-o-O-__-O-oo-O-__-O-o-_.._-o-O-__-O-oo-O-__-O-o-_.._-o-O-__-O-o')
 
-
+// Pattern:
+//  
 
 
 window.onload = () => {

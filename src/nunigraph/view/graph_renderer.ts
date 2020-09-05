@@ -496,7 +496,6 @@ export class NuniGraphRenderer {
         if (fromNode) 
         { // draw the connection currently being made
             const [X,Y] = [fromNode.x*W, fromNode.y*H]
-            console.log('drawing the line', X, Y, x, y)
             ctx.lineWidth = connectionLineWidth
             ctx.strokeStyle = 'white'
             this.directedLine(X, Y, x!, y!, false)

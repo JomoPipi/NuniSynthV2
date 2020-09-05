@@ -49,6 +49,8 @@ export class GateSequencer extends Sequencer {
 
     playStepAtTime(id : number, time : number) {  
 
+        // TODO : Overlap-toggle
+
         const { volume } = this.channelData[id]
         const adsr = this.channelEnvelopes[id]
         const gain = adsr.gain

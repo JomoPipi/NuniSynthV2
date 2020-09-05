@@ -17,7 +17,9 @@ enum NodeTypes
     B_SEQ = 'buffer-sequencer',
     CSN = 'constant-source',
     RECORD = 'audio-capture',
-    MODULE = 'module'
+    MODULE = 'module',
+
+    ENV = 'envelope'
 }
 
 type AudioParams 
@@ -50,6 +52,8 @@ const NodeLabel =
     , [NodeTypes.CSN]:    'Number Value'
     , [NodeTypes.RECORD]: 'Recorder'
     , [NodeTypes.MODULE]: 'Module'
+    
+    , [NodeTypes.ENV]:    'Envelope'
     }
 
 const createAudioNode =
@@ -64,6 +68,8 @@ const createAudioNode =
     , [NodeTypes.CSN]:    'createConstantSource'
     , [NodeTypes.RECORD]: 'createAudioBufferCaptureNode'
     , [NodeTypes.MODULE]: 'createNuniGraphAudioNode'
+    
+    , [NodeTypes.ENV]:    'createEnvelopeNode'
     }
 
 const SupportsInputChannels =
@@ -78,6 +84,8 @@ const SupportsInputChannels =
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: true
+    
+    , [NodeTypes.ENV]:    true
     }
 
 const IsAwareOfInputIDs =
@@ -92,6 +100,8 @@ const IsAwareOfInputIDs =
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: true
+    
+    , [NodeTypes.ENV]:    false
     }
 
 const MustBeStarted =
@@ -106,6 +116,8 @@ const MustBeStarted =
     , [NodeTypes.CSN]:    true
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: false
+    
+    , [NodeTypes.ENV]:    false
     }
 
 const HasAudioParams =
@@ -120,6 +132,8 @@ const HasAudioParams =
     , [NodeTypes.CSN]:    true
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: false
+    
+    , [NodeTypes.ENV]:    false
     }
 
 const HasNoOutput =
@@ -134,6 +148,8 @@ const HasNoOutput =
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: false
+
+    , [NodeTypes.ENV]:    false
     }
 
 const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } =
@@ -148,6 +164,8 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: true
+
+    , [NodeTypes.ENV]:    false
     }
 
 const AudioNodeParams : Record<NodeTypes,AudioParams[]> =
@@ -162,6 +180,8 @@ const AudioNodeParams : Record<NodeTypes,AudioParams[]> =
     , [NodeTypes.CSN]:    ['offset']
     , [NodeTypes.RECORD]: []
     , [NodeTypes.MODULE]: []
+    
+    , [NodeTypes.ENV]:    []
     }
 
 const AudioNodeSubTypes = 
@@ -178,6 +198,8 @@ const AudioNodeSubTypes =
     , [NodeTypes.CSN]:    []
     , [NodeTypes.RECORD]: []
     , [NodeTypes.MODULE]: []
+
+    , [NodeTypes.ENV]: []
     }
 
 const MasterGainColor = '#555'
@@ -193,6 +215,8 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.CSN]:    'rgba(255,200,200,0.5)'
     , [NodeTypes.RECORD]: 'rgba(255,200,255,1)'
     , [NodeTypes.MODULE]: 'rgba(255,240,255,0.5)'
+    
+    , [NodeTypes.ENV]:    'rgba(105,100,255,0.5)'
     }
 
 const NodeTypeWarnings : { readonly [key in NodeTypes]? : string } = 
