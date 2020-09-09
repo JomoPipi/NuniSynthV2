@@ -5,6 +5,7 @@
 
 
 
+import { Envelope } from '../../webaudio2/envelope/envelope.js'
 import 
     { audioCtx, OscillatorNode2 , BufferNode2, GateSequencer
     , SampleSequencer, AudioBufferCaptureNode, NuniGraphAudioNode
@@ -25,6 +26,8 @@ type AudioNodeMap = {
     [NodeTypes.CSN]:    ConstantSourceNode
     [NodeTypes.RECORD]: AudioBufferCaptureNode
     [NodeTypes.MODULE]: NuniGraphAudioNode
+
+    [NodeTypes.ENV]:    Envelope
 }
 
 // NON GENERIC:

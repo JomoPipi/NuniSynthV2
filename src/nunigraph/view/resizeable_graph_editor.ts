@@ -9,7 +9,6 @@ import { NuniGraphAudioNode } from "../../webaudio2/internal.js"
 
 export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
     const box = E('div')
-    
     const { canvas } = audioNode
 
     const topRow = E('div', { className: 'full' }); topRow.style.height = '5px'
@@ -27,6 +26,7 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
     let xy : number[], wh : number[]
     let resizeDirection = 0
     let doLeft = false
+    let canvasMinWidth = Infinity
 
     function mousedown(e : MouseEvent) {
 
@@ -49,6 +49,12 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
 
         window.addEventListener('mousemove', mousemove)
         window.addEventListener('mouseup', mouseup)
+
+        // Set the canvas' min width
+        const w = canvas.width
+        canvas.width = 0
+        canvasMinWidth = canvas.offsetWidth
+        canvas.width = w
     }
 
     function mousemove(e : MouseEvent) {
@@ -61,11 +67,16 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
         {
             if (doLeft)
             {
+                // To prevent moving the container, 
+                // we must not go lower than the min width
+                // X <= w + x - minWidth
+                const _X = Math.min(X, w + x - canvasMinWidth)
+
                 canvas.parentElement!.parentElement!
                     .parentElement!.parentElement!.parentElement!
-                    .style.left = X + 'px'
+                    .style.left = _X + 'px'
 
-                canvas.width = Math.max(0, w + x - X)
+                canvas.width = Math.max(0, w + x - _X)
             }
             else
             {
