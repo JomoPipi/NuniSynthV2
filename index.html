@@ -6,6 +6,10 @@
 
 
 <html lang="en">
+
+
+
+
 <head>
 
     <meta charset="UTF-8">
@@ -28,12 +32,23 @@
 
     <script> 
         // Set default zoom to 1
-        require('electron').webFrame.setZoomFactor(1)
+        require('electron').webFrame.setZoomFactor(1);
     </script>
 
 </head>
+
+
+
+
+
+
+
+
 <body>
     
+
+
+
 <div id="loading-screen" style="display: hidden;" class="loader">
   <div id="loading-text" class="loading-text"> 
     WARNING: <br>
@@ -50,97 +65,428 @@
   </div>
 </div>
 
+
+
+
 <div id="graph-contextmenu" class="graph-contextmenu">
     <span> Create New Node.. </span>
 </div>
 
+
+
+
 <div id="connection-type-prompt" class="connection-type-prompt"></div>
+
+
+
 
 <div id="wait-cursor" class="wait-cursor"></div>
 
 
 
-<div class="the-two-panels">
+
+<div class="main-box-container">
+
+  <div class="nw-corner"></div>
+  <div class="top-edge"></div>
+  <div class="ne-corner"></div>
+
+  <div class="left-edge"></div>
+
+
+
   
-  <div id="tabs-panel" class="panel">
-    
-    <div class="main-top-bar">
+  <div class="the-two-panels">
 
-      <nav id="main-nav-menu" class="menu-nav">
-        <ul>
-            <li><a href="#">File</a>
-              <ul>
-                <li><a href="#"> New Project </a></li>
-                <li><a href="#"> Open.. </a>
-                  <ul>
-                      <li><a href="#"> Saved Project </a></li>
-                      <li><a href="#"> Example Project </a></li>
-                  </ul>   
-                </li>
-                <li><a href="#"> Save </a></li>
-                <li><a href="#"> Save As.. </a></li>
-                <li><a href="#"> Export.. </a></li>
-                  <!-- <ul>
-                    <li><a href="#"> Saved projects </a></li>
-                    <li><a href="#"> Examples </a></li>
-                  </ul>
-                </li> -->
-                <li><a href="#">Settings</a>
-                  <ul>
-                      <li><a href="#">A</a></li>
-                      <li><a href="#">B</a></li>
-                  </ul>        
-                </li>
-              </ul> 
-            </li>
-
-            <li><a href="#"> Edit </a>
+    <div id="tabs-panel" class="panel">
+      
+      <div class="main-top-bar">
+  
+        <nav id="main-nav-menu" class="menu-nav">
+          <ul>
+              <li><a href="#">File</a>
                 <ul>
-                    <li><a href="#"> Copy Selection</a></li>
-                    <li><a href="#"> Cut Selection</a></li>
-                    <li><a href="#"> Paste </a></li>
-                    <li><a href="#"> Modularize </a></li>
+                  <li><a href="#"> New Project </a></li>
+                  <li><a href="#"> Open.. </a>
+                    <ul>
+                        <li><a href="#"> Saved Project </a></li>
+                        <li><a href="#"> Example Project </a></li>
+                    </ul>   
+                  </li>
+                  <li><a href="#"> Save </a></li>
+                  <li><a href="#"> Save As.. </a></li>
+                  <li><a href="#"> Export.. </a></li>
+                    <!-- <ul>
+                      <li><a href="#"> Saved projects </a></li>
+                      <li><a href="#"> Examples </a></li>
+                    </ul>
+                  </li> -->
+                  <li><a href="#">Settings</a>
+                    <ul>
+                        <li><a href="#">A</a></li>
+                        <li><a href="#">B</a></li>
+                    </ul>        
+                  </li>
+                </ul> 
+              </li>
+  
+              <li><a href="#"> Edit </a>
+                  <ul>
+                      <li><a href="#"> Copy Selection</a></li>
+                      <li><a href="#"> Cut Selection</a></li>
+                      <li><a href="#"> Paste </a></li>
+                      <li><a href="#"> Modularize </a></li>
+                  </ul>        
+              </li>
+              
+              <li><a href="#">Utilities</a>
+                <ul>
+                    <li><a href="#">
+                      <span id="tab-swapper" class="flat-grid swapper">
+                        <span id="graph-tab-btn" class="flex-center nodrag">         Graph          </span>
+                        <span id="keyboard-tab-btn" class="flex-center nodrag">      Keyboard       </span>
+                        <span id="buffer-edit-tab-btn" class="flex-center nodrag">   Buffers        </span>
+                        <span id="waveform-edit-tab-btn" class="flex-center nodrag"> Waveforms      </span>
+                      </span>
+                    </a></li>
+                    <li><a href="#">B</a></li>
                 </ul>        
-            </li>
-            
-            <li><a href="#">Utilities</a>
-              <ul>
-                  <li><a href="#">
-                    <span id="tab-swapper" class="flat-grid swapper">
-                      <span id="graph-tab-btn" class="flex-center nodrag">         Graph          </span>
-                      <span id="keyboard-tab-btn" class="flex-center nodrag">      Keyboard       </span>
-                      <span id="buffer-edit-tab-btn" class="flex-center nodrag">   Buffers        </span>
-                      <span id="waveform-edit-tab-btn" class="flex-center nodrag"> Waveforms      </span>
-                    </span>
-                  </a></li>
-                  <li><a href="#">B</a></li>
-              </ul>        
-            </li>
-
-        </ul>
+              </li>
+  
+          </ul>
+          
+        </nav>
         
-      </nav>
+        
+      </div>
       
-      
-    </div>
-    
-    <div id="tabs">
-
-
-      
-      <div id="graph-tab" class="_tab_ show">
+      <div id="tabs">
+  
+  
+        
+        <div id="graph-tab" class="_tab_ show">
+            <div class="main-tab">
+  
+                <div id="project-title"> </div>
+  
+                  <!-- <div id="bufferbox2" class="builder-section">
+                    Buffer Expression:
+                    <button id="buffer-formula-templates-button" class="apply-btn" style="float:right"> 
+                        PRESETS 📋 </button>
+              
+                    <br>
+                    <span class="smaller-text">
+              
+                        <span class="code2">  n  </span> represents the position of each sample in the buffer.
+                        Samples should be numbers -1 and 1. Use JavaScript
+                          <a 
+                            target="_blank" 
+                            href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators"> 
+                            operators </a> 
+                        and
+                          <a 
+                            target="_blank"
+                            href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math"> 
+                            functions </a>.
+                        <br>
+                        
+                    </span>
+                    
+                    <code>
+                      for n in range [0, 48000 * seconds]: <br>
+                      &nbsp; &nbsp; samples[n] =
+                    </code>
+              
+                    <input
+                        type="text" 
+                        id="buffer-formula"
+                        class="text-input-wide center"
+                        value="sin(n/30) + sin(n/20)"> 
+              
+                    <button id="apply-buffer-formula" class="apply-btn"> apply </button>
+              
+                    <div id="buffer-formula-error-msg" class="error-msg"></div>
+              
+                  </div> -->
+                
+  
+                <div>
+                  
+                  <div class="flex-center">
+                    <button id="tempo-tapper" class="neumorph"> TAP </button>
+                    <button id="beat-hold-button" class="neumorph"> HOLD </button>
+                    <!-- <button id="tick-meter"> 
+                      <span id="tick-meter-left" class="top-bar-btn"> </span>
+                      <span id="tick-meter-right" class="top-bar-btn"> </span>
+                    </button> -->
+                    Tempo
+                    <span id="tempo-input-container">
+                      
+                    </span>
+                  </div>
+  
+                </div>
+                  
+                <!-- ADSR -->
+                <span class="adsr-box">
+  
+                  <div id="select-adsr"> 
+                    <!-- INSERT WITH JavaScript -->
+                  </div>
+  
+                  <canvas id="adsr-canvas"></canvas>
+                  
+                  <div id="adsr-knobs" class="adsr-knobs"> 
+                    
+                    <!-- INSERT WITH JavaScript -->
+  
+                  </div>
+                </span>
+                
+                <div>
+  
+                  <!-- PRESETS -->
+                  <div id="graph-preset-list" class="preset-list"
+                  style="display: none;">
+                  <!-- TODO: Remove this -->
+                  </div>
+                  
+                </div>
+              
+                <div id="analyser-eq" class="lcd-display">
+                  <canvas 
+                    id="analyser-canvas"
+                    class="analyser-canvas"
+                  ></canvas>
+                </div>
+  
+            </div>
+        </div>
+  
+  
+  
+  
+        <div id="keyboard-tab" class="_tab_">
           <div class="main-tab">
-
-              <div id="project-title"> </div>
-
-                <!-- <div id="bufferbox2" class="builder-section">
+  
+            <div class="flex-center">
+  
+              <span>
+  
+                <!-- OCTAVE TOGGLE  -->
+                <!-- <span class="flex-center">
+                  <span>
+                    octave:
+                  </span>
+                  <span id="octave-select" class="vert-grid">
+                    <button id="octave-up"> ⇑ </button>
+                    <span id="octave-text"> 0 </span>
+                    <button id="octave-down"> ⇓ </button>
+                  </span>
+                </span> -->
+  
+                <div class="keyboard" id="keyboard-image">
+                  <!-- The image that shows the user what keys are being pressed.  -->
+                  <div class="keyboard__row"><div class="key--double" data-key="192"></div><div class="key--double" data-key="49">  <div>!</div>  <div>1</div></div><div class="key--double" data-key="50">  <div>@</div>  <div>2</div></div><div class="key--double" data-key="51">  <div>#</div>  <div>3</div></div><div class="key--double" data-key="52">  <div>$</div>  <div>4</div></div><div class="key--double" data-key="53">  <div>%</div>  <div>5</div></div><div class="key--double" data-key="54">  <div>^</div>  <div>6</div></div><div class="key--double" data-key="55">  <div>&</div>  <div>7</div></div><div class="key--double" data-key="56">  <div>*</div>  <div>8</div></div><div class="key--double" data-key="57">  <div>(</div>  <div>9</div></div><div class="key--double" data-key="48">  <div>)</div>  <div>0</div></div><div class="key--double" data-key="189">  <div>_</div>  <div>-</div></div><div class="key--double" data-key="187">  <div>+</div>  <div>=</div></div><div class="key--bottom-right key--word key--w4" data-key="8"></div></div> <br><div class="keyboard__row"><div class="key--bottom-left key--word key--w4" data-key="9"></div><div class="key--letter" data-char="Q">Q</div><div class="key--letter" data-char="W">W</div><div class="key--letter" data-char="E">E</div><div class="key--letter" data-char="R">R</div><div class="key--letter" data-char="T">T</div><div class="key--letter" data-char="Y">Y</div><div class="key--letter" data-char="U">U</div><div class="key--letter" data-char="I">I</div><div class="key--letter" data-char="O">O</div><div class="key--letter" data-char="P">P</div><div class="key--double" data-key="219" data-char="{[">  <div>{</div>  <div>[</div></div><div class="key--double" data-key="221" data-char="}]">  <div>}</div>  <div>]</div></div><div class="key--double" data-key="220" data-char="|"></div></div> <br><div class="keyboard__row"><div class="key--bottom-left key--word key--w5" data-key="20"></div><div class="key--letter" data-char="A">A</div><div class="key--letter" data-char="S">S</div><div class="key--letter" data-char="D">D</div><div class="key--letter" data-char="F">F</div><div class="key--letter" data-char="G">G</div><div class="key--letter" data-char="H">H</div><div class="key--letter" data-char="J">J</div><div class="key--letter" data-char="K">K</div><div class="key--letter" data-char="L">L</div><div class="key--double" data-key="186">  <div>:</div>  <div>;</div></div><div class="key--double" data-key="222">  <div>"</div>  <div>'</div></div><div class="key--bottom-right key--word key--w5" data-key="13"></div></div> <br><div class="keyboard__row"><div class="key--bottom-left key--word key--w6" data-key="16"></div><div class="key--letter" data-char="Z">Z</div><div class="key--letter" data-char="X">X</div><div class="key--letter" data-char="C">C</div><div class="key--letter" data-char="V">V</div><div class="key--letter" data-char="B">B</div><div class="key--letter" data-char="N">N</div><div class="key--letter" data-char="M">M</div><div class="key--double" data-key="188">  <div>&lt;</div>  <div>,</div></div><div class="key--double" data-key="190">  <div>&gt;</div>  <div>.</div></div><div class="key--double" data-key="191">  <div>?</div>  <div>/</div></div><div class="key--bottom-right key--word key--w6" data-key="16-R"></div></div>
+                </div>
+  
+                <div id="mono-poly-select" class="center">
+                  VOICES: <input id="n-poly-slider" type="range" min=1 max=20>
+                  <span id="n-poly-text"> 10 </span>
+                </div>
+  
+              </span>  
+  
+            </div>
+  
+            <br>
+            
+            <div id="scale-builder-container">
+  
+              <div class="center">
+                <span id="scale-kinds" class="flat-grid swapper">
+                  <span id="preset-library-btn"> SCALE PRESETS </span>
+                  <span id="scale-builder-btn">  SCALE BUILDER </span>
+                </span> 
+              </div>
+              
+              <div id="preset-library" class="_tab_ show">
+                <div id="scale-preset-list" class="preset-list"></div>
+              </div>
+  
+              <div id="scale-builder" class="_tab_">
+                
+                <div class="builder-section">
+  
+                  <code> EDO (Equal Divisions of Octave) </code> <br>
+  
+                  <input 
+                    type="number" 
+                    id="intervals-per-octave" 
+                    class="text-input center" 
+                    value=12> 
+                  <span> Intervals per Octave </span> <br>
+  
+                  <input 
+                    type="number" 
+                    id="cents-per-step" 
+                    class="text-input center" 
+                    value=100>
+                  <span> Cents per Step </span>
+  
+                  <button class="apply-btn" id="apply-equal-temperament"> apply </button>
+  
+                </div>
+  
+                <div class="builder-section">
+  
+                  Enter a list of comma separated values -- may be cents or ratios.
+                  1/1 is included by  . Octaves repeat. <br>
+                  
+                  <code>
+                    [
+                    <input
+                      type="text" 
+                      id="scale-csv-input"
+                      class="text-input-medium center"
+                      value="9/8,  5/4,  3/2,  1100">
+                      
+                    ]
+                  </code>
+                    
+                  <button class="apply-btn" id="apply-scale-csv"> apply </button>
+  
+                </div>
+  
+                <div class="builder-section">
+                    
+                  Scale Cents Expression <br>
+                  Use
+                    <a 
+                      target="_blank" 
+                      href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators"> 
+                      operators </a> 
+                  and
+                    <a 
+                      target="_blank"
+                      href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math"> 
+                      functions </a>
+                  <br>
+  
+                  <code>
+                    [ <input
+                        type="text" 
+                        id="delta-expression"
+                        class="text-input-medium center"
+                        value="100 + (n % 5) * 100"> | n &lt;- [0,1..]
+                    ]
+                  </code>
+  
+                  <button class="apply-btn" id="apply-cent-delta"> apply </button>
+  
+                </div>
+  
+              </div>
+            </div>
+            <!-- END SCALE BUILDER CONTAINER  -->
+  
+          </div>
+        </div>
+  
+  
+  
+  
+        <div id="buffer-edit-tab" class="_tab_">
+          <div class="main-tab">
+  
+            <div class="lcd-display">
+              <code> BUFFER </code>
+              <code id="buffer-info"> A -- 3 seconds </code>
+              <button id="open-buffer-edit-dialog-button" class="top-bar-btn"> ⚙️ </button>
+            </div>
+    
+            <div>
+              <div id="bufferbox1" class="buffer-box">
+                <div id="buffer-container" class="buffers-list"></div>
+                <canvas id="buffer-canvas"></canvas>
+              </div>
+            </div>
+  
+            <br>
+  
+            <div id="buffer-edit-create-select" class="flat-grid color1 swapper">
+              <span id="buffer-edit-btn"> EDIT </span>
+              <span id="buffer-create-btn"> CREATE </span>
+            </div>
+  
+            <div id="buffer-functions">
+              
+              <div id="buffer-edit" class="_tab_">
+  
+                <button id="reverse-buffer" class="neumorph"> 
+                  reverse </button>
+  
+                <button id="invert-buffer" class="neumorph">  
+                  invert </button>
+  
+              </div>
+  
+              
+              <div id="buffer-create" class="_tab_ show">
+  
+                <span>
+                  NEW BUFFER LENGTH:
+                  <span class="code2"
+                    id="new-buffer-length-text"> 
+                    3 
+                  </span> seconds </span> <br>
+  
+                  <input 
+                    id="new-buffer-length"
+                    type="range" 
+                    min=0.1 
+                    max=20
+                    step=0.1
+                    value=3> 
+                    
+                </span>
+                <br>
+                <span id="formula-template-container"> </span>
+  
+                <div class="builder-section center">
+  
+                  <button id="record" class="record"> 
+                    rec </button>
+  
+                  <span id="record-type-radio" class="center">
+  
+                    <input id="record-mic" 
+                      type="radio"
+                      name="record-radio"
+                      checked="true">
+                    <label for="record-mic" class="record-radio"> 
+                      record mic
+                    </label>
+                    
+                    <input id="record-graph" 
+                      type="radio"
+                      name="record-radio">
+                    <label for="record-graph" class="record-radio"> 
+                      record graph
+                    </label>
+  
+                  </span>
+  
+                </div>
+  
+                <div class="builder-section">
                   Buffer Expression:
                   <button id="buffer-formula-templates-button" class="apply-btn" style="float:right"> 
                       PRESETS 📋 </button>
-            
+  
                   <br>
                   <span class="smaller-text">
-            
+  
                       <span class="code2">  n  </span> represents the position of each sample in the buffer.
                       Samples should be numbers -1 and 1. Use JavaScript
                         <a 
@@ -160,402 +506,104 @@
                     for n in range [0, 48000 * seconds]: <br>
                     &nbsp; &nbsp; samples[n] =
                   </code>
-            
+  
                   <input
                       type="text" 
                       id="buffer-formula"
                       class="text-input-wide center"
                       value="sin(n/30) + sin(n/20)"> 
-            
-                  <button id="apply-buffer-formula" class="apply-btn"> apply </button>
-            
-                  <div id="buffer-formula-error-msg" class="error-msg"></div>
-            
-                </div> -->
-              
-
-              <div>
-                
-                <div class="flex-center">
-                  <button id="tempo-tapper" class="neumorph"> TAP </button>
-                  <button id="beat-hold-button" class="neumorph"> HOLD </button>
-                  <!-- <button id="tick-meter"> 
-                    <span id="tick-meter-left" class="top-bar-btn"> </span>
-                    <span id="tick-meter-right" class="top-bar-btn"> </span>
-                  </button> -->
-                  Tempo
-                  <span id="tempo-input-container">
-                    
-                  </span>
-                </div>
-
-              </div>
-                
-              <!-- ADSR -->
-              <span class="adsr-box">
-
-                <div id="select-adsr"> 
-                  <!-- INSERT WITH JavaScript -->
-                </div>
-
-                <canvas id="adsr-canvas"></canvas>
-                
-                <div id="adsr-knobs" class="adsr-knobs"> 
-                  
-                  <!-- INSERT WITH JavaScript -->
-
-                </div>
-              </span>
-              
-              <div>
-
-                <!-- PRESETS -->
-                <div id="graph-preset-list" class="preset-list"
-                style="display: none;">
-                <!-- TODO: Remove this -->
-                </div>
-                
-              </div>
-            
-              <div id="analyser-eq" class="lcd-display">
-                <canvas 
-                  id="analyser-canvas"
-                  class="analyser-canvas"
-                ></canvas>
-              </div>
-
-          </div>
-      </div>
-
-
-
-
-      <div id="keyboard-tab" class="_tab_">
-        <div class="main-tab">
-
-          <div class="flex-center">
-
-            <span>
-
-              <!-- OCTAVE TOGGLE  -->
-              <!-- <span class="flex-center">
-                <span>
-                  octave:
-                </span>
-                <span id="octave-select" class="vert-grid">
-                  <button id="octave-up"> ⇑ </button>
-                  <span id="octave-text"> 0 </span>
-                  <button id="octave-down"> ⇓ </button>
-                </span>
-              </span> -->
-
-              <div class="keyboard" id="keyboard-image">
-                <!-- The image that shows the user what keys are being pressed.  -->
-                <div class="keyboard__row"><div class="key--double" data-key="192"></div><div class="key--double" data-key="49">  <div>!</div>  <div>1</div></div><div class="key--double" data-key="50">  <div>@</div>  <div>2</div></div><div class="key--double" data-key="51">  <div>#</div>  <div>3</div></div><div class="key--double" data-key="52">  <div>$</div>  <div>4</div></div><div class="key--double" data-key="53">  <div>%</div>  <div>5</div></div><div class="key--double" data-key="54">  <div>^</div>  <div>6</div></div><div class="key--double" data-key="55">  <div>&</div>  <div>7</div></div><div class="key--double" data-key="56">  <div>*</div>  <div>8</div></div><div class="key--double" data-key="57">  <div>(</div>  <div>9</div></div><div class="key--double" data-key="48">  <div>)</div>  <div>0</div></div><div class="key--double" data-key="189">  <div>_</div>  <div>-</div></div><div class="key--double" data-key="187">  <div>+</div>  <div>=</div></div><div class="key--bottom-right key--word key--w4" data-key="8"></div></div> <br><div class="keyboard__row"><div class="key--bottom-left key--word key--w4" data-key="9"></div><div class="key--letter" data-char="Q">Q</div><div class="key--letter" data-char="W">W</div><div class="key--letter" data-char="E">E</div><div class="key--letter" data-char="R">R</div><div class="key--letter" data-char="T">T</div><div class="key--letter" data-char="Y">Y</div><div class="key--letter" data-char="U">U</div><div class="key--letter" data-char="I">I</div><div class="key--letter" data-char="O">O</div><div class="key--letter" data-char="P">P</div><div class="key--double" data-key="219" data-char="{[">  <div>{</div>  <div>[</div></div><div class="key--double" data-key="221" data-char="}]">  <div>}</div>  <div>]</div></div><div class="key--double" data-key="220" data-char="|"></div></div> <br><div class="keyboard__row"><div class="key--bottom-left key--word key--w5" data-key="20"></div><div class="key--letter" data-char="A">A</div><div class="key--letter" data-char="S">S</div><div class="key--letter" data-char="D">D</div><div class="key--letter" data-char="F">F</div><div class="key--letter" data-char="G">G</div><div class="key--letter" data-char="H">H</div><div class="key--letter" data-char="J">J</div><div class="key--letter" data-char="K">K</div><div class="key--letter" data-char="L">L</div><div class="key--double" data-key="186">  <div>:</div>  <div>;</div></div><div class="key--double" data-key="222">  <div>"</div>  <div>'</div></div><div class="key--bottom-right key--word key--w5" data-key="13"></div></div> <br><div class="keyboard__row"><div class="key--bottom-left key--word key--w6" data-key="16"></div><div class="key--letter" data-char="Z">Z</div><div class="key--letter" data-char="X">X</div><div class="key--letter" data-char="C">C</div><div class="key--letter" data-char="V">V</div><div class="key--letter" data-char="B">B</div><div class="key--letter" data-char="N">N</div><div class="key--letter" data-char="M">M</div><div class="key--double" data-key="188">  <div>&lt;</div>  <div>,</div></div><div class="key--double" data-key="190">  <div>&gt;</div>  <div>.</div></div><div class="key--double" data-key="191">  <div>?</div>  <div>/</div></div><div class="key--bottom-right key--word key--w6" data-key="16-R"></div></div>
-              </div>
-
-              <div id="mono-poly-select" class="center">
-                VOICES: <input id="n-poly-slider" type="range" min=1 max=20>
-                <span id="n-poly-text"> 10 </span>
-              </div>
-
-            </span>  
-
-          </div>
-
-          <br>
-          
-          <div id="scale-builder-container">
-
-            <div class="center">
-              <span id="scale-kinds" class="flat-grid swapper">
-                <span id="preset-library-btn"> SCALE PRESETS </span>
-                <span id="scale-builder-btn">  SCALE BUILDER </span>
-              </span> 
-            </div>
-            
-            <div id="preset-library" class="_tab_ show">
-              <div id="scale-preset-list" class="preset-list"></div>
-            </div>
-
-            <div id="scale-builder" class="_tab_">
-              
-              <div class="builder-section">
-
-                <code> EDO (Equal Divisions of Octave) </code> <br>
-
-                <input 
-                  type="number" 
-                  id="intervals-per-octave" 
-                  class="text-input center" 
-                  value=12> 
-                <span> Intervals per Octave </span> <br>
-
-                <input 
-                  type="number" 
-                  id="cents-per-step" 
-                  class="text-input center" 
-                  value=100>
-                <span> Cents per Step </span>
-
-                <button class="apply-btn" id="apply-equal-temperament"> apply </button>
-
-              </div>
-
-              <div class="builder-section">
-
-                Enter a list of comma separated values -- may be cents or ratios.
-                1/1 is included by  . Octaves repeat. <br>
-                
-                <code>
-                  [
-                  <input
-                    type="text" 
-                    id="scale-csv-input"
-                    class="text-input-medium center"
-                    value="9/8,  5/4,  3/2,  1100">
-                    
-                  ]
-                </code>
-                  
-                <button class="apply-btn" id="apply-scale-csv"> apply </button>
-
-              </div>
-
-              <div class="builder-section">
-                  
-                Scale Cents Expression <br>
-                Use
-                  <a 
-                    target="_blank" 
-                    href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators"> 
-                    operators </a> 
-                and
-                  <a 
-                    target="_blank"
-                    href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math"> 
-                    functions </a>
-                <br>
-
-                <code>
-                  [ <input
-                      type="text" 
-                      id="delta-expression"
-                      class="text-input-medium center"
-                      value="100 + (n % 5) * 100"> | n &lt;- [0,1..]
-                  ]
-                </code>
-
-                <button class="apply-btn" id="apply-cent-delta"> apply </button>
-
-              </div>
-
-            </div>
-          </div>
-          <!-- END SCALE BUILDER CONTAINER  -->
-
-        </div>
-      </div>
-
-
-
-
-      <div id="buffer-edit-tab" class="_tab_">
-        <div class="main-tab">
-
-          <div class="lcd-display">
-            <code> BUFFER </code>
-            <code id="buffer-info"> A -- 3 seconds </code>
-            <button id="open-buffer-edit-dialog-button" class="top-bar-btn"> ⚙️ </button>
-          </div>
   
+                  <button id="apply-buffer-formula" class="apply-btn"> apply </button>
+  
+                  <div id="buffer-formula-error-msg" class="error-msg"></div>
+  
+                </div>
+  
+              </div>
+              
+            </div>
+  
+          </div>
+        </div>
+  
+  
+  
+  
+        <div id="waveform-edit-tab" class="_tab_">
+          [WAVEFORM BUILDER PAGE]
           <div>
-            <div id="bufferbox1" class="buffer-box">
-              <div id="buffer-container" class="buffers-list"></div>
-              <canvas id="buffer-canvas"></canvas>
-            </div>
+              <input id="n-waveform-slider" type="range" min=1 max=12 step=1 value=1>
           </div>
-
-          <br>
-
-          <div id="buffer-edit-create-select" class="flat-grid color1 swapper">
-            <span id="buffer-edit-btn"> EDIT </span>
-            <span id="buffer-create-btn"> CREATE </span>
+          <div id="waveform-test">
+  
           </div>
-
-          <div id="buffer-functions">
-            
-            <div id="buffer-edit" class="_tab_">
-
-              <button id="reverse-buffer" class="neumorph"> 
-                reverse </button>
-
-              <button id="invert-buffer" class="neumorph">  
-                invert </button>
-
-            </div>
-
-            
-            <div id="buffer-create" class="_tab_ show">
-
-              <span>
-                NEW BUFFER LENGTH:
-                <span class="code2"
-                  id="new-buffer-length-text"> 
-                  3 
-                </span> seconds </span> <br>
-
-                <input 
-                  id="new-buffer-length"
-                  type="range" 
-                  min=0.1 
-                  max=20
-                  step=0.1
-                  value=3> 
-                  
-              </span>
-              <br>
-              <span id="formula-template-container"> </span>
-
-              <div class="builder-section center">
-
-                <button id="record" class="record"> 
-                  rec </button>
-
-                <span id="record-type-radio" class="center">
-
-                  <input id="record-mic" 
-                    type="radio"
-                    name="record-radio"
-                    checked="true">
-                  <label for="record-mic" class="record-radio"> 
-                    record mic
-                  </label>
-                  
-                  <input id="record-graph" 
-                    type="radio"
-                    name="record-radio">
-                  <label for="record-graph" class="record-radio"> 
-                    record graph
-                  </label>
-
-                </span>
-
-              </div>
-
-              <div class="builder-section">
-                Buffer Expression:
-                <button id="buffer-formula-templates-button" class="apply-btn" style="float:right"> 
-                    PRESETS 📋 </button>
-
-                <br>
-                <span class="smaller-text">
-
-                    <span class="code2">  n  </span> represents the position of each sample in the buffer.
-                    Samples should be numbers -1 and 1. Use JavaScript
-                      <a 
-                        target="_blank" 
-                        href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators"> 
-                        operators </a> 
-                    and
-                      <a 
-                        target="_blank"
-                        href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math"> 
-                        functions </a>.
-                    <br>
-                    
-                </span>
-                
-                <code>
-                  for n in range [0, 48000 * seconds]: <br>
-                  &nbsp; &nbsp; samples[n] =
-                </code>
-
-                <input
-                    type="text" 
-                    id="buffer-formula"
-                    class="text-input-wide center"
-                    value="sin(n/30) + sin(n/20)"> 
-
-                <button id="apply-buffer-formula" class="apply-btn"> apply </button>
-
-                <div id="buffer-formula-error-msg" class="error-msg"></div>
-
-              </div>
-
-            </div>
-            
-          </div>
-
         </div>
+  
+  
+  
+  
       </div>
-
-
-
-
-      <div id="waveform-edit-tab" class="_tab_">
-        [WAVEFORM BUILDER PAGE]
-        <div>
-            <input id="n-waveform-slider" type="range" min=1 max=12 step=1 value=1>
-        </div>
-        <div id="waveform-test">
-
-        </div>
-      </div>
-
-
-
-
+  
     </div>
-
+  
+    <!-- THE GRAPH PANEL  -->
+    <div class="panel">
+      
+      <div class="main-top-bar">
+  
+        <span class="flat-grid full">
+  
+          <span class="flex-center full">
+            <!-- <button id="nuni-logo" class="nuni-logo"></button> -->
+            <button id="nuni-logo" class="nuni-logo"></button>
+          </span>
+  
+          <span id="graph-undo-redo-btns" class="flex-center full">
+            <button class="top-bar-btn undo-btn" id="graph-undo-button">↺</button>
+            <button class="top-bar-btn redo-btn" id="graph-redo-button">↻</button>
+          </span>
+  
+          <span class="flex-center full">
+            <button id="snap-to-grid-btn" class="grid-icon"></button>
+          </span>
+  
+          <span class="flex-center full">
+            <button 
+              id="info-button" 
+              class="info-button"> 
+              i 
+            </button> 
+            <!-- <button id="show-love" onclick="
+            const url = 'https:\/\/www.gofundme.com/f/nunisynth-a-graphical-audio-sandbox?utm_source=customer&utm_medium=copy_link&utm_campaign=p_cf%20share-flow-1&fbclid=IwAR3Ph-YHEoSf91OqaTD9ETf9SV0kCN2sip7wLM6pVgjuAWJD7_dr6OG85cQ'
+            window.open(url, '_blank')" class="top-bar-btn"> ❤️ </button> -->
+          </span>
+        </span>
+  
+      </div>
+  
+      <div id="nunigraph-stuff" class="nunigraph-container">
+        <!-- <div class="nunicanvas-container"> -->
+          <canvas id="nunigraph-canvas" class="nunigraph-canvas"></canvas>
+          <!-- <div class="nunigraph-canvas-tint"></div> -->
+        <!-- </div> -->
+        <div id="node-windows"></div>      
+      </div>
+  
+    </div>
+  
   </div>
 
-  <!-- THE GRAPH PANEL  -->
-  <div class="panel">
-    
-    <div class="main-top-bar">
 
-      <span class="flat-grid full">
 
-        <span class="flex-center full">
-          <!-- <button id="nuni-logo" class="nuni-logo"></button> -->
-          <button id="nuni-logo" class="nuni-logo"></button>
-        </span>
 
-        <span id="graph-undo-redo-btns" class="flex-center full">
-          <button class="top-bar-btn undo-btn" id="graph-undo-button">↺</button>
-          <button class="top-bar-btn redo-btn" id="graph-redo-button">↻</button>
-        </span>
+  <div class="right-edge"></div>
 
-        <span class="flex-center full">
-          <button id="snap-to-grid-btn" class="grid-icon"></button>
-        </span>
-
-        <span class="flex-center full">
-          <button 
-            id="info-button" 
-            class="info-button"> 
-            i 
-          </button> 
-          <!-- <button id="show-love" onclick="
-          const url = 'https:\/\/www.gofundme.com/f/nunisynth-a-graphical-audio-sandbox?utm_source=customer&utm_medium=copy_link&utm_campaign=p_cf%20share-flow-1&fbclid=IwAR3Ph-YHEoSf91OqaTD9ETf9SV0kCN2sip7wLM6pVgjuAWJD7_dr6OG85cQ'
-          window.open(url, '_blank')" class="top-bar-btn"> ❤️ </button> -->
-        </span>
-      </span>
-
-    </div>
-
-    <div id="nunigraph-stuff" class="nunigraph-container">
-      <!-- <div class="nunicanvas-container"> -->
-        <canvas id="nunigraph-canvas" class="nunigraph-canvas"></canvas>
-        <!-- <div class="nunigraph-canvas-tint"></div> -->
-      <!-- </div> -->
-      <div id="node-windows"></div>      
-    </div>
-
-  </div>
+  <div class="sw-corner"></div>
+  <div class="bottom-edge"></div>
+  <div class="se-corner"></div>
 
 </div>
+
 
 
 
@@ -654,25 +702,6 @@
 
 
 
-<!-- <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
 
-<script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-analytics.js"></script>
-
-<script>
-  
-  var firebaseConfig = {
-    apiKey: "AIzaSyAlOTkYFrEOSDyktmLh6_1zZ4Bf-vsoztQ",
-    authDomain: "nunisynth.firebaseapp.com",
-    databaseURL: "https://nunisynth.firebaseio.com",
-    projectId: "nunisynth",
-    storageBucket: "nunisynth.appspot.com",
-    messagingSenderId: "795685541990",
-    appId: "1:795685541990:web:60c6c9e930afeedeebb5a7",
-    measurementId: "G-ES9RCDDKER"
-  };
-  
-  firebase.initializeApp(firebaseConfig);
-  firebase.analytics();
-</script> -->
 </body>
 </html>

@@ -1,0 +1,71 @@
+
+
+
+
+
+
+
+$radius: 20px;
+$radius0: 50px;
+$factor0: 0%;
+$factor1: 100%;
+$dark: $color0;
+$lighter: $color4;
+$main-color: $color2;
+
+$left-edge:  linear-gradient(90deg, $color1 $factor0, transparent $factor1);
+$top-edge:   linear-gradient(180deg, $lighter $factor0, transparent $factor1);
+$right-edge: linear-gradient(270deg, $color1 $factor0, transparent $factor1);
+$bottom-edge:linear-gradient(0deg, $dark $factor0, transparent $factor1);
+
+.main-box-container {
+    background-color: $main-color;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: $radius auto $radius;
+    grid-template-columns: $radius auto $radius;
+
+    .sw-corner {
+        background: 
+            $bottom-edge, $left-edge;
+            background-blend-mode: normal;
+        
+        border-bottom-left-radius: $radius0;
+    }
+    .nw-corner {
+        background: 
+            $top-edge, $left-edge;
+            background-blend-mode: lighten;
+        
+        border-top-left-radius: $radius0;
+    }
+    .ne-corner {
+        background: 
+            $top-edge, $right-edge;
+            background-blend-mode: darken, luminosity;
+        
+        border-top-right-radius: $radius0;
+    }
+    .se-corner {
+        background: 
+            $bottom-edge, $right-edge;
+            background-blend-mode: darken;
+    
+        border-bottom-right-radius: $radius0;
+    }
+
+    .left-edge {
+        background: $left-edge;
+    }
+    .right-edge {
+        background: $right-edge;
+    }
+    .top-edge {
+        background: $top-edge;
+    }
+    .bottom-edge {
+        background: $bottom-edge;
+    }
+}

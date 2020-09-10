@@ -219,6 +219,22 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.ENV]:    'rgba(105,100,255,0.5)'
     }
 
+const NodeTypeColors2 : { readonly [key in NodeTypes] : string } = 
+    { [NodeTypes.GAIN]:   'rgb(255,0,0)'
+    , [NodeTypes.OSC]:    'rgb(0,0,255)'
+    , [NodeTypes.FILTER]: 'rgb(0,255,0)'
+    , [NodeTypes.PANNER]: 'rgb(255,128,0)'
+    , [NodeTypes.DELAY]:  'rgb(255,255,0)'
+    , [NodeTypes.BUFFER]: 'rgb(0,255,255)'
+    , [NodeTypes.SGS]:    'rgb(255,0,255)'
+    , [NodeTypes.B_SEQ]:  'rgb(0,255,195)'
+    , [NodeTypes.CSN]:    'rgb(255,200,200)'
+    , [NodeTypes.RECORD]: 'rgb(255,200,255)'
+    , [NodeTypes.MODULE]: 'rgb(255,240,255)'
+    
+    , [NodeTypes.ENV]:    'rgba(105,100,255)'
+    }
+
 const NodeTypeWarnings : { readonly [key in NodeTypes]? : string } = 
     { [NodeTypes.FILTER]: `Filters may become unstable and we won't do anything about it. If this happens the program will cease to function properly and will need to be re-started.`
     }

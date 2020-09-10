@@ -11,16 +11,10 @@ import './nunigraph/controller/presets.js'
 import './nunigraph/controller/graph_handlers.js'
 import './UI_setup/resize.js'
 import './UI_setup/setup_file_menu_UI.js'
-// import './UI_setup/setup_waveform_page.js'
 import './tests/copy_graph_test.js'
 
-// Turn off turn deployment
+// Turn off for deployment
 // import './tests/copy_graph_test.js'
-
-log('o-O-__-O-o-_.._-o-O-__-O-oo-O-__-O-o-_.._-o-O-__-O-oo-O-__-O-o-_.._-o-O-__-O-oo-O-__-O-o-_.._-o-O-__-O-o')
-
-// Pattern:
-//  
 
 
 window.onload = () => {
@@ -30,6 +24,9 @@ window.onload = () => {
     setTimeout(() => 
         D('loading-screen').style.display = 'none', 2000)
 }
+
+
+
 
 // sequencer type
 // 1: https://codepen.io/njmcode/pen/PwaXwB

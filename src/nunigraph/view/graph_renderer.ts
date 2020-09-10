@@ -360,7 +360,7 @@ export class NuniGraphRenderer {
         if (!HasAudioParams[node.type]) 
         {
 
-            const c2 = highlight ? 'pink' : 'black'
+            const c2 = highlight ? 'pink' : 'black' // NodeTypeColors2[node.type] // 'black'
             const { x, y } = node, r = nodeRadius
             const gradient = ctx.createRadialGradient(x*W, y*H, r/27.0, x*W, y*H, r)
                 gradient.addColorStop(0, 'gray')
@@ -375,7 +375,7 @@ export class NuniGraphRenderer {
         const factor = Math.log2(pValue-min) / (Math.log2(max-min) || 0.5)
         const cval = factor * 4
         const c1 = `rgb(${ [0,1,2].map(n => 100 * (1 + Math.sin(cval + n * twoThirdsPi)) |0).join(',') })`
-        const c2 = highlight ? 'pink' : 'black'
+        const c2 = highlight ? 'pink' : 'black' // NodeTypeColors2[node.type] //
         const {x, y} = node, r = nodeRadius
         const [a, b] = p < 0  ? [c2, c1] : [c1, c2]
         const gradient = ctx.createRadialGradient(x*W, y*H, r/27.0, x*W, y*H, r)

@@ -61,7 +61,7 @@ a {
 
 .main-top-bar {
     -webkit-app-region: drag;
-    background: $color3;
+    background: $color1;
     // linear-gradient($color1,darken($color1, 4%));
     box-sizing: border-box;
 
@@ -85,7 +85,7 @@ a {
 }
 
 .menu-nav {
-    $c: $color3;
+    $c: $color1;
 
     margin: 0px;
     height: 100%;

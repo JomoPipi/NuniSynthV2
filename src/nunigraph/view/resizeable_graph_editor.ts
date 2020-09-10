@@ -86,7 +86,6 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
         if (resizeDirection & VERTICAL) 
         {
             canvas.height = Math.max(0, h + Y - y)
-            canvas.height = Math.max(0, h + Y - y)
         }
 
         audioNode.controller.renderer.render()

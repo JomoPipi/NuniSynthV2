@@ -14,6 +14,8 @@
     padding: 0px;
 }
 
+
+
 body, html {
     border-width: 0px;
     width: 100%;
@@ -23,6 +25,14 @@ body, html {
     -ms-user-select: none; /* IE 10+ and Edge */
     user-select: none; /* Standard syntax */
     overflow: hidden;
+}
+
+html {  background-color: green;}
+body {
+    background: $main-bg;
+    // background: purple;
+    background-size: 130%;
+    background-blend-mode: lighten;
 }
 
 select {
@@ -63,7 +73,7 @@ button {
 }
 
 #tabs {
-    background: $color2;
+    background: transparent;
     color: $color5;
     width: 100%;
     height: 100%;
@@ -199,9 +209,9 @@ button {
 
 
 .nunigraph-container {
-    border: 30px solid $color2;
+    border: 30px solid transparent;
     border-left-width: 10px;
-    background-color: $color2;
+    background: transparent;
     box-sizing: border-box;
 }
 
@@ -210,31 +220,13 @@ button {
     height: 100%;
     width: 100%;
     border-radius: 40px;
+    
     box-shadow: 0 0 5px 10px $color1;// #555;
 }
-
-// .nunigraph-canvas-tint {
-//     // display: none;
-//     pointer-events: none;
-//     width: 100%;
-//     height: 100%;
-//     border-radius: 40px;
-//     position: absolute;
-//     left: 0;
-//     top: 0;
-
-//     background: radial-gradient(
-//         farthest-corner,
-//         rgba(200, 40, 220, .01),
-//         rgba(250, 100, 240, 0.05),
-//         rgba(250, 255, 255, 0.1),
-//     )
-// }
 
 .nunigraph-canvas--module {
     background: $canvas-bg;
     width: 100%;
-    height: 100%;
 }
 
 #nunigraph-legend {
