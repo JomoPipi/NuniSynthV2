@@ -67,7 +67,7 @@ $number-grab-width: 120px;
 
 
 .lcd-display {
-    background: var(--color0);//#050505;
+    background: rgba(20,10,30,0.5); // #050505; // var(--color0);//
     padding: 10px;
     margin: 10px 0px;
     color: rgb(206, 252, 255);

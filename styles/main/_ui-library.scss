@@ -113,7 +113,7 @@
 .number-grab {
     font: 1em Roboto;
     letter-spacing: 0.1em;
-    background: linear-gradient(var(--color2), #111);  
+    background: linear-gradient(var(--color2), var(--color0));  
     color: var(--color5);
     border: 1px solid var(--color0);
     border-right-color: var(--color4);
@@ -122,17 +122,16 @@
     width: inherit;
     cursor: grab;
     
+    &:hover {
+        background: linear-gradient(var(--color3), var(--color4));  
+    }
+
     &:active {
         cursor: grabbing;
 
-        background:
-            linear-gradient(-45deg, #2b0a00, #300012, #002838, #00362a);
+        background: linear-gradient(-45deg, var(--color2), var(--color4));  
         background-size: 400% 400%;
-        animation: gradient 5s ease infinite;
-    }
-    
-    &:hover {
-        background: linear-gradient(var(--color3), #222);  
+        animation: gradient 1.618s ease infinite;
     }
 }
 @keyframes gradient {

@@ -31,21 +31,17 @@ body, html {
   overflow: hidden;
 }
 
-html {
-  background-color: green;
-}
-
 body {
-  background: url("images/texture.png");
+  background: transparent;
   background-size: 130%;
-  background-blend-mode: lighten;
+  border-radius: 20px;
 }
 
 select {
-  background: var(--color5);
+  background: var(--color2);
   border: none;
   padding: 0px 10px;
-  color: var(--color1);
+  color: var(--color6);
   cursor: pointer;
   /* background-image: url(...);   Add custom arrow */
 }
@@ -115,7 +111,7 @@ button {
 
 .info-menu-container {
   display: none;
-  color: #eee;
+  color: var(--color6);
   position: absolute;
   background-color: rgba(0, 0, 0, 0.5);
   top: 0px;
@@ -153,7 +149,7 @@ button {
 }
 
 #info-menu-buttons ._info-menu-button_ {
-  color: #eee;
+  color: var(--color6);
   pointer-events: all;
   border: 1px solid #333;
   background-color: var(--color2);
@@ -210,7 +206,7 @@ button {
 }
 
 .nunigraph-canvas {
-  background: radial-gradient(circle, var(--color0) 34%, #181d1d 100%);
+  background: radial-gradient(circle, var(--color0) 34%, var(--color1) 100%);
   height: 100%;
   width: 100%;
   border-radius: 40px;
@@ -219,7 +215,7 @@ button {
 }
 
 .nunigraph-canvas--module {
-  background: radial-gradient(circle, var(--color0) 34%, #181d1d 100%);
+  background: radial-gradient(circle, var(--color0) 34%, var(--color1) 100%);
   width: 100%;
 }
 
@@ -243,7 +239,7 @@ button {
   -webkit-app-region: no-drag;
   display: none;
   position: absolute;
-  background: #171717;
+  background: var(--color0);
   color: var(--color5);
   border: 1px solid var(--color3);
   z-index: 2;
@@ -374,7 +370,7 @@ code {
 }
 
 .dim-text {
-  color: var(--color4);
+  color: var(--color5);
 }
 
 .vert-split {
@@ -446,14 +442,14 @@ code {
 }
 
 .note-box {
-  background: -webkit-gradient(linear, left top, left bottom, from(var(--color5)), to(var(--color1)));
-  background: linear-gradient(var(--color5), var(--color1));
+  background: -webkit-gradient(linear, left top, left bottom, from(var(--color4)), to(var(--color1)));
+  background: linear-gradient(var(--color4), var(--color1));
   border: 2px solid var(--color0);
 }
 
 .note-box-halfway {
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(a, var(--color4)), to(var(--color0)));
-  background: linear-gradient(var(--color4) a, var(--color0));
+  background: -webkit-gradient(linear, left top, left bottom, from(var(--color4)), to(var(--color0)));
+  background: linear-gradient(var(--color4), var(--color0));
   border: 2px solid var(--color0);
 }
 
@@ -550,8 +546,8 @@ code {
 .number-grab {
   font: 1em Roboto;
   letter-spacing: 0.1em;
-  background: -webkit-gradient(linear, left top, left bottom, from(var(--color2)), to(#111));
-  background: linear-gradient(var(--color2), #111);
+  background: -webkit-gradient(linear, left top, left bottom, from(var(--color2)), to(var(--color0)));
+  background: linear-gradient(var(--color2), var(--color0));
   color: var(--color5);
   border: 1px solid var(--color0);
   border-right-color: var(--color4);
@@ -562,18 +558,18 @@ code {
   cursor: grab;
 }
 
+.number-grab:hover {
+  background: -webkit-gradient(linear, left top, left bottom, from(var(--color3)), to(var(--color4)));
+  background: linear-gradient(var(--color3), var(--color4));
+}
+
 .number-grab:active {
   cursor: -webkit-grabbing;
   cursor: grabbing;
-  background: linear-gradient(-45deg, #2b0a00, #300012, #002838, #00362a);
+  background: linear-gradient(-45deg, var(--color2), var(--color4));
   background-size: 400% 400%;
-  -webkit-animation: gradient 5s ease infinite;
-          animation: gradient 5s ease infinite;
-}
-
-.number-grab:hover {
-  background: -webkit-gradient(linear, left top, left bottom, from(var(--color3)), to(#222));
-  background: linear-gradient(var(--color3), #222);
+  -webkit-animation: gradient 1.618s ease infinite;
+          animation: gradient 1.618s ease infinite;
 }
 
 @-webkit-keyframes gradient {
@@ -614,7 +610,7 @@ code {
 
 .list-btn {
   padding: 0px 10px;
-  color: var(--color4) a;
+  color: var(--color5);
   background: var(--color2);
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
@@ -749,7 +745,7 @@ code {
 }
 
 .lcd-display {
-  background: var(--color0);
+  background: rgba(20, 10, 30, 0.5);
   padding: 10px;
   margin: 10px 0px;
   color: #cefcff;
@@ -852,7 +848,7 @@ a {
 .builder-section {
   padding: 4%;
   background-color: var(--color1);
-  border: 1px solid var(--color4) a;
+  border: 1px solid var(--color4);
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
 }
@@ -860,7 +856,7 @@ a {
 .neumorph {
   padding: 1.5%;
   border: none;
-  color: var(--color4) a;
+  color: var(--color5);
   margin: 4%;
   border-radius: 9px;
   background: transparent;
@@ -1403,28 +1399,28 @@ a {
   background: -webkit-gradient(linear, left bottom, left top, from(var(--color0)), to(transparent)), -webkit-gradient(linear, left top, right top, from(var(--color1)), to(transparent));
   background: linear-gradient(0deg, var(--color0) 0%, transparent 100%), linear-gradient(90deg, var(--color1) 0%, transparent 100%);
   background-blend-mode: normal;
-  border-bottom-left-radius: 50px;
+  border-bottom-left-radius: 0px;
 }
 
 .main-box-container .nw-corner {
   background: -webkit-gradient(linear, left top, left bottom, from(var(--color4)), to(transparent)), -webkit-gradient(linear, left top, right top, from(var(--color1)), to(transparent));
   background: linear-gradient(180deg, var(--color4) 0%, transparent 100%), linear-gradient(90deg, var(--color1) 0%, transparent 100%);
   background-blend-mode: lighten;
-  border-top-left-radius: 50px;
+  border-top-left-radius: 0px;
 }
 
 .main-box-container .ne-corner {
   background: -webkit-gradient(linear, left top, left bottom, from(var(--color4)), to(transparent)), -webkit-gradient(linear, right top, left top, from(var(--color1)), to(transparent));
   background: linear-gradient(180deg, var(--color4) 0%, transparent 100%), linear-gradient(270deg, var(--color1) 0%, transparent 100%);
   background-blend-mode: darken, luminosity;
-  border-top-right-radius: 50px;
+  border-top-right-radius: 0px;
 }
 
 .main-box-container .se-corner {
   background: -webkit-gradient(linear, left bottom, left top, from(var(--color0)), to(transparent)), -webkit-gradient(linear, right top, left top, from(var(--color1)), to(transparent));
   background: linear-gradient(0deg, var(--color0) 0%, transparent 100%), linear-gradient(270deg, var(--color1) 0%, transparent 100%);
   background-blend-mode: darken;
-  border-bottom-right-radius: 50px;
+  border-bottom-right-radius: 0px;
 }
 
 .main-box-container .left-edge {

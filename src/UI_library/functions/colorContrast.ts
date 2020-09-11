@@ -13,7 +13,7 @@ export function rgbaColorContrast(rgba: string) {
             ).split(',').slice(0,3).map(x=>+x.trim())
 
     // http://stackoverflow.com/a/3943023/112731
-    return (r * 0.299 + g * 0.587 + b * 0.114) > 186
+    return (r * 0.299 + g * 0.787 + b * 0.114) > 186
         ? 'black'
         : 'white'
 }

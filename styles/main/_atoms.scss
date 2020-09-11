@@ -81,7 +81,8 @@ code {
 }
 
 .dim-text {
-    color: var(--color4);
+    // undimmed
+    color: var(--color5);
 }
 
 .vert-split {
@@ -135,16 +136,15 @@ code {
 
 .note-box {
     background: 
-        linear-gradient(var(--color5), var(--color1));
+        linear-gradient(var(--color4), var(--color1));
     border: 2px solid var(--color0);
     // border-radius: 20%;
 }
 
 .note-box-halfway {
     background: 
-        linear-gradient(var(--color4)a, var(--color0));
+        linear-gradient(var(--color4), var(--color0));
     border: 2px solid var(--color0);
-    // border-radius: 20%;
 }
 
 .smaller-text {

@@ -27,22 +27,21 @@ body, html {
     overflow: hidden;
 }
 
-html {  background-color: green;}
 body {
-    background: $main-bg;
+    background: transparent;
     // background: purple;
-    background-size: 130%;
-    background-blend-mode: lighten;
+    background-size: 130%; 
+    border-radius: 20px;
 }
 
 select {
     // -webkit-appearance: none;
     // -moz-appearance: none;
     // appearance: none;       /* Remove default arrow */
-    background: var(--color5);
+    background: var(--color2);
     border: none;
     padding: 0px 10px;
-    color: var(--color1);
+    color: var(--color6);
     cursor: pointer;
     /* background-image: url(...);   Add custom arrow */
 }
@@ -117,7 +116,7 @@ button {
 
 .info-menu-container {
     display: none;
-    color: #eee;
+    color: var(--color6);
     position: absolute;
     background-color: rgba(0,0,0,0.5);
     // pointer-events: none;
@@ -151,7 +150,7 @@ button {
     grid-template-columns: 1fr;
     
     ._info-menu-button_ {
-        color: #eee;
+        color: var(--color6);
         pointer-events: all;
         border: 1px solid #333;
         background-color: var(--color2);
@@ -246,7 +245,7 @@ button {
     -webkit-app-region: no-drag;
     display: none;
     position: absolute;
-    background: #171717;
+    background: var(--color0);
     color: var(--color5);
     border: 1px solid var(--color3);
     z-index: 2;

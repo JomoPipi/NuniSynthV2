@@ -26,9 +26,9 @@ const createWindow = () => {
       // , devTools: false // TODO : uncomment for production
       }
     , icon: __dirname + '/../styles/icon.ico'
+    , radii: [20, 20, 20, 20]
+    , transparent: true
     , frame: false
-    , backgroundColor: '#111111'
-    , fullscreen: true
     })
   
   // mainWindow.setMenu(null)

@@ -52,7 +52,7 @@ $periwinkle-crayola: rgba(184, 190, 221, 1);
 
 $main-bg: url('images/texture.png'); // 
 
-$canvas-bg: radial-gradient(circle, var(--color0) 34%, rgb(24, 29, 29) 100%); 
+$canvas-bg: radial-gradient(circle, var(--color0) 34%, var(--color1) 100%); 
 
 :root {
 	--color0:rgb(32, 30, 32);
