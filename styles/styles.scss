@@ -31,43 +31,38 @@ $lavender-blush: rgba(240, 230, 239, 1);
 $periwinkle-crayola: rgba(184, 190, 221, 1);
 
 // color theme 1:
-// $color0: $glossy-grape;
-// $color1: $periwinkle-crayola;
-// $color2: $lavender-blush;
-// $color3: $pink-lavender;
-// $color4: $kobi;
-// $color4a: lighten($color: $color4, $amount: 15%);
-// $color5: rgb(154, 151, 163);
-// $color6: rgb(255, 255, 255);
+// var(--color0): rgb(156, 137, 184);
+// var(--color1): rgb(184, 190, 221);
+// var(--color2): rgb(240, 230, 239);
+// var(--color3): rgb(239, 195, 230);
+// var(--color4): rgb(240, 166, 202);
+// var(--color5): rgb(154, 151, 163);
+// var(--color6): rgb(255, 255, 255);
 //
 
 
 
-// $color0:rgb(45, 42, 45);
-// $color1: rgb(48, 47, 48);
-// $color2: rgb(58, 57, 58);
-// $color3: rgb(68, 64, 68);
-// $color4: rgb(93, 91, 94);
-// $color4a: lighten($color: $color4, $amount: 15%);
-// $color5: rgb(154, 151, 163);
-// $color6: rgb(255, 255, 255);
+// var(--color0):rgb(45, 42, 45);
+// var(--color1): rgb(48, 47, 48);
+// var(--color2): rgb(58, 57, 58);
+// var(--color3): rgb(68, 64, 68);
+// var(--color4): rgb(93, 91, 94);
+// var(--color5): rgb(154, 151, 163);
+// var(--color6): rgb(255, 255, 255);
 
 $main-bg: url('images/texture.png'); // 
 
-$color0:rgb(32, 30, 32);
-$color1: rgb(48, 47, 48);
-$color2: rgb(58, 57, 58);
-$color3: rgb(68, 64, 68);
-$color4: rgb(93, 91, 94);
-$color4a: lighten($color: $color4, $amount: 15%);
-$color5: rgb(154, 151, 163);
-$color6: rgb(255, 255, 255);
+$canvas-bg: radial-gradient(circle, var(--color0) 34%, rgb(24, 29, 29) 100%); 
 
-$canvas-bg: radial-gradient(circle, $color0 34%, rgb(24, 29, 29) 100%); 
-
-$ui-bg: $color1;
-
-$c-shadow: rgba(41, 33, 33, 0.4);
+:root {
+	--color0:rgb(32, 30, 32);
+	--color1: rgb(48, 47, 48);
+	--color2: rgb(58, 57, 58);
+	--color3: rgb(68, 64, 68);
+	--color4: rgb(93, 91, 94);
+	--color5: rgb(154, 151, 163);
+	--color6: rgb(255, 255, 255);
+}
     
 @import './main/setup';
 @import './main/atoms';

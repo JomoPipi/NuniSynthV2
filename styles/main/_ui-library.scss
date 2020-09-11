@@ -50,7 +50,7 @@
 
     border-radius: 100%;
 
-    border: 2px solid $color4a;
+    border: 2px solid var(--color4)a;
     background-image: url('images/knob.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -97,9 +97,9 @@
   margin: 0;
 }
 .number-dial-input {
-    background-color: $color1;
+    background-color: var(--color1);
     width: 60px;
-    color: $color5; 
+    color: var(--color5); 
     display: block;
 }
 .number-dial-component {
@@ -113,11 +113,11 @@
 .number-grab {
     font: 1em Roboto;
     letter-spacing: 0.1em;
-    background: linear-gradient($color2, #111);  
-    color: $color5;
-    border: 1px solid $color0;
-    border-right-color: $color4;
-    border-bottom-color: $color4;
+    background: linear-gradient(var(--color2), #111);  
+    color: var(--color5);
+    border: 1px solid var(--color0);
+    border-right-color: var(--color4);
+    border-bottom-color: var(--color4);
     padding: 10px;
     width: inherit;
     cursor: grab;
@@ -132,7 +132,7 @@
     }
     
     &:hover {
-        background: linear-gradient($color3, #222);  
+        background: linear-gradient(var(--color3), #222);  
     }
 }
 @keyframes gradient {

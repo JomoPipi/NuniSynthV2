@@ -10,38 +10,30 @@
     padding: 0px 5px;
     border-radius: 5px;
     border: none;
-    color: $color5;
-    background-color: $color2;
+    color: var(--color5);
+    background-color: var(--color2);
     float: right;
     box-sizing: border-box;
 }
 
 .list-btn {
     padding: 0px 10px;
-    color: $color4a;
-    background: lighten($color:  $color1, $amount: 2%);
+    color: var(--color4)a;
+    background: var(--color2);
     box-sizing: border-box;
     text-align: left;
     font-size: 1em;
     border: none; 
 
     &:hover {
-        background: 
-            mix(
-            $color1,
-            rgb(255, 0, 255),
-            98%);
+        background: var(--color1);
     }
 }
 .list-btn:nth-child(odd) { 
-    background: lighten($color:  $color1, $amount: 1%);
+    background: var(--color2);
     
     &:hover {
-        background:
-            mix(
-            $color1,
-            rgb(255, 0, 255),
-            98%);
+        background: var(--color1);
     }
 }
 
@@ -49,10 +41,10 @@
     width:15px;
 }
 ::-webkit-scrollbar-track{
-    background:linear-gradient($color1,$color0); border-radius: 5x;
+    background:linear-gradient(var(--color1),var(--color0)); border-radius: 5x;
 }
 ::-webkit-scrollbar-thumb{
-    background:linear-gradient($color3,$color2); border-radius: 5px;
+    background:linear-gradient(var(--color3),var(--color2)); border-radius: 5px;
 }
 
 .swapper {

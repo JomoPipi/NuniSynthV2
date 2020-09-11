@@ -11,6 +11,7 @@ import
     , saveProject
     } from '../storage/dialog.js'
 import { modularizeGraph } from '../nunigraph/controller/graph_handlers.js'
+import { setTheme } from './theme_setup.js'
 
 const menuItemMap =
     { 'Saved Project': openExistingProject
@@ -24,7 +25,14 @@ function getNavMenuClickTarget(e : MouseEvent) {
     const target = e.target as HTMLElement
     const text = target.textContent!.trim() as keyof typeof menuItemMap
     
-    menuItemMap[text] && menuItemMap[text]()
+    if (menuItemMap[text]) 
+    {
+        menuItemMap[text]()
+    }
+    else if (text.length && !isNaN(+text))
+    {
+        setTheme(+text)
+    }
 }
 
 D('main-nav-menu').onclick = getNavMenuClickTarget

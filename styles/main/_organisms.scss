@@ -67,11 +67,11 @@ $number-grab-width: 120px;
 
 
 .lcd-display {
-    background: $color0;//#050505;
+    background: var(--color0);//#050505;
     padding: 10px;
     margin: 10px 0px;
     color: rgb(206, 252, 255);
-    // box-shadow: 0 0 20px 0px $color0;
+    // box-shadow: 0 0 20px 0px var(--color0);
     padding: 18x;
     font-family: monospace;
     letter-spacing: 0.15em;
@@ -119,7 +119,7 @@ text-align: center;
 .tooltip .tooltiptext {
 visibility: hidden;
 width: 300px;
-background-color: $color2;
+background-color: var(--color2);
 color: #fff;
 text-align: center;
 border-radius: 6px;
@@ -140,7 +140,7 @@ margin-left: -5px;
 border-width: 5px;
 border-style: solid;
 border-color: 
-transparent transparent $color2 transparent;
+transparent transparent var(--color2) transparent;
 }
 
 .tooltip:hover .tooltiptext {

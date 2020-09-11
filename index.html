@@ -92,15 +92,12 @@
   <div class="ne-corner"></div>
 
   <div class="left-edge"></div>
-
-
-
   
   <div class="the-two-panels">
 
     <div id="tabs-panel" class="panel">
       
-      <div class="main-top-bar">
+      <div class="main-top-bar" style='z-index: 1;'>
   
         <nav id="main-nav-menu" class="menu-nav">
           <ul>
@@ -138,6 +135,15 @@
                       <li><a href="#"> Modularize </a></li>
                   </ul>        
               </li>
+
+              <li><a href="#">Preferences</a>
+                <ul>
+                  <li><a href="#"> Options </a></li>
+                  <li><a href="#"> Themes </a>
+                    <ul id="theme-container"></ul>
+                  </li>
+                </ul>  
+              </li>
               
               <li><a href="#">Utilities</a>
                 <ul>
@@ -157,10 +163,9 @@
           
         </nav>
         
-        
       </div>
       
-      <div id="tabs">
+      <div id="tabs" style='z-index: 0;'>
   
   
         
@@ -168,47 +173,6 @@
             <div class="main-tab">
   
                 <div id="project-title"> </div>
-  
-                  <!-- <div id="bufferbox2" class="builder-section">
-                    Buffer Expression:
-                    <button id="buffer-formula-templates-button" class="apply-btn" style="float:right"> 
-                        PRESETS 📋 </button>
-              
-                    <br>
-                    <span class="smaller-text">
-              
-                        <span class="code2">  n  </span> represents the position of each sample in the buffer.
-                        Samples should be numbers -1 and 1. Use JavaScript
-                          <a 
-                            target="_blank" 
-                            href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators"> 
-                            operators </a> 
-                        and
-                          <a 
-                            target="_blank"
-                            href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math"> 
-                            functions </a>.
-                        <br>
-                        
-                    </span>
-                    
-                    <code>
-                      for n in range [0, 48000 * seconds]: <br>
-                      &nbsp; &nbsp; samples[n] =
-                    </code>
-              
-                    <input
-                        type="text" 
-                        id="buffer-formula"
-                        class="text-input-wide center"
-                        value="sin(n/30) + sin(n/20)"> 
-              
-                    <button id="apply-buffer-formula" class="apply-btn"> apply </button>
-              
-                    <div id="buffer-formula-error-msg" class="error-msg"></div>
-              
-                  </div> -->
-                
   
                 <div>
                   
@@ -237,9 +201,7 @@
                   <canvas id="adsr-canvas"></canvas>
                   
                   <div id="adsr-knobs" class="adsr-knobs"> 
-                    
                     <!-- INSERT WITH JavaScript -->
-  
                   </div>
                 </span>
                 
@@ -592,9 +554,6 @@
     </div>
   
   </div>
-
-
-
 
   <div class="right-edge"></div>
 

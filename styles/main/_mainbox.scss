@@ -9,13 +9,13 @@ $radius: 20px;
 $radius0: 50px;
 $factor0: 0%;
 $factor1: 100%;
-$dark: $color0;
-$lighter: $color4;
-$main-color: $color2;
+$dark: var(--color0);
+$lighter: var(--color4);
+$main-color: var(--color2);
 
-$left-edge:  linear-gradient(90deg, $color1 $factor0, transparent $factor1);
+$left-edge:  linear-gradient(90deg, var(--color1) $factor0, transparent $factor1);
 $top-edge:   linear-gradient(180deg, $lighter $factor0, transparent $factor1);
-$right-edge: linear-gradient(270deg, $color1 $factor0, transparent $factor1);
+$right-edge: linear-gradient(270deg, var(--color1) $factor0, transparent $factor1);
 $bottom-edge:linear-gradient(0deg, $dark $factor0, transparent $factor1);
 
 .main-box-container {

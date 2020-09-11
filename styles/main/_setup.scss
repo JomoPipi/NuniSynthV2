@@ -20,7 +20,7 @@ body, html {
     border-width: 0px;
     width: 100%;
     height: 100%;
-    color: $color5;
+    color: var(--color5);
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10+ and Edge */
     user-select: none; /* Standard syntax */
@@ -39,18 +39,18 @@ select {
     // -webkit-appearance: none;
     // -moz-appearance: none;
     // appearance: none;       /* Remove default arrow */
-    background: $color5;
+    background: var(--color5);
     border: none;
     padding: 0px 10px;
-    color: $color1;
+    color: var(--color1);
     cursor: pointer;
     /* background-image: url(...);   Add custom arrow */
 }
 
 button {
     cursor: pointer;
-    background-color: $color2;
-    color: $color5;
+    background-color: var(--color2);
+    color: var(--color5);
     font-weight: bolder;
 }
 
@@ -74,7 +74,7 @@ button {
 
 #tabs {
     background: transparent;
-    color: $color5;
+    color: var(--color5);
     width: 100%;
     height: 100%;
 }
@@ -90,8 +90,8 @@ button {
 .graph-contextmenu {
     display: none;
     position: absolute;
-    background-color: $color3;
-    color: $color5;
+    background-color: var(--color3);
+    color: var(--color5);
     z-index: 3;
 }
 
@@ -102,16 +102,16 @@ button {
 
 .connection-type-button {
     font-size: 1em;
-    border: 1px solid $color2;
+    border: 1px solid var(--color2);
     margin: 0 5px;
     border-width: 2px 2px;
 
-    color: $color5;
-    background: $color1;
+    color: var(--color5);
+    background: var(--color1);
 
     &:hover {
-        color: $color6;
-        background: $color2;
+        color: var(--color6);
+        background: var(--color2);
     }
 }
 
@@ -131,7 +131,7 @@ button {
 
 .info-menu {
     border: 3px solid blue;
-    background-color: $color0;
+    background-color: var(--color0);
     width: 400px;
     height: 400px;
     margin-top: 5%;
@@ -154,11 +154,11 @@ button {
         color: #eee;
         pointer-events: all;
         border: 1px solid #333;
-        background-color: $color2;
+        background-color: var(--color2);
     }
 
     .active-info-button {
-        background-color: $color0;
+        background-color: var(--color0);
         border-right: none;
         outline: none;
     }
@@ -221,7 +221,7 @@ button {
     width: 100%;
     border-radius: 40px;
     
-    box-shadow: 0 0 5px 10px $color1;// #555;
+    box-shadow: 0 0 5px 10px var(--color1);// #555;
 }
 
 .nunigraph-canvas--module {
@@ -247,8 +247,8 @@ button {
     display: none;
     position: absolute;
     background: #171717;
-    color: $color5;
-    border: 1px solid $color3;
+    color: var(--color5);
+    border: 1px solid var(--color3);
     z-index: 2;
     box-shadow: 0px 5px 10px rgba(0,0,0,0.4);
 }
@@ -266,7 +266,7 @@ button {
 
 #buffer-canvas {
     width: 100%;
-    border: 1px solid $color1;
+    border: 1px solid var(--color1);
 }
 
 .length-indicator {
