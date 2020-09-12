@@ -10,7 +10,7 @@ import './buffer_utils/internal.js'
 import './nunigraph/controller/presets.js'
 import './nunigraph/controller/graph_handlers.js'
 import './UI_setup/internal.js'
-import './tests/copy_graph_test.js'
+// import './tests/copy_graph_test.js'
 
 // Turn off for deployment
 // import './tests/copy_graph_test.js'

@@ -12,7 +12,7 @@ import { audioCaptureNodeControls } from './audio_capture_controls.js'
 import { createResizeableGraphEditor } from './resizeable_graph_editor.js'
 import 
     { NuniSourceNode, BufferNode2, Sequencer
-    , AudioBufferCaptureNode, NuniGraphAudioNode, MasterClock 
+    , AudioBufferCaptureNode, NuniGraphAudioNode, MasterClock, PianoRoll12Tone 
     } from '../../webaudio2/internal.js'
 import 
     { createDraggableNumberInput
@@ -74,6 +74,11 @@ export function createValuesWindow(
     else if (HasAudioParams[node.type] && node.type !== NodeTypes.B_SEQ) 
     {
         controls.appendChild(exposeAudioParams(node, saveCallback))
+    }
+
+    if (node.audioNode instanceof PianoRoll12Tone)
+    {
+        controls.appendChild(node.audioNode.html)
     }
 
     // // Add delete button, but not if id is 0, because that's the master gain.

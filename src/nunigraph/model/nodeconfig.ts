@@ -19,6 +19,7 @@ enum NodeTypes
     RECORD = 'audio-capture',
     MODULE = 'module',
 
+    PIANOR = 'piano-roll',
     ENV = 'envelope'
 }
 
@@ -40,7 +41,7 @@ type ConnecteeDatum =
     
 type ConnecteeData = ConnecteeDatum[]
 
-const NodeLabel = 
+const NodeLabel : { readonly [key in NodeTypes] : string } =  
     { [NodeTypes.GAIN]:   'Gain'
     , [NodeTypes.OSC]:    'Oscillator'
     , [NodeTypes.FILTER]: 'Filter'
@@ -53,10 +54,11 @@ const NodeLabel =
     , [NodeTypes.RECORD]: 'Recorder'
     , [NodeTypes.MODULE]: 'Module'
     
+    , [NodeTypes.PIANOR]: '12-Tone Piano Roll'
     , [NodeTypes.ENV]:    'Envelope'
     }
 
-const createAudioNode =
+const createAudioNode : { readonly [key in NodeTypes] : string } =
     { [NodeTypes.GAIN]:   'createGain'
     , [NodeTypes.OSC]:    'createOscillator2'
     , [NodeTypes.FILTER]: 'createBiquadFilter'
@@ -69,10 +71,11 @@ const createAudioNode =
     , [NodeTypes.RECORD]: 'createAudioBufferCaptureNode'
     , [NodeTypes.MODULE]: 'createNuniGraphAudioNode'
     
+    , [NodeTypes.PIANOR]: 'create12TonePianoRoll'
     , [NodeTypes.ENV]:    'createEnvelopeNode'
     }
 
-const SupportsInputChannels =
+const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.GAIN]:   true
     , [NodeTypes.OSC]:    false
     , [NodeTypes.FILTER]: true
@@ -85,10 +88,11 @@ const SupportsInputChannels =
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: true
     
+    , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    true
     }
 
-const IsAwareOfInputIDs =
+const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.GAIN]:   false
     , [NodeTypes.OSC]:    false
     , [NodeTypes.FILTER]: false
@@ -101,10 +105,11 @@ const IsAwareOfInputIDs =
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: true
     
+    , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
     }
 
-const MustBeStarted =
+const MustBeStarted : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.GAIN]:   false
     , [NodeTypes.OSC]:    false
     , [NodeTypes.FILTER]: false
@@ -117,10 +122,11 @@ const MustBeStarted =
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: false
     
+    , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
     }
 
-const HasAudioParams =
+const HasAudioParams : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.GAIN]:   true
     , [NodeTypes.OSC]:    true
     , [NodeTypes.FILTER]: true
@@ -133,10 +139,11 @@ const HasAudioParams =
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: false
     
+    , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
     }
 
-const HasNoOutput =
+const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.GAIN]:   false
     , [NodeTypes.OSC]:    false
     , [NodeTypes.FILTER]: false
@@ -148,7 +155,8 @@ const HasNoOutput =
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: false
-
+    
+    , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
     }
 
@@ -165,6 +173,7 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: true
 
+    , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
     }
 
@@ -181,10 +190,11 @@ const AudioNodeParams : Record<NodeTypes,AudioParams[]> =
     , [NodeTypes.RECORD]: []
     , [NodeTypes.MODULE]: []
     
+    , [NodeTypes.PIANOR]: [] // TODO: add offset
     , [NodeTypes.ENV]:    []
     }
 
-const AudioNodeSubTypes = 
+const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
     { [NodeTypes.GAIN]:   []
     , [NodeTypes.OSC]:    ['sine','square','triangle','sawtooth','custom']
     , [NodeTypes.FILTER]: 
@@ -199,6 +209,7 @@ const AudioNodeSubTypes =
     , [NodeTypes.RECORD]: []
     , [NodeTypes.MODULE]: []
 
+    , [NodeTypes.PIANOR]: []
     , [NodeTypes.ENV]: []
     }
 
@@ -216,7 +227,8 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.RECORD]: 'rgba(255,200,255,1)'
     , [NodeTypes.MODULE]: 'rgba(255,240,255,0.5)'
     
-    , [NodeTypes.ENV]:    'rgba(105,100,255,0.5)'
+    , [NodeTypes.PIANOR]: 'rgba(105,100,255,0.5)'
+    , [NodeTypes.ENV]:    'rgba(105,255,255,0.5)'
     }
 
 const NodeTypeColors2 : { readonly [key in NodeTypes] : string } = 
@@ -232,6 +244,7 @@ const NodeTypeColors2 : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.RECORD]: 'rgb(255,200,255)'
     , [NodeTypes.MODULE]: 'rgb(255,240,255)'
     
+    , [NodeTypes.PIANOR]: 'rgb(105,100,255)'
     , [NodeTypes.ENV]:    'rgba(105,100,255)'
     }
 

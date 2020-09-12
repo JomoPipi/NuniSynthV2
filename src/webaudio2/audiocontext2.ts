@@ -13,6 +13,7 @@ import { graphVisualEqualizer } from '../visualizer/global_visualizer.js'
 import { AudioBufferCaptureNode } from './record/buffer_capture_node.js'
 import { NuniGraphAudioNode } from './nunigraph_audionode.js'
 import { Envelope } from './envelope/envelope.js'
+import { PianoRoll12Tone } from './sequencers/pianoroll_12tone.js'
 
 
 class AudioContext2 extends AudioContext {
@@ -64,6 +65,10 @@ class AudioContext2 extends AudioContext {
 
     createEnvelopeNode() {
         return new Envelope(this)
+    }
+
+    create12TonePianoRoll() {
+        return new PianoRoll12Tone(this)
     }
 }
 
