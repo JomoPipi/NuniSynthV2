@@ -26,9 +26,10 @@ const createWindow = () => {
       // , devTools: false // TODO : uncomment for production
       }
     , icon: __dirname + '/../styles/icon.ico'
-    , radii: [20, 20, 20, 20]
-    , transparent: true
+    // , transparent: true
     , frame: false
+    , fullscreenable: true
+    , opacity: 1
     })
   
   // mainWindow.setMenu(null)
@@ -37,11 +38,14 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, '/../index.html'))
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
 }
 
-app.on('ready', createWindow)
+app.on('ready', _ => { 
+  // Transparency Workaround
+  setTimeout(createWindow, 10)
+})
 
 app.on('window-all-closed', () => {
     app.quit()
@@ -52,7 +56,7 @@ app.on('activate', () => {
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) 
   {
-    createWindow()
+    setTimeout(createWindow, 10)
   }
 })
 

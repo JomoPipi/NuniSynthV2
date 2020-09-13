@@ -12,9 +12,8 @@
     // text-decoration: wavy;
     margin: 0px;
     padding: 0px;
+    background: transparent; //
 }
-
-
 
 body, html {
     border-width: 0px;
@@ -25,13 +24,13 @@ body, html {
     -ms-user-select: none; /* IE 10+ and Edge */
     user-select: none; /* Standard syntax */
     overflow: hidden;
+    background: #FF00FF;
 }
 
 body {
     background: transparent;
     // background: purple;
     background-size: 130%; 
-    border-radius: 20px;
 }
 
 select {

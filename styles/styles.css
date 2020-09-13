@@ -14,6 +14,7 @@
   font-family: OpenSans;
   margin: 0px;
   padding: 0px;
+  background: transparent;
 }
 
 body, html {
@@ -29,12 +30,12 @@ body, html {
        user-select: none;
   /* Standard syntax */
   overflow: hidden;
+  background: #FF00FF;
 }
 
 body {
   background: transparent;
   background-size: 130%;
-  border-radius: 20px;
 }
 
 select {
@@ -1393,34 +1394,35 @@ a {
       grid-template-rows: 20px auto 20px;
   -ms-grid-columns: 20px auto 20px;
       grid-template-columns: 20px auto 20px;
+  border-radius: 20px;
 }
 
 .main-box-container .sw-corner {
   background: -webkit-gradient(linear, left bottom, left top, from(var(--color0)), to(transparent)), -webkit-gradient(linear, left top, right top, from(var(--color1)), to(transparent));
   background: linear-gradient(0deg, var(--color0) 0%, transparent 100%), linear-gradient(90deg, var(--color1) 0%, transparent 100%);
   background-blend-mode: normal;
-  border-bottom-left-radius: 0px;
+  border-bottom-left-radius: 3px;
 }
 
 .main-box-container .nw-corner {
   background: -webkit-gradient(linear, left top, left bottom, from(var(--color4)), to(transparent)), -webkit-gradient(linear, left top, right top, from(var(--color1)), to(transparent));
   background: linear-gradient(180deg, var(--color4) 0%, transparent 100%), linear-gradient(90deg, var(--color1) 0%, transparent 100%);
   background-blend-mode: lighten;
-  border-top-left-radius: 0px;
+  border-top-left-radius: 3px;
 }
 
 .main-box-container .ne-corner {
   background: -webkit-gradient(linear, left top, left bottom, from(var(--color4)), to(transparent)), -webkit-gradient(linear, right top, left top, from(var(--color1)), to(transparent));
   background: linear-gradient(180deg, var(--color4) 0%, transparent 100%), linear-gradient(270deg, var(--color1) 0%, transparent 100%);
   background-blend-mode: darken, luminosity;
-  border-top-right-radius: 0px;
+  border-top-right-radius: 3px;
 }
 
 .main-box-container .se-corner {
   background: -webkit-gradient(linear, left bottom, left top, from(var(--color0)), to(transparent)), -webkit-gradient(linear, right top, left top, from(var(--color1)), to(transparent));
   background: linear-gradient(0deg, var(--color0) 0%, transparent 100%), linear-gradient(270deg, var(--color1) 0%, transparent 100%);
   background-blend-mode: darken;
-  border-bottom-right-radius: 0px;
+  border-bottom-right-radius: 3px;
 }
 
 .main-box-container .left-edge {
