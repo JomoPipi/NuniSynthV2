@@ -31,7 +31,8 @@ export function createValuesWindow(
     saveCallback : Function,
     deleteCallback : Function) {
 
-    const controls = E('div')//, { className: 'side-margin' })
+    const { audioNode } = node
+    const controls = E('div')
     
     controls.appendChild(showSubtypes(node, saveCallback))
 
@@ -40,31 +41,31 @@ export function createValuesWindow(
         controls.appendChild(warningButton(node.type))
     }
 
-    if (node.audioNode instanceof NuniGraphAudioNode) 
+    if (audioNode instanceof NuniGraphAudioNode) 
     {
         // TODO: Don't style in JS
         controls.style.margin = '0 0'
-        controls.appendChild(createResizeableGraphEditor(node.audioNode))
+        controls.appendChild(createResizeableGraphEditor(audioNode))
     }
 
-    if (node.audioNode instanceof AudioBufferCaptureNode) 
+    if (audioNode instanceof AudioBufferCaptureNode) 
     {
-        controls.appendChild(audioCaptureNodeControls(node.audioNode))
+        controls.appendChild(audioCaptureNodeControls(audioNode))
     }
 
-    if (node.audioNode instanceof Sequencer) 
+    if (audioNode instanceof Sequencer) 
     {
-        controls.appendChild(sequencerControls(node.audioNode))
+        controls.appendChild(sequencerControls(audioNode))
     }
 
-    if (node.audioNode instanceof BufferNode2) 
+    if (audioNode instanceof BufferNode2) 
     {
-        controls.appendChild(samplerControls(node.audioNode))
+        controls.appendChild(samplerControls(audioNode))
     }
 
-    if (node.audioNode instanceof NuniSourceNode) 
+    if (audioNode instanceof NuniSourceNode) 
     {
-        controls.appendChild(activateKeyboardButton(node.audioNode))
+        controls.appendChild(activateKeyboardButton(audioNode))
     }
 
     if (node.id === 0) 
@@ -75,11 +76,18 @@ export function createValuesWindow(
     {
         controls.appendChild(exposeAudioParams(node, saveCallback))
     }
-
-    if (node.audioNode instanceof PianoRoll12Tone)
+    
+    if (audioNode instanceof PianoRoll12Tone)
     {
-        controls.appendChild(node.audioNode.html)
+        controls.appendChild(createResizeableEditor(
+            audioNode.pianoRoll))
+        //* webaudio-pianoroll has to be loaded
+        //* for play() to be defined
+        requestAnimationFrame(_ => audioNode.play())
     }
+
+
+
 
     // // Add delete button, but not if id is 0, because that's the master gain.
     // if (node.id !== 0) 
@@ -96,6 +104,105 @@ export function createValuesWindow(
     // }
     
     return controls
+}
+
+function createResizeableEditor(
+content : HTMLCanvasElement) {
+    const box = E('div')
+    const canvas = content
+
+    const topRow = E('div', { className: 'full' }); topRow.style.height = '5px'
+    const leftEdge = E('div', { className: 'ew-edge-drag' })
+    const rightEdge = E('div', { className: 'ew-edge-drag' })
+    const middleRowContainer = E('div', { className: 'draggable-row' })
+    const bottomRow = E('div', { className: 'resizeable-window-bottom-row' })
+    const dragCorner = E('div', { className: 'nwse-corner-drag-box' })
+    const dragCornernesw = E('div', { className: 'nesw-corner-drag-box' })
+    const bottomMiddleEdge = E('span')
+        
+    bottomRow.append(dragCornernesw, bottomMiddleEdge, dragCorner)
+
+    const NONE = 0, VERTICAL = 1, HORIZONTAL = 2
+    let xy : number[], wh : number[]
+    let resizeDirection = 0
+    let doLeft = false
+    let canvasMinWidth = Infinity
+
+    function mousedown(e : MouseEvent) {
+
+        doLeft = [leftEdge, dragCornernesw].includes(e.target as HTMLDivElement)
+
+        resizeDirection =
+        e.target === dragCorner || 
+        e.target === dragCornernesw
+            ? 3
+            : e.target === rightEdge || e.target === leftEdge
+            ? HORIZONTAL
+            : e.target === bottomMiddleEdge 
+            ? VERTICAL
+            : NONE
+
+        if (resizeDirection === NONE) return;
+
+        xy = [e.clientX, e.clientY]
+        wh = [canvas.offsetWidth, canvas.offsetHeight]
+
+        window.addEventListener('mousemove', mousemove)
+        window.addEventListener('mouseup', mouseup)
+
+        // Set the canvas' min width
+        const w = canvas.width
+        canvas.width = 0
+        canvasMinWidth = canvas.offsetWidth
+        canvas.width = w
+    }
+
+    function mousemove(e : MouseEvent) {
+        
+        const [X,Y] = [e.clientX, e.clientY]
+        const [x,y] = xy
+        const [w,h] = wh
+        
+        if (resizeDirection & HORIZONTAL) 
+        {
+            if (doLeft)
+            {
+                // To prevent moving the container, 
+                // we must not go lower than the min width
+                // X <= w + x - minWidth
+                const _X = Math.min(X, w + x - canvasMinWidth)
+
+                canvas.parentElement!.parentElement!
+                    .parentElement!.parentElement!.parentElement!
+                    .style.left = _X + 'px'
+
+                canvas.width = Math.max(0, w + x - _X)
+            }
+            else
+            {
+                canvas.width = Math.max(0, w + X - x)
+            }
+        }
+        if (resizeDirection & VERTICAL) 
+        {
+            canvas.height = Math.max(0, h + Y - y)
+        }
+
+    }
+
+    function mouseup(e : MouseEvent) {
+        
+        window.removeEventListener('mousemove', mousemove)
+        window.removeEventListener('mouseup', mouseup)
+    }
+    
+    // dragCorner.onmousedown = mousedown
+    box.onmousedown = mousedown
+
+    middleRowContainer.append(leftEdge, canvas, rightEdge)
+    box.append(topRow, middleRowContainer, bottomRow)
+
+    return box
 }
 
 function warningButton(type : NodeTypes) {

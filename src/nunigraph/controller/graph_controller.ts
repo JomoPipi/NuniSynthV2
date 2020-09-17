@@ -342,9 +342,13 @@ export class NuniGraphController {
         function clickCallback(box : HTMLElement) {
             moveTheWindowToTheTop(box)
 
-            if (node.type !== NodeTypes.MODULE) 
+            if (SelectWhenDialogBoxIsClicked[node.type])
             {
                 _this.selectNode(node)
+            }
+            else // TODO: make this better (doesn't work 100% for the piano roll)
+            {
+                _this.unselectNodes()
             }
             _this.renderer.render({ selectedNodes: [node] })
         }

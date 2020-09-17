@@ -177,6 +177,26 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.ENV]:    false
     }
 
+// The ones that are `false` let you delete stuff inside the node. 
+// We don't want the node itself to get deleted.
+const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } =
+    { [NodeTypes.GAIN]:   true
+    , [NodeTypes.OSC]:    true
+    , [NodeTypes.FILTER]: true
+    , [NodeTypes.PANNER]: true
+    , [NodeTypes.DELAY]:  true
+    , [NodeTypes.BUFFER]: true
+    , [NodeTypes.SGS]:    true
+    , [NodeTypes.B_SEQ]:  true
+    , [NodeTypes.CSN]:    true
+    , [NodeTypes.RECORD]: true
+    , [NodeTypes.MODULE]: false
+
+    , [NodeTypes.PIANOR]: false
+    , [NodeTypes.ENV]:    true
+    }
+
+
 const AudioNodeParams : Record<NodeTypes,AudioParams[]> =
     { [NodeTypes.GAIN]:   ['gain']
     , [NodeTypes.OSC]:    ['frequency','detune']

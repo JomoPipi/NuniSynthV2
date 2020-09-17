@@ -94,9 +94,8 @@ export class Sequencer extends VolumeNodeContainer {
         this.startTime = this.isInSync ? 0 : this.ctx.currentTime + 0.005
     }
 
-    scheduleNotes(tempo : number) {
+    scheduleNotes() {
         if (!this.isPlaying) return;
-        this.updateTempo(tempo)
         const time = this.ctx.currentTime
         const currentTime = time - this.startTime
         

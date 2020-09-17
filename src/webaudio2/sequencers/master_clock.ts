@@ -14,10 +14,14 @@ import { createNumberDialComponent } from "../../UI_library/internal.js"
 
 
 let activated = false, isPaused = false, _tempo = 69
+let _setTempo = (t : number) => {}
 
 const tempoComponent = createNumberDialComponent(
     120, 
-    (value : number) => _tempo = clamp(1, value, 69420),
+    (value : number) => {
+        _setTempo(value)
+        return (_tempo = clamp(1, value, 69420))
+    },
     { dial: 
         { sensitivity: 2**-2
         , min: 20
@@ -28,27 +32,30 @@ const tempoComponent = createNumberDialComponent(
 
 export const MasterClock = {
 
-    setSchedule: (scheduleNotes : (tempo : number) => void) => {
+    setSchedule: (scheduleNotes : () => void, setTempo : (tempo : number) => void) => {
         if (activated) 
         {
             throw 'MasterClock already has a schedule.'
         }
         activated = true
+        _setTempo = setTempo
         startScheduling(scheduleNotes)
     },
 
     getTempo: () => _tempo,
 
-    setTempo: (tempo : number) => tempoComponent.setValue(tempo),
+    setTempo: (tempo : number) => {
+        tempoComponent.setValue(tempo)
+    },
 }
 
 MasterClock.setTempo(120)
 
 D('tempo-input-container').appendChild(tempoComponent)
 
-function startScheduling(scheduleNotes : (tempo : number) => void) {
+function startScheduling(scheduleNotes : () => void) {
 
-    if (!isPaused) scheduleNotes(_tempo)
+    if (!isPaused) scheduleNotes()
 
     const goAgain = startScheduling.bind(null, scheduleNotes)
 

@@ -12,7 +12,7 @@ import { NuniGraphController, ActiveControllers } from './controller/graph_contr
 
 import 
     { KB, audioCtx, Sequencer, BufferNode2
-    , MasterClock, NuniSourceNode, NuniGraphAudioNode
+    , MasterClock, NuniSourceNode, NuniGraphAudioNode, PianoRoll12Tone
     } from '../webaudio2/internal.js'
 import { snapToGrid } from './view/snap_to_grid.js'
 
@@ -93,12 +93,21 @@ Graph_Attachments: {
         }
     })
 
-    MasterClock.setSchedule((tempo : number) => {
-        for (const an of yeildNodes(g)) 
+    MasterClock.setSchedule(() => {
+        for (const an of yeildNodes(g))
         {
-            if (an instanceof Sequencer) 
+            if (an instanceof Sequencer || an instanceof PianoRoll12Tone) 
             {
-                an.scheduleNotes(tempo)
+                an.scheduleNotes()
+            }
+        }
+    },
+    (tempo : number) => {
+        for (const an of yeildNodes(g))
+        {
+            if (an instanceof Sequencer || an instanceof PianoRoll12Tone) 
+            {
+                an.updateTempo(tempo)
             }
         }
     })

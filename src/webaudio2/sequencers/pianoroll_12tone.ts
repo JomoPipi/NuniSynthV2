@@ -8,46 +8,53 @@
 export class PianoRoll12Tone {
 
     html : HTMLElement
-    private canvas : HTMLCanvasElement
-    private octaves = 4
+    pianoRoll : any
+    ctx
+    csn
 
     constructor(ctx : AudioContext) {
-        this.canvas = E('canvas', 
-            { props: {width: 500, height: 300}})
         
-        const pianorollSettings = E('span', { className: 'selected' })
-        const pianoroll = E('ul', { className: 'piano-octave' })
-        pianoroll.innerHTML = [...Array(1)]
-            .map(setOfKeys).join('\n')
+        this.ctx = ctx
+        this.html = E('div')
+        this.html.innerHTML = 
+            `<webaudio-pianoroll
+                wheelzoom=1
+                editmode='dragmono'
+                xscroll=1
+                yscroll=1
+                kbwidth=30
+            ></webaudio-pianoroll>`
 
-        this.html = E('div', 
-            { children: [ pianorollSettings, pianoroll ]})
-
-        this.initializePianoRollHTML(this.canvas)
-    }
-
-    initializePianoRollHTML(canvas : HTMLCanvasElement) {
-        const ctx = canvas.getContext('2d')!
+        this.pianoRoll = this.html.children[0]
         
-        const H = canvas.height
-        const W = canvas.width
-
-        const pianoLine = 0.05
-        ctx.strokeStyle = 'white'
-        ctx.beginPath()
-        ctx.moveTo(W * pianoLine, 0)
-        ctx.lineTo(W * pianoLine, H)
-        ctx.stroke()
-
+        this.csn = ctx.createConstantSource()
+        this.csn.start()
     }
-
-    connect() {
-
+    connect(destination : any) {
+        log('connecting!!!')
+        this.csn.connect(destination)
     }
-    disconnect() {
-
+    disconnect(destination? : any) {
+        this.csn.disconnect(destination)
+    }
+    scheduleNotes() {
+        this.pianoRoll.scheduleNotes()
+    }
+    updateTempo(tempo : number) {
+        this.pianoRoll.updateTempo(tempo)
+    }
+    play() {
+        this.pianoRoll.play(this.ctx, ({t, g, n} : any) => {
+            this.csn.offset.setValueAtTime(n * 100, t)
+            this.csn.offset.setValueAtTime(0, g)
+        })
     }
 }
+
+
+
+
+
 
 function setOfKeys() {
     return `<ul>
