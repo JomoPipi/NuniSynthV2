@@ -26,6 +26,8 @@ D('theme-container')
 // TODO create ThemeData object so that canvases can adjust to the theme changes
 // export const ThemeData = { hasDarkColor0: true }
 
+export const Theme = { colors: themes[0] }
+
 export function setTheme(n : number) {
 
     // ThemeData.hasDarkColor0 = 
@@ -38,6 +40,7 @@ export function setTheme(n : number) {
     // console.log('n =', n, ', themes.length =', themes.length)
 
     const theme = themes[n]
+    Theme.colors = theme
     if (!theme) throw `${n} is not the index of a theme.`
     // There should be 7 colors in each theme
     for (let i = 0; i < theme.length; i++)

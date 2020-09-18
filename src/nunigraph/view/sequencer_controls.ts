@@ -5,7 +5,7 @@
 
 
 
-import { Sequencer, SampleSequencer } from '../../webaudio2/internal.js'
+import { Sequencer, SampleSequencer, MasterClock } from '../../webaudio2/internal.js'
 import { createToggleButton, createRadioButtonGroup, createNumberDialComponent } from '../../UI_library/internal.js'
 import { createSubdivSelect } from './dialogbox_components.js'
 
@@ -87,7 +87,8 @@ function createTopRowControls(an : Sequencer) {
     }
 
     changeSubdivision: {
-        controls.appendChild(createSubdivSelect(an))
+        controls.appendChild(createSubdivSelect(an, _ => 
+            an.updateTempo(MasterClock.getTempo())))
     }
 
     choose_ADSR: {

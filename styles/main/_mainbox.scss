@@ -64,6 +64,7 @@ $bottom-edge:linear-gradient(0deg, $dark $factor0, transparent $factor1);
         background: $right-edge;
     }
     .top-edge {
+        -webkit-app-region: drag;
         background: $top-edge;
     }
     .bottom-edge {

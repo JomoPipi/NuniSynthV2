@@ -30,8 +30,8 @@ const contextmenu = D('graph-contextmenu')
             const menu = contextmenu
 
             if (menu.style.display !== 'none') 
-            {
-                // Place the newly created node where the contextmenu was.
+            { // Place the newly created node under the mouse
+
                 const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = 
                     controller === GraphController 
                     ? controller.renderer.canvas
@@ -40,11 +40,11 @@ const contextmenu = D('graph-contextmenu')
                         .parentNode.parentNode
                         .parentNode // TODO: clean this line up...
 
-                // ? Using e.pageX and e.pageY instead of contextmenu.offsetLeft/offsetTop
-                // ? results in the node being created directly under the cursor. 
-                // ? Consult with others to see what they prefer.
-                node.x = clamp(0, (contextmenu.offsetLeft - offsetLeft) / offsetWidth, 1)
-                node.y = clamp(0, (contextmenu.offsetTop - offsetTop) / offsetHeight, 1)
+                // In the top right corner of the contextmenu?
+                // node.x = clamp(0, (contextmenu.offsetLeft - offsetLeft) / offsetWidth, 1)
+                // node.y = clamp(0, (contextmenu.offsetTop - offsetTop) / offsetHeight, 1)
+                node.x = clamp(0, (e.pageX - offsetLeft) / offsetWidth, 1)
+                node.y = clamp(0, (e.pageY - offsetTop) / offsetHeight, 1)
                 controller.hideContextMenu()
             }
             
@@ -64,13 +64,23 @@ const contextmenu = D('graph-contextmenu')
         contextmenu.appendChild(btn)
     }
 
-    for (const key in NodeTypes) 
+    const nodesSortedByRecurrence = 
+        [ NodeTypes.GAIN
+        , NodeTypes.OSC
+        , NodeTypes.BUFFER
+        , NodeTypes.B_SEQ
+        , NodeTypes.SGS
+        , NodeTypes.CSN
+        , NodeTypes.FILTER
+        , NodeTypes.DELAY
+        , NodeTypes.PANNER
+        , NodeTypes.PIANOR
+        , NodeTypes.RECORD
+        , NodeTypes.MODULE
+        ]
+    for (const type of nodesSortedByRecurrence) 
     {
-        if (isNaN(+key)) 
-        {
-            const type = NodeTypes[key as keyof typeof NodeTypes]
-            append(type, NodeTypeColors[type])
-        }
+        append(type, NodeTypeColors[type])
     }
 }
 

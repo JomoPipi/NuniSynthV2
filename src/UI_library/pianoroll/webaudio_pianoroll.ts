@@ -174,7 +174,7 @@ class Pianoroll extends HTMLElement {
         this.updateTimer=function(){
             this.tick2time=4*60/this.tempo/this.timebase;
         };
-        this.play=function(actx,playcallback,tick){
+        this.play=function(actx, playcallback, tick){
             this.scheduleNotes = function() {
                 if (!this.isPlaying) return;
                 const current=this.actx.currentTime;
@@ -222,8 +222,8 @@ class Pianoroll extends HTMLElement {
             this.actx=actx;
             this.playcallback=playcallback;
             this.timestack=[];
-            this.time0=this.time1=this.actx.currentTime+0.1;
-            this.tick0=this.tick1=this.cursor;
+            this.time0=this.time1=0//this.actx.currentTime+0.1;
+            this.tick0=this.tick1=this.cursor=0;
             this.tick2time=4*60/this.tempo/this.timebase;
             const p=this.findNextEv(this.cursor);
             this.index1=p.i;
@@ -244,6 +244,7 @@ class Pianoroll extends HTMLElement {
             //// if(this.timer)
             ////     clearInterval(this.timer);
             //// this.timer=null;
+            this.timer = null
             this.isPlaying = false
         };
         this.setMMLString=function(s){

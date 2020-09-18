@@ -259,6 +259,11 @@ export class NuniGraphController {
     
     openWindow(node : NuniGraphNode) {
 
+        if (!SelectWhenDialogBoxIsClicked[node.type])
+        {
+            this.unselectNodes()
+        }
+
         // If window is already open, move it to the top
         if (this.getOpenWindow[node.id]) 
         {
@@ -346,10 +351,11 @@ export class NuniGraphController {
             {
                 _this.selectNode(node)
             }
-            else // TODO: make this better (doesn't work 100% for the piano roll)
+            else 
             {
                 _this.unselectNodes()
             }
+            
             _this.renderer.render({ selectedNodes: [node] })
         }
 

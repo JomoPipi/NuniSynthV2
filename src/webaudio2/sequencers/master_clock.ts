@@ -101,5 +101,11 @@ tapBtn.addEventListener('click', count)
 
 // Add hold button
 const holdBtn = D('beat-hold-button')
-holdBtn.onmousedown = () => isPaused = true
-holdBtn.onmouseup = () => isPaused = false
+holdBtn.onmousedown = () => { 
+    isPaused = true 
+    holdBtn.classList.add('selected')
+}
+holdBtn.onmouseup = () => { 
+    isPaused = false 
+    holdBtn.classList.remove('selected')
+}

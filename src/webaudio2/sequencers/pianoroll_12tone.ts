@@ -5,6 +5,8 @@
 
 
 
+import { Theme } from '../../UI_setup/theme_setup.js'
+
 export class PianoRoll12Tone {
 
     html : HTMLElement
@@ -13,7 +15,7 @@ export class PianoRoll12Tone {
     csn
 
     constructor(ctx : AudioContext) {
-        
+        log('colors = ',Theme.colors)
         this.ctx = ctx
         this.html = E('div')
         this.html.innerHTML = 
@@ -23,6 +25,10 @@ export class PianoRoll12Tone {
                 xscroll=1
                 yscroll=1
                 kbwidth=30
+                colrulerbg='${Theme.colors[2]}'
+                colrulerfg='${Theme.colors[5]}'
+                collt='${Theme.colors[1]}'
+                coldk='${Theme.colors[0]}'
             ></webaudio-pianoroll>`
 
         this.pianoRoll = this.html.children[0]
@@ -44,7 +50,7 @@ export class PianoRoll12Tone {
         this.pianoRoll.updateTempo(tempo)
     }
     play() {
-        this.pianoRoll.play(this.ctx, ({t, g, n} : any) => {
+        this.pianoRoll.play(this.ctx, ({ t, g, n } : any) => {
             this.csn.offset.setValueAtTime(n * 100, t)
             this.csn.offset.setValueAtTime(0, g)
         })
