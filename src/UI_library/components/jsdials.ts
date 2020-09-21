@@ -93,6 +93,7 @@ export class JsDial {
         this.dial.addEventListener('mousedown', mouseStart as EventListener)
         this.update = (value : number) => {
             this.value = value
+            func(value)
             this.render()
         }
 

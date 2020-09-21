@@ -20,6 +20,7 @@ import
     , JsDial
     } from '../../UI_library/internal.js'
 import { createSubdivSelect } from './dialogbox_components.js'
+import { GraphController } from '../init.js'
 
 
 
@@ -244,6 +245,10 @@ function gainControls(node : NuniGraphNode) {
         valueText.innerText =
             `${volumeTodB(value).toFixed(1)}dB`
     })
+    if (node !== GraphController.g.nodes[0])
+    { // If it's not the master output we don't allow this
+        dial.html.ondblclick = dial.update.bind(null, 1)
+    }
 
     const box = E('div', { children: [dial.html, valueText] })
     return box
