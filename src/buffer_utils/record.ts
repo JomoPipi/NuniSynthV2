@@ -65,14 +65,22 @@ export function recordTo(index : number) {
     // @ts-ignore - Unleash the power of the double equal. Muahahaha!
     else if (selected == DESKTOP)
     {
+        // Delay the active recording color until they've actually chosen what to record
+        recordButton.classList.toggle('recording')
+
         const mediaStreamDestination = 
             audioCtx.createMediaStreamDestination()
 
         audioCtx.volume.connect(mediaStreamDestination)
 
         desktopCapture(
-            (stream : MediaStream) => handleStream(stream, () => audioCtx.volume.disconnect(mediaStreamDestination)
-            ))
+            (stream : MediaStream) => {
+                // Now we record
+                recordButton.classList.toggle('recording')
+                handleStream(
+                    stream, 
+                    () => audioCtx.volume.disconnect(mediaStreamDestination))
+            })
     }
     else
     {

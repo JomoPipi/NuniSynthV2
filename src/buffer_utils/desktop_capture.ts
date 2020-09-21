@@ -47,7 +47,7 @@ export function desktopCapture(handleStreamCallback : Function) {
     }
 
     async function useSource(source : any, handleStreamCallback : Function) {
-        let resultStream : MediaStream 
+        
         try 
         {
             log('name =',source.name)
