@@ -38,3 +38,7 @@
 .show-grid { // Has to be at the end so that it "wins".
     display: grid;
 }
+
+.clearboth {
+    clear: both;
+}

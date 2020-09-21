@@ -35,7 +35,14 @@
     background-color: #f00;
 }
 
+.rec-buttons-container {
+    display: inline-grid;
+    grid-template-columns: 1fr 1fr 1fr;
 
+    button {
+        padding: 0px 5px;
+    }
+}
 
 
 .audioparams-container {

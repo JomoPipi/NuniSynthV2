@@ -8,6 +8,19 @@
 import { BufferUtils } from './init_buffers.js'
 import { audioCtx } from '../webaudio2/internal.js'
 import { BufferStorage } from '../storage/buffer_storage.js'
+import { desktopCapture } from './desktop_capture.js'
+import { createRadioButtonGroup } from "../UI_library/internal.js"
+
+const MIC = 0, GRAPH = 1, DESKTOP = 2
+const recordButtonGroup = 
+    createRadioButtonGroup(
+    { buttons: ['Mic', 'Graph', 'Desktop']
+    , selected: 'Mic'
+    , className: 'nunisynth!!'
+    , containerClassName: 'rec-buttons-container'
+    })
+
+D('record-type-radio-group').appendChild(recordButtonGroup)
 
 export function recordTo(index : number) {
     const recordButton = D('record')
@@ -26,16 +39,19 @@ export function recordTo(index : number) {
     }
 
     log('recording...')
+    const selected = recordButtonGroup.dataset.selected!
 
-    if ((D('record-mic') as HTMLInputElement).checked) 
+    // @ts-ignore - Unleash the power of the double equal. Muahahaha!
+    if (selected == MIC) 
     {
         navigator
             .mediaDevices
             .getUserMedia({ audio: true })
             .then(handleStream)
             .catch(errStuff)
-    } 
-    else 
+    }
+    // @ts-ignore - Unleash the power of the double equal. Muahahaha!
+    else if (selected == GRAPH)
     {
         const mediaStreamDestination = 
             audioCtx.createMediaStreamDestination()
@@ -45,6 +61,22 @@ export function recordTo(index : number) {
         handleStream(
             mediaStreamDestination.stream,
             () => audioCtx.volume.disconnect(mediaStreamDestination))
+    }
+    // @ts-ignore - Unleash the power of the double equal. Muahahaha!
+    else if (selected == DESKTOP)
+    {
+        const mediaStreamDestination = 
+            audioCtx.createMediaStreamDestination()
+
+        audioCtx.volume.connect(mediaStreamDestination)
+
+        desktopCapture(
+            (stream : MediaStream) => handleStream(stream, () => audioCtx.volume.disconnect(mediaStreamDestination)
+            ))
+    }
+    else
+    {
+        throw 'Weird Error'
     }
 
     function handleStream(stream : MediaStream, f? : Function) {

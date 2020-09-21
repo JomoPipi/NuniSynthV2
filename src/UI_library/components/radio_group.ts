@@ -10,21 +10,28 @@ type RadioButtonOptions = {
     selected : string | number
     className? : string
     text? : string
-    onclick : (data : any, index : number) => void
+    onclick? : (data : any, index : number) => void
+    containerClassName? : string
     }
 
 export function createRadioButtonGroup(
-    { buttons, selected, className, onclick, text } : RadioButtonOptions) {
+    { buttons
+    , selected
+    , className
+    , onclick
+    , text
+    , containerClassName } : RadioButtonOptions) {
 
-    const box = E('span', {
-        text, 
-        children: [E('br')],
+    const box = E('span', 
+        { text 
+        , children: text ? [E('br')] : undefined
+        , className: containerClassName
         })
 
     const btns = buttons.map((text) => 
         box.appendChild(E('button', 
             { text
-            , className
+            , className: className || 'top-bar-btn'
             })))
 
     if (typeof selected === 'number') 
@@ -43,10 +50,10 @@ export function createRadioButtonGroup(
     box.onclick = (e : MouseEvent) => {
         const btn = e.target as HTMLButtonElement
         const index = btns.indexOf(btn)
-
         if (index >= 0) 
         {
-            onclick(btn.innerText, index)
+            box.dataset.selected = index.toString()
+            onclick && onclick(btn.innerText, index)
 
             for (const _btn of btns) 
             {

@@ -246,7 +246,6 @@ const adsrDials =
         text: 'ADSR',
         buttons: [...'ABCD'],
         selected: 'A',
-        className: 'top-bar-btn',
         onclick: (data : any, index : number) => {
             const adsr = ADSR_Controller
             adsr.index = index

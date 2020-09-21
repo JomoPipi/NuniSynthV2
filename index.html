@@ -98,11 +98,11 @@
 
     <div id="tabs-panel" class="panel">
       
-      <div class="main-top-bar" style='z-index: 1;'>
+      <div class="main-top-bar left" style='z-index: 1;'>
   
         <nav id="main-nav-menu" class="menu-nav">
           <ul>
-              <li><a href="#">File</a>
+              <li class="top"><a href="#">File</a>
                 <ul>
                   <li><a href="#"> New Project </a></li>
                   <li><a href="#"> Open.. </a>
@@ -124,7 +124,7 @@
                 </ul> 
               </li>
   
-              <li><a href="#"> Edit </a>
+              <li class="top"><a href="#"> Edit </a>
                   <ul>
                       <li><a href="#"> Copy Selection</a></li>
                       <li><a href="#"> Cut Selection</a></li>
@@ -133,7 +133,7 @@
                   </ul>        
               </li>
 
-              <li><a href="#">Preferences</a>
+              <li class="top"><a href="#">Preferences</a>
                 <ul>
                   <li><a href="#"> Options </a></li>
                   <li><a href="#"> Themes </a>
@@ -142,7 +142,7 @@
                 </ul>  
               </li>
               
-              <li><a href="#">Utilities</a>
+              <li class="top"><a href="#">Utilities</a>
                 <ul>
                     <li><a href="#">
                       <span id="tab-swapper" class="flat-grid swapper">
@@ -417,22 +417,12 @@
                   <button id="record" class="record"> 
                     rec </button>
   
-                  <span id="record-type-radio" class="center">
-  
-                    <input id="record-mic" 
-                      type="radio"
-                      name="record-radio"
-                      checked="true">
-                    <label for="record-mic" class="record-radio"> 
-                      record mic
-                    </label>
-                    
-                    <input id="record-graph" 
-                      type="radio"
-                      name="record-radio">
-                    <label for="record-graph" class="record-radio"> 
-                      record graph
-                    </label>
+
+                  <audio id="myaudio" style="border:1px solid white;"> omg</audio>
+
+                  <span id="desktop-capture-source-prompt-container"></span>
+
+                  <span id="record-type-radio-group" class="center">
   
                   </span>
   
@@ -508,7 +498,7 @@
     <!-- THE GRAPH PANEL  -->
     <div class="panel">
       
-      <div class="main-top-bar">
+      <div class="main-top-bar right">
   
         <span class="flat-grid full">
   

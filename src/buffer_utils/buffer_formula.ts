@@ -8,6 +8,7 @@
 import { BufferUtils } from './init_buffers.js'
 import { audioCtx } from '../webaudio2/internal.js'
 import { BufferStorage } from '../storage/buffer_storage.js'
+import { createSelectionPrompt } from '../UI_library/components/selection_prompt.js'
 
 const formulaInput = D('buffer-formula') as HTMLInputElement
 const errorMsgText = D('buffer-formula-error-msg')
@@ -107,31 +108,20 @@ D('buffer-formula-templates-button').onclick = () =>
 const bufferPresetsContainer = D('formula-template-container')
 
 function showBufferFormulaTemplates() {
+    bufferPresetsContainer.appendChild(
+        createSelectionPrompt(Object.keys(bufferPresets)))
 
-    const buttons =
-        Object.keys(bufferPresets).map(name => 
-            E(  'div',
-                { className: 'list-btn'
-                , text: name
-                }
-            ))
-
-    const list = E('span', 
-        { className: 'window show preset-list'
-        , children: buttons
-        })
-    
-    bufferPresetsContainer.appendChild(list)
-    window.addEventListener('mousedown', clickBufferTemplateOrNot)
+    requestAnimationFrame(_ => 
+        window.addEventListener('click', clickBufferTemplateOrNot))
 }
 
 function clickBufferTemplateOrNot(e : MouseEvent) {
-    if (e.target instanceof HTMLElement && e.target.innerText in bufferPresets) 
+    // @ts-ignore 
+    const text = e.target.innerText
+    if (text in bufferPresets) 
     {
-        formulaInput.value = 
-            bufferPresets[e.target.innerText as keyof typeof bufferPresets]
+        formulaInput.value = bufferPresets[text as keyof typeof bufferPresets]
     }
-
     bufferPresetsContainer.innerHTML = ''
-    window.removeEventListener('mousedown', clickBufferTemplateOrNot)
+    window.removeEventListener('click', clickBufferTemplateOrNot)
 }

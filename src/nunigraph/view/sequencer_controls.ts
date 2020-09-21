@@ -95,7 +95,6 @@ function createTopRowControls(an : Sequencer) {
         controls.appendChild(createRadioButtonGroup(
             { buttons: [...'ABCD']
             , selected: String.fromCharCode(an.adsrIndex + 65)
-            , className: 'top-bar-btn'
             , onclick: (data : string, index : number) => {
                 an.adsrIndex = index
             }

@@ -21,6 +21,8 @@ import { snapToGrid } from './view/snap_to_grid.js'
 class Nuni extends NuniGraphController {
 
     volumeNode : GainNode
+    //TODO:
+    history : any[]
 
     constructor(canvas : HTMLCanvasElement, volumeNode : GainNode) {
         const G = new NuniGraph()
@@ -37,6 +39,8 @@ class Nuni extends NuniGraphController {
             .connect(volumeNode)
 
         this.volumeNode = volumeNode
+
+        this.history = []
     }
 }
 

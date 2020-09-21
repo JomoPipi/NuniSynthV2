@@ -26,7 +26,6 @@ const createWindow = () => {
       // , devTools: false // TODO : uncomment for production
       }
     , icon: __dirname + '/../styles/icon.ico'
-    // , transparent: true
     , frame: false
     , fullscreenable: true
     , opacity: 1

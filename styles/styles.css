@@ -30,7 +30,7 @@ body, html {
        user-select: none;
   /* Standard syntax */
   overflow: hidden;
-  background: #FF00FF;
+  background: black;
 }
 
 body {
@@ -625,7 +625,7 @@ code {
 }
 
 .list-btn:nth-child(odd) {
-  background: var(--color2);
+  background: var(--color3);
 }
 
 .list-btn:nth-child(odd):hover {
@@ -715,6 +715,17 @@ code {
 
 .recording {
   background-color: #f00;
+}
+
+.rec-buttons-container {
+  display: -ms-inline-grid;
+  display: inline-grid;
+  -ms-grid-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
+}
+
+.rec-buttons-container button {
+  padding: 0px 5px;
 }
 
 .audioparams-container {
@@ -897,13 +908,25 @@ a {
 
 .main-top-bar {
   -webkit-app-region: drag;
-  background: var(--color1);
+  background: -webkit-gradient(linear, left top, left bottom, from(var(--color1)), to(var(--color0)));
+  background: linear-gradient(var(--color1), var(--color0));
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  border: 1px solid var(--color0);
+  border-top-color: #111;
+  border-bottom-color: var(--color4);
 }
 
 .main-top-bar button {
   -webkit-app-region: no-drag;
+}
+
+.main-top-bar.left {
+  border-right-width: 0px;
+}
+
+.main-top-bar.right {
+  border-left-width: 0px;
 }
 
 .no-drag, .menu-nav ul li {
@@ -923,11 +946,10 @@ a {
 .menu-nav {
   z-index: 90;
   margin: 0px;
-  height: 100%;
-  background-color: var(--color1);
+  background-color: transparent;
   /* Hide Dropdowns by Default */
   /* Display Dropdowns on Hover */
-  /* Fisrt Tier Dropdown */
+  /* First Tier Dropdown */
   /* Second, Third and more Tiers	*/
 }
 
@@ -963,10 +985,14 @@ a {
   border-width: 0px;
 }
 
+.menu-nav ul li.top {
+  background-color: transparent;
+}
+
 .menu-nav a {
   display: block;
   padding: 0 10px;
-  color: var(--color6);
+  color: var(--color5);
   font-size: 15px;
   line-height: 30px;
   text-decoration: none;
@@ -1381,6 +1407,10 @@ a {
 .show-grid {
   display: -ms-grid;
   display: grid;
+}
+
+.clearboth {
+  clear: both;
 }
 
 .main-box-container {
