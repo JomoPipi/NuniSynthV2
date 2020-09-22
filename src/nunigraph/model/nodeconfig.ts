@@ -20,7 +20,8 @@ enum NodeTypes
     MODULE = 'module',
 
     PIANOR = 'piano-roll',
-    ENV = 'envelope'
+    ENV = 'envelope',
+    CUSTOM = 'custom-module'
 }
 
 type AudioParams 
@@ -55,7 +56,8 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.MODULE]: 'Module'
     
     , [NodeTypes.PIANOR]: '12-Tone Piano Roll'
-    , [NodeTypes.ENV]:    'Envelope'
+    , [NodeTypes.ENV]:    'Envelope (doesn\'t do anything)'
+    , [NodeTypes.CUSTOM]: 'Custom Module (should be hidden)'
     }
 
 const createAudioNode : { readonly [key in NodeTypes] : string } =
@@ -73,6 +75,7 @@ const createAudioNode : { readonly [key in NodeTypes] : string } =
     
     , [NodeTypes.PIANOR]: 'create12TonePianoRoll'
     , [NodeTypes.ENV]:    'createEnvelopeNode'
+    , [NodeTypes.CUSTOM]: 'createCustomNode'
     }
 
 const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
@@ -90,6 +93,7 @@ const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    true
+    , [NodeTypes.CUSTOM]: true
     }
 
 const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
@@ -107,6 +111,7 @@ const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
     
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
+    , [NodeTypes.CUSTOM]: false
     }
 
 const MustBeStarted : { readonly [key in NodeTypes] : boolean } =
@@ -124,6 +129,7 @@ const MustBeStarted : { readonly [key in NodeTypes] : boolean } =
     
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
+    , [NodeTypes.CUSTOM]: false
     }
 
 const HasAudioParams : { readonly [key in NodeTypes] : boolean } =
@@ -141,6 +147,7 @@ const HasAudioParams : { readonly [key in NodeTypes] : boolean } =
     
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
+    , [NodeTypes.CUSTOM]: true
     }
 
 const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
@@ -158,6 +165,7 @@ const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
     
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
+    , [NodeTypes.CUSTOM]: false
     }
 
 const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } =
@@ -175,6 +183,7 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
 
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
+    , [NodeTypes.CUSTOM]: false
     }
 
 // The ones that are `false` let you delete stuff inside the node. 
@@ -194,6 +203,7 @@ const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } 
 
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    true
+    , [NodeTypes.CUSTOM]: true
     }
 
 
@@ -212,6 +222,8 @@ const AudioNodeParams : Record<NodeTypes,AudioParams[]> =
     
     , [NodeTypes.PIANOR]: [] // TODO: add offset
     , [NodeTypes.ENV]:    []
+    , get [NodeTypes.CUSTOM]() { return [] }
+    // , set [NodeTypes.CUSTOM](params : []) { }
     }
 
 const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
@@ -231,6 +243,7 @@ const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
 
     , [NodeTypes.PIANOR]: []
     , [NodeTypes.ENV]: []
+    , [NodeTypes.CUSTOM]: []
     }
 
 const MasterGainColor = '#555'
@@ -249,6 +262,7 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     
     , [NodeTypes.PIANOR]: 'rgba(105,100,255,0.5)'
     , [NodeTypes.ENV]:    'rgba(105,255,255,0.5)'
+    , [NodeTypes.CUSTOM]: 'rgba(105,255,255,0.5)'
     }
 
 const NodeTypeColors2 : { readonly [key in NodeTypes] : string } = 
@@ -265,7 +279,8 @@ const NodeTypeColors2 : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.MODULE]: 'rgb(255,240,255)'
     
     , [NodeTypes.PIANOR]: 'rgb(105,100,255)'
-    , [NodeTypes.ENV]:    'rgba(105,100,255)'
+    , [NodeTypes.ENV]:    'rgb(105,100,255)'
+    , [NodeTypes.CUSTOM]: 'rgb(105,255,255)'
     }
 
 const NodeTypeWarnings : { readonly [key in NodeTypes]? : string } = 

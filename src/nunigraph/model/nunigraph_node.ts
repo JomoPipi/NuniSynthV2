@@ -30,6 +30,7 @@ type AudioNodeMap = {
 
     [NodeTypes.PIANOR]: PianoRoll12Tone
     [NodeTypes.ENV]:    Envelope
+    [NodeTypes.CUSTOM]: any
 }
 
 // NON GENERIC:
