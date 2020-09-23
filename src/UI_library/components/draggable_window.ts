@@ -29,7 +29,7 @@ export function createDraggableWindow(
     box.style.left = '50vw'
     box.style.top = '50vh'
 
-    const bar = E('div', { text, className: 'draggable-window-bar' })
+    const bar = E('div', { text: text + ' ', className: 'draggable-window-bar' })
     const exitBtn = E('button', { text: 'x', className: 'exit-button' })
 
     bar.style.backgroundColor = color || '#555'

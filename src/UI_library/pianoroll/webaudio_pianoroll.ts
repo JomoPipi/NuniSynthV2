@@ -61,27 +61,10 @@ customElements.define("webaudio-pianoroll",
 
 class Pianoroll extends HTMLElement {
 
-    scheduleNotes = () => void 0
+    constructor() {
+        super()
 
-    defineProps() {
-        const plist = defaultProperties
-        for (let k in plist)
-        {
-            const v = plist[k]
-            this["_"+k] = this.getAttr(k,v.value)
-            Object.defineProperty(this, k, {
-                get: () => this["_"+k],
-                set: val => {
-                    this["_"+k] = val
-                    if(typeof(this[v.observer])=="function")
-                    {
-                        this[v.observer]()
-                    }
-                }
-            })
-        }        
-    }
-    connectedCallback(){
+        // Previously inside connectedCallback
         const root=this
         this.defineProps()
         root.innerHTML =
@@ -1142,6 +1125,30 @@ class Pianoroll extends HTMLElement {
             this.redrawAreaSel();
         };
         this.ready();
+    }
+
+    scheduleNotes = () => void 0
+
+    defineProps() {
+        const plist = defaultProperties
+        for (let k in plist)
+        {
+            const v = plist[k]
+            this["_"+k] = this.getAttr(k,v.value)
+            Object.defineProperty(this, k, {
+                get: () => this["_"+k],
+                set: val => {
+                    this["_"+k] = val
+                    if(typeof(this[v.observer])=="function")
+                    {
+                        this[v.observer]()
+                    }
+                }
+            })
+        }        
+    }
+    connectedCallback() {
+        
     }
     sendEvent(ev) {
         const event = document.createEvent("HTMLEvents");

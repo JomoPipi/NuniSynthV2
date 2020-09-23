@@ -281,6 +281,14 @@ export class NuniGraphController {
         }
 
         
+        const barContent = [titleEditor()] as HTMLElement[]
+
+        if (node.type === NodeTypes.MODULE) 
+        {
+            barContent.push(E('button', { text: '⚙️' }))
+        }
+        if (node.INPUT_NODE_ID || node.id === 0) barContent.length = 0
+
         // Create dialogBox:
         const dialogBox =
             createDraggableWindow(
@@ -290,10 +298,7 @@ export class NuniGraphController {
                 , color: node.id === 0 
                     ? MasterGainColor 
                     : NodeTypeColors[node.type]
-                , barContent: node.INPUT_NODE_ID || node.id === 0 // Allow titles for all (except certain) nodes
-                // , barContent: node.type !== NodeTypes.MODULE // Allow titles only for modules
-                    ? undefined
-                    : titleEditor()
+                , barContent: E('span', { children: barContent })
                 })
         this.getOpenWindow[node.id] = dialogBox
 

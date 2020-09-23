@@ -369,6 +369,7 @@ interface CustomAudioNodeProperties
     graphCode?   : string
     stepMatrix?  : Indexable<boolean>
     phaseShift?  : number
+    MMLString?   : string
 }
 
 const Transferable_AudioNodeProperties = 
@@ -383,6 +384,7 @@ const Transferable_AudioNodeProperties =
     , stepMatrix  : true
     , phaseShift  : true
     , channelData : true
+    , MMLString   : true
     }
 
 const PostConnection_Transferable_InputRemappable_AudioNodeProperties 

@@ -13,6 +13,7 @@ export class PianoRoll12Tone {
     pianoRoll : any
     ctx
     csn
+    _MMLString = ''
 
     constructor(ctx : AudioContext) {
         log('colors = ',Theme.colors)
@@ -54,6 +55,12 @@ export class PianoRoll12Tone {
             this.csn.offset.setValueAtTime(n * 100, t)
             this.csn.offset.setValueAtTime(0, g)
         })
+    }
+    get MMLString() {
+        return this.pianoRoll.getMMLString()
+    }
+    set MMLString(s : string) {
+        this.pianoRoll.setMMLString(s)
     }
 }
 

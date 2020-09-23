@@ -15,6 +15,11 @@
     background: transparent; //
 }
 
+input {
+    margin: 0px;
+    padding: 0px;
+}
+
 body, html {
     border-width: 0px;
     width: 100%;
@@ -47,7 +52,7 @@ select {
 
 button {
     cursor: pointer;
-    background-color: var(--color2);
+    background-color: transparent;
     color: var(--color5);
     font-weight: bolder;
 }
