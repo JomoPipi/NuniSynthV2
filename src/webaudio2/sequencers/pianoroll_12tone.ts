@@ -13,7 +13,6 @@ export class PianoRoll12Tone {
     pianoRoll : any
     ctx
     csn
-    _MMLString = ''
 
     constructor(ctx : AudioContext) {
         log('colors = ',Theme.colors)
@@ -36,6 +35,19 @@ export class PianoRoll12Tone {
         
         this.csn = ctx.createConstantSource()
         this.csn.start()
+
+        for (const prop of Object.keys(Transferable_Pianoroll_properties))
+        {
+            Object.defineProperty(this, prop, { 
+                get() {
+                    return this.pianoRoll[prop]
+                }, 
+                set(value : any) {
+                    this.pianoRoll[prop] = value
+                }
+            })
+        }
+
     }
     connect(destination : any) {
         log('connecting!!!')
@@ -62,6 +74,7 @@ export class PianoRoll12Tone {
     set MMLString(s : string) {
         this.pianoRoll.setMMLString(s)
     }
+
 }
 
 

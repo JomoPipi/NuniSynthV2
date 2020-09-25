@@ -70,6 +70,12 @@ class AudioContext2 extends AudioContext {
     create12TonePianoRoll() {
         return new PianoRoll12Tone(this)
     }
+
+    async createProcessorNode() {
+        await this.audioWorklet.addModule('dist/webaudio2/white-noise-processor.js')
+        const whiteNoiseNode = new AudioWorkletNode(this, 'white-noise-processor')
+        return whiteNoiseNode
+    }
 }
 
 export const audioCtx = new AudioContext2()

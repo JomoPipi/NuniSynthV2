@@ -27,8 +27,27 @@
     top: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 999;
+    z-index: 1;
     cursor: wait;
+}
+
+.custom-node-wizard-container {
+    display: none;
+    background: transparent;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999;
+    text-align: center;
+}
+
+.wizard-page-one {
+    margin-top:25%;
+    background-color: blue;
+    height: 50vh;
+    width: 50vw;
 }
 
 .show { // Has to be at the end so that it "wins".

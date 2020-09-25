@@ -77,6 +77,7 @@ const contextmenu = D('graph-contextmenu')
         , NodeTypes.PIANOR
         , NodeTypes.RECORD
         , NodeTypes.MODULE
+        , NodeTypes.PROCESSOR
         ]
     for (const type of nodesSortedByRecurrence) 
     {

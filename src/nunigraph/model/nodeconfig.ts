@@ -20,8 +20,9 @@ enum NodeTypes
     MODULE = 'module',
 
     PIANOR = 'piano-roll',
-    ENV = 'envelope',
-    CUSTOM = 'custom-module'
+    ENV = 'envelope', // <- Not used
+    CUSTOM = 'custom-module',
+    PROCESSOR = 'processor'
 }
 
 type AudioParams 
@@ -58,6 +59,7 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PIANOR]: '12-Tone Piano Roll'
     , [NodeTypes.ENV]:    'Envelope (doesn\'t do anything)'
     , [NodeTypes.CUSTOM]: 'Custom Module (should be hidden)'
+    , [NodeTypes.PROCESSOR]: 'Processor'
     }
 
 const createAudioNode : { readonly [key in NodeTypes] : string } =
@@ -76,6 +78,7 @@ const createAudioNode : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PIANOR]: 'create12TonePianoRoll'
     , [NodeTypes.ENV]:    'createEnvelopeNode'
     , [NodeTypes.CUSTOM]: 'createCustomNode'
+    , [NodeTypes.PROCESSOR]: 'createProcessorNode'
     }
 
 const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
@@ -94,6 +97,7 @@ const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    true
     , [NodeTypes.CUSTOM]: true
+    , [NodeTypes.PROCESSOR]:true
     }
 
 const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
@@ -112,6 +116,7 @@ const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
     , [NodeTypes.CUSTOM]: false
+    , [NodeTypes.PROCESSOR]:false
     }
 
 const MustBeStarted : { readonly [key in NodeTypes] : boolean } =
@@ -130,6 +135,7 @@ const MustBeStarted : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
     , [NodeTypes.CUSTOM]: false
+    , [NodeTypes.PROCESSOR]:false
     }
 
 const HasAudioParams : { readonly [key in NodeTypes] : boolean } =
@@ -148,6 +154,7 @@ const HasAudioParams : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
     , [NodeTypes.CUSTOM]: true
+    , [NodeTypes.PROCESSOR]:false
     }
 
 const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
@@ -166,6 +173,7 @@ const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
     , [NodeTypes.CUSTOM]: false
+    , [NodeTypes.PROCESSOR]:false
     }
 
 const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } =
@@ -184,6 +192,7 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
     , [NodeTypes.CUSTOM]: false
+    , [NodeTypes.PROCESSOR]:false
     }
 
 // The ones that are `false` let you delete stuff inside the node. 
@@ -204,6 +213,7 @@ const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    true
     , [NodeTypes.CUSTOM]: true
+    , [NodeTypes.PROCESSOR]:false
     }
 
 
@@ -224,6 +234,7 @@ const AudioNodeParams : Record<NodeTypes,AudioParams[]> =
     , [NodeTypes.ENV]:    []
     , get [NodeTypes.CUSTOM]() { return [] }
     // , set [NodeTypes.CUSTOM](params : []) { }
+    , [NodeTypes.PROCESSOR]:[]
     }
 
 const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
@@ -244,6 +255,7 @@ const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
     , [NodeTypes.PIANOR]: []
     , [NodeTypes.ENV]: []
     , [NodeTypes.CUSTOM]: []
+    , [NodeTypes.PROCESSOR]:[]
     }
 
 const MasterGainColor = '#555'
@@ -263,6 +275,7 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PIANOR]: 'rgba(105,100,255,0.5)'
     , [NodeTypes.ENV]:    'rgba(105,255,255,0.5)'
     , [NodeTypes.CUSTOM]: 'rgba(105,255,255,0.5)'
+    , [NodeTypes.PROCESSOR]:'rgba(200,150,255,0.5)'
     }
 
 const NodeTypeColors2 : { readonly [key in NodeTypes] : string } = 
@@ -281,6 +294,7 @@ const NodeTypeColors2 : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PIANOR]: 'rgb(105,100,255)'
     , [NodeTypes.ENV]:    'rgb(105,100,255)'
     , [NodeTypes.CUSTOM]: 'rgb(105,255,255)'
+    , [NodeTypes.PROCESSOR]:'rgb(200,150,255)'
     }
 
 const NodeTypeWarnings : { readonly [key in NodeTypes]? : string } = 
@@ -372,7 +386,20 @@ interface CustomAudioNodeProperties
     MMLString?   : string
 }
 
-const Transferable_AudioNodeProperties = 
+const Transferable_Pianoroll_properties = 
+    { width       : true
+    , height      : true
+    , xrange      : true
+    , yrange      : true
+    , xoffset     : true
+    , yoffset     : true
+    , xruler      : true
+    , yruler      : true
+    , markstart   : true
+    , markend     : true
+    }
+
+const Transferable_AudioNodeProperties = Object.assign(
     { type        : true
     , kbMode      : true
     , subdiv      : true
@@ -385,7 +412,8 @@ const Transferable_AudioNodeProperties =
     , phaseShift  : true
     , channelData : true
     , MMLString   : true
-    }
+    },
+    Transferable_Pianoroll_properties)
 
 const PostConnection_Transferable_InputRemappable_AudioNodeProperties 
 : Immutable<{ [key in NodeTypes]? : (keyof typeof Transferable_AudioNodeProperties)[] }> = 

@@ -12,6 +12,8 @@ import { NuniGraph } from '../model/nunigraph.js'
 import { clipboard } from './clipboard.js'
 import { UI_clamp, createDraggableWindow } from '../../UI_library/internal.js'
 import { createValuesWindow } from '../view/display_nodedata.js'
+import { createSelectionPrompt } from '../../UI_library/components/selection_prompt.js'
+import { startCustomNodeWizard } from './customnodewizard.js'
 // import { openWindow, closeWindow, showContextMenu } from './window_toggler.js'
 
 export const ActiveControllers = [] as NuniGraphController[]
@@ -281,13 +283,41 @@ export class NuniGraphController {
         }
 
         
-        const barContent = [titleEditor()] as HTMLElement[]
+        const barContent = E('span', { children: [titleEditor()] })
 
-        if (node.type === NodeTypes.MODULE) 
+        if (node.type === NodeTypes.MODULE)
         {
-            barContent.push(E('button', { text: '⚙️' }))
+            const gearButton = E('button', 
+            { text: '⚙️'
+            , props: 
+                { onclick: (e : any) => {
+                    const prompt = createSelectionPrompt(['Create Custom Node..'])
+                    barContent.appendChild(prompt)
+                    prompt.style.margin = '30px -100px'
+
+                    // Delay this or it will register on the same click
+                    requestAnimationFrame(_ =>
+                        window.addEventListener('click', (e : any) => {
+                            if (e.target === prompt.children[0]) 
+                            {
+                                startCustomNodeWizard(node as any)
+                            }
+                            barContent.removeChild(barContent.lastElementChild!)
+                        }, { once: true }))
+
+                    }
+                }
+            })
+            barContent.appendChild(gearButton)
         }
-        if (node.INPUT_NODE_ID || node.id === 0) barContent.length = 0
+
+        if (node.INPUT_NODE_ID || node.id === 0) 
+        {
+            while (barContent.lastElementChild) 
+            {
+                barContent.removeChild(barContent.lastElementChild);
+            }
+        }
 
         // Create dialogBox:
         const dialogBox =
@@ -298,7 +328,7 @@ export class NuniGraphController {
                 , color: node.id === 0 
                     ? MasterGainColor 
                     : NodeTypeColors[node.type]
-                , barContent: E('span', { children: barContent })
+                , barContent
                 })
         this.getOpenWindow[node.id] = dialogBox
 

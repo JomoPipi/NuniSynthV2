@@ -54,7 +54,7 @@ code {
     border: 1px solid var(--color3);
     display: grid;
     grid-template-columns: 1fr;
-    height: 200px;
+    max-height: 200px;
     overflow-y: scroll;
     text-align: left;
 }

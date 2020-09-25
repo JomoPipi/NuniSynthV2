@@ -63,7 +63,7 @@ function updateKeys(keydown : boolean) {
                 if (idx >= 0) return;
                 held.push(key)
             } 
-            else 
+            else
             {
                 held.splice(idx,1)
                 if (idx !== held.length && KB.mode === 'mono') 

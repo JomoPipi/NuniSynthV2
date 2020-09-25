@@ -9,6 +9,7 @@
     
     transition: opacity 0.5s ease-in-out;
     opacity: 1;
+    pointer-events: none;
 }
 .loading-text {
     @extend .center;

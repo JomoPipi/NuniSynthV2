@@ -31,6 +31,7 @@ type AudioNodeMap = {
     [NodeTypes.PIANOR]: PianoRoll12Tone
     [NodeTypes.ENV]:    Envelope
     [NodeTypes.CUSTOM]: any
+    [NodeTypes.PROCESSOR]: AudioWorklet
 }
 
 type AudioNode2<T extends NodeTypes> 
@@ -82,7 +83,21 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.title = title
         this.INPUT_NODE_ID = INPUT_NODE_ID
 
-        this.audioNode = (audioCtx as Indexed)[createAudioNode[type]]()
+        if (type === NodeTypes.PROCESSOR)
+        { 
+            this.audioNode = 3 as any
+            ;(audioCtx as Indexed)[createAudioNode[type]]()
+                .then((processor : any) => {
+                    this.audioNode = processor
+                })
+                .catch((e : any) => {
+                    log('error: ', e)
+                })
+        }
+        else
+        {
+            this.audioNode = (audioCtx as Indexed)[createAudioNode[type]]()
+        }
         
         // TODO: Maybe start it during on tempo tick?
         if (MustBeStarted[type]) (this.audioNode as any).start(0)

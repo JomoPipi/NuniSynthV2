@@ -17,6 +17,6 @@ export function createSelectionPrompt(nameList : string[]) {
         { className: 'window show preset-list'
         , children: buttons
         })
-
+        
     return list
 }

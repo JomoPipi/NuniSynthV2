@@ -42,7 +42,7 @@ export function desktopCapture(handleStreamCallback : Function) {
                 useSource(source, handleStreamCallback)
             }
             
-            promptContainer.innerHTML = ''
+            promptContainer.removeChild(promptContainer.lastElementChild!)
         }
     }
 
