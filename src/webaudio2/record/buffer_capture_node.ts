@@ -31,6 +31,8 @@ export class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
         const isRecording = recordButton.classList.contains('recording')
         if (isRecording) 
         {
+            recordButton.innerText = 'rec'
+            recordButton.classList.remove('record-error')
             recordButton.classList.remove('recording')
             clearTimeout(BufferUtils.lastRecorderRequestId)
             BufferUtils.stopLastRecorder()
@@ -39,7 +41,7 @@ export class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
 
         const errStuff = (err : string) => {
             recordButton.innerText = err
-            recordButton.style.backgroundColor = 'orange'
+            recordButton.classList.add('record-error')
         }
     
         const mediaRecorder = new MediaRecorder(this.stream)
@@ -67,16 +69,16 @@ export class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
         mediaRecorder.addEventListener('stop', () => {
             const audioBlob = new Blob(audioChunks)
 
-            audioBlob.arrayBuffer().then(arraybuffer => {
-                this.ctx.decodeAudioData(arraybuffer)
-                .then((audiobuffer : AudioBuffer) => 
-                {
+            audioBlob.arrayBuffer()
+                .then(arraybuffer => this.ctx.decodeAudioData(arraybuffer))
+                .then((audiobuffer : AudioBuffer) => {
+                    log('am I here?')
                     const rate =  this.ctx.sampleRate
 
                     // This new buffer ensures that the length is exact
                     const buffer = 
                         this.ctx.createBuffer(
-                        1, 
+                        1,
                         recordLength * rate,
                         rate)
                     buffer.copyToChannel(audiobuffer.getChannelData(0), 0)
@@ -87,8 +89,6 @@ export class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
                     BufferUtils.updateBufferUI()
                 })
                 .catch(errStuff)
-            })
-            .catch(errStuff)
         })
 
         BufferUtils.stopLastRecorder = () => {

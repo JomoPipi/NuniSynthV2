@@ -721,6 +721,10 @@ code {
   background-color: #f00;
 }
 
+.record-error {
+  background-color: orange;
+}
+
 .rec-buttons-container {
   display: -ms-inline-grid;
   display: inline-grid;
