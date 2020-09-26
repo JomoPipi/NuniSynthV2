@@ -6,6 +6,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",
+    "dev": "(tsc --watch & p1=$!; npm start & ps2=$!; wait $p1 $p2)",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
