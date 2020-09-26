@@ -39,7 +39,7 @@ export function recordTo(index : number) {
     }
 
     log('recording...')
-    const selected = recordButtonGroup.dataset.selected!
+    const selected = recordButtonGroup.dataset.selected! || MIC
 
     // @ts-ignore - Unleash the power of the double equal. Muahahaha!
     if (selected == MIC) 
