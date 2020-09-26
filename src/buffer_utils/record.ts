@@ -100,10 +100,9 @@ export function recordTo(index : number) {
         mediaRecorder.addEventListener('stop', () => {
             const audioBlob = new Blob(audioChunks)
 
-            audioBlob.arrayBuffer().then(arraybuffer => {
-                audioCtx.decodeAudioData(arraybuffer)
-                .then((audiobuffer : AudioBuffer) => 
-                {
+            audioBlob.arrayBuffer()
+                .then(arraybuffer => audioCtx.decodeAudioData(arraybuffer))
+                .then(audiobuffer => {
                     const rate =  audioCtx.sampleRate
 
                     // This new buffer ensures that the length is exact
@@ -121,8 +120,6 @@ export function recordTo(index : number) {
                     f && f()
                 })
                 .catch(errStuff)
-            })
-            .catch(errStuff)
         })
 
         BufferUtils.stopLastRecorder = () => mediaRecorder.stop()
