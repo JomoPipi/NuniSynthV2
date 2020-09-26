@@ -8,8 +8,9 @@
 import { GraphController } from '../init.js'
 import { LZW_decompress } from '../../helpers/lzw_compression.js'
 
+presets()
 
-{
+async function presets() {
     const presets = 
         { 'LFO Example 1': `{"connections":{"0":[],"5":[{"id":0,"connectionType":"channel"}],"6":[{"id":7,"connectionType":"channel"}],"7":[{"id":5,"connectionType":"frequency"}]},"nodes":[{"id":0,"type":"gain","x":0.24,"y":0.5690346083788707,"title":"OUTPUT","audioNode":{},"audioParamValues":{"gain":0.25044590807994566},"audioNodeProperties":{}},{"id":5,"type":"oscillator","x":0.39999999999999997,"y":0.5690346083788707,"audioNode":{"ctx":{"analyser":{},"volume":{}},"volumeNode":{},"playingKeys":{},"stopLastNSources":[],"_kbMode":false,"_type":"sine","detune":{},"frequency":{},"soloSource":{}},"audioParamValues":{"frequency":200,"detune":0},"audioNodeProperties":{"kbMode":false,"type":"sine"}},{"id":6,"type":"oscillator","x":0.24,"y":0.3414207650273224,"audioNode":{"ctx":{"analyser":{},"volume":{}},"volumeNode":{},"playingKeys":{},"stopLastNSources":[],"_kbMode":false,"_type":"sine","detune":{},"frequency":{},"soloSource":{}},"audioParamValues":{"frequency":4,"detune":0},"audioNodeProperties":{"kbMode":false,"type":"sine"}},{"id":7,"type":"gain","x":0.39999999999999997,"y":0.3414207650273224,"audioNode":{},"audioParamValues":{"gain":100},"audioNodeProperties":{}}]}`
         , 'LFO Example 2': `{"connections":{"1":[{"id":3,"connectionType":"channel"}],"3":[{"id":0,"connectionType":"channel"}],"4":[{"id":3,"connectionType":"gain"}]},"nodes":[{"id":0,"type":"gain","x":0.24,"y":0.853551912568306,"title":"OUTPUT","audioNode":{},"audioParamValues":{"gain":0.11230623494142718},"audioNodeProperties":{}},{"id":1,"type":"oscillator","x":0.39999999999999997,"y":0.853551912568306,"title":"oscillator","audioNode":{"ctx":{"analyser":{},"volume":{}},"volumeNode":{},"playingKeys":{},"stopLastNSources":[],"_kbMode":false,"_type":"sine","detune":{},"frequency":{},"soloSource":{}},"audioParamValues":{"frequency":220,"detune":1.6484375},"audioNodeProperties":{"kbMode":false,"type":"sine"}},{"id":3,"type":"gain","x":0.39999999999999997,"y":0.6259380692167578,"title":"gain","audioNode":{},"audioParamValues":{"gain":1},"audioNodeProperties":{}},{"id":4,"type":"oscillator","x":0.24,"y":0.6259380692167578,"title":"oscillator","audioNode":{"ctx":{"analyser":{},"volume":{}},"volumeNode":{},"playingKeys":{},"stopLastNSources":[],"_kbMode":false,"_type":"sine","detune":{},"frequency":{},"soloSource":{}},"audioParamValues":{"frequency":8,"detune":0},"audioNodeProperties":{"kbMode":false,"type":"sine"}}]}`
@@ -55,19 +56,19 @@ import { LZW_decompress } from '../../helpers/lzw_compression.js'
         div.appendChild(item)
     }
 
-    div.onclick = function(e : MouseEvent) {
+    div.onclick = async function(e : MouseEvent) {
         const name = (e.target as HTMLElement).innerText
         if (name in presets) 
         {
             GraphController.save()
             GraphController.closeAllWindows()
-            GraphController.fromString(presets[name as keyof typeof presets])
+            await GraphController.fromString(presets[name as keyof typeof presets])
             GraphController.renderer.render()
         }
     }
 
     Apply_The_Default_Preset: {
-        GraphController.fromString(presets['Keyboard 1'])
+        await GraphController.fromString(presets['Keyboard 1'])
         GraphController.renderer.render()
     }
 }

@@ -16,8 +16,8 @@ import { NuniGraphNode } from "../nunigraph/model/nunigraph_node.js"
 
 export {}
 
-function cycleGraph(input : string) {
-    GraphController.fromString(input)
+async function cycleGraph(input : string) {
+    await GraphController.fromString(input)
     return GraphController.g.toRawString()
 }
 
@@ -27,13 +27,13 @@ const tests =
     }
 
 
-function runGraphWholeCopyTests() {
+async function runGraphWholeCopyTests() {
     let passed = 0, failed = 0
     for (const name in tests) 
     {
         const code1 = tests[name as keyof typeof tests]
 
-        const code2 = cycleGraph(cycleGraph(code1))
+        const code2 = await cycleGraph(await cycleGraph(code1))
 
         if (code1 !== code2) 
         { 
@@ -53,18 +53,18 @@ runGraphWholeCopyTests()
 
 
 const g = GraphController.g // new NuniGraph()
-;(function control_s_sgs_test() {
+;(async function control_s_sgs_test() {
     g.clear()
     let passed = 0, failed = 0
     
-    const sgs = g.createNewNode(NodeTypes.SGS, 
+    const sgs = await g.createNewNode(NodeTypes.SGS, 
         { x: .1
         , y: .5
         , audioParamValues:{}
         , audioNodeProperties:{} 
         })
 
-    const osc = g.createNewNode(NodeTypes.OSC, 
+    const osc = await g.createNewNode(NodeTypes.OSC, 
         { x: .3
         , y: .5
         , audioParamValues:{}
@@ -76,7 +76,7 @@ const g = GraphController.g // new NuniGraph()
     const vol = sgs.audioNode.channelData[osc.id].volume = 0.5
     const row = sgs.audioNode.stepMatrix[osc.id] = [0,1,0,1,0,0,1,0].map(Boolean)
 
-    const [sgs2,osc2] = g.reproduceNodesAndConnections([sgs,osc]) as 
+    const [sgs2,osc2] = await g.reproduceNodesAndConnections([sgs,osc]) as 
         [NuniGraphNode<NodeTypes.SGS>, NuniGraphNode<NodeTypes.OSC>]
 
     const tests = 
@@ -99,7 +99,7 @@ const g = GraphController.g // new NuniGraph()
     }  
     
     const code1 = g.toString()
-    const code2 = cycleGraph(cycleGraph(code1))
+    const code2 = await cycleGraph(await cycleGraph(code1))
 
     if (code1 !== code2) 
     { 

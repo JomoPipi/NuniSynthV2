@@ -20,9 +20,10 @@ import { snapToGrid } from './view/snap_to_grid.js'
     
 class Nuni extends NuniGraphController {
 
-    volumeNode : GainNode
     //TODO:
-    history : any[]
+    volumeNode : GainNode
+    G : NuniGraph
+    history !: any[]
 
     constructor(canvas : HTMLCanvasElement, volumeNode : GainNode) {
         const G = new NuniGraph()
@@ -30,15 +31,19 @@ class Nuni extends NuniGraphController {
         super
             ( G 
             , D('connection-type-prompt')
-            , new NuniGraphRenderer(G, canvas))
+            , new NuniGraphRenderer(G, canvas)) // may need to await master gain
+
+        this.G = G
+        this.volumeNode = volumeNode
+    }
+
+    async init() {
+        await this.G.initializeMasterGain()
         
-        
-        G.nodes
+        this.G.nodes
             .find(({ id }) => id === 0)!
             .audioNode
-            .connect(volumeNode)
-
-        this.volumeNode = volumeNode
+            .connect(this.volumeNode)
 
         this.history = []
     }
@@ -50,80 +55,86 @@ NuniGraphAudioNode.createController = // Nuni
 export const GraphController 
     = new Nuni(D('nunigraph-canvas') as HTMLCanvasElement, audioCtx.volume)
 
-GraphController.activateEventHandlers()
-GraphController.g.nodes[0].setValueOfParam('gain', 0.125)
+init()
 
-ActiveControllers.push(GraphController)
+async function init() {
 
-snapToGrid.attach(() => ActiveControllers.forEach(c => c.renderer.render()))
+    GraphController.activateEventHandlers()
+    await GraphController.g.initializeMasterGain()
+    GraphController.g.nodes[0].setValueOfParam('gain', 0.125)
 
-let DEBUG = true
-if (DEBUG) 
-{
-    (<any>window).controller = GraphController
-}
+    ActiveControllers.push(GraphController)
 
-Graph_Attachments: {
+    snapToGrid.attach(() => ActiveControllers.forEach(c => c.renderer.render()))
 
-    // break Graph_Attachments // <- comment this in for testing
-
-    const g = GraphController.g
-
-    function* yeildNodes(g : NuniGraph) : Generator {
-        for (const { audioNode } of g.nodes) 
-        {
-            if (audioNode instanceof NuniGraphAudioNode)
-            {
-                yield* yeildNodes(audioNode.controller.g)
-            } 
-            else 
-            {
-                yield audioNode
-            }
-        }
-    }
+    let DEBUG = true
     if (DEBUG) 
     {
-        (<any>window).getNodes = () => [...yeildNodes(g)]
+        (<any>window).controller = GraphController
     }
-    
-    KB.attachToGraph(function*() {
-        for (const an of yeildNodes(g)) 
-        {
-            if (an instanceof NuniSourceNode) 
-            { // && an.kbMode !== 'none') {
-                yield an
-            }
-        }
-    })
 
-    MasterClock.setSchedule(() => {
-        for (const an of yeildNodes(g))
-        {
-            if (an instanceof Sequencer || an instanceof PianoRoll12Tone) 
-            {
-                an.scheduleNotes()
-            }
-        }
-    },
-    (tempo : number) => {
-        for (const an of yeildNodes(g))
-        {
-            if (an instanceof Sequencer || an instanceof PianoRoll12Tone) 
-            {
-                an.updateTempo(tempo)
-            }
-        }
-    })
+    Graph_Attachments: {
 
-    BufferUtils.initBufferPresets(audioCtx)
-    BufferUtils.setRefreshBufferFunc((index : number) => {
-        for (const an of yeildNodes(g)) 
-        {
-            if (an instanceof BufferNode2 && an.bufferKey === index) 
+        // break Graph_Attachments // <- comment this in for testing
+
+        const g = GraphController.g
+
+        function* yeildNodes(g : NuniGraph) : Generator {
+            for (const { audioNode } of g.nodes) 
             {
-                an.refresh()
+                if (audioNode instanceof NuniGraphAudioNode)
+                {
+                    yield* yeildNodes(audioNode.controller.g)
+                } 
+                else 
+                {
+                    yield audioNode
+                }
             }
         }
-    })
+        if (DEBUG) 
+        {
+            (<any>window).getNodes = () => [...yeildNodes(g)]
+        }
+        
+        KB.attachToGraph(function*() {
+            for (const an of yeildNodes(g)) 
+            {
+                if (an instanceof NuniSourceNode) 
+                { // && an.kbMode !== 'none') {
+                    yield an
+                }
+            }
+        })
+
+        MasterClock.setSchedule(() => {
+            for (const an of yeildNodes(g))
+            {
+                if (an instanceof Sequencer || an instanceof PianoRoll12Tone) 
+                {
+                    an.scheduleNotes()
+                }
+            }
+        },
+        (tempo : number) => {
+            for (const an of yeildNodes(g))
+            {
+                if (an instanceof Sequencer || an instanceof PianoRoll12Tone) 
+                {
+                    an.updateTempo(tempo)
+                }
+            }
+        })
+
+        BufferUtils.initBufferPresets(audioCtx)
+        BufferUtils.setRefreshBufferFunc((index : number) => {
+            for (const an of yeildNodes(g)) 
+            {
+                if (an instanceof BufferNode2 && an.bufferKey === index) 
+                {
+                    an.refresh()
+                }
+            }
+        })
+    }
 }

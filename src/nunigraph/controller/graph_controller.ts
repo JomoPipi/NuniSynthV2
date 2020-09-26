@@ -100,9 +100,9 @@ export class NuniGraphController {
 
 
 
-    fromString(graphCode : string) {
+    async fromString(graphCode : string) {
         this.renderer.clearConnectionsCache()
-        this.g.fromString(graphCode)
+        await this.g.fromString(graphCode)
     }
 
 
@@ -259,7 +259,7 @@ export class NuniGraphController {
     
 
     
-    openWindow(node : NuniGraphNode) {
+    async openWindow(node : NuniGraphNode) {
 
         if (!SelectWhenDialogBoxIsClicked[node.type])
         {
@@ -333,7 +333,7 @@ export class NuniGraphController {
         this.getOpenWindow[node.id] = dialogBox
 
         dialogBox.children[1].appendChild(
-            createValuesWindow(
+            await createValuesWindow(
                 node, 
                 () => this.save(),
                 deleteCallBack))
@@ -654,7 +654,7 @@ export class NuniGraphController {
 
 
 
-    private mouseup(e : MouseEvent) {
+    private async mouseup(e : MouseEvent) {
 
         if (this.renderer.lastDottedLine) 
         {
@@ -682,7 +682,7 @@ export class NuniGraphController {
             const Y = e.offsetY / this.renderer.canvas.height
 
             this.selectedNodes = 
-                this.g.pasteNodes(X, Y, clipboard.nodes, clipboard.connections)
+                await this.g.pasteNodes(X, Y, clipboard.nodes, clipboard.connections)
 
             this.renderer.render(this)
         }
@@ -747,7 +747,7 @@ export class NuniGraphController {
 
 
 
-    private keydown(e : KeyboardEvent) {
+    private async keydown(e : KeyboardEvent) {
         // undo/redo with keyboard disabled, for now
         // if (this.undoRedoModule.tryInput(e)) 
         // {
@@ -805,7 +805,7 @@ export class NuniGraphController {
             this.save()
 
             this.selectedNodes = 
-                this.g.reproduceNodesAndConnections(nodesToCopy)
+                await this.g.reproduceNodesAndConnections(nodesToCopy)
 
             this.renderer.render(this)
 

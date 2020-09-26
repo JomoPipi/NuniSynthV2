@@ -53,50 +53,43 @@ type AudioNode2<T extends NodeTypes>
 
 export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
-    id : number
-    type : T
-    audioNode : AudioNode2<T>
+    audioNode !: AudioNode2<T>
     x : number
     y : number
-    audioParamValues : Indexable<number>
+    audioParamValues !: Indexable<number>
     title? : string
     readonly INPUT_NODE_ID? : { id : number }
 
     
-    constructor(id : number, type : T, settings : NodeCreationSettings) {
+    constructor(public id : number, public type : T, private settings : NodeCreationSettings) {
 
         // Change display: {x,y} to just x,y later to save space on the string conversions
         // (will require changing/throwing away all currently saved graphs :/)
         const 
             { x
             , y
-            , audioParamValues
-            , audioNodeProperties
             , title
             , INPUT_NODE_ID
             } = settings
 
-        this.id = id
-        this.type = type
         this.x = x
         this.y = y
         this.title = title
         this.INPUT_NODE_ID = INPUT_NODE_ID
+    }
 
-        if (type === NodeTypes.PROCESSOR)
-        { 
-            this.audioNode = 3 as any
-            ;(audioCtx as Indexed)[createAudioNode[type]]()
-                .then((processor : any) => {
-                    this.audioNode = processor
-                })
-                .catch((e : any) => {
-                    log('error: ', e)
-                })
-        }
-        else
-        {
-            this.audioNode = (audioCtx as Indexed)[createAudioNode[type]]()
+    async init() {
+        const {
+            audioParamValues,
+            audioNodeProperties,
+        } = this.settings
+
+        const {type} = this
+
+        try {
+            this.audioNode = await (audioCtx as Indexed)[createAudioNode[type]]()
+        } catch (e) {
+            log('error: ', e)
         }
         
         // TODO: Maybe start it during on tempo tick?

@@ -27,7 +27,7 @@ import { GraphController } from '../init.js'
 
 
 
-export function createValuesWindow(
+export async function createValuesWindow(
     node : NuniGraphNode, 
     saveCallback : Function,
     deleteCallback : Function) {
@@ -71,7 +71,7 @@ export function createValuesWindow(
 
     if (node.id === 0) 
     {
-        controls.appendChild(gainControls(node))
+        controls.appendChild(await gainControls(node))
     }
     else if (HasAudioParams[node.type] && node.type !== NodeTypes.B_SEQ) 
     {
@@ -226,7 +226,7 @@ function warningButton(type : NodeTypes) {
 }
 
 
-function gainControls(node : NuniGraphNode) {
+async function gainControls(node : NuniGraphNode) {
     const value = node.audioNode.gain.value
     
     const dial = new JsDial(1)
@@ -245,6 +245,9 @@ function gainControls(node : NuniGraphNode) {
         valueText.innerText =
             `${volumeTodB(value).toFixed(1)}dB`
     })
+
+    await GraphController.g.initializeMasterGain()
+
     if (node !== GraphController.g.nodes[0])
     { // If it's not the master output we don't allow this
         dial.html.ondblclick = dial.update.bind(null, 1)

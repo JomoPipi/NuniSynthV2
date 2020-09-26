@@ -83,7 +83,7 @@ export function saveProjectAs() {
         })
 }
 
-export function openExistingProject() {
+export async function openExistingProject() {
 
     const options = 
         { title
@@ -91,20 +91,19 @@ export function openExistingProject() {
         , defaultPath: projectsFolderPath 
         }
 
-    dialog
-        .showOpenDialog(options)
-        .then(({ canceled, filePaths } : Indexed) => {
+    // TODO remove unsafe type casts
+    const promise = dialog.showOpenDialog(options) as Promise<Indexed>
+    const { canceled, filePaths } = await promise
 
-            if (!canceled) 
-            {
-                loadNuniFile(fs.readFileSync(filePaths[0], 'utf8'))
+    if (!canceled) 
+    {
+        await loadNuniFile(fs.readFileSync(filePaths[0], 'utf8'))
 
-                D('project-title').textContent =
-                makeNuniFile.currentFileName = 
-                    filePaths[0]
-                        .replace(projectsFolderPath, '')
-                        .replace('.nuni', '')
-                        .slice(1)
-            }
-        })
+        D('project-title').textContent =
+        makeNuniFile.currentFileName = 
+            filePaths[0]
+                .replace(projectsFolderPath, '')
+                .replace('.nuni', '')
+                .slice(1)
+    }
 }
