@@ -97,29 +97,30 @@ export function recordTo(index : number) {
             audioChunks.push(event.data)
         })
 
-        mediaRecorder.addEventListener('stop', () => {
+        mediaRecorder.addEventListener('stop', async () => {
             const audioBlob = new Blob(audioChunks)
 
-            audioBlob.arrayBuffer()
-                .then(arraybuffer => audioCtx.decodeAudioData(arraybuffer))
-                .then(audiobuffer => {
-                    const rate =  audioCtx.sampleRate
+            try {
+                const arraybuffer = await audioBlob.arrayBuffer()
+                const audiobuffer = await audioCtx.decodeAudioData(arraybuffer)
+                const rate =  audioCtx.sampleRate
 
-                    // This new buffer ensures that the length is exact
-                    const buffer = 
-                        audioCtx.createBuffer(
-                        1, 
-                        BufferUtils.nextBufferDuration * rate,
-                        rate)
-                    buffer.copyToChannel(audiobuffer.getChannelData(0), 0)
+                // This new buffer ensures that the length is exact
+                const buffer = 
+                    audioCtx.createBuffer(
+                    1, 
+                    BufferUtils.nextBufferDuration * rate,
+                    rate)
+                buffer.copyToChannel(audiobuffer.getChannelData(0), 0)
 
-                    BufferStorage.set(index, buffer)
-                    BufferUtils.refreshAffectedBuffers()
-                    recordButton.classList.remove('recording')
-                    BufferUtils.updateBufferUI()
-                    f && f()
-                })
-                .catch(errStuff)
+                BufferStorage.set(index, buffer)
+                BufferUtils.refreshAffectedBuffers()
+                recordButton.classList.remove('recording')
+                BufferUtils.updateBufferUI()
+                f && f()
+            } catch (e) {
+                errStuff(e)
+            }
         })
 
         BufferUtils.stopLastRecorder = () => mediaRecorder.stop()
