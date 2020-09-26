@@ -20,14 +20,14 @@ const menuItemMap =
     , 'Modularize': modularizeGraph
     }
 
-function getNavMenuClickTarget(e : MouseEvent) {
+async function getNavMenuClickTarget(e : MouseEvent) {
     
     const target = e.target as HTMLElement
     const text = target.textContent!.trim() as keyof typeof menuItemMap
     
     if (menuItemMap[text]) 
     {
-        menuItemMap[text]()
+        await menuItemMap[text]()
     }
     else if (text.length && !isNaN(+text))
     {

@@ -104,7 +104,7 @@ D('graph-undo-redo-btns').onclick = function(e : MouseEvent) {
 }
 
 // Modularize button
-export function modularizeGraph() {
+export async function modularizeGraph() {
     const { g } = GraphController
     const graphCode = g.toString()
     for (const node of [...g.nodes]) 
@@ -115,12 +115,16 @@ export function modularizeGraph() {
         }
     }
 
-    const node = g.createNewNode(NodeTypes.MODULE, 
+    const node = await g.createNewNode(NodeTypes.MODULE, 
         { x: 0.5
         , y: 0.5
         , audioParamValues: {}
         , audioNodeProperties: { graphCode } 
         })
+
+    await node.audioNode
+            .controller
+            .g.initializeMasterGain()
     
     node.audioNode
         .controller

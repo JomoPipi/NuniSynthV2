@@ -48,15 +48,15 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
         this._windowIsOpen = false
     }
 
-    get graphCode() {
+    getGraphCode() {
         return this.controller.g.toString()
     }
-    set graphCode(code : string) {
-        this.controller.fromString(code)
+    async setGraphCode(code : string) {
+        await this.controller.fromString(code)
     }
 
     
-    addInput({ id, audioNode } : NuniNode) {
+    async addInput({ id, audioNode } : NuniNode) {
 
         const inputNode 
             = this.controller
@@ -71,7 +71,7 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
         {
             const inputNode 
                 = this.inputs[id]
-                = this.controller.g.createNewNode(NodeTypes.GAIN, 
+                = await this.controller.g.createNewNode(NodeTypes.GAIN, 
                 { x: Math.random() < 0.5 ? 0.05 : 0.95
                 , y: Math.random()
                 , audioParamValues: { gain: 1 }

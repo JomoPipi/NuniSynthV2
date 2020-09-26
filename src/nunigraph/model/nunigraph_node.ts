@@ -76,11 +76,9 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.y = y
         this.title = title
         this.INPUT_NODE_ID = INPUT_NODE_ID
-
-        this.init()
     }
 
-    private async init() {
+    async init() {
         const {
             audioParamValues,
             audioNodeProperties,

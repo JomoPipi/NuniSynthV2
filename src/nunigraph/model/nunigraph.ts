@@ -46,14 +46,18 @@ export class NuniGraph {
         this.nextId = 0
         this.nodes = []
         this.oneWayConnections = {}
-
-        this.initializeMasterGain()
     }
 
 
 
+    private masterGainPromise?: Promise<NuniGraphNode<NodeTypes.GAIN>>
 
-    private initializeMasterGain() {
+    async initializeMasterGain() {
+        if (this.masterGainPromise) {
+            await this.masterGainPromise
+            return
+        }
+
         const masterGainSettings = Object.assign(defaultNodeSettings(), 
             { audioParamValues: { [NodeTypes.GAIN]: 1 }
             , x: 0.5
@@ -61,15 +65,17 @@ export class NuniGraph {
             , title: 'OUTPUT'
             })
 
-        this.createNewNode(NodeTypes.GAIN, masterGainSettings)
+        this.masterGainPromise = this.createNewNode(NodeTypes.GAIN, masterGainSettings)
+        await this.masterGainPromise
     }
 
 
 
 
-    createNewNode<T extends NodeTypes>(type : T, settings : NodeCreationSettings = defaultNodeSettings()) {
+    async createNewNode<T extends NodeTypes>(type : T, settings : NodeCreationSettings = defaultNodeSettings()) {
 
         const node = new NuniGraphNode(this.nextId++, type, settings)
+        await node.init()
         this.nodes.push(node)
 
         return node
@@ -259,7 +265,7 @@ export class NuniGraph {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
     // ! ctrl + click paste function 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
-    pasteNodes(X : number, Y : number, _nodeDataArray : Indexed[], connections : any[]) {
+    async pasteNodes(X : number, Y : number, _nodeDataArray : Indexed[], connections : any[]) {
 
         const nNodes = _nodeDataArray.length
         const centerX = _nodeDataArray.reduce((a, { x }) => a + x, 0) / nNodes
@@ -267,7 +273,7 @@ export class NuniGraph {
 
 
         //* Make nodes
-        const nodeCopies = _nodeDataArray.map((
+        const nodeCopies = await Promise.all(_nodeDataArray.map((
             { type, oldId, x, y, audioParamValues
             , audioNodeProperties, INPUT_NODE_ID, title }) => {
 
@@ -284,7 +290,7 @@ export class NuniGraph {
                 }
 
             return this.createNewNode(type, settings)
-        }) as NuniGraphNode[]
+        }) as Promise<NuniGraphNode>[])
 
         const retainedInputs = new Set()
 
@@ -419,12 +425,13 @@ export class NuniGraph {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
     // ! ctrl + s copy and paste function
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
-    reproduceNodesAndConnections(nodes : NuniGraphNode[]) { 
+    async reproduceNodesAndConnections(nodes : NuniGraphNode[]) { 
         
-        const correspondenceMap = nodes.reduce((map,node) => {
-            map[node.id] = this.reproduceNode(node)
-            return map
-        }, {} as { [key : number] : NuniGraphNode })
+        const correspondenceMap = {} as { [key : number] : NuniGraphNode }
+
+        await Promise.all(nodes.map(async (node) => {
+            correspondenceMap[node.id] = await this.reproduceNode(node)
+        }))
 
         log('Object.values(correspondenceMap)',Object.values(correspondenceMap)[0].audioNode)
 
@@ -569,7 +576,7 @@ export class NuniGraph {
 
 
 
-    fromRawString(s : string) {
+    private async fromRawString(s : string) {
         try 
         {
             var json = JSON.parse(s)
@@ -578,14 +585,15 @@ export class NuniGraph {
         {
             throw `Error parsing graph JSON string: ${e}`
         }
-        this.fromJSON(json)
+        await this.fromJSON(json)
     }
 
 
 
 
     // ! Copy function #1
-    fromJSON({ connections, nodes }  : Indexed) {
+    async fromJSON({ connections, nodes }  : Indexed) {
+        await this.initializeMasterGain()
 
         this.clear()
 
@@ -627,6 +635,7 @@ export class NuniGraph {
             if (!INPUT_NODE_ID) settings.title = title
 
             const newNode = new NuniGraphNode(id, type, JSON.parse(JSON.stringify(settings)))
+            await newNode.init()
             this.nodes.push(newNode)
         }
         this.nextId = 
@@ -686,8 +695,8 @@ export class NuniGraph {
 
 
 
-    fromString(s : string) {
-        return this.fromRawString(LZW_decompress(s))
+    async fromString(s : string) {
+        return await this.fromRawString(LZW_decompress(s))
     }
 
 

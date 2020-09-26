@@ -18,10 +18,10 @@ export function makeNuniFile() {
 }
 makeNuniFile.currentFileName = ''
 
-export function loadNuniFile(nuniFile : string) {
+export async function loadNuniFile(nuniFile : string) {
     GraphController.closeAllWindows()
     const { graphCode, values, tempo } = JSON.parse(nuniFile)
-    GraphController.g.fromJSON(graphCode)
+    await GraphController.g.fromJSON(graphCode)
     ADSR_Controller.values = values
     const t = tempo ?? 120
     if (!tempo) console.warn('Tempo set to default: 120')
