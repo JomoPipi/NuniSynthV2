@@ -4,8 +4,6 @@ Let's play with **NuniSynth**, an audio routing graph synthesizer based on the [
 
 Linking together basic **audio nodes** gives us the flexibility to create various complex audio functions with dynamic effects.
 
-
-
 # Node Types
 
 **Gain** nodes can be used to amplify the output data from other nodes.
@@ -21,8 +19,18 @@ Linking together basic **audio nodes** gives us the flexibility to create variou
 **Buffer** nodes allow you to play loaded or recorded samples.
 
 # Connections
-If you try to make a connection to any node besides the **master gain**, you will be asked to specify the connection type. 
 
-**Channel** connections are used to pass sound data from the `from` node to the `to` node (the arrow points from `from` to `to`). 
+If you try to make a connection to any node besides the **master gain**, you will be asked to specify the connection type.
+
+**Channel** connections are used to pass sound data from the `from` node to the `to` node (the arrow points from `from` to `to`).
 
 Any other connection type uses the `from` node's sound data to automatically change the values of the `to` node's parameters, over time.
+
+# Geting Started
+
+## Dev mode:
+
+```
+npm install
+npm run dev
+```
