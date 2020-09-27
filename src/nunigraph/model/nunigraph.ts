@@ -214,7 +214,6 @@ export class NuniGraph {
         } 
         else 
         {
-            console.log('node1',node1.type,node1.audioNode.connect)
             node1.audioNode.connect(destination as AudioNode)
         }
     }
@@ -410,7 +409,8 @@ export class NuniGraph {
 
         if (!INPUT_NODE_ID && node.id !== 0) settings.title = title
         
-        return this.createNewNode(type, settings)
+        const _node = this.createNewNode(type, settings)
+        return _node
     }
 
 
@@ -425,8 +425,6 @@ export class NuniGraph {
             map[node.id] = this.reproduceNode(node)
             return map
         }, {} as { [key : number] : NuniGraphNode })
-
-        log('Object.values(correspondenceMap)',Object.values(correspondenceMap)[0].audioNode)
 
         this.reproduceConnections(correspondenceMap)
 

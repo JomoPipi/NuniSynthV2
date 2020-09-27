@@ -83,21 +83,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.title = title
         this.INPUT_NODE_ID = INPUT_NODE_ID
 
-        if (type === NodeTypes.PROCESSOR)
-        { 
-            this.audioNode = 3 as any
-            ;(audioCtx as Indexed)[createAudioNode[type]]()
-                .then((processor : any) => {
-                    this.audioNode = processor
-                })
-                .catch((e : any) => {
-                    log('error: ', e)
-                })
-        }
-        else
-        {
-            this.audioNode = (audioCtx as Indexed)[createAudioNode[type]]()
-        }
+        this.audioNode = (audioCtx as Indexed)[createAudioNode[type]]()
         
         // TODO: Maybe start it during on tempo tick?
         if (MustBeStarted[type]) (this.audioNode as any).start(0)
