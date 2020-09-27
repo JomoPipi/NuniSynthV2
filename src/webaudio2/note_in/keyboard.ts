@@ -40,8 +40,8 @@ export const KB =
     , connectedNodes: function*() { yield* [] as Indexed[] }
     }
 
-function attachToGraph(getNodes : () => Generator<Indexed, void, unknown>) {
-    KB.connectedNodes = getNodes
+function attachToGraph(getAudioNodes : () => Generator<Indexed, void, unknown>) {
+    KB.connectedNodes = getAudioNodes
 
     document.onkeydown = updateKeys(true)
     document.onkeyup = updateKeys(false)

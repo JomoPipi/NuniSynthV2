@@ -7,7 +7,6 @@
 
 import { NuniSourceNode } from './nuni_source_node.js'
 import { NuniAudioParam } from '../nuni_audioparam.js'
-import { createPeriodicWave } from '../../waveform_utils/mutable_waveform.js'
 
 export class OscillatorNode2 extends NuniSourceNode {
     /**
@@ -30,20 +29,21 @@ export class OscillatorNode2 extends NuniSourceNode {
         
         this.kbMode = false
         this.customWave = ctx.createPeriodicWave(
-            new Float32Array([0, 1/1, 1/2, 1/8, 1/8, 1/25, 1/32, 1/8]),
-            new Float32Array([0, 1/3, 1/2, 1/4, 1/800, 1/65, 1/9, 1/37]))
-        
-        
+            new Float32Array([0, 1, 0, 0]),
+            new Float32Array([0, 1, 0, 0]))
+    }
+
+    setPeriodicWave(createWave : (ctx : AudioContext) => PeriodicWave) {
+        this.customWave = createWave(this.ctx)
+        this.type = 'custom' // Trigger the setter
     }
 
     set type(t : OscillatorType) {
-        console.log('t =',t,this.soloSource)
         if (this.soloSource) 
         {
-            log('truthy ?',t === 'custom')
             if (t === 'custom')
             {
-                this.soloSource.setPeriodicWave(this.customWave = createPeriodicWave(this.ctx))
+                this.soloSource.setPeriodicWave(this.customWave)
             }
             else 
             {

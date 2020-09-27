@@ -12,9 +12,10 @@ import { NuniGraphController, ActiveControllers } from './controller/graph_contr
 
 import 
     { KB, audioCtx, Sequencer, BufferNode2
-    , MasterClock, NuniSourceNode, NuniGraphAudioNode, PianoRoll12Tone
+    , MasterClock, NuniSourceNode, NuniGraphAudioNode, PianoRoll12Tone, OscillatorNode2
     } from '../webaudio2/internal.js'
 import { snapToGrid } from './view/snap_to_grid.js'
+import { WaveformUtils } from '../waveform_utils/mutable_waveform.js'
 
     
     
@@ -84,7 +85,7 @@ Graph_Attachments: {
     }
     if (DEBUG) 
     {
-        (<any>window).getNodes = () => [...yeildNodes(g)]
+        (<any>window).getAudioNodes = () => [...yeildNodes(g)]
     }
     
     KB.attachToGraph(function*() {
@@ -123,6 +124,16 @@ Graph_Attachments: {
             if (an instanceof BufferNode2 && an.bufferKey === index) 
             {
                 an.refresh()
+            }
+        }
+    })
+
+    WaveformUtils.onWaveformChange(() => {
+        for (const an of yeildNodes(g))
+        {
+            if (an instanceof OscillatorNode2 && an.type === 'custom')
+            {
+                an.setPeriodicWave(WaveformUtils.createPeriodicWave)
             }
         }
     })

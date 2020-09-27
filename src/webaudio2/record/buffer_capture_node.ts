@@ -72,7 +72,6 @@ export class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
             audioBlob.arrayBuffer()
                 .then(arraybuffer => this.ctx.decodeAudioData(arraybuffer))
                 .then((audiobuffer : AudioBuffer) => {
-                    log('am I here?')
                     const rate =  this.ctx.sampleRate
 
                     // This new buffer ensures that the length is exact

@@ -12,8 +12,9 @@ export class XYPad {
     H : number
     ctx : CanvasRenderingContext2D
     point : [number, number]
+    callback? : Function
 
-    constructor(canvas : HTMLCanvasElement, size : number) {
+    constructor(canvas : HTMLCanvasElement, size : number, callback? : Function) {
         this.W = this.H = canvas.width = canvas.height = size
         this.canvas = canvas
         this.ctx = canvas.getContext('2d')!
@@ -26,6 +27,7 @@ export class XYPad {
         
         this.render()
         
+        this.callback = callback
         canvas.onmousedown = mousedown
         
         const slider = this
@@ -51,6 +53,8 @@ export class XYPad {
             slider.point[1] =
             clamp(margin, e.clientY - t, slider.H - margin)
             slider.render()
+
+            callback && callback()
         }
 
     }
