@@ -77,7 +77,9 @@ export const ADSR_Controller = {
     index: 0,
 
     values: 
-        [...Array(N_ADSRs)].map(defaultADSR),
+        Object.assign([...Array(N_ADSRs)].map(defaultADSR),
+            // { '⎍': 
+            {}),
 
     trigger: function(gain : AudioParam, time : number, volume : number, adsrIndex : number) {
         const { attack, decay, sustain, curve } = this.values[adsrIndex]
@@ -133,7 +135,13 @@ export const ADSR_Controller = {
 
 canvas.onclick = () => {
     const adsr = ADSR_Controller.values[ADSR_Controller.index]
-    const next = { linear: 'logarithmic', logarithmic: 'exponential', exponential: 'S', S: 'linear' }
+    const next = 
+        { linear: 'logarithmic'
+        , logarithmic: 'exponential'
+        , exponential: 'S'
+        , S: 'linear'
+        , undefined: 'S' // Backwards compatibility
+        }
     adsr.curve = next[adsr.curve] as CurveType
     ADSR_Controller.render()
 }

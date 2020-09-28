@@ -39,7 +39,7 @@ export class OscillatorNode2 extends NuniSourceNode {
     }
 
     set type(t : OscillatorType) {
-        if (this.soloSource) 
+        if (this.soloSource)
         {
             if (t === 'custom')
             {

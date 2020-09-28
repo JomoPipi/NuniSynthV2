@@ -63,3 +63,5 @@ export const WaveformUtils =
     { onWaveformChange: (f : Function) => callback.function = f
     , createPeriodicWave
     }
+
+// ⎍
