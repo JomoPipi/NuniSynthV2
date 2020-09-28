@@ -92,9 +92,10 @@ function createTopRowControls(an : Sequencer) {
     }
 
     choose_ADSR: {
+        const buttons = [...'ABCD⎍']
         controls.appendChild(createRadioButtonGroup(
-            { buttons: [...'ABCD⎍']
-            , selected: String.fromCharCode(an.adsrIndex + 65)
+            { buttons
+            , selected: buttons[an.adsrIndex]
             , onclick: (data : string, index : number) => {
                 an.adsrIndex = index
             }

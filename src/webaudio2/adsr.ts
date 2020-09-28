@@ -76,10 +76,16 @@ export const ADSR_Controller = {
 
     index: 0,
 
-    values: 
+    values:
         Object.assign([...Array(N_ADSRs)].map(defaultADSR),
-            // { '⎍': 
-            {}),
+            { 4: // ⎍
+                { attack: 0.0
+                , decay: 0
+                , sustain: 1
+                , release: 0
+                , curve: 'S' as CurveType
+                }
+            }),
 
     trigger: function(gain : AudioParam, time : number, volume : number, adsrIndex : number) {
         const { attack, decay, sustain, curve } = this.values[adsrIndex]
@@ -150,7 +156,7 @@ type RenderOptions = Partial<{ updateKnobs : boolean }>
 
 ;{
     const adsr = ADSR_Controller
-    const isAux = false // s === 'aux-'        
+    const isAux = false // s === 'aux-' // (aux-adsr = A and D only)
     const ctx = adsr.canvas.getContext('2d')!
     
     adsr.render = function (options : RenderOptions = {}) {
