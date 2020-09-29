@@ -216,15 +216,37 @@ export class Sequencer extends VolumeNodeContainer {
             }
             grid.appendChild(row)
         }
-        grid.onclick = (e : MouseEvent) => {
-            const box = e.target as HTMLSpanElement
-            if (box.dataset.sequencerKey) 
+        
+        grid.onmousedown = (e : MouseEvent) => {
+            const box = e.target as HTMLElement
+            if (box.dataset.sequencerKey) // Grid buttons
             {
                 const turnOn = box.classList.toggle('selected')
                 const [key,i] = box.dataset.sequencerKey.split(':').map(Number)
                 this.stepMatrix[key][i] = turnOn
+                
+                const row = box.parentElement!
+                let lastEntered = i
+                row.onmousemove = (e : MouseEvent) => {
+                    const box = e.target as HTMLElement
+                    if (box.dataset.sequencerKey) // Grid buttons
+                    {
+                        const [key,i] = box.dataset.sequencerKey.split(':').map(Number)
+                        if (i !== lastEntered)
+                        {
+                            const turnOn = box.classList.toggle('selected')
+                            this.stepMatrix[key][i] = turnOn
+                        }
+                        lastEntered = i
+                    }
+                }
+                window.onmouseup = mouseup
+                function mouseup() {
+                    row.onmousemove = null
+                    window.removeEventListener('mouseup', mouseup)
+                }
             }
-            else if (box.dataset.sequencerRowKey) 
+            else if (box.dataset.sequencerRowKey) // Mute/Solo buttons
             {
                 const key = +box.dataset.sequencerRowKey
                 const mutesolo = box.innerText
