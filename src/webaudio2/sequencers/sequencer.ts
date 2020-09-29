@@ -20,7 +20,7 @@ export class Sequencer extends VolumeNodeContainer {
      * whatever inputs are connected to it.
      */
     nSteps = 8
-    subdiv = 8
+    private _subdiv = 8
     currentStep = 0
     startTime = 0
     noteTime = 0
@@ -54,11 +54,17 @@ export class Sequencer extends VolumeNodeContainer {
         // this.controls = new SequencerControls(this)
     }
 
+    get subdiv() { return this._subdiv }
+    set subdiv(division : number) { 
+        this._subdiv = division
+        this.updateTempo(MasterClock.getTempo())
+    }
+
     updateTempo(tempo : number) {
         tempo = clamp(1, tempo, Infinity)
-        const newTick = (60 * 4 / tempo) / this.subdiv
+        const newTick = (60 * 4 / tempo) / this._subdiv
         
-        if (this.tick !== newTick) 
+        if (this.tick !== newTick)
         {
             this.tick = newTick
 
