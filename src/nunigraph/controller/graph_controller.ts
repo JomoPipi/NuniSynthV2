@@ -450,7 +450,9 @@ export class NuniGraphController {
 
         menu.style.zIndex = (openWindowGlobalIndexThatKeepsRising + 1).toString()
         menu.style.display = 'grid'
-        UI_clamp(x, y, menu, document.body, { topLeft: true })
+
+        // Place the menu in a 
+        UI_clamp(x, y, menu, document.body, { smartClamp: true })
     }
 
 

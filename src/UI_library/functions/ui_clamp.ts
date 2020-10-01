@@ -6,7 +6,7 @@
 
 
 type ClampOptions = {
-    topLeft? : boolean
+    smartClamp? : boolean
     disableClamp? : 0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15
     }
 
@@ -32,7 +32,7 @@ export function UI_clamp(
         , container.offsetTop
         ]
     
-    const [X, Y] = options.topLeft 
+    const [X, Y] = options.smartClamp 
         ? [x, y]
         : [x-w/2+dx, y-h/2+dy]
 
@@ -42,9 +42,24 @@ export function UI_clamp(
     const maxX = disable & RIGHT ?  Infinity : W-w+dx
     const maxY = disable & DOWN  ?  Infinity : H-h+dy
 
-    element.style.left =
-        clamp(minX, X, maxX) + 'px'
+    const left = clamp(minX, X, maxX)
+    const top = clamp(minY, Y, maxY)
 
-    element.style.top =
-        clamp(minY, Y, maxY) + 'px'
+    // smartClamp means copy VSCode way of doing it
+    if (options.smartClamp && left >= maxX)
+    {
+        element.style.left = (X - w) + 'px'
+    } 
+    else
+    {
+        element.style.left = left + 'px'
+    }
+    if (options.smartClamp && top >= maxY)
+    {
+        element.style.top = (Y - h) + 'px'
+    }
+    else
+    {
+        element.style.top = top + 'px'
+    }
 }

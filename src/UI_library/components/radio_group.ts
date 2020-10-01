@@ -22,19 +22,19 @@ export function createRadioButtonGroup(
     , text
     , containerClassName } : RadioButtonOptions) {
 
-    const box = E('span', 
-        { text 
+    const box = E('span',
+        { text
         , children: text ? [E('br')] : undefined
         , className: containerClassName
         })
 
-    const btns = buttons.map((text) => 
-        box.appendChild(E('button', 
+    const btns = buttons.map((text) =>
+        box.appendChild(E('button',
             { text
             , className: className || 'top-bar-btn'
             })))
 
-    if (typeof selected === 'number') 
+    if (typeof selected === 'number')
     {
         const btn = btns[selected]
         if (!btn) throw 'The index is out of bounds'
