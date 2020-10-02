@@ -91,9 +91,87 @@ button {
 .graph-contextmenu {
   display: none;
   position: absolute;
-  background-color: var(--color3);
+  z-index: 90;
+  margin: 0px;
+  background-color: transparent;
+  /* Hide Dropdowns by Default */
+  /* Display Dropdowns on Hover */
+  /* First Tier Dropdown */
+  /* Second, Third and more Tiers	*/
+}
+
+.graph-contextmenu ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  position: relative;
+}
+
+.graph-contextmenu ul li {
+  display: inline-block;
+  background-color: var(--color1);
+  /* Change this in order to change the Dropdown symbol */
+}
+
+.graph-contextmenu ul li li > a:after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #fffecc;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+
+.graph-contextmenu ul li li > a:only-child:after {
+  content: '';
+  border-width: 0px;
+}
+
+.graph-contextmenu ul li.top {
+  background-color: transparent;
+}
+
+.graph-contextmenu a {
+  display: block;
+  padding: 0 10px;
   color: var(--color5);
-  z-index: 3;
+  font-size: 12px;
+  line-height: 20px;
+  text-decoration: none;
+  font-family: sans-serif;
+}
+
+.graph-contextmenu a:hover {
+  background-color: var(--color0);
+}
+
+.graph-contextmenu ul ul ul {
+  display: none;
+  position: absolute;
+  top: 20px;
+  /* the height of the main nav */
+}
+
+.graph-contextmenu ul li:hover > ul {
+  display: inherit;
+}
+
+.graph-contextmenu ul ul li {
+  width: 170px;
+  float: none;
+  display: list-item;
+  position: relative;
+}
+
+.graph-contextmenu ul ul ul li {
+  position: relative;
+  top: -20px;
+  left: 170px;
 }
 
 .connection-type-prompt {

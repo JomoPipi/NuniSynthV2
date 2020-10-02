@@ -14,6 +14,7 @@ import { UI_clamp, createDraggableWindow } from '../../UI_library/internal.js'
 import { createValuesWindow } from '../view/display_nodedata.js'
 import { createSelectionPrompt } from '../../UI_library/components/selection_prompt.js'
 import { startCustomNodeWizard } from './customnodewizard.js'
+import { contextmenu } from './graph_contextmenu.js'
 // import { openWindow, closeWindow, showContextMenu } from './window_toggler.js'
 
 export const ActiveControllers = [] as NuniGraphController[]
@@ -150,7 +151,7 @@ export class NuniGraphController {
 
 
     hideContextMenu() {
-        D('graph-contextmenu').style.display = 'none'
+        contextmenu.style.display = 'none'
     }
 
 
@@ -446,13 +447,11 @@ export class NuniGraphController {
 
         DIRTYGLOBALS.lastControllerToOpenTheContextmenu = this
 
-        const menu = D('graph-contextmenu')
-
-        menu.style.zIndex = (openWindowGlobalIndexThatKeepsRising + 1).toString()
-        menu.style.display = 'grid'
+        contextmenu.style.zIndex = (openWindowGlobalIndexThatKeepsRising + 1).toString()
+        contextmenu.style.display = 'grid'
 
         // Place the menu in a 
-        UI_clamp(x, y, menu, document.body, { smartClamp: true })
+        UI_clamp(x, y, contextmenu, document.body, { smartClamp: true })
     }
 
 
