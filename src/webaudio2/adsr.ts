@@ -68,6 +68,13 @@ const defaultADSR = () => (
     , release: 0.3812504768371582
     , curve: 'exponential' as CurveType
     })
+const squareADSR = 
+    { attack: 0.0
+    , decay: 0
+    , sustain: 1
+    , release: 0
+    , curve: 'S' as CurveType
+    }
 
 const canvas = D('adsr-canvas') as HTMLCanvasElement
 
@@ -76,19 +83,13 @@ export const ADSR_Controller = {
 
     index: 0,
 
-    values:
-        Object.assign([...Array(N_ADSRs)].map(defaultADSR),
-            { 4: // ⎍
-                { attack: 0.0
-                , decay: 0
-                , sustain: 1
-                , release: 0
-                , curve: 'S' as CurveType
-                }
-            }),
+    values: [...Array(N_ADSRs)].map(defaultADSR),
 
     trigger: function(gain : AudioParam, time : number, volume : number, adsrIndex : number) {
-        const { attack, decay, sustain, curve } = this.values[adsrIndex]
+        const adsr = adsrIndex === 4 // TODO: get rid of hardcoding, here.
+            ? squareADSR 
+            : this.values[adsrIndex]
+        const { attack, decay, sustain, curve } = adsr
         gain.cancelScheduledValues(time)           
         
         if (curve === 'linear')
@@ -123,8 +124,11 @@ export const ADSR_Controller = {
         source.start(time)
     },
 
-    untriggerAdsr: function(gain : AudioParam, time : number, index? : number) {
-        const { release } = this.values[index ?? this.index]
+    untriggerAdsr: function(gain : AudioParam, time : number, adsrIndex? : number) {
+        const adsr = adsrIndex === 4 // TODO: get rid of hardcoding, here.
+            ? squareADSR 
+            : this.values[adsrIndex ?? this.index]
+        const { release } = adsr
         gain.cancelScheduledValues(time)
         gain.setTargetAtTime(0, time, release)
     },
