@@ -7,6 +7,7 @@
 
 import { ModuleStorage } from "../../storage/module_storage.js"
 import { GraphController } from "../init.js"
+import { NuniGraphNode } from "../model/nunigraph_node.js"
 
 
 
@@ -20,13 +21,24 @@ export const contextmenu = D('graph-contextmenu')
 //     GraphController.showContextMenu(e.pageX, 0)
 
 contextmenu.onclick = (e : any) => {
-    if (e.target.dataset.createNodeType)
+    const { createNodeType, moduleName } = e.target.dataset
+
+    if (createNodeType)
     {
-        createNode(e.target.dataset.createNodeType, e)
+        createNode(createNodeType, e)
+    }
+    else if (moduleName)
+    {
+        const node = createNode(NodeTypes.MODULE, e)
+        const graphCode = ModuleStorage.get(moduleName)
+
+        node.audioNode.controller.fromString(graphCode)
+        node.title = moduleName
+        GraphController.renderer.render()
     }
 }
 
-function createNode(type : NodeTypes, e : MouseEvent) {
+function createNode<T extends NodeTypes>(type : T, e : MouseEvent) : NuniGraphNode<T> {
 
     const controller 
         = DIRTYGLOBALS.lastControllerToOpenTheContextmenu 
@@ -57,6 +69,8 @@ function createNode(type : NodeTypes, e : MouseEvent) {
     
     controller.renderer.render()
     DIRTYGLOBALS.lastControllerToOpenTheContextmenu = GraphController
+
+    return node
 }
 
 
@@ -78,51 +92,25 @@ const nodesSortedByRecurrence =
     , NodeTypes.PROCESSOR
     ]
 
-const btnList = E('ul', { text: ' Create New Node..' })
-const container2 = E('li', { children: [btnList] })
-const container = E('ul', { children: [container2] })
 
-contextmenu.appendChild(container)
 
-// Fill up the menu
-for (const type of nodesSortedByRecurrence) 
-{
-    const surface = E('a', 
-        { text: NodeLabel[type]
-        , props: { href: '#' } // <- TODO: ask someone if this is needed
-        })
-    const btn = E('li', { children: [surface] })
 
-    surface.dataset.createNodeType = type
-    btn.style.borderLeft = `2px solid ${NodeTypeColors[type]}`
 
-    btnList.appendChild(btn)
-}
+const moduleContainer = E('ul')
+refreshList()
 
-// TODO: continue..
-
-const moduleList = [...Array(4)].map((_,i) => 
-    E('li', 
-    { children: 
-        [ E('a', 
-            { props: { href:'#' }
-            , text: i + 'bla bla bla'
-            })
-        ]
-    }))
-
-const moduleContainer = E('ul', { children: moduleList })
-
-const refreshList = () => {
-    const moduleList = ModuleStorage.list().map((name, i) => 
-    E('li', 
-    { children: 
-        [ E('a', 
+function refreshList() {
+    const moduleList = ModuleStorage.list().map(name => {
+        const element = E('a', 
             { props: { href:'#' }
             , text: name
             })
-        ]
-    }))
+        element.dataset.moduleName = name
+        return E('li', 
+        { children: 
+            [ element ]
+        })
+    })
 
     while (moduleContainer.lastElementChild)
     {
@@ -132,8 +120,27 @@ const refreshList = () => {
     moduleContainer.append(...moduleList)
 }
 
+export function addModuleToList(title : string, graphCode : string) {
+    D('wait-cursor').classList.add('show')
+
+    ModuleStorage.set(title, graphCode)
+    refreshList()
+
+    setTimeout(() => {
+        D('wait-cursor').classList.remove('show')
+    }, 500)
+}
+
+// Fill up the menu
+const btnList = E('ul', { text: ' Create New Node..' })
+const container2 = E('li', { children: [btnList] })
+const container = E('ul', { children: [container2] })
+contextmenu.appendChild(container)
+
+
 const modulesBtn = E('li', 
-    { children: 
+    { className: 'contextmenu-btn'
+    , children: 
         [ E('a', 
             { props: { href: '#'
             , text: 'Modules'
@@ -141,19 +148,21 @@ const modulesBtn = E('li',
         , moduleContainer
         ]
     })
-btnList.appendChild(modulesBtn)
 
-export function addModuleToList(title : string, graphCode : string) {
-    if (ModuleStorage.get(title))
-    {
-        const sep = '⎍'
-        const [prefix, num] = title.split(sep)
-        const newTitle = `${prefix}${sep}${(+num||-1) + 1}`
-        ModuleStorage.set(newTitle, graphCode)
-    }
-    else 
-    {
-        ModuleStorage.set(title, graphCode)
-    }
-    refreshList()
+btnList.appendChild(modulesBtn)
+for (const type of nodesSortedByRecurrence) 
+{
+    const surface = E('a', 
+        { text: NodeLabel[type]
+        , props: { href: '#' } // <- TODO: ask someone if this is needed
+        })
+    const btn = E('li',
+        { className: 'contextmenu-btn'
+        , children: [surface] 
+        })
+
+    surface.dataset.createNodeType = type
+    btn.style.borderColor = NodeTypeColors[type]
+
+    btnList.appendChild(btn)
 }

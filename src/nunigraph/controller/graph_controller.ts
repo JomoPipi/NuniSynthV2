@@ -580,7 +580,7 @@ export class NuniGraphController {
         const [x,y] = this.lastMouse_DownXY
         let showConnectionInsertionMacroLine = false
         
-        this.mouseHasMovedSinceLastMouseDown ||= 
+        this.mouseHasMovedSinceLastMouseDown ||=
             (Math.abs(x - e.offsetX) > 1 || Math.abs(y - e.offsetY) > 1)
 
         const isPressing = 
@@ -641,7 +641,7 @@ export class NuniGraphController {
             : msg.type !== HOVER.EMPTY
             ? msg.node.id : undefined
 
-        const options = 
+        const options =
             { x: e.offsetX
             , y: e.offsetY
             , buttons: e.buttons

@@ -88,6 +88,10 @@ button {
   height: 100%;
 }
 
+.contextmenu-btn {
+  border-left: 2px solid transparent;
+}
+
 .graph-contextmenu {
   display: none;
   position: absolute;
@@ -1483,7 +1487,7 @@ a {
   top: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 1;
+  z-index: 999999;
   cursor: wait;
 }
 
@@ -1495,7 +1499,7 @@ a {
   top: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 999;
+  z-index: 999998;
   text-align: center;
 }
 
