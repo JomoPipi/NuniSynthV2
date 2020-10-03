@@ -5,6 +5,7 @@
 
 
 
+import { ModuleStorage } from "../../storage/module_storage.js"
 import { GraphController } from "../init.js"
 
 
@@ -99,26 +100,60 @@ for (const type of nodesSortedByRecurrence)
 }
 
 // TODO: continue..
-// const moduleList = [...Array(4)].map((_,i) => 
-//     E('li', 
-//     { children: 
-//         [ E('a', 
-//             { props: { href:'#' }
-//             , text: i + 'bla bla bla'
-//             })
-//         ]
-//     }))
 
-// const btn = E('li', 
-//     { children: 
-//         [ E('a', 
-//             { props: { href: '#'
-//             , text: 'Modules'
-//             } })
-//         , E('ul', 
-//             { children: 
-//                 moduleList
-//             })
-//         ]
-//     })
-// btnList.appendChild(btn)
+const moduleList = [...Array(4)].map((_,i) => 
+    E('li', 
+    { children: 
+        [ E('a', 
+            { props: { href:'#' }
+            , text: i + 'bla bla bla'
+            })
+        ]
+    }))
+
+const moduleContainer = E('ul', { children: moduleList })
+
+const refreshList = () => {
+    const moduleList = ModuleStorage.list().map((name, i) => 
+    E('li', 
+    { children: 
+        [ E('a', 
+            { props: { href:'#' }
+            , text: name
+            })
+        ]
+    }))
+
+    while (moduleContainer.lastElementChild)
+    {
+        moduleContainer.removeChild(moduleContainer.lastElementChild)
+    }
+    
+    moduleContainer.append(...moduleList)
+}
+
+const modulesBtn = E('li', 
+    { children: 
+        [ E('a', 
+            { props: { href: '#'
+            , text: 'Modules'
+            } })
+        , moduleContainer
+        ]
+    })
+btnList.appendChild(modulesBtn)
+
+export function addModuleToList(title : string, graphCode : string) {
+    if (ModuleStorage.get(title))
+    {
+        const sep = '⎍'
+        const [prefix, num] = title.split(sep)
+        const newTitle = `${prefix}${sep}${(+num||-1) + 1}`
+        ModuleStorage.set(newTitle, graphCode)
+    }
+    else 
+    {
+        ModuleStorage.set(title, graphCode)
+    }
+    refreshList()
+}

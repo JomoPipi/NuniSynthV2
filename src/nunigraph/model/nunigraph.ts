@@ -50,6 +50,8 @@ export class NuniGraph {
         this.initializeMasterGain()
     }
 
+    get masterGain() { return this.nodes[0] }
+
 
 
 
@@ -591,14 +593,14 @@ export class NuniGraph {
         if (nodes[0].id !== 0) throw 'Oh, I did not expect this.'
 
         // Manually copy the master-gain, because it can't be deleted
-        this.nodes[0].x = nodes[0].x
-        this.nodes[0].y = nodes[0].y
-        this.nodes[0].setValueOfParam('gain', nodes[0].audioParamValues.gain)
+        this.masterGain.x = nodes[0].x
+        this.masterGain.y = nodes[0].y
+        this.masterGain.setValueOfParam('gain', nodes[0].audioParamValues.gain)
 
-        this.nodes[0].title = 'OUTPUT'
+        this.masterGain.title = 'OUTPUT'
 
         // recreate the nodes
-        for (const node of nodes) 
+        for (const node of nodes)
         {
             const 
                 { id

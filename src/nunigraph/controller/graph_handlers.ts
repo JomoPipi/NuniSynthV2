@@ -53,10 +53,10 @@ export function modularizeGraph() {
     
     node.audioNode
         .controller
-        .g.nodes[0]
+        .g.masterGain
         .setValueOfParam('gain', 1)
     
-    g.makeConnection(node, g.nodes[0], 'channel')
+    g.makeConnection(node, g.masterGain, 'channel')
 
     GraphController.renderer.render()
 }

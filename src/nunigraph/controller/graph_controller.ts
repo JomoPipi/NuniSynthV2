@@ -14,7 +14,7 @@ import { UI_clamp, createDraggableWindow } from '../../UI_library/internal.js'
 import { createValuesWindow } from '../view/display_nodedata.js'
 import { createSelectionPrompt } from '../../UI_library/components/selection_prompt.js'
 import { startCustomNodeWizard } from './customnodewizard.js'
-import { contextmenu } from './graph_contextmenu.js'
+import { contextmenu, addModuleToList } from './graph_contextmenu.js'
 // import { openWindow, closeWindow, showContextMenu } from './window_toggler.js'
 
 export const ActiveControllers = [] as NuniGraphController[]
@@ -27,6 +27,10 @@ type DeleteNodeOptions = {
     }
 
 const dialogBoxesContainer = D('node-windows')
+
+const is
+    = <T extends NodeTypes>(node : NuniGraphNode, type : T) 
+    : node is NuniGraphNode<T> => node.type === type
 
 export class NuniGraphController {
 /**
@@ -117,8 +121,6 @@ export class NuniGraphController {
 
         // Right-click options
         this.renderer.canvas.oncontextmenu = (e : MouseEvent) => {
-            e.preventDefault()
-            // this.showContextMenu(e.clientX, e.clientY)
             this.showContextMenu(e.clientX, e.clientY)
         }
     }
@@ -274,50 +276,52 @@ export class NuniGraphController {
             return;
         }
 
-        // If this is a module, mark it as active.
-        if (node.audioNode instanceof NuniGraphAudioNode) 
+        const barContent = E('span', 
+            { children: node.INPUT_NODE_ID || node.id === 0
+                ? undefined
+                : [titleEditor()] 
+            })
+        
+        if (is(node, NodeTypes.MODULE))
         {
+            // Mark the controller as 'active'
             const controller = node.audioNode.controller
-            if (ActiveControllers.includes(controller)) throw 'graph_controller.ts - shouldn\'t have happened'
+            if (ActiveControllers.includes(controller)) throw `graph_controller.ts - this shouldn't have happened`
             ActiveControllers.push(controller)
             node.audioNode.activateWindow()
-        }
 
-        
-        const barContent = E('span', { children: [titleEditor()] })
-
-        if (node.type === NodeTypes.MODULE)
-        {
+            // Add a button for additional options
             const gearButton = E('button', 
             { text: '⚙️'
-            , props: 
-                { onclick: (e : any) => {
-                    const prompt = createSelectionPrompt(['Create Custom Node..'])
+            , props:
+                { onclick: () => {
+                    const prompt = createSelectionPrompt(
+                        [ 'Create Custom Node..'
+                        , 'Save Module'
+                        ])
                     barContent.appendChild(prompt)
                     prompt.style.margin = '30px -100px'
 
                     // Delay this or it will register on the same click
                     requestAnimationFrame(_ =>
-                        window.addEventListener('click', (e : any) => {
-                            if (e.target === prompt.children[0]) 
+                        window.addEventListener('click', (e : MouseEvent) => {
+                            const [createCustomNode, saveModule] = prompt.children
+                            if (e.target === createCustomNode) 
                             {
-                                startCustomNodeWizard(node as any)
+                                startCustomNodeWizard(node)
+                            }
+                            else if (e.target === saveModule)
+                            {
+                                addModuleToList(
+                                    node.title || 'Untitled',
+                                    node.audioNode.controller.g.toString())
                             }
                             barContent.removeChild(barContent.lastElementChild!)
                         }, { once: true }))
-
                     }
                 }
             })
             barContent.appendChild(gearButton)
-        }
-
-        if (node.INPUT_NODE_ID || node.id === 0) 
-        {
-            while (barContent.lastElementChild) 
-            {
-                barContent.removeChild(barContent.lastElementChild);
-            }
         }
 
         // Create dialogBox:
@@ -341,10 +345,9 @@ export class NuniGraphController {
 
         dialogBoxesContainer.appendChild(dialogBox)
 
-
         // Place diaglogBox:
         moveTheWindowToTheTop(dialogBox)
-        if (node.id in this.lastNodeWindowPosition) 
+        if (this.lastNodeWindowPosition[node.id]) 
         {
             // Place it where it was:
             const [x,y] = this.lastNodeWindowPosition[node.id]
@@ -590,8 +593,8 @@ export class NuniGraphController {
         if (!this.selectionStart    // A selection is not currently being made
             && selectedNodes.length // A group of nodes is selected
             && isPressing)          // The user is pressing
-        {                    
-                
+        {
+
             const { node, bounds } = this.lastMouse_DownMsg
 
             const { U, D, L, R } = bounds || { U: 0, D: 0, L: 0, R: 0 }
@@ -749,36 +752,6 @@ export class NuniGraphController {
 
 
     private keydown(e : KeyboardEvent) {
-        // undo/redo with keyboard disabled, for now
-        // if (this.undoRedoModule.tryInput(e)) 
-        // {
-
-        //     // SGS doesn't support window staying open throughout undo/redo
-        //     this.closeAllWindows()
-
-            // // Close the ones that shouldn't be there anymore
-            // // const IDs = new Set(this.g.nodes.map(node => node.id))
-            // // for (const nodeId in this.getOpenWindow) 
-            // // {
-            // //     if (!IDs.has(+nodeId)) 
-            // //     {
-            // //         this.closeWindow(+nodeId)
-            //  //     }
-            // // }
-        //     this.renderer.render()
-        // }
-
-        // for (const { audioNode } of this.g.nodes) 
-        // {
-        //     if (audioNode instanceof NuniGraphAudioNode && 
-        //         audioNode.windowIsOpen &&
-        //         audioNode.controller.selectedNodes.length > 0) {
-            
-        //         // Don't do mouse events here
-        //         return; 
-        //     }
-        // }
-        
         // 46 for Windows, 8 for Apple
         if (e.keyCode === 46 || (ISMAC && e.keyCode === 8))
         {
