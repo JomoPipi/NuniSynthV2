@@ -5,6 +5,8 @@
 
 
 
+import { BufferUtils } from "../buffer_utils/internal.js"
+import { BufferStorage } from "./buffer_storage.js"
 // File System Dialog
 
 import { makeNuniFile, loadNuniFile } from "./save_project.js"
@@ -28,27 +30,29 @@ if (!fs.existsSync(projectsFolderPath))
 // console.log(store.get('unicorn'))
 
 export function saveProject() {
+    D('wait-cursor').classList.add('show')
+
     if (makeNuniFile.currentFileName) 
     {
-        D('wait-cursor').classList.add('show')
 
+        const fileName = makeNuniFile.currentFileName
         const file = makeNuniFile()
         const filePath = projectsFolderPath + '\\' 
-            + makeNuniFile.currentFileName
+            + fileName
             + '.nuni'
 
-        fs.writeFileSync(filePath, file)
+        saveProtocol(filePath, file)
 
         D('main-nav-menu').style.cursor = 'wait'
-        
-        setTimeout(() => {
-            D('wait-cursor').classList.remove('show')
-        }, 500)
     } 
     else 
     {
         saveProjectAs()
     }
+    
+    setTimeout(() => {
+        D('wait-cursor').classList.remove('show')
+    }, 500)
 }
 
 const title = 'NuniSynth Project Folder'
@@ -56,12 +60,13 @@ const filters = [{ name: 'nuni', extensions: ['nuni'] }]
 
 export function saveProjectAs() {
 
+    const fileName = makeNuniFile.currentFileName
     const options = 
         { title
         , filters
         , defaultPath: projectsFolderPath 
             + '\\'
-            + (makeNuniFile.currentFileName || 'Untitled')
+            + (fileName || 'Untitled')
         }
 
     dialog
@@ -70,14 +75,8 @@ export function saveProjectAs() {
             if (!canceled) 
             {
                 const file = makeNuniFile()
-                fs.writeFileSync(filePath, file)
-
-                makeNuniFile.currentFileName = 
-                D('project-title').textContent =
-                    filePath
-                        .replace(projectsFolderPath, '')
-                        .replace('.nuni', '')
-                        .slice(1)
+                saveProtocol(filePath, file)
+                setProjectTitle(filePath)
             }
         })
 }
@@ -93,17 +92,67 @@ export function openExistingProject() {
     dialog
         .showOpenDialog(options)
         .then(({ canceled, filePaths } : Indexed) => {
-
             if (!canceled) 
             {
-                loadNuniFile(fs.readFileSync(filePaths[0], 'utf8'))
-
-                D('project-title').textContent =
-                makeNuniFile.currentFileName = 
-                    filePaths[0]
-                        .replace(projectsFolderPath, '')
-                        .replace('.nuni', '')
-                        .slice(1)
+                const file = fs.readFileSync(filePaths[0], 'utf8')
+                loadNuniFile(file)
+                setProjectTitle(filePaths[0])
+                loadBuffers(filePaths[0])
             }
         })
+}
+
+function setProjectTitle(path : string) {
+    D('project-title').textContent =
+    makeNuniFile.currentFileName = 
+        path
+            .replace(projectsFolderPath, '')
+            .replace('.nuni', '')
+            .slice(1)
+}
+
+function saveProtocol(filePath : string, file : string) {
+    fs.writeFileSync(filePath, file)
+    const fileName = filePath.split('\\').pop()!.replace('.nuni', '')
+    saveBuffers(fileName)
+}
+
+const audioBuffersFolderPath = userDataPath + '\\AudioBuffers'
+
+if (!fs.existsSync(audioBuffersFolderPath)) 
+{
+    log(`Created folder in ${audioBuffersFolderPath}`)
+    fs.mkdirSync(audioBuffersFolderPath)
+}
+
+function saveBuffers(fileName : string) {
+    const buffersPath = audioBuffersFolderPath + '\\' + fileName
+    if (!fs.existsSync(buffersPath)) 
+    {
+        fs.mkdirSync(buffersPath)
+    }
+    for (let i = 0; i < BufferUtils.nBuffers; i++)
+    {
+        const path = buffersPath + '\\' + i
+        fs.writeFileSync(path, Buffer.from(BufferStorage.get(i).getChannelData(0)))
+    }
+}
+
+function loadBuffers(path : string) {
+    const fileName = path.split('\\').pop()!.replace('.nuni', '')
+    const buffersPath = audioBuffersFolderPath + '\\' + fileName
+
+    try {
+        for (let i = 0; i < BufferUtils.nBuffers; i++)
+        {
+            const path = buffersPath + '\\' + i
+            const buff = fs.readFileSync(path)
+            const f32Array = Float32Array.from(buff)
+            BufferStorage.get(i).copyToChannel(f32Array, 0)   
+        }
+    } 
+    catch(e)
+    {
+        console.warn('failed to read buffers')
+    }
 }

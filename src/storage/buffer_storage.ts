@@ -15,4 +15,8 @@ function set(key : number, buffer : AudioBuffer) {
     buffers[key] = buffer
 }
 
-export const BufferStorage = { set, get }
+function list() {
+    return Object.keys(buffers)
+}
+
+export const BufferStorage = { set, get, list }

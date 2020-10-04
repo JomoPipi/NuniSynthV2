@@ -132,7 +132,7 @@ export function addModuleToList(title : string, graphCode : string) {
 }
 
 // Fill up the menu
-const btnList = E('ul', { text: ' Create New Node..' })
+const btnList = E('ul', { text: ' Create New Node...' })
 const container2 = E('li', { children: [btnList] })
 const container = E('ul', { children: [container2] })
 contextmenu.appendChild(container)
