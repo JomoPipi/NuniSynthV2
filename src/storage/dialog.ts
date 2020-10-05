@@ -129,31 +129,37 @@ const audioBuffersFolderPath = userDataPath + '\\AudioBuffers'
 
 if (!fs.existsSync(audioBuffersFolderPath)) 
 {
-    log(`Created folder in ${audioBuffersFolderPath}`)
+    log(`Created folder at ${audioBuffersFolderPath}.`)
     fs.mkdirSync(audioBuffersFolderPath)
 }
 
-const KEY_SEPARATOR = '-__-'
-const CHANNEL_SEPARATOR = '_--_'
+const CHANNEL_SEPARATOR = '-__-'
 const META = '-_-_-metadata'
 
 function saveBuffers(fileName : string) {
     const buffersPath = audioBuffersFolderPath + '\\' + fileName
     
-    for (let key = 0; key < 26; key++)
+    if (!fs.existsSync(buffersPath)) 
     {
-        const path = buffersPath + KEY_SEPARATOR + key
+        log(`Created folder for ${fileName}'s audio buffers at ${buffersPath}.`)
+        fs.mkdirSync(buffersPath)
+    }
+
+    
+    for (let key = 0; key < BufferUtils.nBuffers; key++)
+    {
+        const path = buffersPath + '\\' + key
         const audioBuffer = BufferStorage.get(key)
         const { numberOfChannels, length, sampleRate } = audioBuffer
         const metadata = JSON.stringify({ numberOfChannels, length, sampleRate })
         const metadataPath = path + META
         fs.writeFileSync(metadataPath, metadata)
 
-        for (let i = 0; i < numberOfChannels; i++)
+        for (let ch = 0; ch < numberOfChannels; ch++)
         {
-            const float32Array = audioBuffer.getChannelData(i)
+            const float32Array = audioBuffer.getChannelData(ch)
             const buffer = Buffer.from(float32Array.buffer)
-            const channelPath = path + CHANNEL_SEPARATOR + i
+            const channelPath = path + CHANNEL_SEPARATOR + ch
             fs.writeFileSync(channelPath, buffer)
         }
     }
@@ -162,10 +168,10 @@ function saveBuffers(fileName : string) {
 function loadBuffers(filePath : string) {
     const fileName = filePath.split('\\').pop()!.replace('.nuni', '')
     const buffersPath = audioBuffersFolderPath + '\\' + fileName
-    
-    for (let key = 0; key < 26; key++)
+
+    for (let key = 0; key < BufferUtils.nBuffers; key++)
     {
-        const path = buffersPath + KEY_SEPARATOR + key
+        const path = buffersPath + '\\' + key
         const metadataPath = path + META
         if (!fs.existsSync(metadataPath))
         {
@@ -200,6 +206,9 @@ function loadBuffers(filePath : string) {
 
 
 function roundTripTest() {
+    // This test saves the contents of buffer A to disk,
+    // And then loads it into buffer B
+
     const buffersPath = audioBuffersFolderPath + '\\' + '__test__'
     const audioBuffer = BufferStorage.get(0)
     const nChannels = audioBuffer.numberOfChannels
