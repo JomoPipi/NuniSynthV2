@@ -14,7 +14,6 @@ import { BufferStorage } from "./buffer_storage.js"
 import { makeNuniFile, loadNuniFile } from "./save_project.js"
 
 const { dialog } = require('electron').remote
-
 const { app } = require('electron').remote
 const userDataPath : string = app.getPath('userData')
 const fs = require('fs')
@@ -175,7 +174,7 @@ function loadBuffers(filePath : string) {
         const metadataPath = path + META
         if (!fs.existsSync(metadataPath))
         {
-            console.warn('could not retrieve buffer metadata at ' + metadataPath)
+            console.warn('Could not retrieve buffer metadata at ' + metadataPath)
             return;
         }
         const metadata = fs.readFileSync(metadataPath)
