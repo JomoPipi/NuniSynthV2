@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "@types/dom-mediacapture-record": "^1.0.7",
+    "audiobuffer-to-wav": "^1.0.0",
     "electron-packager": "^15.1.0",
     "electron-squirrel-startup": "^1.0.0"
   },

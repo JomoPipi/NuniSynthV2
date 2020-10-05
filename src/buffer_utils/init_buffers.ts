@@ -36,7 +36,7 @@ class BufferUtily {
     lastRecorderRequestId : number
     stopLastRecorder : Function
     nextBufferDuration : number
-    nBuffers : number
+    readonly nBuffers : number
     private refreshFunc : Function
     
     constructor() {

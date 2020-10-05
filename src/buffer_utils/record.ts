@@ -103,7 +103,7 @@ export function recordTo(index : number) {
             try {
                 const arraybuffer = await audioBlob.arrayBuffer()
                 const audiobuffer = await audioCtx.decodeAudioData(arraybuffer)
-                const rate =  audioCtx.sampleRate
+                const rate = audioCtx.sampleRate
 
                 // This new buffer ensures that the length is exact
                 const buffer = 
