@@ -7,7 +7,7 @@
 
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { sequencerControls } from './sequencer_controls.js'
-import { BufferUtils } from '../../buffer_utils/internal.js'
+import { BufferUtils, drawBuffer, drawBuffer2 } from '../../buffer_utils/internal.js'
 import { audioCaptureNodeControls } from './audio_capture_controls.js'
 import { createResizeableGraphEditor } from './resizeable_graph_editor.js'
 import 
@@ -21,6 +21,7 @@ import
     } from '../../UI_library/internal.js'
 import { createSubdivSelect } from './dialogbox_components.js'
 import { GraphController } from '../init.js'
+import { BufferStorage } from '../../storage/buffer_storage.js'
 
 
 
@@ -310,18 +311,29 @@ function samplerControls(audioNode : BufferNode2) {
     const value = E('span', { text: String.fromCharCode(65 + audioNode.bufferKey) })
     box.appendChild(value)
 
+    const canvas = E('canvas')
+    canvas.style.display = 'inline'
+    const size = 25
+    const H = canvas.height = size
+    const W = canvas.width = size 
+    const ctx = canvas.getContext('2d')!
+    const buffer = BufferStorage.get(audioNode.bufferKey).getChannelData(0)
+    drawBuffer2(buffer, ctx, H, W)
+    box.appendChild(canvas)
+
     // TODO: change this to a select box, 
     // and don't depend on BufferUtils, 
     // depend on BufferStorage, instead.
     ;['-','+'].forEach((op,i) => { // change the buffer index
         const btn = E('button', { text: op })
         btn.onclick = () => {
-            const v = clamp(0, 
+            const key = clamp(0,
                 audioNode.bufferKey + Math.sign(i - .5), 
                 BufferUtils.nBuffers-1)
 
-            value.innerText = String.fromCharCode(65 + v)
-            audioNode.bufferKey = v
+            value.innerText = String.fromCharCode(65 + key)
+            audioNode.bufferKey = key
+            drawBuffer2(BufferStorage.get(key).getChannelData(0), ctx, H, W)
         }
         box.appendChild(btn)
     })
@@ -329,7 +341,7 @@ function samplerControls(audioNode : BufferNode2) {
     box.appendChild(createToggleButton(
         audioNode, 
         'loop', 
-        { update: (on : boolean) => audioNode.refresh()}
+        { update: (on : boolean) => audioNode.refresh() }
         ))
 
     return box

@@ -362,7 +362,8 @@ button {
     @extend .some-margin;
     display: inline-grid;
     width: 60%;
-    grid-template-columns: 0.5fr 0.25fr 0.25fr 0.25fr 0.5fr;
+    gap: 5px;
+    grid-template-columns: 0.5fr 0.5fr 0.25fr 0.25fr 0.25fr 0.5fr;
 }
 
 
