@@ -20,9 +20,11 @@ code {
 .some-margin {
     margin: 10px;
 } 
-
 .some-padding {
-    padding: 2%;
+    padding: 10px;
+}
+.some-border {
+    border: 10px solid transparent;
 }
 
 .shrink {

@@ -335,13 +335,14 @@ button {
           box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.4);
 }
 
-.buffer-row {
+.buffer-stuff-row {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   display: -ms-inline-grid;
   display: inline-grid;
-  width: 60%;
-  gap: 5px;
-  -ms-grid-columns: 0.5fr 0.5fr 0.25fr 0.25fr 0.25fr 0.5fr;
-      grid-template-columns: 0.5fr 0.5fr 0.25fr 0.25fr 0.25fr 0.5fr;
+  width: 100%;
+  -ms-grid-columns: 0.5fr 0.25fr 0.25fr 0.25fr 0.5fr 0.5fr;
+      grid-template-columns: 0.5fr 0.25fr 0.25fr 0.25fr 0.5fr 0.5fr;
 }
 
 #buffer-canvas {
@@ -390,12 +391,16 @@ code {
   display: none;
 }
 
-.some-margin, .buffer-row {
+.some-margin {
   margin: 10px;
 }
 
 .some-padding {
-  padding: 2%;
+  padding: 10px;
+}
+
+.some-border {
+  border: 10px solid transparent;
 }
 
 .shrink {

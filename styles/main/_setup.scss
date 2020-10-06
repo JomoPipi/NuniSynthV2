@@ -358,12 +358,12 @@ button {
     box-shadow: 0px 5px 10px rgba(0,0,0,0.4);
 }
 
-.buffer-row {
-    @extend .some-margin;
+.buffer-stuff-row {
+    // @extend .some-border;
+    box-sizing: border-box;
     display: inline-grid;
-    width: 60%;
-    gap: 5px;
-    grid-template-columns: 0.5fr 0.5fr 0.25fr 0.25fr 0.25fr 0.5fr;
+    width: 100%;
+    grid-template-columns:  0.5fr 0.25fr 0.25fr 0.25fr 0.5fr 0.5fr;
 }
 
 

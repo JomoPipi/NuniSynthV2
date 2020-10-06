@@ -12,7 +12,8 @@ import { audioCaptureNodeControls } from './audio_capture_controls.js'
 import { createResizeableGraphEditor } from './resizeable_graph_editor.js'
 import 
     { NuniSourceNode, BufferNode2, Sequencer
-    , AudioBufferCaptureNode, NuniGraphAudioNode, MasterClock, PianoRoll12Tone 
+    , AudioBufferCaptureNode, NuniGraphAudioNode
+    , MasterClock, PianoRoll12Tone, OscillatorNode2 
     } from '../../webaudio2/internal.js'
 import 
     { createDraggableNumberInput
@@ -45,8 +46,6 @@ export function createValuesWindow(
 
     if (audioNode instanceof NuniGraphAudioNode) 
     {
-        // TODO: Don't style in JS
-        controls.style.margin = '0 0'
         controls.appendChild(createResizeableGraphEditor(audioNode))
     }
 
@@ -65,7 +64,7 @@ export function createValuesWindow(
         controls.appendChild(samplerControls(audioNode))
     }
 
-    if (audioNode instanceof NuniSourceNode) 
+    if (audioNode instanceof OscillatorNode2) 
     {
         controls.appendChild(activateKeyboardButton(audioNode))
     }
@@ -303,23 +302,24 @@ function insertOptions(select : HTMLSelectElement, options : string[]) {
 
 
 function samplerControls(audioNode : BufferNode2) {
-    const box = E('span', 
-        { className: 'buffer-row'
-        , children: [E('span', { text: 'buffer' })]
-        })
+    const box = E('span', { className: 'buffer-stuff-row' })
         
+    const canvas = E('canvas', { className: 'some-border' })
+    canvas.style.display = 'block'
+    const size = 50
+    const H = canvas.height = size
+    const W = canvas.width = size * 4
+    const ctx = canvas.getContext('2d')!
+    ;(audioNode.refreshObserver = () => {
+        const buffer = BufferStorage.get(audioNode.bufferKey).getChannelData(0)
+        drawBuffer2.call(null, buffer, ctx, H, W)
+    })()
+
+    box.appendChild(E('span', { text: 'buffer' }))
+
     const value = E('span', { text: String.fromCharCode(65 + audioNode.bufferKey) })
     box.appendChild(value)
 
-    const canvas = E('canvas')
-    canvas.style.display = 'inline'
-    const size = 25
-    const H = canvas.height = size
-    const W = canvas.width = size 
-    const ctx = canvas.getContext('2d')!
-    const buffer = BufferStorage.get(audioNode.bufferKey).getChannelData(0)
-    drawBuffer2(buffer, ctx, H, W)
-    box.appendChild(canvas)
 
     // TODO: change this to a select box, 
     // and don't depend on BufferUtils, 
@@ -343,8 +343,11 @@ function samplerControls(audioNode : BufferNode2) {
         'loop', 
         { update: (on : boolean) => audioNode.refresh() }
         ))
+        
+    box.appendChild(activateKeyboardButton(audioNode))
 
-    return box
+    const container = E('div', { className: 'some-border vert-split', children: [box, canvas] })
+    return container
 }
 
 
