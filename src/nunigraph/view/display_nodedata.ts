@@ -7,7 +7,7 @@
 
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { sequencerControls } from './sequencer_controls.js'
-import { BufferUtils, drawBuffer, drawBuffer2 } from '../../buffer_utils/internal.js'
+import { BufferUtils  } from '../../buffer_utils/internal.js'
 import { audioCaptureNodeControls } from './audio_capture_controls.js'
 import { createResizeableGraphEditor } from './resizeable_graph_editor.js'
 import 
@@ -22,7 +22,6 @@ import
     } from '../../UI_library/internal.js'
 import { createSubdivSelect } from './dialogbox_components.js'
 import { GraphController } from '../init.js'
-import { BufferStorage } from '../../storage/buffer_storage.js'
 
 
 
@@ -303,21 +302,11 @@ function insertOptions(select : HTMLSelectElement, options : string[]) {
 
 function samplerControls(audioNode : BufferNode2) {
     const box = E('span', { className: 'buffer-stuff-row' })
-        
-    const canvas = E('canvas', { className: 'some-border' })
-    canvas.style.display = 'block'
-    const size = 50
-    const H = canvas.height = size
-    const W = canvas.width = size * 4
-    const ctx = canvas.getContext('2d')!
-    ;(audioNode.refreshObserver = () => {
-        const buffer = BufferStorage.get(audioNode.bufferKey).getChannelData(0)
-        drawBuffer2.call(null, buffer, ctx, H, W)
-    })()
 
     box.appendChild(E('span', { text: 'buffer' }))
 
-    const value = E('span', { text: String.fromCharCode(65 + audioNode.bufferKey) })
+    const text = String.fromCharCode(65 + audioNode.bufferKey)
+    const value = E('span', { text })
     box.appendChild(value)
 
 
@@ -333,7 +322,6 @@ function samplerControls(audioNode : BufferNode2) {
 
             value.innerText = String.fromCharCode(65 + key)
             audioNode.bufferKey = key
-            drawBuffer2(BufferStorage.get(key).getChannelData(0), ctx, H, W)
         }
         box.appendChild(btn)
     })
@@ -346,7 +334,12 @@ function samplerControls(audioNode : BufferNode2) {
         
     box.appendChild(activateKeyboardButton(audioNode))
 
-    const container = E('div', { className: 'some-border vert-split', children: [box, canvas] })
+    // customElements.define('buffer-boundaries', class extends HTMLElement)
+
+    const container = E('div', 
+        { className: 'some-border vert-split'
+        , children: [box, audioNode.canvas] 
+        })
     return container
 }
 

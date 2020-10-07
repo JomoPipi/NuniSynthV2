@@ -79,6 +79,4 @@ class AudioContext2 extends AudioContext {
 
 export const audioCtx = new AudioContext2()
 
-;(async () => {
-    await audioCtx.audioWorklet.addModule('dist/webaudio2/white-noise-processor.js')
-})()
+audioCtx.audioWorklet.addModule('dist/webaudio2/white-noise-processor.js')

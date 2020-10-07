@@ -5,7 +5,7 @@
 
 
 
-import { drawBuffer } from './draw_buffer.js'
+import { drawBuffer, drawBuffer2 } from './draw_buffer.js'
 import { BufferStorage } from '../storage/buffer_storage.js'
 
 
@@ -38,6 +38,7 @@ class BufferUtily {
     nextBufferDuration : number
     readonly nBuffers : number
     private refreshFunc : Function
+    private imageDataCenter : Record<number,ImageData>
     
     constructor() {
         this.currentIndex = 0
@@ -46,6 +47,18 @@ class BufferUtily {
         this.nextBufferDuration = +(D('new-buffer-length') as HTMLSelectElement).value
         this.nBuffers = 26
         this.refreshFunc = (x : never) => x
+        this.imageDataCenter = {}
+    }
+
+    getImage(key : number, ctx : CanvasRenderingContext2D, H : number, W : number) {
+        const data = this.imageDataCenter[key]
+        if (data) return data
+        const buffer = BufferStorage.get(key).getChannelData(0)
+        const imageData 
+            = this.imageDataCenter[key] 
+            = drawBuffer2.call(null, buffer, ctx, H, W)
+            
+        return imageData
     }
 
     updateBufferUI() {

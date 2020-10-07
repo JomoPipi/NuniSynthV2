@@ -24,9 +24,5 @@ import { reallyDrawBuffer } from './draw_buffer_worker.js'
 
 export function drawBuffer2(buffer : Float32Array, ctx : CanvasRenderingContext2D, H : number, W : number) {
     reallyDrawBuffer(buffer, ctx, H, W)
-    log('drew it')
+    return ctx.getImageData(0, 0, W, H)
 }
-
-// function resizeBuffer() {
-//     worker.postMessage({ resize: true })
-// }

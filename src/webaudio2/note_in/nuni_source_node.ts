@@ -28,7 +28,6 @@ export class NuniSourceNode extends VolumeNodeContainer {
     private stopLastNSources : StopFunc[]
     private _kbMode : boolean
     protected soloSource? : SoundSource
-    refreshObserver? : Function
     
     constructor(ctx : AudioContext) {
         super(ctx)
@@ -50,8 +49,6 @@ export class NuniSourceNode extends VolumeNodeContainer {
     }
 
     refresh() {
-        this.refreshObserver && this.refreshObserver()
-        
         if (this.soloSource) 
         {
             this.soloSource.stop(0)
