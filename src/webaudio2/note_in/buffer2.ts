@@ -8,7 +8,8 @@
 import { NuniSourceNode } from './nuni_source_node.js'
 import { NuniAudioParam } from '../nuni_audioparam.js'
 import { BufferStorage } from '../../storage/buffer_storage.js'
-import { BufferCanvas } from './buffercanvas.js'
+import { BufferCanvasFrame } from './buffercanvas.js'
+
 
 export class BufferNode2 extends NuniSourceNode {
     /**
@@ -20,7 +21,9 @@ export class BufferNode2 extends NuniSourceNode {
     private _bufferKey : number
     detune : NuniAudioParam
     playbackRate : NuniAudioParam
-    bufferCanvas : BufferCanvas
+    bufferCanvas : BufferCanvasFrame
+    loopStart = 0
+    loopEnd = 0
     
     constructor(ctx : AudioContext) {
         super(ctx)
@@ -31,7 +34,12 @@ export class BufferNode2 extends NuniSourceNode {
         this.playbackRate = new NuniAudioParam(ctx)
 
         this.kbMode = false
-        this.bufferCanvas = new BufferCanvas()
+        this.bufferCanvas = new BufferCanvasFrame({
+            onChange: (start : number, end : number) => {
+                this.loopStart = start
+                this.loopEnd = end
+            }
+        })
     }
 
     set bufferKey(key : number) {
@@ -52,6 +60,8 @@ export class BufferNode2 extends NuniSourceNode {
         this.playbackRate.connect(src.playbackRate)
         src.buffer = BufferStorage.get(this._bufferKey)
         src.loop = this.loop
+        src.loopStart = this.loopStart
+        src.loopEnd = this.loopEnd
 
         return src
     }

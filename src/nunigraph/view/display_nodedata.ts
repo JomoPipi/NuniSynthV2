@@ -336,7 +336,7 @@ function samplerControls(audioNode : BufferNode2) {
 
     const container = E('div', 
         { className: 'some-border vert-split'
-        , children: [box, audioNode.bufferCanvas.canvas] 
+        , children: [box, audioNode.bufferCanvas.frame] 
         })
     return container
 }

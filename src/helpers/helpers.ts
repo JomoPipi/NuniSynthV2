@@ -46,13 +46,14 @@ type ElementSettings = {
     className? : string
     children? : HTMLElement[]
     props? : Indexed
+    is? : string
 }
 
 const E = <T extends string>(x : T, settings : ElementSettings = {}) => {
-    const element = document.createElement(x) as CreatedElement<T>
-    
-    const { text, className, children, props } = settings
 
+    const { text, className, children, props, is } = settings
+    const element = document.createElement(x, { is }) as CreatedElement<T>
+    
     element.innerText = text || ''
 
     if (className)
