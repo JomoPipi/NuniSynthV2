@@ -8,7 +8,7 @@
 import { NuniSourceNode } from './nuni_source_node.js'
 import { NuniAudioParam } from '../nuni_audioparam.js'
 import { BufferStorage } from '../../storage/buffer_storage.js'
-import { BufferUtils } from '../../buffer_utils/internal.js'
+import { BufferCanvas } from './buffercanvas.js'
 
 export class BufferNode2 extends NuniSourceNode {
     /**
@@ -20,8 +20,7 @@ export class BufferNode2 extends NuniSourceNode {
     private _bufferKey : number
     detune : NuniAudioParam
     playbackRate : NuniAudioParam
-    canvas : HTMLCanvasElement
-    updateCanvas : Function
+    bufferCanvas : BufferCanvas
     
     constructor(ctx : AudioContext) {
         super(ctx)
@@ -32,15 +31,13 @@ export class BufferNode2 extends NuniSourceNode {
         this.playbackRate = new NuniAudioParam(ctx)
 
         this.kbMode = false
-        const [canvas,updateCanvas] = createCanvas(this)
-        this.canvas = canvas
-        this.updateCanvas = updateCanvas
+        this.bufferCanvas = new BufferCanvas()
     }
 
     set bufferKey(key : number) {
         this._bufferKey = key
         this.refresh()
-        this.updateCanvas()
+        this.bufferCanvas.setKey(key)
     }
 
     get bufferKey() {
@@ -58,19 +55,4 @@ export class BufferNode2 extends NuniSourceNode {
 
         return src
     }
-}
-
-function createCanvas(audioNode : BufferNode2) : [HTMLCanvasElement, Function] {
-    const canvas = E('canvas', { className: 'some-border' })
-    const size = 50
-    const H = canvas.height = size
-    const W = canvas.width = size * 4
-    const ctx = canvas.getContext('2d')!
-    const updateCanvas = () => {
-        const imageData = BufferUtils.getImage(audioNode.bufferKey, ctx, H, W)
-        ctx.putImageData(imageData, 0, 0)
-    }
-    updateCanvas()
-
-    return [canvas, updateCanvas]
 }

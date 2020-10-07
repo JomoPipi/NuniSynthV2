@@ -334,11 +334,9 @@ function samplerControls(audioNode : BufferNode2) {
         
     box.appendChild(activateKeyboardButton(audioNode))
 
-    // customElements.define('buffer-boundaries', class extends HTMLElement)
-
     const container = E('div', 
         { className: 'some-border vert-split'
-        , children: [box, audioNode.canvas] 
+        , children: [box, audioNode.bufferCanvas.canvas] 
         })
     return container
 }
