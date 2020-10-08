@@ -23,9 +23,8 @@ export class BufferNode2 extends NuniSourceNode {
     detune : NuniAudioParam
     playbackRate : NuniAudioParam
     bufferCanvas : BufferCanvasFrame
-    loopStart = 0
-    loopEnd = 1
-    duration = 0
+    _loopStart = 0
+    _loopEnd = 1
     
     constructor(ctx : AudioContext) {
         super(ctx)
@@ -40,16 +39,30 @@ export class BufferNode2 extends NuniSourceNode {
             update: (isStart : boolean, value : number) => {
                 if (isStart)
                 {
-                    this.loopStart = value
+                    this._loopStart = value
                 }
                 else
                 {
-                    this.loopEnd = value
+                    this._loopEnd = value
                 }
                 NuniSourceNode.prototype.refresh.call(this)
             }
         })
     }
+
+    set loopStart(value : number) {
+        this._loopStart = value
+        this.bufferCanvas.updateLoopStartOrEnd(value, true)
+        NuniSourceNode.prototype.refresh.call(this)
+    }
+    get loopStart() { return this._loopStart }
+
+    set loopEnd(value : number) {
+        this._loopEnd = value
+        this.bufferCanvas.updateLoopStartOrEnd(value, false)
+        NuniSourceNode.prototype.refresh.call(this)
+    }
+    get loopEnd() { return this._loopEnd }
 
     set bufferKey(key : number) {
         this._bufferKey = key
@@ -60,7 +73,7 @@ export class BufferNode2 extends NuniSourceNode {
     get bufferKey() {
         return this._bufferKey
     }
-    
+
     refresh() {
         NuniSourceNode.prototype.refresh.call(this)
         this.bufferCanvas?.setKey(this._bufferKey)
@@ -72,11 +85,11 @@ export class BufferNode2 extends NuniSourceNode {
         src.playbackRate.setValueAtTime(0, this.ctx.currentTime)
         this.detune.connect(src.detune)
         this.playbackRate.connect(src.playbackRate)
-        const reversed = this.loopStart > this.loopEnd
+        const reversed = this._loopStart > this._loopEnd
         src.buffer = BufferStorage.get(this._bufferKey, reversed)
         src.loop = this.loop
-        src.loopStart = Math.min(this.loopStart, this.loopEnd) * src.buffer.duration
-        src.loopEnd = Math.max(this.loopStart, this.loopEnd) * src.buffer.duration
+        src.loopStart = Math.min(this._loopStart, this._loopEnd) * src.buffer.duration
+        src.loopEnd = Math.max(this._loopStart, this._loopEnd) * src.buffer.duration
 
         return src
     }

@@ -412,6 +412,8 @@ const Transferable_AudioNodeProperties = Object.assign(
     , phaseShift  : true
     , channelData : true
     , MMLString   : true
+    , loopStart   : true
+    , loopEnd     : true
     },
     Transferable_Pianoroll_properties)
 

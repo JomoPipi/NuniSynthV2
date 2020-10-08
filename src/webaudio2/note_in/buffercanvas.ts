@@ -18,6 +18,11 @@ export class BufferCanvasFrame {
     private ctx
     frame : HTMLDivElement
     canvas : HTMLCanvasElement
+    left : HTMLElement
+    right : HTMLElement
+    lPanel : HTMLElement
+    rPanel : HTMLElement
+    shadowRoot : ShadowRoot
 
     constructor({ update } : Arguments) {
         this.frame = E('div', { className: 'center' })
@@ -64,15 +69,12 @@ export class BufferCanvasFrame {
         <div id="left" class="slice left" >🔪</div>
         <div id="right"class="slice right">🔪</div>`
 
-        const left = shadowRoot.getElementById('left')!
-        const right = shadowRoot.getElementById('right')!
-        const lPanel = shadowRoot.getElementById('left-panel')!
-        const rPanel = shadowRoot.getElementById('right-panel')!
-        const canvas = shadowRoot.getElementById('canvas')! as 
+        this.lPanel = shadowRoot.getElementById('left-panel')!
+        this.rPanel = shadowRoot.getElementById('right-panel')!
+        this.left = shadowRoot.getElementById('left')!
+        this.right = shadowRoot.getElementById('right')!
+        const canvas = this.canvas = shadowRoot.getElementById('canvas')! as 
             HTMLCanvasElement
-
-        left.onmousedown = doUntilMouseUp(mousemove(true), { mouseup: mouseup(true) })
-        right.onmousedown = doUntilMouseUp(mousemove(false), { mouseup: mouseup(false) })
 
         function mouseup(grabbingLeftSlicer : boolean) {
             return (e : MouseEvent) => {
@@ -83,32 +85,59 @@ export class BufferCanvasFrame {
             }
         }
 
-        function mousemove(grabbingLeftSlicer : boolean) {
-            return function(e : MouseEvent) {
+        const mousemove = (grabbingLeftSlicer : boolean) => {
+            return (e : MouseEvent) => {
                 const x = e.x - canvas.getBoundingClientRect().left
                 const width = canvas.offsetWidth
-                const percent = clamp(0, x/width, 1)
-                const val = width * percent
+                const val = clamp(0, x, width)
 
-                if (grabbingLeftSlicer) 
-                {
-                    lPanel.style.width = val + 'px'
-                    left.style.right = (width - val) + 'px'
-                }
-                else 
-                {
-                    rPanel.style.width = (width - val) + 'px'
-                    rPanel.style.left = val + 'px'
-                    right.style.left = val + 'px'
-                }
+                this.updateSlicers(grabbingLeftSlicer, val, width - val)
             }
         }
 
-        this.canvas = canvas
-        this.H = this.canvas.height = this.size
-        this.W = this.canvas.width = this.size * 5
-        this.ctx = this.canvas.getContext('2d')!
+        this.left.onmousedown = doUntilMouseUp(mousemove(true), { mouseup: mouseup(true) })
+        this.right.onmousedown = doUntilMouseUp(mousemove(false), { mouseup: mouseup(false) })
+
+        this.H = canvas.height = this.size
+        this.W = canvas.width = this.size * 5
+        this.ctx = canvas.getContext('2d')!
         this.refresh()
+
+        this.shadowRoot = shadowRoot
+    }
+
+    updateSlicers(leftSlicer : boolean, val : number, _val : number) {
+        if (leftSlicer) 
+        {
+            this.lPanel.style.width = val + 'px'
+            this.left.style.right = _val + 'px'
+        }
+        else 
+        {
+            this.rPanel.style.width = _val + 'px'
+            this.rPanel.style.left = val + 'px'
+            this.right.style.left = val + 'px'
+        }
+    }
+
+    updateLoopStartOrEnd(value : number, start : boolean) {
+        const width = this.canvas.offsetWidth
+
+        if (width === 0)
+        {
+            // We need to get notified when the shadowRoot gets connected to the dom tree
+            // TODO: Optimize, if possible.
+            const observer = new MutationObserver(mutations => {
+                this.updateLoopStartOrEnd(value, start)
+                observer.disconnect()
+                return;
+            })
+            observer.observe(document, { subtree: true, childList: true })
+            return;
+        }
+        const val = value * width
+        const _val = width - val
+        this.updateSlicers(start, val, _val)
     }
 
     setKey(key : number) {
