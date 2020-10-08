@@ -5,6 +5,7 @@
 
 
 
+import { doUntilMouseUp } from "../../UI_library/events/until_mouseup.js";
 import { NuniGraphAudioNode } from "../../webaudio2/internal.js"
 
 export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
@@ -23,16 +24,21 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
     bottomRow.append(dragCornernesw, bottomMiddleEdge, dragCorner)
 
     const NONE = 0, VERTICAL = 1, HORIZONTAL = 2
-    let xy : number[], wh : number[]
-    let resizeDirection = 0
-    let doLeft = false
-    let canvasMinWidth = Infinity
+    const state = 
+        { xy: [0,0]
+        , wh: [0,0]
+        , resizeDirection: 0
+        , doLeft: false
+        , canvasMinWidth: Infinity
+        }
+
+    box.onmousedown = doUntilMouseUp(mousemove, mousedown)
 
     function mousedown(e : MouseEvent) {
 
-        doLeft = [leftEdge, dragCornernesw].includes(e.target as HTMLDivElement)
+        state.doLeft = [leftEdge, dragCornernesw].includes(e.target as HTMLDivElement)
 
-        resizeDirection =
+        state.resizeDirection =
         e.target === dragCorner || 
         e.target === dragCornernesw
             ? 3
@@ -42,35 +48,32 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
             ? VERTICAL
             : NONE
 
-        if (resizeDirection === NONE) return;
+        if (state.resizeDirection === NONE) return;
 
-        xy = [e.clientX, e.clientY]
-        wh = [canvas.offsetWidth, canvas.offsetHeight]
-
-        window.addEventListener('mousemove', mousemove)
-        window.addEventListener('mouseup', mouseup)
+        state.xy = [e.clientX, e.clientY]
+        state.wh = [canvas.offsetWidth, canvas.offsetHeight]
 
         // Set the canvas' min width
         const w = canvas.width
         canvas.width = 0
-        canvasMinWidth = canvas.offsetWidth
+        state.canvasMinWidth = canvas.offsetWidth
         canvas.width = w
     }
 
     function mousemove(e : MouseEvent) {
         
         const [X,Y] = [e.clientX, e.clientY]
-        const [x,y] = xy
-        const [w,h] = wh
+        const [x,y] = state.xy
+        const [w,h] = state.wh
         
-        if (resizeDirection & HORIZONTAL) 
+        if (state.resizeDirection & HORIZONTAL) 
         {
-            if (doLeft)
+            if (state.doLeft)
             {
                 // To prevent moving the container, 
                 // we must not go lower than the min width
                 // X <= w + x - minWidth
-                const _X = Math.min(X, w + x - canvasMinWidth)
+                const _X = Math.min(X, w + x - state.canvasMinWidth)
 
                 canvas.parentElement!.parentElement!
                     .parentElement!.parentElement!.parentElement!
@@ -83,22 +86,13 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
                 canvas.width = Math.max(0, w + X - x)
             }
         }
-        if (resizeDirection & VERTICAL) 
+        if (state.resizeDirection & VERTICAL) 
         {
             canvas.height = Math.max(0, h + Y - y)
         }
 
         audioNode.controller.renderer.render()
     }
-
-    function mouseup(e : MouseEvent) {
-        
-        window.removeEventListener('mousemove', mousemove)
-        window.removeEventListener('mouseup', mouseup)
-    }
-    
-    // dragCorner.onmousedown = mousedown
-    box.onmousedown = mousedown
 
     middleRowContainer.append(leftEdge, canvas, rightEdge)
     box.append(topRow, middleRowContainer, bottomRow)

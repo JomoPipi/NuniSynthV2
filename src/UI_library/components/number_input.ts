@@ -5,6 +5,14 @@
 
 
 
+import { doUntilMouseUp } from "../events/until_mouseup.js"
+
+
+
+
+
+
+
 type UpdateFuncSettings = {
     amount : number
     min : number
@@ -26,33 +34,26 @@ export function createDraggableNumberInput(
             }
         })
 
-    let startX : number,
-        startY : number,
-        startValue : number
-
-    const mousedown = function(e : MouseEvent) {
-        startX = e.clientX
-        startY = e.clientY
-        startValue = mousedownFunc()
-        window.addEventListener('mousemove',mousemove)
-        window.addEventListener('mouseup',mouseup)
-    }
+    const state = { startX: 0, startY: 0, startValue: 0 }
 
     const update = realUpdateFunc(updateFunc, settings)
+
+    const mousedown = function(e : MouseEvent) {
+        state.startX = e.clientX
+        state.startY = e.clientY
+        state.startValue = mousedownFunc()
+    }
 
     const mousemove = function(e : MouseEvent) {
         e.stopPropagation()
         if (e.buttons !== 1) return;
         valueInput.value = 
-            update(startY-e.clientY + (e.clientX-startX)/128.0, startValue)
+            update(
+                state.startY-e.clientY + (e.clientX-state.startX)/128.0, 
+                state.startValue)
     }
 
-    const mouseup = () => {
-        window.removeEventListener('mousemove',mousemove)
-        window.removeEventListener('mouseup',mouseup)
-    }
-
-    valueInput.onmousedown = mousedown
+    valueInput.onmousedown = doUntilMouseUp(mousemove, mousedown)
     valueInput.oninput = () => updateFunc(+valueInput.value)
     return valueInput
 }

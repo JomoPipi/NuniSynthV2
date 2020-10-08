@@ -28,10 +28,16 @@ export class BufferCanvasFrame {
             position: relative;
             background-color: red;
         }
+        canvas {
+            width: 100%;
+        }
         .slice {
             position: absolute;
             cursor: grab;
             bottom: 0%;
+        }
+        .slice:active {
+            cursor: grabbing;
         }
         .left { 
             right: 100%;
@@ -40,26 +46,53 @@ export class BufferCanvasFrame {
             left: 100%;
             transform: scale(-1, 1);
         }
-        canvas {
-            width: 100%;
+        .panel {
+            height: 100%;
+            background: rgba(100,100,100,0.5);
+            position: absolute;
+            top: 0;
+        }
+        .left-panel {
+            left: 0;
         }
         </style>
         
         <canvas id="canvas"></canvas>
-        <div id="right"class="slice right">🔪</div>
         <div id="left" class="slice left" >🔪</div>
+        <div id="right"class="slice right">🔪</div>
+
+        <div id="left-panel" class="panel right-panel" ></div>
+        <div id="right-panel"class="panel left-panel"></div>
         <slot></slot>`
 
         const left = shadowRoot.getElementById('left')!
         const right = shadowRoot.getElementById('right')!
+        const lPanel = shadowRoot.getElementById('panel left-panel')!
+        const rPanel = shadowRoot.getElementById('panel right-panel')!
         const canvas = shadowRoot.getElementById('canvas')! as 
             HTMLCanvasElement
 
         log('righleft =',right.innerText, left.innerHTML)
 
         this.frame.onmousedown = (e : MouseEvent) => {
-            log(e.x)
-            log(this.canvas.offsetWidth)
+            const targ = e.target
+            if (targ === left || targ === right)
+            {
+                this.frame.onmousemove = (e : MouseEvent) => {
+                    const width = this.canvas.offsetWidth
+                    const percent = e.offsetX/width
+                    if (targ === left)
+                    {
+                        const val = width * percent
+                        log('val =',val)
+                        lPanel.style.width = val + 'px'
+                    }
+                }
+                
+                this.frame.onmouseup = () => {
+                    this.frame.onmousemove = null
+                }
+            }
         }
 
         this.canvas = canvas

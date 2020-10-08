@@ -22,6 +22,7 @@ import
     } from '../../UI_library/internal.js'
 import { createSubdivSelect } from './dialogbox_components.js'
 import { GraphController } from '../init.js'
+import { doUntilMouseUp } from '../../UI_library/events/until_mouseup.js'
 
 
 
@@ -79,7 +80,7 @@ export function createValuesWindow(
     
     if (audioNode instanceof PianoRoll12Tone)
     {
-        controls.appendChild(createResizeableEditor(
+        controls.appendChild(createResizeablePianorollEditor(
             audioNode.pianoRoll))
         //* webaudio-pianoroll has to be loaded
         //* for play() to be defined
@@ -106,7 +107,7 @@ export function createValuesWindow(
     return controls
 }
 
-function createResizeableEditor(
+function createResizeablePianorollEditor(
 content : HTMLCanvasElement) {
     const box = E('div')
     const canvas = content
@@ -127,9 +128,10 @@ content : HTMLCanvasElement) {
     let resizeDirection = 0
     let doLeft = false
     let canvasMinWidth = Infinity
+    
+    box.onmousedown = doUntilMouseUp(mousemove, mousedown)
 
     function mousedown(e : MouseEvent) {
-
         doLeft = [leftEdge, dragCornernesw].includes(e.target as HTMLDivElement)
 
         resizeDirection =
@@ -146,9 +148,6 @@ content : HTMLCanvasElement) {
 
         xy = [e.clientX, e.clientY]
         wh = [canvas.offsetWidth, canvas.offsetHeight]
-
-        window.addEventListener('mousemove', mousemove)
-        window.addEventListener('mouseup', mouseup)
 
         // Set the canvas' min width
         const w = canvas.width
@@ -189,15 +188,6 @@ content : HTMLCanvasElement) {
         }
 
     }
-
-    function mouseup(e : MouseEvent) {
-        
-        window.removeEventListener('mousemove', mousemove)
-        window.removeEventListener('mouseup', mouseup)
-    }
-    
-    // dragCorner.onmousedown = mousedown
-    box.onmousedown = mousedown
 
     middleRowContainer.append(leftEdge, canvas, rightEdge)
     box.append(topRow, middleRowContainer, bottomRow)
