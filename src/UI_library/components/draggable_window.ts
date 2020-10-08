@@ -56,7 +56,7 @@ function addDragFunction(bar : HTMLElement, box : HTMLElement, clickCallback : F
     
     const state = { coords: [0] }
 
-    bar.onmousedown = doUntilMouseUp(mousemove, mousedown)
+    bar.onmousedown = doUntilMouseUp(mousemove, { mousedown })
 
     function mousedown(e : MouseEvent) {
         state.coords = 

@@ -52,12 +52,12 @@ class BufferUtily {
 
     getImage(key : number, ctx : CanvasRenderingContext2D, H : number, W : number) {
         const data = this.imageDataCenter[key]
-        if (data) return data
+        if (data && !BufferStorage.imageNeedsUpdate[key]) return data
         const buffer = BufferStorage.get(key).getChannelData(0)
         const imageData 
             = this.imageDataCenter[key] 
             = drawBuffer2.call(null, buffer, ctx, H, W)
-            
+        BufferStorage.imageNeedsUpdate[key] = false
         return imageData
     }
 

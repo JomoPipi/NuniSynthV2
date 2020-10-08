@@ -14,7 +14,9 @@ import { BufferStorage } from "../storage/buffer_storage.js"
 
 
 function reverseBuffer(index : number) {
+    console.warn('this should not be used because it mutates the buffers')
     BufferStorage.get(index).getChannelData(0).reverse()
+    BufferStorage.get(index, true).getChannelData(0).reverse()
     BufferUtils.refreshAffectedBuffers()
 }
 

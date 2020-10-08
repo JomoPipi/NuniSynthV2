@@ -53,7 +53,7 @@ export function createDraggableNumberInput(
                 state.startValue)
     }
 
-    valueInput.onmousedown = doUntilMouseUp(mousemove, mousedown)
+    valueInput.onmousedown = doUntilMouseUp(mousemove, { mousedown })
     valueInput.oninput = () => updateFunc(+valueInput.value)
     return valueInput
 }

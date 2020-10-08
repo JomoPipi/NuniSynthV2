@@ -10,7 +10,7 @@ import { KB } from './keyboard.js'
 import { VolumeNodeContainer } from '../volumenode_container.js'
 
 
-
+type Source = AudioBufferSourceNode | OscillatorNode
 
 type SoundSource = OscillatorNode | AudioBufferSourceNode
 
@@ -43,8 +43,7 @@ export class NuniSourceNode extends VolumeNodeContainer {
         this.refresh()
     }
 
-
-    createSource() : AudioBufferSourceNode | OscillatorNode {
+    createSource() : Source {
         throw 'Must be implemented in the "concrete" classes.'
     }
 
@@ -62,11 +61,14 @@ export class NuniSourceNode extends VolumeNodeContainer {
             const src = this.createSource()
             const adsr = this.ctx.createGain()
             const t = this.ctx.currentTime
+            const offset = src instanceof AudioBufferSourceNode
+                ? src.loopStart : 0
+
             adsr.gain.setValueAtTime(1, t)
             adsr.connect(this.volumeNode)
             
             src.connect(adsr)
-            src.start(t)
+            src.start(t, offset)
             this.soloSource = src
         }
     }

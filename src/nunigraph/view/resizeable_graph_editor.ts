@@ -32,7 +32,7 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
         , canvasMinWidth: Infinity
         }
 
-    box.onmousedown = doUntilMouseUp(mousemove, mousedown)
+    box.onmousedown = doUntilMouseUp(mousemove, { mousedown })
 
     function mousedown(e : MouseEvent) {
 

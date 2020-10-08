@@ -5,20 +5,23 @@
 
 
 
-type F = (e : MouseEvent) => void
+type Handler = (e : MouseEvent) => void
 
-export function doUntilMouseUp(mousemove : F, _mousedown? : F) {
+export function doUntilMouseUp(
+    mousemove : Handler, 
+    { mousedown, mouseup } : Partial<Indexable<Handler>> = {}) {
     
-    function mousedown(e : MouseEvent) {
-        _mousedown && _mousedown(e)
+    function _mousedown(e : MouseEvent) {
+        mousedown && mousedown(e)
         window.addEventListener('mousemove', mousemove)
-        window.addEventListener('mouseup', mouseup)
+        window.addEventListener('mouseup', _mouseup)
     }
 
-    function mouseup() {
+    function _mouseup(e : MouseEvent) {
+        mouseup && mouseup(e)
         window.removeEventListener('mousemove', mousemove)
-        window.removeEventListener('mouseup', mouseup)
+        window.removeEventListener('mouseup', _mouseup)
     }
 
-    return mousedown
+    return _mousedown
 }

@@ -6,8 +6,9 @@
 
 
 import { BufferUtils } from "../../buffer_utils/internal.js"
+import { doUntilMouseUp } from "../../UI_library/events/until_mouseup.js"
 
-type Arguments = { onChange : Function }
+type Arguments = { update : Function }
 
 export class BufferCanvasFrame {
     private nowShowing = 0
@@ -17,9 +18,8 @@ export class BufferCanvasFrame {
     private ctx
     frame : HTMLDivElement
     canvas : HTMLCanvasElement
-    onChange
 
-    constructor({ onChange } : Arguments) {
+    constructor({ update } : Arguments) {
         this.frame = E('div', { className: 'center' })
 
         const shadowRoot = this.frame.attachShadow({ mode: 'open' })
@@ -48,9 +48,10 @@ export class BufferCanvasFrame {
         }
         .panel {
             height: 100%;
-            background: rgba(100,100,100,0.5);
+            background: rgba(0, 0, 0, 0.5);
             position: absolute;
             top: 0;
+            pointer-events: none;
         }
         .left-panel {
             left: 0;
@@ -58,53 +59,57 @@ export class BufferCanvasFrame {
         </style>
         
         <canvas id="canvas"></canvas>
-        <div id="left" class="slice left" >🔪</div>
-        <div id="right"class="slice right">🔪</div>
-
         <div id="left-panel" class="panel right-panel" ></div>
         <div id="right-panel"class="panel left-panel"></div>
-        <slot></slot>`
+        <div id="left" class="slice left" >🔪</div>
+        <div id="right"class="slice right">🔪</div>`
 
         const left = shadowRoot.getElementById('left')!
         const right = shadowRoot.getElementById('right')!
-        const lPanel = shadowRoot.getElementById('panel left-panel')!
-        const rPanel = shadowRoot.getElementById('panel right-panel')!
+        const lPanel = shadowRoot.getElementById('left-panel')!
+        const rPanel = shadowRoot.getElementById('right-panel')!
         const canvas = shadowRoot.getElementById('canvas')! as 
             HTMLCanvasElement
 
-        log('righleft =',right.innerText, left.innerHTML)
+        left.onmousedown = doUntilMouseUp(mousemove(true), { mouseup: mouseup(true) })
+        right.onmousedown = doUntilMouseUp(mousemove(false), { mouseup: mouseup(false) })
 
-        this.frame.onmousedown = (e : MouseEvent) => {
-            const targ = e.target
-            if (targ === left || targ === right)
-            {
-                this.frame.onmousemove = (e : MouseEvent) => {
-                    const width = this.canvas.offsetWidth
-                    const percent = e.offsetX/width
-                    if (targ === left)
-                    {
-                        const val = width * percent
-                        log('val =',val)
-                        lPanel.style.width = val + 'px'
-                    }
+        function mouseup(grabbingLeftSlicer : boolean) {
+            return (e : MouseEvent) => {
+                const x = e.x - canvas.getBoundingClientRect().left
+                const width = canvas.offsetWidth
+                const percent = clamp(0, x/width, 1)
+                update(grabbingLeftSlicer, percent)
+            }
+        }
+
+        function mousemove(grabbingLeftSlicer : boolean) {
+            return function(e : MouseEvent) {
+                const x = e.x - canvas.getBoundingClientRect().left
+                const width = canvas.offsetWidth
+                const percent = clamp(0, x/width, 1)
+                const val = width * percent
+
+                if (grabbingLeftSlicer) 
+                {
+                    lPanel.style.width = val + 'px'
+                    left.style.right = (width - val) + 'px'
                 }
-                
-                this.frame.onmouseup = () => {
-                    this.frame.onmousemove = null
+                else 
+                {
+                    rPanel.style.width = (width - val) + 'px'
+                    rPanel.style.left = val + 'px'
+                    right.style.left = val + 'px'
                 }
             }
         }
 
         this.canvas = canvas
         this.H = this.canvas.height = this.size
-        this.W = this.canvas.width = this.size * 4
+        this.W = this.canvas.width = this.size * 5
         this.ctx = this.canvas.getContext('2d')!
         this.refresh()
-
-        this.onChange = onChange
     }
-
-    
 
     setKey(key : number) {
         this.nowShowing = key

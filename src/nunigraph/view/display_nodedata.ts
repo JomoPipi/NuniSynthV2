@@ -129,7 +129,7 @@ content : HTMLCanvasElement) {
     let doLeft = false
     let canvasMinWidth = Infinity
     
-    box.onmousedown = doUntilMouseUp(mousemove, mousedown)
+    box.onmousedown = doUntilMouseUp(mousemove, { mousedown })
 
     function mousedown(e : MouseEvent) {
         doLeft = [leftEdge, dragCornernesw].includes(e.target as HTMLDivElement)
