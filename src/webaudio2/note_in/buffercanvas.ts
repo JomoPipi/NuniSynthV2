@@ -130,7 +130,6 @@ export class BufferCanvasFrame {
             const observer = new MutationObserver(mutations => {
                 this.updateLoopStartOrEnd(value, start)
                 observer.disconnect()
-                return;
             })
             observer.observe(document, { subtree: true, childList: true })
             return;
