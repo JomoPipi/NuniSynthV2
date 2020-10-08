@@ -38,6 +38,7 @@ export class BufferNode2 extends NuniSourceNode {
             onChange: (start : number, end : number) => {
                 this.loopStart = start
                 this.loopEnd = end
+                this.refresh()
             }
         })
     }

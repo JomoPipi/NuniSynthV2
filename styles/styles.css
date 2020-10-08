@@ -336,6 +336,7 @@ button {
 }
 
 .buffer-stuff-row {
+  border-bottom: 10px solid transparent;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   display: -ms-inline-grid;
