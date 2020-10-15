@@ -651,7 +651,7 @@ export class NuniGraphController {
             , selectedNodes: this.getNodesInBox(e.offsetX, e.offsetY)
             , showConnectionInsertionMacroLine
             }
-
+            
         this.renderer.render(options)
     }
 

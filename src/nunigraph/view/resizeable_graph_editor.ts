@@ -61,6 +61,11 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
     }
 
     function mousemove(e : MouseEvent) {
+        // This is here to prevent the `render` (at the bottom) from interfering with
+        // the render function from GraphController.prototype.mousemove
+        // You can see this for yourself if you comment this out and 
+        // try make connections within a module.
+        if (state.resizeDirection === NONE) return;
         
         const [X,Y] = [e.clientX, e.clientY]
         const [x,y] = state.xy

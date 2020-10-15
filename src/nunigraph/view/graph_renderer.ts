@@ -8,6 +8,7 @@
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { NuniGraph } from '../model/nunigraph.js'
 import { snapToGrid } from './snap_to_grid.js'
+import { ActiveControllers } from '../controller/graph_controller.js'
 
 export enum HOVER { EDGE, SELECT, CONNECTION, EMPTY }
 
@@ -153,6 +154,7 @@ export class NuniGraphRenderer {
         /** The inputs (x1,y1,x2,y2) are the coordinates of the centers of nodes.
          *  If cacheOptions is falsy, the connection line hasn't been set and is being dragged by the user.
          */ 
+
         const { ctx
             , nodeRadius
             , nodeLineWidth
@@ -321,6 +323,7 @@ export class NuniGraphRenderer {
                     let dotted = false
                     if (macroHinted && x && y && toId !== node.id && fromId !== node.id)
                     {
+                        log('others =',toId, node.id, fromId )
                         const m = (y2-y1) / (x2-x1 || 1e-8)
                         const b = y1 - m * x1
                         const _y = m * x + b
@@ -453,7 +456,6 @@ export class NuniGraphRenderer {
     }
 
     render(options = {}) {
-        
         const 
             { g
             , canvas
@@ -493,17 +495,18 @@ export class NuniGraphRenderer {
         this.drawNodeConnections(nodes, innerOptions)
         this.drawNodes(nodes, innerOptions)
 
-        if (fromNode) 
+        // TODO: investigate how x or y can be undefined
+        // while fromNode is truthy
+        if (fromNode && x && y) 
         { // draw the connection currently being made
             const [X,Y] = [fromNode.x*W, fromNode.y*H]
             ctx.lineWidth = connectionLineWidth
             ctx.strokeStyle = 'white'
-            this.directedLine(X, Y, x!, y!, false)
+            this.directedLine(X, Y, x, y, false)
         }
     }
 
     getGraphMouseTarget({ offsetX: x, offsetY: y } : MouseEvent) : HoverResponse {
-        
         const 
             { canvas
             , g
