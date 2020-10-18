@@ -131,6 +131,12 @@ code {
     justify-content: center;
 }
 
+.space-evenly {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
 .vert-grid {
     display: grid;
     grid-template-columns: 1fr;
