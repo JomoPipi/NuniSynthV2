@@ -24,16 +24,16 @@ interface SourceNode {
 // https://developer.mozilla.org/en-US/docs/Web/API/AudioParam/setTargetAtTime#Choosing_a_good_timeConstant
 const releaseTimeConstant = 10
 
-const waveArray = new Float32Array(9);
-waveArray[0] = 0.5;
-waveArray[1] = 1;
-waveArray[2] = 0.5;
-waveArray[3] = 0;
-waveArray[4] = 0.5;
-waveArray[5] = 6;
-waveArray[6] = 0.5;
-waveArray[7] = 0;
-waveArray[8] = 0.5;
+const waveArray = new Float32Array(9)
+waveArray[0] = 0.5
+waveArray[1] = 1
+waveArray[2] = 0.5
+waveArray[3] = 0
+waveArray[4] = 0.5
+waveArray[5] = 6
+waveArray[6] = 0.5
+waveArray[7] = 0
+waveArray[8] = 0.5
 
 var createLogarithmicBuffer = function createLogarithmicBuffer(direction = 1, base? : number, length? : number) {
     base = base || 10,

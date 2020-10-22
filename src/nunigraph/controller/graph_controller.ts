@@ -207,6 +207,25 @@ export class NuniGraphController {
 
         // The `force` parameter was added because of a requirement of NuniGraph.pasteNodes
         if (!force && node.INPUT_NODE_ID) return; // This can only be deleted from its' outer scope.
+
+        // See if there's any modules that this node is connected to..
+        for (const { id } of this.g.oneWayConnections[node.id])
+        {
+            const moduleNode = this.g.nodes.find(node => 
+                node.id === id && node.type === NodeTypes.MODULE) as NuniGraphNode<NodeTypes.MODULE>
+
+            if (moduleNode)
+            {
+                // We have to close this inputNode's window if it's open.
+                const inputNode 
+                    = moduleNode.audioNode.controller.g.nodes.find(node =>
+                        node.INPUT_NODE_ID?.id === node.id)
+
+                if (!inputNode) throw 'error, this should be here'
+
+                moduleNode.audioNode.controller.closeWindow(inputNode.id)
+            }
+        }
         
         this.connectionTypePrompt.classList.remove('show')
         this.closeWindow(node.id)
@@ -513,7 +532,7 @@ export class NuniGraphController {
                 this.renderer.fromNode = node!
             },
 
-            [HOVER.CONNECTION]: () => { 
+            [HOVER.CONNECTION]: () => {
             
                 this.selectedNodes = []
                 
@@ -754,16 +773,12 @@ export class NuniGraphController {
     private keydown(e : KeyboardEvent) {
         // 46 for Windows, 8 for Apple
         if (e.keyCode === 46 || (ISMAC && e.keyCode === 8))
-        {
-            if (this.selectedNodes.length) 
+        {   // this.save()
+            for (const node of this.selectedNodes) 
             {
-                this.save()
-                for (const node of this.selectedNodes) 
+                if (node.id !== 0) 
                 {
-                    if (node.id !== 0) 
-                    {
-                        this.deleteNode(node)
-                    }
+                    this.deleteNode(node)
                 }
             }
         }
