@@ -13,6 +13,7 @@ import { doUntilMouseUp } from "../events/until_mouseup.js"
 
 
 
+
 export class XYPad {
 
     canvas : HTMLCanvasElement
@@ -21,10 +22,10 @@ export class XYPad {
     ctx : CanvasRenderingContext2D
     point : [number, number]
 
-    constructor(canvas : HTMLCanvasElement, size : number, callback? : Function) {
-        this.W = this.H = canvas.width = canvas.height = size
-        this.canvas = canvas
-        this.ctx = canvas.getContext('2d')!
+    constructor (size : number, callback? : Function) {
+        this.canvas = E('canvas')
+        this.W = this.H = this.canvas.width = this.canvas.height = size
+        this.ctx = this.canvas.getContext('2d')!
         this.point = [this.W/2, this.H/2]
 
         // TODO: move to CSS
@@ -34,7 +35,7 @@ export class XYPad {
         
         this.render()
 
-        canvas.onmousedown = doUntilMouseUp(mousemove)
+        this.canvas.onmousedown = doUntilMouseUp(mousemove)
         
         const slider = this
         function mousemove(e : MouseEvent) {

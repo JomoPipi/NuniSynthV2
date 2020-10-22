@@ -10,7 +10,7 @@ import { XYPad } from '../UI_library/components/xypad.js'
 
 const slider = D('n-waveform-slider') as HTMLInputElement
 const container = D('waveform-test')
-const pads = [new XYPad(E('canvas'), 100)]
+const pads : XYPad[] = []
 const callback = { function: (() => void 0) as Function }
 
 ;(slider.oninput = () => {
@@ -24,9 +24,9 @@ function drawPads() {
     pads.length = 0
     for (let i = 1; i < +slider.value+1; i++)
     {
-        const canvas = E('canvas')
-        pads.push(new XYPad(canvas, 100, callback.function))
-        container.appendChild(canvas)
+        const pad = new XYPad(100, callback.function)
+        pads.push(pad)
+        container.appendChild(pad.canvas)
     }
 
     container.ondblclick = (e : MouseEvent) => {

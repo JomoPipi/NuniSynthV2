@@ -85,7 +85,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
         this.audioNode = (audioCtx as Indexed)[createAudioNode[type]]()
         
-        // TODO: Maybe start it during on tempo tick?
+        // TODO: Maybe start it on tempo tick?
         if (MustBeStarted[type]) (this.audioNode as any).start(0)
 
         Object.assign(this.audioNode, JSON.parse(JSON.stringify(audioNodeProperties)))

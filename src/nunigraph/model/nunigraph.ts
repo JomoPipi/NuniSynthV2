@@ -122,7 +122,7 @@ export class NuniGraph {
         
         for (const { audioNode, type } of this.nodes) 
         {
-            // TODO: refactor into IsInputAwareObject
+            // TODO: refactor into IsInputAware Object
             // if (IsAwareOfInputIDs[type])
             // {
             //     audioNode.removeInput(node)
@@ -216,7 +216,7 @@ export class NuniGraph {
         } 
         else 
         {
-            node1.audioNode.connect(destination as AudioNode)
+            node1.audioNode.connect(destination)
         }
     }
 
@@ -236,7 +236,7 @@ export class NuniGraph {
         } 
         else 
         {
-            node1.audioNode.disconnect(destination as AudioNode)
+            node1.audioNode.disconnect(destination)
         }
     }
 
@@ -288,8 +288,7 @@ export class NuniGraph {
         }) as NuniGraphNode[]
 
         const retainedInputs = new Set()
-
-
+        
         //* Make connections
         for (const indexA in nodeCopies) 
         {
@@ -463,7 +462,6 @@ export class NuniGraph {
 
 
     private copyModuleInputNodes(
-        // TODO: figure out the type situation so b can be NuniGraphNode<NodeTypes.MODULE>
         a : NuniGraphNode, b : NuniGraphNode, nodeA : NuniGraphNode, nodeB : NuniGraphNode) {
 
         // Handle the input node(s) of b

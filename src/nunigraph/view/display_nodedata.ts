@@ -339,7 +339,7 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
     for (const param of AudioNodeParams[node.type]) 
     {
         const initialValue = node.audioParamValues[param]
-        const isGain = param === 'gain' // TODO: get rid of hardcoding
+        const isGain = param === 'gain'
         const to_dB = (n : number) => // ''
             `gain (${volumeTodB(Math.abs(n)).toFixed(2)} dB)`
 

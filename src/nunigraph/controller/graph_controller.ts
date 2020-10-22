@@ -209,7 +209,7 @@ export class NuniGraphController {
         if (!force && node.INPUT_NODE_ID) return; // This can only be deleted from its' outer scope.
 
         // See if there's any modules that this node is connected to..
-        for (const { id } of this.g.oneWayConnections[node.id])
+        for (const { id } of this.g.oneWayConnections[node.id] || [])
         {
             const moduleNode = this.g.nodes.find(node => 
                 node.id === id && node.type === NodeTypes.MODULE) as NuniGraphNode<NodeTypes.MODULE>
