@@ -346,7 +346,7 @@ export class NuniGraphController {
         // Create dialogBox:
         const dialogBox =
             createDraggableWindow(
-                { text: `${NodeLabel[node.type]}, id: ${node.id}`
+                { text: `${NodeEmojiLabel[node.type]} : ${node.id}`
                 , clickCallback
                 , closeCallback
                 , color: node.id === 0 
@@ -422,7 +422,7 @@ export class NuniGraphController {
                 { className: 'title-editor'
                 , props: 
                     { value: node.title || ''
-                    , size: 10
+                    , size: 5// 10
                     }
                 })
 

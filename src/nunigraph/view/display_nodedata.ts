@@ -69,7 +69,7 @@ export function createValuesWindow(
         controls.appendChild(activateKeyboardButton(audioNode))
     }
 
-    if (node.id === 0) 
+    if (node.id === 0) // || node.type === NodeTypes.GAIN) 
     {
         controls.appendChild(gainControls(node))
     }
@@ -217,7 +217,6 @@ function warningButton(type : NodeTypes) {
 
 function gainControls(node : NuniGraphNode) {
     const value = node.audioNode.gain.value
-    
     const dial = new JsDial(1)
     dial.min = 0.1
     dial.max = Math.SQRT2
@@ -335,8 +334,10 @@ function samplerControls(audioNode : BufferNode2) {
 
 
 function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node {
-    const allParams = E('div', { className: 'audioparams-container' })
-    for (const param of AudioNodeParams[node.type]) 
+    const params = AudioNodeParams[node.type]
+    const className = params.length > 1 ? 'audioparams-container' : 'audioparam-container'
+    const allParams = E('div', { className })
+    for (const param of params) 
     {
         const initialValue = node.audioParamValues[param]
         const isGain = param === 'gain'

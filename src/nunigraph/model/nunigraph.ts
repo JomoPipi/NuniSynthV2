@@ -32,8 +32,11 @@ export class NuniGraph {
      * It has a list of nodes and a connection map.*
      */
     
-
-
+     
+//  type ConnecteeDatum = 
+//  { id : number, connectionType : ConnectionType }
+    
+//  type ConnecteeData = ConnecteeDatum[]
 
     private nextId : number
     readonly nodes : NuniGraphNode[]
@@ -288,7 +291,7 @@ export class NuniGraph {
         }) as NuniGraphNode[]
 
         const retainedInputs = new Set()
-        
+
         //* Make connections
         for (const indexA in nodeCopies) 
         {

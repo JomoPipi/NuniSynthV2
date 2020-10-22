@@ -62,6 +62,25 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PROCESSOR]: 'Processor'
     }
 
+const NodeEmojiLabel : { readonly [key in NodeTypes] : string } =  
+    { [NodeTypes.GAIN]:   '🔊'
+    , [NodeTypes.OSC]:    '∿'
+    , [NodeTypes.FILTER]: '🌫️'
+    , [NodeTypes.PANNER]: '⧟'
+    , [NodeTypes.DELAY]:  '🕖'
+    , [NodeTypes.BUFFER]: '📼'
+    , [NodeTypes.SGS]:    '⛩️'
+    , [NodeTypes.B_SEQ]:  '📼'
+    , [NodeTypes.CSN]:    '🎚️'
+    , [NodeTypes.RECORD]: '🎙️'
+    , [NodeTypes.MODULE]: '🎛️'
+    
+    , [NodeTypes.PIANOR]: '🎼 '
+    , [NodeTypes.ENV]:    'Envelope (doesn\'t do anything)'
+    , [NodeTypes.CUSTOM]: 'Custom Module (should be hidden)'
+    , [NodeTypes.PROCESSOR]: '💻'
+    }
+
 const createAudioNode : { readonly [key in NodeTypes] : string } =
     { [NodeTypes.GAIN]:   'createGain'
     , [NodeTypes.OSC]:    'createOscillator2'

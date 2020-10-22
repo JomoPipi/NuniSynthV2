@@ -54,6 +54,11 @@
     gap: 10px;
     margin: 5px 10px;
 }
+.audioparam-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin: 5px 10px;
+}
 
 $number-grab-width: 120px;
 .params-box {
