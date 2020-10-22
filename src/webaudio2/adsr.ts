@@ -68,11 +68,11 @@ const defaultADSR = () => (
     , release: 0.3812504768371582
     , curve: 'exponential' as CurveType
     })
-const squareADSR = 
-    { attack: 0.0
+const squareADSR = // Needs to be somewhat smooth to prevent pop sounds
+    { attack: 0.001
     , decay: 0
     , sustain: 1
-    , release: 0
+    , release: 0.001
     , curve: 'S' as CurveType
     }
 
@@ -83,12 +83,10 @@ export const ADSR_Controller = {
 
     index: 0,
 
-    values: [...Array(N_ADSRs)].map(defaultADSR),
+    values: [...Array(N_ADSRs)].map(defaultADSR).concat([squareADSR]),
 
     trigger: function(gain : AudioParam, time : number, volume : number, adsrIndex : number) {
-        const adsr = adsrIndex === 4 // TODO: get rid of hardcoding, here.
-            ? squareADSR 
-            : this.values[adsrIndex]
+        const adsr = this.values[adsrIndex]
         const { attack, decay, sustain, curve } = adsr
         gain.cancelScheduledValues(time)           
         
@@ -125,9 +123,7 @@ export const ADSR_Controller = {
     },
 
     untriggerAdsr: function(gain : AudioParam, time : number, adsrIndex? : number) {
-        const adsr = adsrIndex === 4 // TODO: get rid of hardcoding, here.
-            ? squareADSR 
-            : this.values[adsrIndex ?? this.index]
+        const adsr = this.values[adsrIndex ?? this.index]
         const { release } = adsr
         gain.cancelScheduledValues(time)
         gain.setTargetAtTime(0, time, release)
