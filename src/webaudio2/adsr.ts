@@ -86,6 +86,7 @@ export const ADSR_Controller = {
     values: [...Array(N_ADSRs)].map(defaultADSR).concat([squareADSR]),
 
     trigger: function(gain : AudioParam, time : number, volume : number, adsrIndex : number) {
+        log(adsrIndex, this.values.length)
         const adsr = this.values[adsrIndex]
         const { attack, decay, sustain, curve } = adsr
         gain.cancelScheduledValues(time)           
@@ -147,8 +148,9 @@ canvas.onclick = () => {
         , exponential: 'S'
         , S: 'linear'
         , undefined: 'S' // Backwards compatibility
-        }
-    adsr.curve = next[adsr.curve] as CurveType
+        } as Record<CurveType,CurveType>
+
+    adsr.curve = next[adsr.curve]
     ADSR_Controller.render()
 }
 
@@ -162,7 +164,6 @@ type RenderOptions = Partial<{ updateKnobs : boolean }>
     adsr.render = function (options : RenderOptions = {}) {
         const H = this.canvas.height, W = this.canvas.width
         ctx.lineWidth = 5
-
         const { attack, decay, sustain, release } = this.values[this.index]
 
         const sum = attack + decay + 0.25 + release

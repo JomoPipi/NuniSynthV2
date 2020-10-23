@@ -32,6 +32,7 @@ export function createSubdivSelect(an : { subdiv : number }, fn? : (value : numb
         E('select', 
         { children: subdivisionList.map(makeSubdivisionOption) })
 
+    select.style.width = select.offsetHeight + 'px'
     select.value = an.subdiv <= 1 
         ? `${Math.round(1 / an.subdiv)} bars` 
         : '1/' + an.subdiv

@@ -381,7 +381,7 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
                 updateFunc,
                 settings)
 
-        box.append(numberInput, textBox)
+        box.append(textBox, numberInput)
 
         allParams.appendChild(box)
 
@@ -390,7 +390,7 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
             const subdiv = { subdiv: 0 }
             const subdivSelect = createSubdivSelect(subdiv, updateParam)
 
-            textBox.append(E('br'), subdivSelect)
+            textBox.append(' ', subdivSelect)
 
             function updateParam(value : number) {
                 const newValue = param === 'frequency'

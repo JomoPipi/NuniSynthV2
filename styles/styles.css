@@ -857,8 +857,8 @@ code {
 .params-box {
   display: -ms-grid;
   display: grid;
-  -ms-grid-rows: 1fr 1fr;
-      grid-template-rows: 1fr 1fr;
+  -ms-grid-rows: 0.75fr 1fr;
+      grid-template-rows: 0.75fr 1fr;
   width: 120px;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;

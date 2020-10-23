@@ -63,7 +63,7 @@
 $number-grab-width: 120px;
 .params-box {
     display: grid;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 0.75fr 1fr;
     width: $number-grab-width;
     box-sizing: border-box;
     align-self: center;

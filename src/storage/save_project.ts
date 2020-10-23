@@ -22,7 +22,13 @@ export function loadNuniFile(nuniFile : string) {
     GraphController.closeAllWindows()
     const { graphCode, values, tempo } = JSON.parse(nuniFile)
     GraphController.g.fromJSON(graphCode)
-    ADSR_Controller.values = values
+
+    // ADSR_Controller.values = values
+    for (let i = 0; i < 4; i++) 
+    // Older graphs do not support
+    // Additional ADSRs
+        ADSR_Controller.values[i] = values[i]
+
     const t = tempo ?? 120
     if (!tempo) console.warn('Tempo set to default: 120')
 

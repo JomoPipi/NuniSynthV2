@@ -346,7 +346,7 @@ export class NuniGraphController {
         // Create dialogBox:
         const dialogBox =
             createDraggableWindow(
-                { text: `${NodeEmojiLabel[node.type]} : ${node.id}`
+                { text: `${NodeEmojiLabel[node.type]} ᴵᴰ ${node.id}`
                 , clickCallback
                 , closeCallback
                 , color: node.id === 0 
