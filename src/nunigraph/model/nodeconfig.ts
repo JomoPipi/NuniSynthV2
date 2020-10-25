@@ -36,6 +36,7 @@ type AudioParams
     | 'playbackRate'
     | 'offset'
 
+// compressor node properties:
     | 'threshold'
     | 'knee'
     | 'ratio'
