@@ -32,6 +32,7 @@ type AudioNodeMap = {
     [NodeTypes.ENV]:    Envelope
     [NodeTypes.CUSTOM]: any
     [NodeTypes.PROCESSOR]: AudioWorklet
+    [NodeTypes.COMPRESSOR]: DynamicsCompressorNode
 }
 
 type AudioNode2<T extends NodeTypes> 
@@ -88,7 +89,11 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         // TODO: Maybe start it on tempo tick?
         if (MustBeStarted[type]) (this.audioNode as any).start(0)
 
-        Object.assign(this.audioNode, JSON.parse(JSON.stringify(audioNodeProperties)))
+        if (this.type !== NodeTypes.COMPRESSOR)
+        {
+        // CompressorNode throws error
+            Object.assign(this.audioNode, JSON.parse(JSON.stringify(audioNodeProperties)))
+        }
 
         this.audioParamValues = JSON.parse(JSON.stringify(audioParamValues))
 
