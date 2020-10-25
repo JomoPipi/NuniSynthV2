@@ -246,12 +246,17 @@ log('constructor!!')
             let i,l,n,t,defo,defl,tie,evlast;
             const parse={s:s,i:i,tb:this.timebase};
             function getNum(p){
-                var n=0;
+                let n = 0, x = 1
+                if (p.s[p.i] === '-')
+                {
+                    ++p.i
+                    x = -1
+                }
                 while(p.s[p.i]>="0"&&p.s[p.i]<="9"){
                     n=n*10+parseInt(p.s[p.i]);
                     ++p.i;
                 }
-                return n;
+                return n * x;
             }
             function getLen(p){
                 var n=getNum(p);
@@ -297,7 +302,7 @@ log('constructor!!')
             tie=0;
             evlast=null;
             for(parse.i=0;parse.i<parse.s.length;){
-                switch(parse.s[parse.i]){
+                switch (parse.s[parse.i]) {
                 case '>':
                     ++parse.i; ++defo; n=-1; l=0;
                     break;
