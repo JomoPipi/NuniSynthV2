@@ -84,7 +84,7 @@ export function createValuesWindow(
             audioNode.pianoRoll))
         //* webaudio-pianoroll has to be loaded
         //* for play() to be defined
-        requestAnimationFrame(_ => audioNode.play())
+        // requestAnimationFrame(_ => audioNode.play())
     }
 
 

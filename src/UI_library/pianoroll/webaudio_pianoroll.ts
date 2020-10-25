@@ -63,7 +63,7 @@ class Pianoroll extends HTMLElement {
 
     constructor() {
         super()
-
+log('constructor!!')
         // Previously inside connectedCallback
         const root=this
         this.defineProps()
@@ -138,7 +138,8 @@ class Pianoroll extends HTMLElement {
         this.sortSequence=function(){
             this.sequence.sort((x,y) => x.t-y.t);
         };
-        this.findNextEv=function(tick){
+        this.findNextEv=function(tick) {
+            log('length =',this.sequence.length)
             for(let i=0;i<this.sequence.length;++i){
                 const nev=this.sequence[i];
                 if(nev.t>=this.markend)
@@ -157,8 +158,9 @@ class Pianoroll extends HTMLElement {
         this.updateTimer=function(){
             this.tick2time=4*60/this.tempo/this.timebase;
         };
-        this.play=function(actx, playcallback, tick){
+        this.play=function(actx, playcallback, tick) {
             this.scheduleNotes = function() {
+                // log('scheduling notes!')
                 if (!this.isPlaying) return;
                 const current=this.actx.currentTime;
                 while(this.timestack.length>1 && current>=this.timestack[1][0]){
@@ -186,7 +188,7 @@ class Pianoroll extends HTMLElement {
                         if(this.playcallback)
                             this.playcallback(cbev);
                         e=this.sequence[++this.index1];
-                        if(!e || e.t>=this.markend){
+                        if(!e || e.t >= this.markend){
                             this.time1+=(this.markend-this.tick1)*this.tick2time;
                             const p=this.findNextEv(this.markstart);
                             this.timestack.push([this.time1,this.markstart,this.tick2time]);
@@ -205,7 +207,16 @@ class Pianoroll extends HTMLElement {
             this.actx=actx;
             this.playcallback=playcallback;
             this.timestack=[];
-            this.time0=this.time1=0//this.actx.currentTime+0.1;
+
+
+            // causes big lag after a long time:
+            // this.time0=this.time1=0
+            // fix:
+            const measure = this.markend - this.markstart, t = this.actx.currentTime
+            this.time0 = this.time1 = 0
+            while (this.time0 + measure < t) this.time0 += measure
+            this.time1 = this.time0
+
             this.tick0=this.tick1=this.cursor=0;
             this.tick2time=4*60/this.tempo/this.timebase;
             const p=this.findNextEv(this.cursor);
@@ -943,7 +954,7 @@ class Pianoroll extends HTMLElement {
 
             // TODO: use ctrl + wheel instead of hit test?
             const ht=this.hitTest(pos);
-            if((this.wheelzoomx||this.wheelzoom) && ht.m!="y"){ // && ht.m=="x"){
+            if((this.wheelzoomx||this.wheelzoom) && e.ctrlKey) { //ht.m!="y"){ // && ht.m=="x"){
                 if(delta>0){
                     this.xoffset=ht.t-(ht.t-this.xoffset)/1.2
                     this.xrange/=1.2;
@@ -953,7 +964,7 @@ class Pianoroll extends HTMLElement {
                     this.xrange*=1.2;
                 }
             }
-            if((this.wheelzoomy||this.wheelzoom) && ht.m=="y"){
+            else if (this.wheelzoomy||this.wheelzoom) { // && ht.m=="y"){
                 if(delta>0){
                     this.yoffset=ht.n-(ht.n-this.yoffset)/1.2
                     this.yrange/=1.2;

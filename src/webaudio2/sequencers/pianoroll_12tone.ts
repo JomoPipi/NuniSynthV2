@@ -17,21 +17,39 @@ export class PianoRoll12Tone {
     constructor(ctx : AudioContext) {
         log('colors = ',Theme.colors)
         this.ctx = ctx
-        this.html = E('div')
-        this.html.innerHTML = 
-            `<webaudio-pianoroll
-                wheelzoom=1
-                editmode='dragmono'
-                xscroll=1
-                yscroll=1
-                kbwidth=30
-                colrulerbg='${Theme.colors[2]}'
-                colrulerfg='${Theme.colors[5]}'
-                collt='${Theme.colors[1]}'
-                coldk='${Theme.colors[0]}'
-            ></webaudio-pianoroll>`
 
-        this.pianoRoll = this.html.children[0]
+        // this.pianoRoll = new Pianoroll()
+        // this.html = E('div', { children: [this.pianoRoll] })
+        
+        // this.pianoRoll.editmode = 'dragmono'
+        // this.pianoRoll.xscroll = 
+        // this.pianoRoll.yscroll = 
+        // this.pianoRoll.wheelzoom = 1
+        // this.pianoRoll.kbwidth = 30
+        // this.pianoRoll.colrulerbg = Theme.colors[2]
+        // this.pianoRoll.colrulerfg = Theme.colors[5]
+        // this.pianoRoll.collt = Theme.colors[1]
+        // this.pianoRoll.coldk = Theme.colors[0]
+
+        this.html = E('div')
+
+        const util = D("utility-div")
+        util.innerHTML = `
+<webaudio-pianoroll
+    wheelzoom=1
+    editmode='dragmono'
+    xscroll=1
+    yscroll=1
+    kbwidth=30
+    colrulerbg='${Theme.colors[2]}'
+    colrulerfg='${Theme.colors[5]}'
+    collt='${Theme.colors[1]}'
+    coldk='${Theme.colors[0]}'
+></webaudio-pianoroll>`
+
+        this.pianoRoll = util.removeChild(util.children[0])
+        this.html.appendChild(this.pianoRoll)
+        requestAnimationFrame(_ => this.play())
         
         this.csn = ctx.createConstantSource()
         this.csn.start()
@@ -50,7 +68,6 @@ export class PianoRoll12Tone {
 
     }
     connect(destination : any) {
-        log('connecting!!!')
         this.csn.connect(destination)
     }
     disconnect(destination? : any) {
