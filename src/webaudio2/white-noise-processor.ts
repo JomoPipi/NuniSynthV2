@@ -22,6 +22,7 @@ class WhiteNoiseProcessor extends AudioWorkletProcessor {
     constructor() { super() }
     process (inputs : any, outputs : any, parameters : any) {
         const output = outputs[0]
+        log('inputs, outputs, params =', inputs, outputs, parameters)
         output.forEach((channel : any) => {
             for (let i = 0; i < channel.length; i++) 
             {

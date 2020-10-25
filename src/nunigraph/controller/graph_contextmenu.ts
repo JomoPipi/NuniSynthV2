@@ -76,7 +76,7 @@ function createNode<T extends NodeTypes>(type : T, e : MouseEvent) : NuniGraphNo
 
 
 
-const nodesSortedByRecurrence = 
+const nodesSortedByRecurrence : NodeTypes[] = 
     [ NodeTypes.GAIN
     , NodeTypes.OSC
     , NodeTypes.BUFFER
@@ -89,6 +89,7 @@ const nodesSortedByRecurrence =
     , NodeTypes.PIANOR
     , NodeTypes.RECORD
     , NodeTypes.MODULE
+    , NodeTypes.COMPRESSOR
     , NodeTypes.PROCESSOR
     ]
 

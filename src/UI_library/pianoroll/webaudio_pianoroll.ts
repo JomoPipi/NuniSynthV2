@@ -63,7 +63,7 @@ class Pianoroll extends HTMLElement {
 
     constructor() {
         super()
-log('constructor!!')
+        
         // Previously inside connectedCallback
         const root=this
         this.defineProps()
@@ -139,7 +139,7 @@ log('constructor!!')
             this.sequence.sort((x,y) => x.t-y.t);
         };
         this.findNextEv=function(tick) {
-            log('length =',this.sequence.length)
+            
             for(let i=0;i<this.sequence.length;++i){
                 const nev=this.sequence[i];
                 if(nev.t>=this.markend)
@@ -160,7 +160,7 @@ log('constructor!!')
         };
         this.play=function(actx, playcallback, tick) {
             this.scheduleNotes = function() {
-                // log('scheduling notes!')
+                
                 if (!this.isPlaying) return;
                 const current=this.actx.currentTime;
                 while(this.timestack.length>1 && current>=this.timestack[1][0]){

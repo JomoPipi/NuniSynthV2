@@ -22,7 +22,8 @@ enum NodeTypes
     PIANOR = 'piano-roll',
     ENV = 'envelope', // <- Not used
     CUSTOM = 'custom-module',
-    PROCESSOR = 'processor'
+    PROCESSOR = 'processor',
+    COMPRESSOR = 'compression'
 }
 
 type AudioParams 
@@ -34,6 +35,12 @@ type AudioParams
     | 'delayTime' 
     | 'playbackRate'
     | 'offset'
+
+    | 'threshold'
+    | 'knee'
+    | 'ratio'
+    | 'attack'
+    | 'release'
 
 type ConnectionType = 
     AudioParams | 'channel'
@@ -60,6 +67,7 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.ENV]:    'Envelope (doesn\'t do anything)'
     , [NodeTypes.CUSTOM]: 'Custom Module (should be hidden)'
     , [NodeTypes.PROCESSOR]: 'Processor'
+    , [NodeTypes.COMPRESSOR]: 'Compression'
     }
 
 const NodeEmojiLabel : { readonly [key in NodeTypes] : string } =  
@@ -79,6 +87,7 @@ const NodeEmojiLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.ENV]:    'Envelope (doesn\'t do anything)'
     , [NodeTypes.CUSTOM]: 'Custom Module (should be hidden)'
     , [NodeTypes.PROCESSOR]: '💻'
+    , [NodeTypes.COMPRESSOR]: '💢'
     }
 
 const createAudioNode : { readonly [key in NodeTypes] : string } =
@@ -98,6 +107,7 @@ const createAudioNode : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.ENV]:    'createEnvelopeNode'
     , [NodeTypes.CUSTOM]: 'createCustomNode'
     , [NodeTypes.PROCESSOR]: 'createProcessorNode'
+    , [NodeTypes.COMPRESSOR]: 'createCompressorNode'
     }
 
 const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
@@ -117,6 +127,7 @@ const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.ENV]:    true
     , [NodeTypes.CUSTOM]: true
     , [NodeTypes.PROCESSOR]:true
+    , [NodeTypes.COMPRESSOR]:true
     }
 
 const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
@@ -136,6 +147,7 @@ const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.ENV]:    false
     , [NodeTypes.CUSTOM]: false
     , [NodeTypes.PROCESSOR]:false
+    , [NodeTypes.COMPRESSOR]:false
     }
 
 const MustBeStarted : { readonly [key in NodeTypes] : boolean } =
@@ -155,6 +167,7 @@ const MustBeStarted : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.ENV]:    false
     , [NodeTypes.CUSTOM]: false
     , [NodeTypes.PROCESSOR]:false
+    , [NodeTypes.COMPRESSOR]:false
     }
 
 const HasAudioParams : { readonly [key in NodeTypes] : boolean } =
@@ -174,6 +187,7 @@ const HasAudioParams : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.ENV]:    false
     , [NodeTypes.CUSTOM]: true
     , [NodeTypes.PROCESSOR]:false
+    , [NodeTypes.COMPRESSOR]:true
     }
 
 const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
@@ -193,6 +207,7 @@ const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.ENV]:    false
     , [NodeTypes.CUSTOM]: false
     , [NodeTypes.PROCESSOR]:false
+    , [NodeTypes.COMPRESSOR]:false
     }
 
 const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } =
@@ -212,6 +227,7 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.ENV]:    false
     , [NodeTypes.CUSTOM]: false
     , [NodeTypes.PROCESSOR]:false
+    , [NodeTypes.COMPRESSOR]:false
     }
 
 // The ones that are `false` let you delete stuff inside the node. 
@@ -233,6 +249,7 @@ const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.ENV]:    true
     , [NodeTypes.CUSTOM]: true
     , [NodeTypes.PROCESSOR]:false
+    , [NodeTypes.COMPRESSOR]:true
     }
 
 
@@ -254,6 +271,7 @@ const AudioNodeParams : Record<NodeTypes,AudioParams[]> =
     , get [NodeTypes.CUSTOM]() { return [] }
     // , set [NodeTypes.CUSTOM](params : []) { }
     , [NodeTypes.PROCESSOR]:[]
+    , [NodeTypes.COMPRESSOR]: ['threshold', 'knee', 'ratio', 'attack', 'release']
     }
 
 const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
@@ -272,9 +290,10 @@ const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
     , [NodeTypes.MODULE]: []
 
     , [NodeTypes.PIANOR]: []
-    , [NodeTypes.ENV]: []
+    , [NodeTypes.ENV]:    []
     , [NodeTypes.CUSTOM]: []
     , [NodeTypes.PROCESSOR]:[]
+    , [NodeTypes.COMPRESSOR]:[]
     }
 
 const MasterGainColor = '#555'
@@ -295,6 +314,7 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.ENV]:    'rgba(105,255,255,0.5)'
     , [NodeTypes.CUSTOM]: 'rgba(105,255,255,0.5)'
     , [NodeTypes.PROCESSOR]:'rgba(200,150,255,0.5)'
+    , [NodeTypes.COMPRESSOR]:'rgba(200,180,220,0.5)'
     }
 
 const NodeTypeColors2 : { readonly [key in NodeTypes] : string } = 
@@ -314,6 +334,7 @@ const NodeTypeColors2 : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.ENV]:    'rgb(105,100,255)'
     , [NodeTypes.CUSTOM]: 'rgb(105,255,255)'
     , [NodeTypes.PROCESSOR]:'rgb(200,150,255)'
+    , [NodeTypes.COMPRESSOR]:'rgb(200,180,220)'
     }
 
 const NodeTypeWarnings : { readonly [key in NodeTypes]? : string } = 
@@ -330,6 +351,12 @@ const ConnectionTypeColors : { readonly [key in ConnectionType] : string } =
     , delayTime:    'yellow'
     , playbackRate: 'cyan'
     , offset:       'rgb(255,200,200)'
+
+    , threshold: 'rgb(200,150,150)'
+    , knee: 'rgb(200,150,150)'
+    , ratio: 'rgb(200,150,150)'
+    , attack: 'rgb(200,150,150)'
+    , release: 'rgb(200,150,150)'
     }
 
 const DefaultParamValues : { readonly [key in AudioParams] : number } = 
@@ -341,6 +368,12 @@ const DefaultParamValues : { readonly [key in AudioParams] : number } =
     , delayTime:    0.5
     , playbackRate: 1
     , offset:       0
+    
+    , threshold: 0
+    , knee: 0
+    , ratio: 1
+    , attack: 0.1
+    , release: 0.1
     }
 
 const AudioParamRanges : { readonly [key in AudioParams] : [number,number] } = 
@@ -352,6 +385,12 @@ const AudioParamRanges : { readonly [key in AudioParams] : [number,number] } =
     , delayTime:    [0, 1]
     , playbackRate: [0, 32]
     , offset:       [-1e5, 1e5]
+
+    , threshold: [-100, 0]
+    , knee: [0, 40]
+    , ratio: [1, 20]
+    , attack: [0, 1]
+    , release: [0, 1]
     }
 
 const hasLinearSlider : { readonly [key in AudioParams] : boolean } = 
@@ -363,6 +402,12 @@ const hasLinearSlider : { readonly [key in AudioParams] : boolean } =
     , delayTime:    false
     , playbackRate: false
     , offset:       false
+
+    , threshold: true
+    , knee: true
+    , ratio: true
+    , attack: false
+    , release: false
     }
 
 const isSubdividable : { readonly [key in AudioParams] : boolean } = 
@@ -374,6 +419,12 @@ const isSubdividable : { readonly [key in AudioParams] : boolean } =
     , delayTime:    true
     , playbackRate: false
     , offset:       false
+    
+    , threshold: false
+    , knee: false
+    , ratio: false
+    , attack: false
+    , release: false
     }
 
 const sliderFactor : { readonly [key in AudioParams] : number } = 
@@ -385,6 +436,12 @@ const sliderFactor : { readonly [key in AudioParams] : number } =
     , delayTime:    .005
     , playbackRate: 2**-6
     , offset:       10**-2
+
+    , threshold: 10**-2
+    , knee: 10**-2
+    , ratio: 10**-2
+    , attack: 10**-2
+    , release: 10**-2
     }
 
 interface CustomAudioNodeProperties
@@ -433,6 +490,12 @@ const Transferable_AudioNodeProperties = Object.assign(
     , MMLString   : true
     , loopStart   : true
     , loopEnd     : true
+    
+    , threshold: true
+    , knee: true
+    , ratio: true
+    , attack: true
+    , release: true
     },
     Transferable_Pianoroll_properties)
 

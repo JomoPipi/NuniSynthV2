@@ -75,6 +75,10 @@ class AudioContext2 extends AudioContext {
         const audioWorkletNode = new AudioWorkletNode(this, 'white-noise-processor')
         return audioWorkletNode
     }
+
+    createCompressorNode() {
+        return new DynamicsCompressorNode(this)
+    }
 }
 
 export const audioCtx = new AudioContext2()
