@@ -667,11 +667,11 @@ class Pianoroll extends HTMLElement {
                 }
             }
         };
-        this.setListener=function(el,mode){
+        this.setListener=function(el, mode){
             this.bindcontextmenu = this.contextmenu.bind(this);
             this.bindpointermove = this.pointermove.bind(this);
             this.bindcancel = this.cancel.bind(this);
-            el.addEventListener("mousedown",this.pointerdown.bind(this),true);
+            el.addEventListener("mousedown",this.pointerdown.bind(this), mode);
             //// el.addEventListener("touchstart",this.pointerdown.bind(this),false);
             //// if(mode){
             ////     el.addEventListener("mouseover",this.pointerover.bind(this),false);
@@ -701,7 +701,7 @@ class Pianoroll extends HTMLElement {
             this.setListener(this.markendimg,true);
             this.setListener(this.markstartimg,true);
             this.setListener(this.cursorimg,true);
-            this.setListener(this.menu,false);
+            this.setListener(this.menu,true);
             this.sequence=[];
             this.dragging={o:null};
             this.kbimg.style.height=this.sheight+"px";
