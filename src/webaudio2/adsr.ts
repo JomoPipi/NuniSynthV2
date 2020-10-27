@@ -86,7 +86,7 @@ export const ADSR_Controller = {
     values: [...Array(N_ADSRs)].map(defaultADSR).concat([squareADSR]),
 
     trigger: function(gain : AudioParam, time : number, volume : number, adsrIndex : number) {
-        log(adsrIndex, this.values.length)
+        
         const adsr = this.values[adsrIndex]
         const { attack, decay, sustain, curve } = adsr
         gain.cancelScheduledValues(time)           

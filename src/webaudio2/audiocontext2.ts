@@ -14,6 +14,7 @@ import { AudioBufferCaptureNode } from './record/buffer_capture_node.js'
 import { NuniGraphAudioNode } from './nunigraph_audionode.js'
 import { Envelope } from './envelope/envelope.js'
 import { PianoRoll12Tone } from './sequencers/pianoroll_12tone.js'
+import { ProcessorNode } from './processor/processornode.js'
 
 
 class AudioContext2 extends AudioContext {
@@ -72,8 +73,7 @@ class AudioContext2 extends AudioContext {
     }
 
     createProcessorNode() {
-        const audioWorkletNode = new AudioWorkletNode(this, 'white-noise-processor')
-        return audioWorkletNode
+        return new ProcessorNode(this)
     }
 
     createCompressorNode() {
@@ -83,4 +83,4 @@ class AudioContext2 extends AudioContext {
 
 export const audioCtx = new AudioContext2()
 
-audioCtx.audioWorklet.addModule('dist/webaudio2/white-noise-processor.js')
+audioCtx.audioWorklet.addModule('dist/webaudio2/processor/bypass-processor.js')

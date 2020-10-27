@@ -31,7 +31,7 @@ type AudioNodeMap = {
     [NodeTypes.PIANOR]: PianoRoll12Tone
     [NodeTypes.ENV]:    Envelope
     [NodeTypes.CUSTOM]: any
-    [NodeTypes.PROCESSOR]: AudioWorklet
+    [NodeTypes.PROCESSOR]: AudioWorkletNode
     [NodeTypes.COMPRESSOR]: DynamicsCompressorNode
 }
 
