@@ -3786,6 +3786,10 @@ var scopeManager = _dereq_("./scope-manager.js");
 var prodParams   = _dereq_("./prod-params.js");
 var console = _dereq_("console-browserify");
 
+const state_option_asi = true
+// fuck semicolons in js:
+// replaced all "state.option.asi" with "state_option_asi"
+
 var JSHINT = (function() {
   "use strict";
 
@@ -5118,7 +5122,7 @@ var JSHINT = (function() {
 
       if (isSameLine && !blockEnd && !(stmt.id === "do" && state.inES6(true))) {
         errorAt("E058", state.tokens.curr.line, state.tokens.curr.character);
-      } else if (!state.option.asi) {
+      } else if (!state_option_asi) {
         if (!(blockEnd && isSameLine && state.option.lastsemic)) {
           warningAt("W033", state.tokens.curr.line, state.tokens.curr.character);
         }
@@ -6104,7 +6108,7 @@ var JSHINT = (function() {
       warning("W062");
     }
 
-    if (state.option.asi && checkPunctuators(state.tokens.prev, [")", "]"]) &&
+    if (state_option_asi && checkPunctuators(state.tokens.prev, [")", "]"]) &&
       !sameLine(state.tokens.prev, state.tokens.curr)) {
       warning("W014", state.tokens.curr, state.tokens.curr.id);
     }
@@ -6285,7 +6289,7 @@ var JSHINT = (function() {
   infix("[", function(context, left, that) {
     var e, s, canUseDot;
 
-    if (state.option.asi && checkPunctuators(state.tokens.prev, [")", "]"]) &&
+    if (state_option_asi && checkPunctuators(state.tokens.prev, [")", "]"]) &&
       !sameLine(state.tokens.prev, state.tokens.curr)) {
       warning("W014", state.tokens.curr, state.tokens.curr.id);
     }
@@ -8032,7 +8036,7 @@ var JSHINT = (function() {
   stmt("break", function() {
     var v = state.tokens.next.value;
 
-    if (!state.option.asi)
+    if (!state_option_asi)
       nolinebreak(this);
 
     if (state.tokens.next.identifier &&
@@ -8060,7 +8064,7 @@ var JSHINT = (function() {
       warning("W052", state.tokens.next, this.value);
     }
 
-    if (!state.option.asi)
+    if (!state_option_asi)
       nolinebreak(this);
 
     if (state.tokens.next.identifier) {
@@ -8242,7 +8246,7 @@ var JSHINT = (function() {
 
     if (sameLine(this, state.tokens.next)) {
       if (delegatingYield ||
-          (state.tokens.next.id !== ";" && !state.option.asi &&
+          (state.tokens.next.id !== ";" && !state_option_asi &&
            !state.tokens.next.reach && state.tokens.next.nud)) {
 
         nobreaknonadjacent(state.tokens.curr, state.tokens.next);
@@ -8257,7 +8261,7 @@ var JSHINT = (function() {
           (prev.lbp > 30 || (!prev.assign && !isEndOfExpr()))) {
         error("E050", this);
       }
-    } else if (!state.option.asi) {
+    } else if (!state_option_asi) {
       nolinebreak(this); // always warn (Line breaking error)
     }
     return this;

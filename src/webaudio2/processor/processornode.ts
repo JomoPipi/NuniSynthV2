@@ -9,6 +9,26 @@ type Destination = AudioNode | AudioParam
 
 declare var ace : any
 
+const INITIAL_CODE = `class CustomProcessor extends AudioWorkletProcessor {
+    static get parameterDescriptors() {
+      return [{ name: 'gain', defaultValue: 0.1}]
+    }
+    constructor() {
+      super()
+      this.sampleRate = 44100
+    }
+    process(inputs, outputs, parameters) {
+      const speakers = outputs[0]
+      for (let i = 0; i < speakers[0].length; i++) {
+        const noise = Math.random() * 2 - 1
+        const gain = parameters.gain[i]
+        speakers[0][i] = noise * gain
+        speakers[1][i] = noise * gain
+      }
+      return true
+    }
+}`
+
 let ID = 0
 
 export class ProcessorNode {
@@ -36,38 +56,29 @@ export class ProcessorNode {
     .container {
         width: 100%;
         height: 100%;
+        overflow-y: scroll;
+        max-height: 500px;
     }
     .editor {
         width: 100%;
         height: 100%;
     }
-    * {
-        font-family: monospace;
-    }
 </style>
-<div id='${editorID}' class="editor">function foo(items) {
-    var x = "All this is syntax highlighted";
-    return x;
-}</div>`
+<div id='${editorID}' class="editor"></div>`
         requestAnimationFrame(() => {
             const codeEditor = D(editorID)
             const editor = ace.edit(codeEditor)
             editor.setTheme("ace/theme/gruvbox")
             editor.getSession().setMode("ace/mode/javascript")
-            editor.getSession().setValue(`
-function process() {
-  
-}
-`)
+            editor.getSession().setValue(INITIAL_CODE)
             editor.setOptions({
-                showPrintMargin: false, // hides the vertical limiting strip
+                showPrintMargin: false,
                 fontSize: 12,
                 fontFamily: 'monospace',
                 maxLines: Infinity,
                 tabSize: 2,
-                showGutter: false
+                // showGutter: false
             })
-
         })
 
         return div
