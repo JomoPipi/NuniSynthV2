@@ -132,7 +132,7 @@ content : HTMLDivElement) {
     let xy : number[], wh : number[]
     let resizeDirection = 0
     let doLeft = false
-    let canvasMinWidth = 0 // Infinity
+    let canvasMinWidth = Infinity
     
     box.onmousedown = doUntilMouseUp(mousemove, { mousedown })
 
@@ -155,13 +155,15 @@ content : HTMLDivElement) {
         wh = [canvas.offsetWidth, canvas.offsetHeight]
 
         // Set the canvas' min width
-        // const w = canvas.width
-        // canvas.width = 0
-        // canvasMinWidth = canvas.offsetWidth
-        // canvas.width = w
+        const w = canvas.style.width
+        canvas.style.width = '0px'
+        canvasMinWidth = canvas.offsetWidth
+        canvas.style.width = w
     }
 
     function mousemove(e : MouseEvent) {
+
+        if (resizeDirection === NONE) return;
         
         const [X,Y] = [e.clientX, e.clientY]
         const [x,y] = xy

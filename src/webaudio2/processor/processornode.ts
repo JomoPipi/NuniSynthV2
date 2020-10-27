@@ -27,22 +27,49 @@ export class ProcessorNode {
     }
 
     getUIComponent() {
-        const div = E('div')
-        // div.attachShadow
+        const div = E('div', { className: 'container' })
+        div.style.width = '162px'
+        div.style.height = '100px'
         const editorID = `editor${ID++}`
         div.innerHTML = `
-<div id='${editorID}' style="width: 162px; height: 100px;">function foo(items) {
+<style>
+    .container {
+        width: 100%;
+        height: 100%;
+    }
+    .editor {
+        width: 100%;
+        height: 100%;
+    }
+    * {
+        font-family: monospace;
+    }
+</style>
+<div id='${editorID}' class="editor">function foo(items) {
     var x = "All this is syntax highlighted";
     return x;
 }</div>`
         requestAnimationFrame(() => {
-            const editor = ace.edit(editorID)
-            // editor.setTheme("ace/theme/monokai")
-            // editor.session.setMode("ace/mode/javascript")
-            editor.setValue('Hello, world!')
-            console.log('editor =', editorID, editor)
+            const codeEditor = D(editorID)
+            const editor = ace.edit(codeEditor)
+            editor.setTheme("ace/theme/gruvbox")
+            editor.getSession().setMode("ace/mode/javascript")
+            editor.getSession().setValue(`
+function process() {
+  
+}
+`)
+            editor.setOptions({
+                showPrintMargin: false, // hides the vertical limiting strip
+                fontSize: 12,
+                fontFamily: 'monospace',
+                maxLines: Infinity,
+                tabSize: 2,
+                showGutter: false
+            })
+
         })
 
-        return div.children[0] as HTMLDivElement
+        return div
     }
 }
