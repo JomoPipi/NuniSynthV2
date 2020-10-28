@@ -90,7 +90,7 @@ export function createValuesWindow(
     else if (audioNode instanceof ProcessorNode)
     {
         controls.appendChild(createResizeableWindow(
-            audioNode.getUIComponent()))
+            audioNode.getUIComponent(), audioNode.resizeUI.bind(audioNode)))
     }
 
 
@@ -112,8 +112,7 @@ export function createValuesWindow(
     
     return controls
 }
-function createResizeableWindow(
-content : HTMLDivElement) {
+function createResizeableWindow(content : HTMLDivElement, resizeCallback? : any) {
     const box = E('div')
     const canvas = content
 
@@ -134,7 +133,7 @@ content : HTMLDivElement) {
     let doLeft = false
     let canvasMinWidth = Infinity
     
-    box.onmousedown = doUntilMouseUp(mousemove, { mousedown })
+    box.onmousedown = doUntilMouseUp(mousemove, { mousedown, mouseup: resizeCallback })
 
     function mousedown(e : MouseEvent) {
         doLeft = [leftEdge, dragCornernesw].includes(e.target as HTMLDivElement)

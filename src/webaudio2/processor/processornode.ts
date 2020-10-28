@@ -46,6 +46,7 @@ export class ProcessorNode {
     private audioWorkletNode : AudioWorkletNode
     private ctx : AudioContext
     private volumeNode : GainNode
+    private editor? : any
 
     constructor (ctx : AudioContext) {
         this.audioWorkletNode = new AudioWorkletNode(ctx, 'bypass-processor')
@@ -60,6 +61,11 @@ export class ProcessorNode {
 
     disconnect(destination? : Destination) {
         this.volumeNode.disconnect(destination as any)
+    }
+
+    resizeUI() {
+        log('this =',this)
+        if (this.editor) this.editor.resize()
     }
 
     getUIComponent() {
@@ -88,6 +94,7 @@ export class ProcessorNode {
 
         const codeEditor = D(editorID)
         const editor = ace.edit(codeEditor)
+        this.editor = editor
 
         const run = E('button', { text: 'Run' })
             run.onclick = playAudio.bind(null, editor)
@@ -99,10 +106,10 @@ export class ProcessorNode {
         editor.getSession().setValue(INITIAL_CODE)
         editor.setOptions({
             showPrintMargin: false,
-            fontSize: 12,
             fontFamily: 'monospace',
             maxLines: Infinity,
             tabSize: 2,
+            wrap: true,
             // showGutter: false
         })
 
