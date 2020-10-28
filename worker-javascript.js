@@ -5509,9 +5509,10 @@ var JSHINT = (function() {
   };
   assignop("%=", "assignmod");
   assignop("**=", function(context, left, that) {
-    if (!state.inES7()) {
-      warning("W119", that, "Exponentiation operator", "7");
-    }
+    // garbage
+    // if (!state.inES7()) {
+    //   warning("W119", that, "Exponentiation operator", "7");
+    // }
 
     that.left = left;
 
@@ -5562,9 +5563,10 @@ var JSHINT = (function() {
   }, orPrecendence);
   infix("&&", "and", 50);
   infix("**", function(context, left, that) {
-    if (!state.inES7()) {
-      warning("W119", that, "Exponentiation operator", "7");
-    }
+    // garbage
+    // if (!state.inES7()) {
+    //   warning("W119", that, "Exponentiation operator", "7");
+    // }
     if (!left.paren && beginsUnaryExpression(left)) {
       error("E024", that, "**");
     }
@@ -11459,7 +11461,7 @@ exports.val = {
   ignore       : false, // start/end ignoring lines of code, bypassing the lexer
 
   ignoreDelimiters: false, // array of start/end delimiters used to ignore
-  esversion: 5
+  esversion: 7
 };
 exports.unstable = {
   bigint: true

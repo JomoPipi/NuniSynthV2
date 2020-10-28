@@ -11,6 +11,7 @@ import
     { GateSequencer, NuniAudioParam
     , Sequencer, NuniGraphAudioNode
     } from '../../webaudio2/internal.js'
+import { ProcessorNode } from '../../webaudio2/processor/processornode.js'
 
 type Destination = AudioNode | AudioParam | NuniAudioParam
 
@@ -213,6 +214,10 @@ export class NuniGraph {
         {
             destination.addInput(node1)
         }
+        else if (destination instanceof ProcessorNode)
+        {
+            node1.audioNode.connect(destination.audioWorkletNode)
+        }
         else if (destination instanceof NuniAudioParam) 
         {
             node1.audioNode.connect(destination.offset)
@@ -236,7 +241,11 @@ export class NuniGraph {
         else if (destination instanceof NuniAudioParam) 
         {
             node1.audioNode.disconnect(destination.offset)
-        } 
+        }
+        else if (destination instanceof ProcessorNode)
+        {
+            node1.audioNode.disconnect(destination.audioWorkletNode)
+        }
         else 
         {
             node1.audioNode.disconnect(destination)

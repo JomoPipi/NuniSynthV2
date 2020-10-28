@@ -19,7 +19,8 @@ const INITIAL_CODE = `class CustomProcessor extends AudioWorkletProcessor {
     }
     process(inputs, outputs, parameters) {
       const speakers = outputs[0]
-      for (let i = 0; i < speakers[0].length; i++) {
+      for (let i = 0; i < speakers[0].length; i++)
+      {
         const noise = Math.random() * 2 - 1
         const gain = parameters.gain[i]
         speakers[0][i] = noise * gain
@@ -32,7 +33,7 @@ const INITIAL_CODE = `class CustomProcessor extends AudioWorkletProcessor {
 class CustomAudioNode extends AudioWorkletNode {
     constructor(audioContext : AudioContext, processorName : string) {
         super (audioContext, processorName, 
-            { numberOfInputs: 0
+            { numberOfInputs: 1
             , numberOfOutputs: 1
             , outputChannelCount: [2]
             });
@@ -43,7 +44,7 @@ let ID = 0
 let newCodeId = 0
 
 export class ProcessorNode {
-    private audioWorkletNode : AudioWorkletNode
+    audioWorkletNode : AudioWorkletNode
     private ctx : AudioContext
     private volumeNode : GainNode
     private editor? : any
@@ -64,8 +65,7 @@ export class ProcessorNode {
     }
 
     resizeUI() {
-        log('this =',this)
-        if (this.editor) this.editor.resize()
+        this.editor?.resize()
     }
 
     getUIComponent() {
@@ -106,7 +106,7 @@ export class ProcessorNode {
         editor.getSession().setValue(INITIAL_CODE)
         editor.setOptions({
             showPrintMargin: false,
-            fontFamily: 'monospace',
+            fontFamily: 'Lucida Console',
             maxLines: Infinity,
             tabSize: 2,
             wrap: true,
@@ -170,6 +170,32 @@ function createProcessorCode(userCode : string, processorName : string) {
 //       {
 //         const noise = Math.sin(this.x++/(((this.y *= 1.0001) % 100) + 694.0));
 //         const gain = parameters.gain[0]
+//         speakers[0][i] = noise 
+//         speakers[1][i] = noise
+//       }
+//       return true
+//     }
+// }
+
+
+
+
+// let t = 0
+// class CustomProcessor extends AudioWorkletProcessor {
+//     static get parameterDescriptors() {
+//       return [{ name: 'gain', defaultValue: 0.1}]
+//     }
+//     constructor() {
+//       super()
+//       this.sampleRate = 44100
+//     }
+//     process(inputs, outputs, parameters) {
+//       console.log(inputs[0])
+//       const speakers = outputs[0]
+//       t++
+//       for (let i = 0; i < speakers[0].length; i++)
+//       {
+//         const noise = Math.sin(((Math.sin(t)*1000**.4)*((t+i)/Math.E))/Math.PI ** Math.E)
 //         speakers[0][i] = noise 
 //         speakers[1][i] = noise
 //       }
