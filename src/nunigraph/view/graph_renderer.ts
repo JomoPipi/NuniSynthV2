@@ -323,7 +323,6 @@ export class NuniGraphRenderer {
                     let dotted = false
                     if (macroHinted && x && y && toId !== node.id && fromId !== node.id)
                     {
-                        log('others =',toId, node.id, fromId )
                         const m = (y2-y1) / (x2-x1 || 1e-8)
                         const b = y1 - m * x1
                         const _y = m * x + b

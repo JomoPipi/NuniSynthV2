@@ -9,45 +9,68 @@ type Destination = AudioNode | AudioParam
 
 declare var ace : any
 
-const INITIAL_CODE = `class CustomProcessor extends AudioWorkletProcessor {
-    static get parameterDescriptors() {
-      return [{ name: 'gain', defaultValue: 0.1}]
+const INITIAL_CODE = 
+`class CustomProcessor extends AudioWorkletProcessor {
+  static get parameterDescriptors() {
+    return [{ name: 'gain', defaultValue: 0.1}]
+  }
+  constructor() {
+    super()
+    this.sampleRate = 44100
+  }
+  process(inputs, outputs, parameters) {
+    const speakers = outputs[0]
+    for (let i = 0; i < speakers[0].length; i++)
+    {
+      const noise = Math.sin(Date.now()*(1+i))
+      const gain = parameters.gain[0]
+      speakers[0][i] = noise * gain
     }
-    constructor() {
-      super()
-      this.sampleRate = 44100
-    }
-    process(inputs, outputs, parameters) {
-      const speakers = outputs[0]
-      for (let i = 0; i < speakers[0].length; i++)
-      {
-        const noise = Math.random() * 2 - 1
-        const gain = parameters.gain[i]
-        speakers[0][i] = noise * gain
-        speakers[1][i] = noise * gain
-      }
-      return true
-    }
+    return true
+  }
 }`
+// = `class CustomProcessor extends AudioWorkletProcessor {
+//     static get parameterDescriptors() {
+//       return [{ name: 'gain', defaultValue: 0.1}]
+//     }
+//     constructor() {
+//       super()
+//       this.sampleRate = 44100
+//     }
+//     process(inputs, outputs, parameters) {
+//       const speakers = outputs[0]
+//       for (let i = 0; i < speakers[0].length; i++)
+//       {
+//         const noise = Math.random() * 2 - 1
+//         const gain = parameters.gain[i]
+//         speakers[0][i] = noise * gain
+//         speakers[1][i] = noise * gain
+//       }
+//       return true
+//     }
+// }`
 
-class CustomAudioNode extends AudioWorkletNode {
-    constructor(audioContext : AudioContext, processorName : string) {
-        super (audioContext, processorName, 
-            { numberOfInputs: 1
-            , numberOfOutputs: 1
-            , outputChannelCount: [2]
-            });
-    }
-}
 
-let ID = 0
-let newCodeId = 0
+
+// class CustomAudioNode extends AudioWorkletNode {
+//     constructor(audioContext : AudioContext, processorName : string) {
+//         super (audioContext, processorName, 
+//             { numberOfInputs: 1
+//             , numberOfOutputs: 1
+//             , outputChannelCount: [2]
+//             });
+//     }
+// }
 
 export class ProcessorNode {
     audioWorkletNode : AudioWorkletNode
+    code = INITIAL_CODE
     private ctx : AudioContext
     private volumeNode : GainNode
+    private editorNeedsUpdate = false
     private editor? : any
+    private UIComponent? : HTMLDivElement
+    private url = ''
 
     constructor (ctx : AudioContext) {
         this.audioWorkletNode = new AudioWorkletNode(ctx, 'bypass-processor')
@@ -69,10 +92,13 @@ export class ProcessorNode {
     }
 
     getUIComponent() {
-        const div = E('div', { className: 'container' })
-        div.style.width = '162px'
-        div.style.height = '100px'
-        const editorID = `editor${ID++}`
+        if (this.UIComponent) return this.UIComponent
+
+        const div = this.UIComponent = E('div', { className: 'container' })
+        const topRow = E('div')
+        const codeEditor = E('div', { className: 'editor' })
+        div.style.width = '486px'
+        div.style.height = '300px'
         div.innerHTML = `
         <style>
             .container {
@@ -85,71 +111,80 @@ export class ProcessorNode {
                 width: 100%;
                 height: 100%;
             }
-        </style>
-        <div id="${editorID}-top-row"></div>
-        <div id='${editorID}' class="editor"></div>`
+        </style>`
+        div.append(topRow, codeEditor)
 
         // We need to wait for the innerHTML to be parsed:
         requestAnimationFrame(() => {
 
-        const codeEditor = D(editorID)
-        const editor = ace.edit(codeEditor)
-        this.editor = editor
+        const options = 
+            { showPrintMargin: false
+            , fontFamily: 'Lucida Console'
+            , maxLines: Infinity
+            , tabSize: 2
+            , wrap: true
+            // showGutter: false
+            }
+        this.editor = ace.edit(codeEditor, options)
 
         const run = E('button', { text: 'Run' })
-            run.onclick = playAudio.bind(null, editor)
+            run.onclick = this.playAudio.bind(this)
 
-        D(`${editorID}-top-row`).append(run)
+        topRow.append(run)
 
-        editor.setTheme("ace/theme/gruvbox")
-        editor.getSession().setMode("ace/mode/javascript")
-        editor.getSession().setValue(INITIAL_CODE)
-        editor.setOptions({
-            showPrintMargin: false,
-            fontFamily: 'Lucida Console',
-            maxLines: Infinity,
-            tabSize: 2,
-            wrap: true,
-            // showGutter: false
-        })
+        this.editor.setTheme("ace/theme/gruvbox")
+        this.editor.getSession().setMode("ace/mode/javascript")
+        this.editor.getSession().setValue(this.code)
 
         })
-        const _this = this
+
         return div
+    }
 
-        function runEditorCode(editor : any) {
-            ++newCodeId
-            const userCode = editor.getSession().getValue()
-            const code = createProcessorCode(userCode, editorID + ":" + newCodeId)
-            const blob = new Blob([code], { type: 'application/javascript' })
-            const url = window.URL.createObjectURL(blob);
-        
-           _this.runAudioWorklet(url, editorID + ":" + newCodeId);
+    private static _id = 0
+    private createNewCodeId() { return ProcessorNode._id++ }
+
+    updateCode(code : string) {
+        if (this.editor) 
+        {
+            this.editor.getSession().setValue(code)
+            return
         }
-        
-        function playAudio(editor : any) {
-            runEditorCode(editor);
-        }
-    }
-        
-    runAudioWorklet(workletUrl : string, processorName : string) {
-        this.ctx.audioWorklet.addModule(workletUrl).then(() => {
-            this.stopAudio();
-            this.audioWorkletNode = new CustomAudioNode(this.ctx, processorName);
-            this.audioWorkletNode.connect(this.volumeNode);
-        });
-    }
-    stopAudio() {
-        this.audioWorkletNode.disconnect(this.volumeNode);
+        this.code = code
+        this.editorNeedsUpdate = true
     }
     
+    runEditorCode() {
+        if (this.editorNeedsUpdate) this.editor.getSession().setValue(this.code)
+        else this.code = this.editor.getSession().getValue()
+        const id = this.createNewCodeId().toString()
+        const code = createProcessorCode(this.code, id)
+        const blob = new Blob([code], { type: 'application/javascript' })
+        log('url =',this.url)
+        // window.URL.revokeObjectURL(this.url)
+        this.url = window.URL.createObjectURL(blob)
+        this.runAudioWorklet(id)
+    }
+    
+    playAudio() {
+        this.runEditorCode()
+    }
+        
+    async runAudioWorklet(processorName : string) {
+        await this.ctx.audioWorklet.addModule(this.url)
+        // this.audioWorkletNode.disconnect(this.volumeNode)
+
+        this.audioWorkletNode.disconnect()
+        this.audioWorkletNode = new AudioWorkletNode(this.ctx, processorName)
+        this.audioWorkletNode.connect(this.volumeNode)
+    }
 }
-;(<any>window).CustomAudioNode = CustomAudioNode
+// ;(<any>window).CustomAudioNode = CustomAudioNode
 
 function createProcessorCode(userCode : string, processorName : string) {
     return `${userCode}
 
-    registerProcessor("${processorName}", CustomProcessor);`;
+    registerProcessor("${processorName}", CustomProcessor)`;
 }
 
 
