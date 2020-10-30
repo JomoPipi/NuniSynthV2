@@ -146,6 +146,7 @@ code {
     background: 
         linear-gradient(var(--color4), var(--color1));
     border: 2px solid var(--color0);
+    box-sizing: border-box;
     // border-radius: 20%;
 }
 
@@ -153,6 +154,7 @@ code {
     background: 
         linear-gradient(var(--color4), var(--color0));
     border: 2px solid var(--color0);
+    box-sizing: border-box;
 }
 
 .smaller-text {

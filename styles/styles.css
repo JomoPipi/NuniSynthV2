@@ -551,12 +551,16 @@ code {
   background: -webkit-gradient(linear, left top, left bottom, from(var(--color4)), to(var(--color1)));
   background: linear-gradient(var(--color4), var(--color1));
   border: 2px solid var(--color0);
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 .note-box-halfway {
   background: -webkit-gradient(linear, left top, left bottom, from(var(--color4)), to(var(--color0)));
   background: linear-gradient(var(--color4), var(--color0));
   border: 2px solid var(--color0);
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 .smaller-text {
@@ -1500,9 +1504,7 @@ a {
 }
 
 .highlighted {
-  border: 2px solid cyan;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  border-color: cyan;
 }
 
 .wait-cursor {

@@ -311,6 +311,8 @@ export class Sequencer extends VolumeNodeContainer {
                 dial.render()
 
                 const valueText = E('span', { text: volumeTodB(value).toFixed(1) + 'dB' })
+                    valueText.style.display = 'inline-block'
+                    valueText.style.width = '52px' // The rows need to being moved by the text
                     // applyStyle(valueText, 
                     //     { display: 'inline-block'
                     //     , width: '70px'
