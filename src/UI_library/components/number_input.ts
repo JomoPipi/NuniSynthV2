@@ -18,6 +18,8 @@ type UpdateFuncSettings = {
     min : number
     max : number
     isLinear : boolean
+    width? : number
+    height? : number
     }
 
 export function createDraggableNumberInput(
@@ -33,6 +35,10 @@ export function createDraggableNumberInput(
             , value: initialValue
             }
         })
+        for (const d of ['width','height'] as 'width'[])
+        {
+            if (settings[d]) valueInput.style[d] = settings[d] + 'px'
+        }
 
     const state = { startX: 0, startY: 0, startValue: 0 }
 

@@ -5,7 +5,7 @@
 
 
 
-import { createNumberDialComponent } from "../../UI_library/internal.js"
+import { createDraggableNumberInput, createNumberDialComponent } from "../../UI_library/internal.js"
 
 
 
@@ -31,7 +31,9 @@ type Options =
     , allowFree? : boolean
     }
 
-export function createSubdivSelect(an : { subdiv : number }, options ?: Options) {
+const freeTempo = 'Free'
+
+export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv : number, isInSync? : boolean }, options ?: Options) {
     const { fn, allowFree }  = options || {}
         
     const makeSubdivisionOption = (n : number) =>
@@ -43,7 +45,7 @@ export function createSubdivSelect(an : { subdiv : number }, options ?: Options)
             })
 
     const maybeFree = allowFree 
-        ? [E('option', { text: 'Free', className: 'list-btn' })] 
+        ? [E('option', { text: freeTempo, className: 'list-btn' })] 
         : []
 
     const select = 
@@ -51,21 +53,36 @@ export function createSubdivSelect(an : { subdiv : number }, options ?: Options)
 
     select.style.width = select.offsetHeight + 'px'
     select.value 
-        = an.subdiv === 0
-        ? select.value
+        = an.subdivisionSynced
+        ? freeTempo
         : an.subdiv <= 1 
         ? `${Math.round(1 / an.subdiv)} bars` 
         : '1/' + an.subdiv
 
+    const freeKnob = createDraggableNumberInput(
+        an.subdiv, () => an.subdiv, (value : number) => fn!(an.subdiv = value), 
+        { amount: 2**(-7)
+        , min: 1
+        , max: 999
+        , isLinear: false
+        , width: 80
+        , height: 30 
+        })
+        freeKnob.style.display = an.subdivisionSynced ? 'inline' : 'none'
+    
     select.onchange = function() {
-        // if (select.value === 'free')
-        // {
-        //     showFreeKnob(an.subdiv || 1, fn)
-        //     an.subdiv = 0
-        //     return;
-        // }
-        // else hideFreeKnob()
-
+        if (select.value === freeTempo)
+        {
+            an.subdivisionSynced = true
+            an.isInSync = false
+            freeKnob.style.display = 'inline'
+            return
+        }
+        else 
+        {
+            an.subdivisionSynced = false
+            freeKnob.style.display = 'none'
+        }
         const n = select.value.endsWith('bars') 
             ? 1.0/+select.value.split(' ')[0]
             : +select.value.split('/')[1]
@@ -74,7 +91,6 @@ export function createSubdivSelect(an : { subdiv : number }, options ?: Options)
         fn && fn(n)
     }
 
-    // const freeKnob = createNumberDialComponent()
 
-    return select // E('div', { children: [select, freeKnob] })
+    return E('div', { children: [select, freeKnob] })
 }

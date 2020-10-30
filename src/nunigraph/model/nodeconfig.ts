@@ -480,6 +480,7 @@ const Transferable_AudioNodeProperties = Object.assign(
     { type        : true
     , kbMode      : true
     , subdiv      : true
+    , subdivisionSynced : true
     , isInSync    : true
     , bufferKey   : true
     , nSteps      : true

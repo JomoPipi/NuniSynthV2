@@ -639,13 +639,14 @@ code {
 
 .number-dial-input {
   background-color: var(--color1);
-  width: 60px;
+  width: 44px;
   color: var(--color5);
   display: block;
 }
 
 .number-dial-component {
-  display: inline-block;
+  display: -ms-inline-grid;
+  display: inline-grid;
   text-align: start;
 }
 
