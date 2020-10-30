@@ -1,3 +1,4 @@
+import { doUntilMouseUp } from "../events/until_mouseup.js"
 
 
 
@@ -13,7 +14,6 @@ const classes = [
 export class JsDial {
     
     [x : string] : unknown
-    private isActive : boolean
     sensitivity : number
     lastY : number
     lastX : number
@@ -56,31 +56,16 @@ export class JsDial {
     
     attach(func : (n : number) => void, startFunc? : Function, endFunc? : Function) {
 
-        const start = (x:number, y:number) => { 
-            this.lastX = x
-            this.lastY = y
+        const mousedown = ({ clientX, clientY } : MouseEvent) => {
+            this.lastX = clientX
+            this.lastY = clientY
             this.isActive = true
             startFunc && startFunc()
             this.render()
-
-            window.addEventListener('mousemove', mouseMove)
-            window.addEventListener('mouseup', end)
         }
-
-        const end = () => { 
-            this.isActive = false
-            endFunc && endFunc()
-            
-            window.removeEventListener('mousemove', mouseMove)
-            window.removeEventListener('mouseup', end)
-        }
-
-        const mouseStart = (e : MouseEvent) => start(e.clientX,e.clientY)
-        const mouseMove  = (e : MouseEvent) => move (e.clientX,e.clientY)
         
-        const move = (x:number, y:number) => {
+        const mousemove = ({ clientX: x, clientY: y } : MouseEvent) => {
             
-            if (!this.isActive) return;
             this.value += (this.lastY - y + x - this.lastX) * this.sensitivity
             this.value = clamp(this.min, this.value, this.max)
             this.lastX = x
@@ -90,7 +75,13 @@ export class JsDial {
             func(this.value)
         }
 
-        this.dial.addEventListener('mousedown', mouseStart as EventListener)
+        const mouseup = () => { 
+            this.isActive = false
+            endFunc && endFunc()
+        }
+
+        this.dial.onmousedown = doUntilMouseUp(mousemove, { mousedown, mouseup })
+
         this.update = (value : number) => {
             this.value = value
             func(value)

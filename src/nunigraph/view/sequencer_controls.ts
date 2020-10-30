@@ -87,8 +87,10 @@ function createTopRowControls(an : Sequencer) {
     }
 
     changeSubdivision: {
-        controls.appendChild(createSubdivSelect(an, _ => 
-            an.updateTempo(MasterClock.getTempo())))
+        controls.appendChild(createSubdivSelect(an ,
+            { fn: _ => an.updateTempo(MasterClock.getTempo())
+            , allowFree: true 
+            }))
     }
 
     choose_ADSR: {

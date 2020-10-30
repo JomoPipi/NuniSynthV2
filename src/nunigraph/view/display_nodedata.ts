@@ -483,7 +483,7 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
         
         if (isSubdividable[param]) {
             const subdiv = { subdiv: 0 }
-            const subdivSelect = createSubdivSelect(subdiv, updateParam)
+            const subdivSelect = createSubdivSelect(subdiv, { fn: updateParam })
 
             textBox.append(' ', subdivSelect)
 

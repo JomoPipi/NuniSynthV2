@@ -51,7 +51,7 @@ export function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
     choose_recording_length: {
 
         const value = audioNode.recordingLength
-        const subdivSelect = createSubdivSelect(audioNode, updateSlider)
+        const subdivSelect = createSubdivSelect(audioNode, { fn: updateSlider })
         const lengthText = E('span', { text: value + 's' })
         const lengthSlider = E('input',
             { props: 
