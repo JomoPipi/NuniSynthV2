@@ -11,23 +11,37 @@ declare var ace : any
 
 const INITIAL_CODE = 
 `class CustomProcessor extends AudioWorkletProcessor {
-  static get parameterDescriptors() {
-    return [{ name: 'gain', defaultValue: 0.1}]
-  }
-  constructor() {
-    super()
-    this.sampleRate = 44100
-  }
-  process(inputs, outputs, parameters) {
-    const speakers = outputs[0]
-    for (let i = 0; i < speakers[0].length; i++)
-    {
-      const noise = Math.sin(Date.now()*(1+i))
-      const gain = parameters.gain[0]
-      speakers[0][i] = noise * gain
+    static get parameterDescriptors() {
+      return [{ name: 'gain', defaultValue: 0.1}]
     }
-    return true
-  }
+    constructor() {
+      super()
+      this.sampleRate = 44100
+      this.isRunning = true
+      this.port.onmessage = (e) => {
+        switch (e.data) {
+          case 'end': 
+            this.isRunning = false
+            break
+        }
+      }
+    }
+    process(inputs, outputs, parameters) {
+      
+      
+      // USER CODING AREA:
+      const speakers = outputs[0]
+      for (let i = 0; i < speakers[0].length; i++)
+      {
+        const noise = Math.sin(Date.now()/(1+i/500))
+        const gain = parameters.gain[0]
+        speakers[0][i] = speakers[1][i] = noise * gain
+      }
+      // MESS WITH ANYTHING ELSE AT YOUR OWN RISK.
+      
+      
+      return this.isRunning
+    }
 }`
 // = `class CustomProcessor extends AudioWorkletProcessor {
 //     static get parameterDescriptors() {
@@ -52,15 +66,19 @@ const INITIAL_CODE =
 
 
 
-// class CustomAudioNode extends AudioWorkletNode {
-//     constructor(audioContext : AudioContext, processorName : string) {
-//         super (audioContext, processorName, 
-//             { numberOfInputs: 1
-//             , numberOfOutputs: 1
-//             , outputChannelCount: [2]
-//             });
-//     }
-// }
+class CustomAudioNode extends AudioWorkletNode {
+    constructor(audioContext : AudioContext, processorName : string) {
+        super (audioContext, processorName, 
+            { numberOfInputs: 1
+            , numberOfOutputs: 1
+            , outputChannelCount: [2]
+            });
+    }
+}
+
+
+// const processorReferences : Record<any,AudioWorkletNode> = {}
+// const processor_id = { get VALUE() { return this._++ }, _: 0 }
 
 export class ProcessorNode {
     audioWorkletNode : AudioWorkletNode
@@ -71,6 +89,7 @@ export class ProcessorNode {
     private editor? : any
     private UIComponent? : HTMLDivElement
     private url = ''
+    // private id = processor_id.VALUE
 
     constructor (ctx : AudioContext) {
         this.audioWorkletNode = new AudioWorkletNode(ctx, 'bypass-processor')
@@ -171,15 +190,16 @@ export class ProcessorNode {
     }
         
     async runAudioWorklet(processorName : string) {
+        this.audioWorkletNode.port.postMessage('end')
         await this.ctx.audioWorklet.addModule(this.url)
         // this.audioWorkletNode.disconnect(this.volumeNode)
-
         this.audioWorkletNode.disconnect()
-        this.audioWorkletNode = new AudioWorkletNode(this.ctx, processorName)
+        this.audioWorkletNode = new CustomAudioNode(this.ctx, processorName)
+        // processorReferences[this.id] = this.audioWorkletNode
         this.audioWorkletNode.connect(this.volumeNode)
     }
 }
-// ;(<any>window).CustomAudioNode = CustomAudioNode
+;(<any>window).CustomAudioNode = CustomAudioNode
 
 function createProcessorCode(userCode : string, processorName : string) {
     return `${userCode}
