@@ -64,7 +64,6 @@ export function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
                         const value = lengthSlider.value
                         lengthText.innerText = value + 's'
                         audioNode.recordingLength = +value
-                        subdivSelect.value = '-'
                         audioNode.subdiv = 0
                     }
                 }

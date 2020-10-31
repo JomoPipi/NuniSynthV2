@@ -217,6 +217,11 @@ export class Sequencer extends VolumeNodeContainer {
             }
             grid.appendChild(row)
         }
+
+        const setButtonState = (r : number, c : number, on : boolean) => {
+            this.HTMLBoxes[r][c].classList.toggle('selected', on)
+            this.stepMatrix[r][c] = on
+        }
         
         grid.onmousedown = (e : MouseEvent) => {
             const box = e.target as HTMLElement
@@ -224,6 +229,9 @@ export class Sequencer extends VolumeNodeContainer {
             {
                 const turnOn = box.classList.toggle('selected')
                 const [key,i] = box.dataset.sequencerKey.split(':').map(Number)
+
+                const rowState = this.stepMatrix[key].slice()
+
                 this.stepMatrix[key][i] = turnOn
                 
                 const row = box.parentElement!
@@ -232,13 +240,17 @@ export class Sequencer extends VolumeNodeContainer {
                     const box = e.target as HTMLElement
                     if (box.dataset.sequencerKey) // Grid buttons
                     {
-                        const [key,i] = box.dataset.sequencerKey.split(':').map(Number)
-                        if (i !== lastEntered)
+                        const [_,j] = box.dataset.sequencerKey.split(':').map(Number)
+                        if (j !== lastEntered)
                         {
-                            const turnOn = box.classList.toggle('selected')
-                            this.stepMatrix[key][i] = turnOn
+                            const [start, end] = [i,j].sort((a,b) => a - b)
+                            for (let c = 0; c < this.nSteps; c++)
+                            {
+                                const flip = start <= c && c <= end
+                                setButtonState(key, c, flip !== rowState[c])
+                            }
                         }
-                        lastEntered = i
+                        lastEntered = j
                     }
                 }
                 window.onmouseup = mouseup
