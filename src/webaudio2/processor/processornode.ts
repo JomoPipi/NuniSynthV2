@@ -61,7 +61,6 @@ export class ProcessorNode {
     _processorCode = INITIAL_CODE
     private ctx : AudioContext
     private volumeNode : GainNode
-    private editorNeedsUpdate = false
     private editor? : any
     private UIComponent? : HTMLDivElement
     private url = ''
@@ -71,6 +70,7 @@ export class ProcessorNode {
         this.ctx = ctx
         this.volumeNode = ctx.createGain()
         this.audioWorkletNode.connect(this.volumeNode)
+        this.getUIComponent()
     }
 
     connect(destination : Destination) {
@@ -116,24 +116,24 @@ export class ProcessorNode {
         // We need to wait for the innerHTML to be parsed:
         requestAnimationFrame(() => {
 
-        const options = 
-            { showPrintMargin: false
-            , fontFamily: 'Lucida Console'
-            , maxLines: Infinity
-            , tabSize: 2
-            , wrap: true
-            // showGutter: false
-            }
-        this.editor = ace.edit(codeEditor, options)
+            const options = 
+                { showPrintMargin: false
+                , fontFamily: 'Lucida Console'
+                , maxLines: Infinity
+                , tabSize: 2
+                , wrap: true
+                // showGutter: false
+                }
+            this.editor = ace.edit(codeEditor, options)
 
-        const run = E('button', { text: 'Run' })
-            run.onclick = this.playAudio.bind(this)
+            const run = E('button', { text: 'Run' })
+                run.onclick = this.playAudio.bind(this)
 
-        topRow.append(run)
+            topRow.append(run)
 
-        this.editor.setTheme("ace/theme/gruvbox")
-        this.editor.getSession().setMode("ace/mode/javascript")
-        this.editor.getSession().setValue(this._processorCode)
+            this.editor.setTheme("ace/theme/gruvbox")
+            this.editor.getSession().setMode("ace/mode/javascript")
+            this.editor.getSession().setValue(this._processorCode)
 
         })
 
@@ -144,20 +144,29 @@ export class ProcessorNode {
     private createNewCodeId() { return ProcessorNode._id++ }
 
     set processorCode(code : string) {
-        if (this.editor) 
+        this._processorCode = code
+        if (this.editor)
         {
             this.editor.getSession().setValue(code)
-            return
         }
-        this._processorCode = code
-        this.editorNeedsUpdate = true
+        else
+        {
+            this.sendToAudioWorklet()
+        }
     }
 
     get processorCode() { return this._processorCode }
     
+    playAudio() {
+        this.runEditorCode()
+    }
+
     runEditorCode() {
-        if (this.editorNeedsUpdate) this.editor.getSession().setValue(this._processorCode)
-        else this._processorCode = this.editor.getSession().getValue()
+        this._processorCode = this.editor.getSession().getValue()
+        this.sendToAudioWorklet()
+    }
+
+    sendToAudioWorklet() {
         const id = this.createNewCodeId().toString()
         const code = createProcessorCode(this._processorCode, id)
         const blob = new Blob([code], { type: 'application/javascript' })
@@ -165,10 +174,6 @@ export class ProcessorNode {
         this.runAudioWorklet(id)
     }
     
-    playAudio() {
-        this.runEditorCode()
-    }
-        
     async runAudioWorklet(processorName : string) {
         this.audioWorkletNode.port.postMessage('end')
         await this.ctx.audioWorklet.addModule(this.url)
