@@ -492,6 +492,7 @@ const Transferable_AudioNodeProperties = Object.assign(
     , MMLString   : true
     , loopStart   : true
     , loopEnd     : true
+    , processorCode : true
     
     , threshold: true
     , knee: true

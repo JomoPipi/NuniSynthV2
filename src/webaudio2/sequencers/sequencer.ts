@@ -286,8 +286,7 @@ export class Sequencer extends VolumeNodeContainer {
         }
 
         function rowOptions(items : HTMLElement, key : string) {
-            const box = E('span')//, { className: 'flat-grid' })
-            // box.style.width = '200px'
+            const box = E('span')
 
             mute_solo_box: {
                 const muteSoloBox = E('span')

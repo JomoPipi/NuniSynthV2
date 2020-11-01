@@ -58,7 +58,7 @@ class CustomAudioNode extends AudioWorkletNode {
 
 export class ProcessorNode {
     audioWorkletNode : AudioWorkletNode
-    code = INITIAL_CODE
+    _processorCode = INITIAL_CODE
     private ctx : AudioContext
     private volumeNode : GainNode
     private editorNeedsUpdate = false
@@ -133,7 +133,7 @@ export class ProcessorNode {
 
         this.editor.setTheme("ace/theme/gruvbox")
         this.editor.getSession().setMode("ace/mode/javascript")
-        this.editor.getSession().setValue(this.code)
+        this.editor.getSession().setValue(this._processorCode)
 
         })
 
@@ -143,21 +143,23 @@ export class ProcessorNode {
     private static _id = 0
     private createNewCodeId() { return ProcessorNode._id++ }
 
-    updateCode(code : string) {
+    set processorCode(code : string) {
         if (this.editor) 
         {
             this.editor.getSession().setValue(code)
             return
         }
-        this.code = code
+        this._processorCode = code
         this.editorNeedsUpdate = true
     }
+
+    get processorCode() { return this._processorCode }
     
     runEditorCode() {
-        if (this.editorNeedsUpdate) this.editor.getSession().setValue(this.code)
-        else this.code = this.editor.getSession().getValue()
+        if (this.editorNeedsUpdate) this.editor.getSession().setValue(this._processorCode)
+        else this._processorCode = this.editor.getSession().getValue()
         const id = this.createNewCodeId().toString()
-        const code = createProcessorCode(this.code, id)
+        const code = createProcessorCode(this._processorCode, id)
         const blob = new Blob([code], { type: 'application/javascript' })
         this.url = window.URL.createObjectURL(blob)
         this.runAudioWorklet(id)
