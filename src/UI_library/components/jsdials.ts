@@ -27,12 +27,12 @@ export class JsDial {
     rounds : number
     update : (value : number) => void
 
-    constructor(classIndex? : number) {
+    constructor(CSS_classIndex? : number) {
         
         this.dial = E('div', { className: 'js-dial' })
         
         this.html = E('div', 
-            { className: classes[classIndex || 0]
+            { className: classes[CSS_classIndex || 0]
             , children: [this.dial]
             }) 
             

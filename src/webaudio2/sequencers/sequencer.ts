@@ -173,7 +173,6 @@ export class Sequencer extends VolumeNodeContainer {
                 this.HTMLBoxes[key][step].classList.remove('highlighted')
             }
         }
-
         // this.controls.unhighlightGrid()
     }
 
@@ -278,9 +277,7 @@ export class Sequencer extends VolumeNodeContainer {
                             button.classList.remove('selected')
                         }
                     }
-                    this.soloChannel = activate
-                        ? key
-                        : -1
+                    this.soloChannel = activate ? key : -1
                 }
             }
         }

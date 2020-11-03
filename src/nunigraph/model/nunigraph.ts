@@ -32,12 +32,6 @@ export class NuniGraph {
      * The job of the NuniGraph is to keep track of nodes and their connections.
      * It has a list of nodes and a connection map.*
      */
-    
-     
-//  type ConnecteeDatum = 
-//  { id : number, connectionType : ConnectionType }
-    
-//  type ConnecteeData = ConnecteeDatum[]
 
     private nextId : number
     readonly nodes : NuniGraphNode[]
@@ -233,7 +227,7 @@ export class NuniGraph {
 
     private disconnect_audioNode_from_destination(node1 : NuniGraphNode, destination : Destination) {
 
-    // TODO: Change this methods to disconnect_node_from_destination, and put this condition in a config object.
+        // TODO: Change this methods to disconnect_node_from_destination, and put this condition in a config object.
         if (destination instanceof GateSequencer || destination instanceof NuniGraphAudioNode) 
         {
             destination.removeInput(node1)

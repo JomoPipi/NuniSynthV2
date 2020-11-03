@@ -116,8 +116,7 @@ function showBufferFormulaTemplates() {
 }
 
 function clickBufferTemplateOrNot(e : MouseEvent) {
-    // @ts-ignore 
-    const text = e.target.innerText
+    const text = (e.target as HTMLElement).innerText
     if (text in bufferPresets) 
     {
         formulaInput.value = bufferPresets[text as keyof typeof bufferPresets]

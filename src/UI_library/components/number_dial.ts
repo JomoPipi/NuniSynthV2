@@ -42,7 +42,6 @@ export function createNumberDialComponent(
                 }
             }
         })
-        // valueInput.style.width = dial.html.offsetWidth + 'px'
         Object.assign(valueInput, props.input)
         
     dial.attach((value : number) => {
