@@ -15,22 +15,7 @@ export class PianoRoll12Tone {
     csn
 
     constructor(ctx : AudioContext) {
-        log('colors = ',Theme.colors)
         this.ctx = ctx
-
-        // this.pianoRoll = new Pianoroll()
-        // this.html = E('div', { children: [this.pianoRoll] })
-        
-        // this.pianoRoll.editmode = 'dragmono'
-        // this.pianoRoll.xscroll = 
-        // this.pianoRoll.yscroll = 
-        // this.pianoRoll.wheelzoom = 1
-        // this.pianoRoll.kbwidth = 30
-        // this.pianoRoll.colrulerbg = Theme.colors[2]
-        // this.pianoRoll.colrulerfg = Theme.colors[5]
-        // this.pianoRoll.collt = Theme.colors[1]
-        // this.pianoRoll.coldk = Theme.colors[0]
-
         this.html = E('div')
 
         const util = D("utility-div")

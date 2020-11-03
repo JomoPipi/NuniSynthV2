@@ -216,7 +216,7 @@ export class NuniGraph {
         }
         else if (destination instanceof ProcessorNode)
         {
-            node1.audioNode.connect(destination.audioWorkletNode)
+            node1.audioNode.connect(destination.inputChannelNode)
         }
         else if (destination instanceof NuniAudioParam) 
         {
@@ -238,13 +238,13 @@ export class NuniGraph {
         {
             destination.removeInput(node1)
         } 
+        else if (destination instanceof ProcessorNode)
+        {
+            node1.audioNode.disconnect(destination.inputChannelNode)
+        }
         else if (destination instanceof NuniAudioParam) 
         {
             node1.audioNode.disconnect(destination.offset)
-        }
-        else if (destination instanceof ProcessorNode)
-        {
-            node1.audioNode.disconnect(destination.audioWorkletNode)
         }
         else 
         {

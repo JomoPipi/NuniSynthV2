@@ -9,6 +9,8 @@ type Destination = AudioNode | AudioParam
 
 declare var ace : any
 
+const END = 'end'
+
 const INITIAL_CODE = 
 `class CustomProcessor extends AudioWorkletProcessor {
   static get parameterDescriptors() {
@@ -20,7 +22,7 @@ const INITIAL_CODE =
     this.isRunning = true
     this.port.onmessage = (e) => {
     switch (e.data) {
-      case 'end': 
+      case ${END}: 
       this.isRunning = false
       break
     }
@@ -58,6 +60,7 @@ class CustomAudioNode extends AudioWorkletNode {
 
 export class ProcessorNode {
     audioWorkletNode : AudioWorkletNode
+    inputChannelNode : GainNode
     _processorCode = INITIAL_CODE
     private ctx : AudioContext
     private volumeNode : GainNode
@@ -67,6 +70,7 @@ export class ProcessorNode {
 
     constructor (ctx : AudioContext) {
         this.audioWorkletNode = new AudioWorkletNode(ctx, 'bypass-processor')
+        this.inputChannelNode = ctx.createGain()//.connect(this.audioWorkletNode) as GainNode
         this.ctx = ctx
         this.volumeNode = ctx.createGain()
         this.audioWorkletNode.connect(this.volumeNode)
@@ -175,11 +179,12 @@ export class ProcessorNode {
     }
     
     async runAudioWorklet(processorName : string) {
-        this.audioWorkletNode.port.postMessage('end')
+        this.audioWorkletNode.port.postMessage(END)
         await this.ctx.audioWorklet.addModule(this.url)
         this.audioWorkletNode.disconnect()
         this.audioWorkletNode = new CustomAudioNode(this.ctx, processorName)
         this.audioWorkletNode.connect(this.volumeNode)
+        this.inputChannelNode.connect(this.audioWorkletNode)
     }
 }
 ;(<any>window).CustomAudioNode = CustomAudioNode
