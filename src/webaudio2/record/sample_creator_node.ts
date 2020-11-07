@@ -104,6 +104,6 @@ export class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
                 (this.subdiv === 0 
                     ? this.recordingLength
                     : (60 * 4 / MasterClock.getTempo()) / this.subdiv
-                ) * 1010 + delta * 1010) // Going for 1% longer, here
+                ) * 1020 + delta * 1020) // Going for 2% longer, here
     }
 }

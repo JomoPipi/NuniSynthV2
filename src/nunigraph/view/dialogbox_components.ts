@@ -5,7 +5,7 @@
 
 
 
-import { createDraggableNumberInput, createNumberDialComponent } from "../../UI_library/internal.js"
+import { createDraggableNumberInput } from "../../UI_library/internal.js"
 
 
 
@@ -33,17 +33,17 @@ type Options =
 
 const freeTempo = 'Free'
 
+const makeSubdivisionOption = (n : number) =>
+    E('option', 
+        { text: n < 1 
+            ? `${Math.round(1/n)} bars` 
+            : '1/' + n
+        , className: 'list-btn' 
+        })
+
 export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv : number, isInSync? : boolean }, options ?: Options) {
     const { fn, allowFree }  = options || {}
         
-    const makeSubdivisionOption = (n : number) =>
-        E('option', 
-            { text: n < 1 
-                ? `${Math.round(1/n)} bars` 
-                : '1/' + n
-            , className: 'list-btn' 
-            })
-
     const maybeFree = allowFree 
         ? [E('option', { text: freeTempo, className: 'list-btn' })] 
         : []
@@ -92,5 +92,23 @@ export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv :
     }
 
 
-    return E('div', { children: [select, freeKnob] })
+    return E('span', { children: [select, freeKnob] })
+}
+
+export function createSubdivSelect2(fn? : (value : number) => void) {
+
+    const select = 
+        E('select', { children: subdivisionList.map(makeSubdivisionOption) })
+
+    // select.style.width = select.offsetHeight + 'px'
+
+    select.onchange = function() {
+        const n = select.value.endsWith('bars') 
+            ? 1.0/+select.value.split(' ')[0]
+            : +select.value.split('/')[1]
+
+        fn && fn(n)
+    }
+
+    return E('span', { children: [select] })
 }

@@ -9,6 +9,8 @@ import { BufferUtils } from "./init_buffers.js"
 import { recordTo } from "./record.js"
 import { formulateBuffer } from "./buffer_formula.js"
 import { BufferStorage } from "../storage/buffer_storage.js"
+import { createSubdivSelect2 } from "../nunigraph/view/dialogbox_components.js"
+import { MasterClock } from "../webaudio2/internal.js"
 
 
 
@@ -41,11 +43,26 @@ D('buffer-functions').onclick = (e : MouseEvent) => {
     ;(funcMap[btn.id as keyof typeof funcMap] || (() => void 0))()
 }
 
-D('new-buffer-length').oninput = () => {
-    const value = (D('new-buffer-length') as HTMLSelectElement).value
-    D('new-buffer-length-text').innerText = value
-    BufferUtils.nextBufferDuration = +value
+const lengthSlider = D('new-buffer-length') as HTMLSelectElement
+const lengthText = D('new-buffer-length-text')
+
+const setLength = (value : number) => {
+    const seconds = (60 * 4 / MasterClock.getTempo() / value)
+    lengthSlider.value = lengthText.innerText = seconds.toString()
+    BufferUtils.nextBufferDuration = seconds
 }
+
+lengthSlider.oninput = () => {
+    const seconds = lengthSlider.value
+    lengthText.innerText = seconds
+    BufferUtils.nextBufferDuration = +seconds
+}
+
+const subdivSelect2 = createSubdivSelect2(setLength)
+    subdivSelect2.style.backgroundColor = 'gray' // Makes a gray line on top.. just looks pretty :)
+
+D('buffer-length-stuff').append(subdivSelect2)
+
 
 // D('open-buffer-edit-dialog-button').onclick = () =>
 //     toggleBufferEditDialog(BufferUtils.currentIndex)
