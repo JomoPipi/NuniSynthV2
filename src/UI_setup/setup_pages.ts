@@ -15,12 +15,12 @@ import { pageGroupify } from "../UI_library/components/page_groupify.js"
 
 // Group tab-swappers with their tabs
 // TODO: remove this and put all the frequently used things on one tab
-pageGroupify(D('tab-swapper'), [
-    'graph-tab',
-    'keyboard-tab',
-    'buffer-edit-tab',
-    'waveform-edit-tab',
-    ])
+// pageGroupify(D('tab-swapper'), [
+//     'graph-tab',
+//     'keyboard-tab',
+//     'buffer-edit-tab',
+//     'waveform-edit-tab',
+//     ])
 
 pageGroupify(D('scale-kinds'), [
     'preset-library',

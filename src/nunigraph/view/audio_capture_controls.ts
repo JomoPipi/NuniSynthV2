@@ -50,9 +50,10 @@ export function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
     
     choose_recording_length: {
 
+        const secs = 's '
         const value = audioNode.recordingLength
         const subdivSelect = createSubdivSelect(audioNode, { fn: updateSlider })
-        const lengthText = E('span', { text: value + 's' })
+        const lengthText = E('span', { text: value + secs })
         const lengthSlider = E('input',
             { props: 
                 { type: 'range'
@@ -62,7 +63,7 @@ export function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
                 , value: audioNode.recordingLength.toString()
                 , oninput: () => {
                         const value = lengthSlider.value
-                        lengthText.innerText = value + 's'
+                        lengthText.innerText = value + secs
                         audioNode.recordingLength = +value
                         audioNode.subdiv = 0
                     }
@@ -71,7 +72,7 @@ export function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
 
         function updateSlider(value : number) {
             const length = (60 * 4 / MasterClock.getTempo()) / audioNode.subdiv
-            lengthText.textContent = length + 's'
+            lengthText.textContent = length + secs
             lengthSlider.value = length.toString()
         }
 
@@ -87,7 +88,7 @@ export function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
                 }
             })
 
-        controls.append(checkbox, E('span', { text: 'sync' }))
+        controls.append(checkbox, E('span', { text: ' sync ' }))
 
         checkbox.oninput = () => {
             audioNode.sync = checkbox.checked

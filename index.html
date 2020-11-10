@@ -120,20 +120,20 @@
                   <li><a href="#"> New Project </a></li>
                   <li><a href="#"> Open.. </a>
                     <ul>
-                        <li><a href="#"> Saved Project </a></li>
-                        <li><a href="#"> Example Project </a></li>
+                        <li><a href="#"> Saved Projects </a></li>
+                        <li><a href="#"> Example Projects </a></li>
                     </ul>   
                   </li>
                   <li><a href="#"> Save </a></li>
                   <li><a href="#"> Save As.. </a></li>
-                  <li><a href="#"> Export.. </a></li>
+                  <!-- <li><a href="#"> Export.. </a></li> -->
                   
-                  <li><a href="#">Settings</a>
+                  <!-- <li><a href="#">Settings</a>
                     <ul>
                         <li><a href="#">A</a></li>
                         <li><a href="#">B</a></li>
                     </ul>        
-                  </li>
+                  </li> -->
                 </ul> 
               </li>
   
@@ -155,17 +155,20 @@
                 </ul>  
               </li>
               
-              <li class="top"><a href="#">Utilities</a>
+              <li class="top"><a href="#">Utils</a>
                 <ul>
                     <li><a href="#">
-                      <span id="tab-swapper" class="flat-grid swapper">
+                      <!-- <span id="tab-swapper" class="flat-grid swapper" style="display: none;">
                         <span id="graph-tab-btn" class="flex-center nodrag">         Graph          </span>
                         <span id="keyboard-tab-btn" class="flex-center nodrag">      Keyboard       </span>
                         <span id="buffer-edit-tab-btn" class="flex-center nodrag">   Buffers        </span>
                         <span id="waveform-edit-tab-btn" class="flex-center nodrag"> Waveforms      </span>
-                      </span>
+                      </span> -->
                     </a></li>
-                    <li><a href="#">B</a></li>
+                    <li><a href="#">Main</a></li>
+                    <li><a href="#">Keyboard</a></li>
+                    <li><a href="#">Samples</a></li>
+                    <li><a href="#">Custom Wave</a></li>
                 </ul>        
               </li>
   
@@ -186,7 +189,8 @@
   
                 <div>
                   
-                  <div class="space-evenly">
+                  <div class="clock-settings space-evenly">
+
                     <div>
                       <button id="tempo-tapper" class="neumorph"> TAP </button> <br>
                       <button id="beat-hold-button" class="neumorph"> HOLD </button>
@@ -195,11 +199,15 @@
                         <span id="tick-meter-right" class="top-bar-btn"> </span>
                       </button> -->
                     </div>
+                    &nbsp;
+                    <span class="clock-area-label"> Clock </span>
+                    &nbsp;
                     <div>
-                      Tempo <br>
+                      BPM <br>
                       <span id="tempo-input-container">
                       </span>
                     </div>
+
                   </div>
   
                 </div>
@@ -321,7 +329,7 @@
                 <div class="builder-section">
   
                   Enter a list of comma separated values -- may be cents or ratios.
-                  1/1 is included by  . Octaves repeat. <br>
+                  1/1 is included by default. Octaves repeat. <br>
                   
                   <code>
                     [
@@ -380,7 +388,7 @@
           <div class="main-tab">
   
             <div class="lcd-display">
-              <code> BUFFER </code>
+              <code> SAMPLE </code>
               <code id="buffer-info"> A -- 3 seconds </code>
               <button id="open-buffer-edit-dialog-button" class="top-bar-btn"> ⚙️ </button>
             </div>
@@ -452,7 +460,7 @@
                 <div class="builder-section">
                   Buffer Expression:
                   <button id="buffer-formula-templates-button" class="apply-btn" style="float:right"> 
-                      PRESETS 📋 </button>
+                      Presets 📋 </button>
   
                   <br>
                   <span class="smaller-text">
@@ -500,7 +508,7 @@
   
   
         <div id="waveform-edit-tab" class="_tab_">
-          [WAVEFORM BUILDER PAGE]
+          Custom Waveform Builder
           <div>
               <input id="n-waveform-slider" type="range" min=1 max=12 step=1 value=1>
           </div>

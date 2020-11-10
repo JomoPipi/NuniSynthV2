@@ -30,7 +30,7 @@ export class XYPad {
 
         // TODO: move to CSS
         this.canvas.style.margin = '5px'
-        this.canvas.style.border = '1px solid black'
+        this.canvas.style.border = '1px solid var(--color5)'
         this.canvas.style.backgroundColor = 'transparent'
         
         this.render()
@@ -56,7 +56,7 @@ export class XYPad {
 
     render() {
         this.ctx.clearRect(0,0,this.W,this.H)
-        this.ctx.strokeStyle = 'black'
+        this.ctx.strokeStyle = 'red'
         
         this.ctx.beginPath()
         const [x,y] = this.point

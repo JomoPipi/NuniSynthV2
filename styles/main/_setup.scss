@@ -20,6 +20,10 @@ input {
     padding: 0px;
 }
 
+input[type=range]::-webkit-slider-runnable-track {
+    background: var(--color2);
+}
+
 body, html {
     border-width: 0px;
     width: 100%;

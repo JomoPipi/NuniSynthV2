@@ -12,6 +12,7 @@ type RadioButtonOptions = {
     text? : string
     onclick? : (data : any, index : number) => void
     containerClassName? : string
+    orientation? : number
     }
 
 export function createRadioButtonGroup(
@@ -20,11 +21,13 @@ export function createRadioButtonGroup(
     , className
     , onclick
     , text
-    , containerClassName } : RadioButtonOptions) {
+    , containerClassName
+    , orientation 
+    } : RadioButtonOptions) {
 
     const box = E('span',
         { text
-        , children: text ? [E('br')] : undefined
+        , children: text && orientation !== 2 ? [E('br')] : undefined
         , className: containerClassName
         })
 

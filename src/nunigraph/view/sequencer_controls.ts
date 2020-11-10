@@ -106,7 +106,7 @@ function createTopRowControls(an : Sequencer) {
     }
 
     toggleSyncPlay: {
-        controls.append(createToggleButton(
+        controls.appendChild(createToggleButton(
             an,
             'isInSync',
             { text: 'sync'

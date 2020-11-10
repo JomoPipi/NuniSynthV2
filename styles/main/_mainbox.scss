@@ -9,14 +9,25 @@ $radius: 20px;
 $radius0: 3px; //50px;
 $factor0: 0%;
 $factor1: 100%;
-$dark: var(--color0);
+$dark: #121212; // var(--color0);
 $lighter: var(--color4);
-$main-color: var(--color2);
+$main-color:  var(--color0); // var(--color2);
 
 $left-edge:  linear-gradient(90deg, var(--color1) $factor0, transparent $factor1);
 $top-edge:   linear-gradient(180deg, $lighter $factor0, transparent $factor1);
 $right-edge: linear-gradient(270deg, var(--color1) $factor0, transparent $factor1);
 $bottom-edge:linear-gradient(0deg, $dark $factor0, transparent $factor1);
+
+.apply-btn {
+    margin: 5px;
+    padding: 0px 5px;
+    border-radius: 5px;
+    border: none;
+    color: var(--color5);
+    background-color: $main-color;
+    float: right;
+    box-sizing: border-box;
+}
 
 .main-box-container {
     background-color: $main-color;
@@ -70,4 +81,16 @@ $bottom-edge:linear-gradient(0deg, $dark $factor0, transparent $factor1);
     .bottom-edge {
         background: $bottom-edge;
     }
+}
+
+.clock-settings {
+    border: 1px solid var(--color4);
+    border-radius:  25px;
+    // padding: 15px;
+}
+
+.clock-area-label {
+    margin-top: -23%;
+    background-color: $main-color;
+    padding: 15px;
 }

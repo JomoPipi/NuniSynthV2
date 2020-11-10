@@ -61,13 +61,16 @@ const N_ADSRs = 4
 
 type CurveType = 'linear' | 'logarithmic' | 'exponential' | 'S'
 
-const defaultADSR = () => (
-    { attack: 0.010416984558105469
-    , decay: 0.17708349227905273
-    , sustain: 0.2166603088378906
-    , release: 0.3812504768371582
-    , curve: 'exponential' as CurveType
-    })
+const defaultADSR = (_ : any, index : number) => {
+    const x = index / 8
+    return ( 
+        { attack: 0.010416984558105469 + x
+        , decay: 0.17708349227905273 + x
+        , sustain: 0.2166603088378906 + x
+        , release: 0.3812504768371582 + x
+        , curve: 'exponential' as CurveType
+        })
+}
 const squareADSR = // Needs to be somewhat smooth to prevent pop sounds
     { attack: 0.001
     , decay: 0
@@ -257,16 +260,17 @@ const adsrDials =
     }, {} as Indexable<JsDial>)
     
 { 
-    D('select-adsr').appendChild(createRadioButtonGroup({
-        text: 'ADSR',
-        buttons: [...'ABCD'],
-        selected: 'A',
-        onclick: (data : any, index : number) => {
+    D('select-adsr').appendChild(createRadioButtonGroup(
+        { text: 'ADSR '
+        , buttons: [...'ABCD']
+        , selected: 'A'
+        , onclick: (data : any, index : number) => {
             const adsr = ADSR_Controller
             adsr.index = index
             adsr.render({ updateKnobs: true })
         }
-    }))
+        , orientation: 2
+        }))
 }
 
 function updateKnobs() {

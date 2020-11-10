@@ -6,7 +6,7 @@
 
 
 import './resize.js'
-import './setup_file_menu_UI.js'
+import './click_nav_menu.js'
 import './setup_pages.js'
 import './theme_setup.js'
 export {}
