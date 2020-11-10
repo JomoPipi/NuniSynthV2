@@ -77,7 +77,7 @@ const g = GraphController.g // new NuniGraph()
     
     g.makeConnection(osc, sgs, 'channel')
 
-    const vol = sgs.audioNode.channelData[osc.id].volume = 0.5
+    // const vol = sgs.audioNode.channelData[osc.id].volume = 0.5
     const row = sgs.audioNode.stepMatrix[osc.id] = [0,1,0,1,0,0,1,0].map(Boolean)
 
     const [sgs2, osc2] = g.reproduceNodesAndConnections([sgs, osc]) as 
@@ -85,7 +85,7 @@ const g = GraphController.g // new NuniGraph()
 
     const tests = 
         { 'id remapped correctly': JSON.stringify(sgs2.audioNode.stepMatrix[osc2.id]) === JSON.stringify(row)
-        , 'id remapped correctly 2': JSON.stringify(sgs2.audioNode.channelData[osc2.id].volume) === JSON.stringify(vol)
+        // , 'id remapped correctly 2': JSON.stringify(sgs2.audioNode.channelData[osc2.id].volume) === JSON.stringify(vol)
         }
 
     let name : keyof typeof tests

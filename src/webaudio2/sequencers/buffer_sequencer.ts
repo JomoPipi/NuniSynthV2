@@ -44,6 +44,9 @@ export class SampleSequencer extends Sequencer {
             , bufferKey: 0
             }
         this.stepMatrix[this.nextId] = this.createStepRow()
+        this.channelVolumes[this.nextId] = this.ctx.createGain()
+            .connect(this.volumeNode) as GainNode
+            this.channelVolumes[this.nextId].gain.value = 1
         this.nextId++
         this.refresh()
     }
@@ -51,6 +54,7 @@ export class SampleSequencer extends Sequencer {
     removeInput(key : number) {
         delete this.channelData[key]
         delete this.stepMatrix[key]
+        delete this.channelData[key]
         this.refresh()
     }
 
@@ -82,7 +86,7 @@ export class SampleSequencer extends Sequencer {
 
         const adsr = new GainNode(this.ctx)
         adsr.gain.setValueAtTime(0, 0)
-        adsr.connect(this.volumeNode)
+        adsr.connect(this.channelVolumes[id])
         
         // Connect the source to the envelope
         src.connect(adsr)

@@ -10,7 +10,7 @@ import { VolumeNodeContainer } from '../volumenode_container.js'
 import { JsDial } from '../../UI_library/internal.js'
 
 type ChannelData = {
-    volume : number
+    readonly volume : number // Deprecated
     bufferKey? : number
     }
 
@@ -39,6 +39,7 @@ export class Sequencer extends VolumeNodeContainer {
     windowIsOpen : boolean
     protected HTMLBoxes : Indexable<Indexable<HTMLElement>>
     channelData : Indexable<ChannelData>
+    channelVolumes : Indexable<GainNode>
 
     constructor(ctx : AudioContext) {
         super(ctx)
@@ -52,6 +53,7 @@ export class Sequencer extends VolumeNodeContainer {
         this.mutedChannel = {}
         this.HTMLBoxes = {}
         this.channelData = {}
+        this.channelVolumes = {}
         // this.controls = new SequencerControls(this)
     }
 
@@ -184,10 +186,10 @@ export class Sequencer extends VolumeNodeContainer {
         this.HTMLGrid.innerHTML = ''
         this.HTMLBoxes = {}
         const grid = this.HTMLGrid
-        const { nSteps, channelData, mutedChannel } = this
+        const { nSteps, channelData, mutedChannel, channelVolumes } = this
         const soloButtons : HTMLButtonElement[] = []
 
-        for (const key in channelData) 
+        for (const key in channelVolumes) 
         {
             const row = E('div', { className: 'flex-center' })
 
@@ -307,7 +309,8 @@ export class Sequencer extends VolumeNodeContainer {
             }
             
             add_volume_knob: {
-                const value = channelData[key].volume
+                // const value = channelData[key].volume
+                const value = channelVolumes[key].gain.value
                 
                 const dial = new JsDial()
                 dial.min = 0.1
@@ -328,14 +331,17 @@ export class Sequencer extends VolumeNodeContainer {
                     
                 dial.attach((value : number) => {
                     const v = value ** 4.0
-                    channelData[key].volume = v
+                    // channelData[key].volume = v
+                    channelVolumes[key].gain.value = v
+                    
                     valueText.innerText = 
                         volumeTodB(v).toFixed(1) + 'dB'
                 })
 
                 dial.attachDoubleClick(() => {
                     dial.value = 1
-                    channelData[key].volume = 1
+                    // channelData[key].volume = 1
+                    channelVolumes[key].gain.value = 0
                     valueText.innerText = '0.0dB'
                 })
 

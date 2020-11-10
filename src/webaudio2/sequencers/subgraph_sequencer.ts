@@ -23,9 +23,12 @@ export class GateSequencer extends Sequencer {
 
         this.channelData[id] = { volume: 1 }
         const adsr = this.channelEnvelopes[id] = new GainNode(this.ctx)
+        this.channelVolumes[id] = this.ctx.createGain()
+            .connect(this.volumeNode) as GainNode
+            this.channelVolumes[id].gain.value = 1
         adsr.gain.value = 0
         audioNode.connect(adsr)
-        adsr.connect(this.volumeNode)
+        adsr.connect(this.channelVolumes[id])
         this.stepMatrix[id] = this.createStepRow()
         this.refresh()
     }
@@ -43,6 +46,7 @@ export class GateSequencer extends Sequencer {
         this.channelEnvelopes[id].disconnect()
         delete this.channelEnvelopes[id]
         delete this.channelData[id]
+        delete this.channelVolumes[id]
         delete this.stepMatrix[id]
         this.refresh()
     }
