@@ -103,8 +103,14 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
                 const { channelVolumes, channelData } = this.audioNode
                 for (const key in channelData)
                 {
+                    if (!channelVolumes[key])
+                    {
+                        if (this.type === NodeTypes.SGS) throw 'Oh, okay. Do it for SGS as well.'
+                        this.audioNode.createChannelVolume(key)
+                    }
                     channelVolumes[key].gain.value = channelData[key].volume
                 }
+                this.audioNode.refresh()
             }})
         }
 

@@ -19,9 +19,11 @@ export class SampleSequencer extends Sequencer {
     nextId : number
     detune : NuniAudioParam
     playbackRate : NuniAudioParam
+    ctx : AudioContext
 
     constructor(ctx : AudioContext) {
         super(ctx)
+        this.ctx = ctx
         this.nextId = 0
         this.detune = new NuniAudioParam(ctx)
         this.playbackRate = new NuniAudioParam(ctx)
@@ -38,15 +40,20 @@ export class SampleSequencer extends Sequencer {
     //     this.refresh()
     // }
 
+    createChannelVolume(id : number) {
+        this.channelVolumes[this.nextId] = this.ctx.createGain()
+        this.channelVolumes[this.nextId].connect(this.volumeNode) as GainNode
+        this.channelVolumes[this.nextId].gain.value = 1
+        return this.channelVolumes[id]
+    }
+
     addInput() {
         this.channelData[this.nextId] = 
             { volume: 1
             , bufferKey: 0
             }
         this.stepMatrix[this.nextId] = this.createStepRow()
-        this.channelVolumes[this.nextId] = this.ctx.createGain()
-        this.channelVolumes[this.nextId].connect(this.volumeNode) as GainNode
-            this.channelVolumes[this.nextId].gain.value = 1
+        this.createChannelVolume(this.nextId)
         this.nextId++
         this.refresh()
     }
