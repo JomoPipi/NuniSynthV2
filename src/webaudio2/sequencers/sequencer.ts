@@ -10,7 +10,7 @@ import { VolumeNodeContainer } from '../volumenode_container.js'
 import { JsDial } from '../../UI_library/internal.js'
 
 type ChannelData = {
-    readonly volume : number // Deprecated
+    volume : number // Deprecated
     bufferKey? : number
     }
 
@@ -331,7 +331,7 @@ export class Sequencer extends VolumeNodeContainer {
                     
                 dial.attach((value : number) => {
                     const v = value ** 4.0
-                    // channelData[key].volume = v
+                    channelData[key].volume = v
                     channelVolumes[key].gain.value = v
                     
                     valueText.innerText = 
@@ -340,8 +340,8 @@ export class Sequencer extends VolumeNodeContainer {
 
                 dial.attachDoubleClick(() => {
                     dial.value = 1
-                    // channelData[key].volume = 1
-                    channelVolumes[key].gain.value = 0
+                    channelData[key].volume = 1
+                    channelVolumes[key].gain.value = 1
                     valueText.innerText = '0.0dB'
                 })
 

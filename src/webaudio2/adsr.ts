@@ -88,7 +88,7 @@ export const ADSR_Controller = {
 
     values: [...Array(N_ADSRs)].map(defaultADSR).concat([squareADSR]),
 
-    trigger: function(gain : AudioParam, time : number, volume : number, adsrIndex : number) {
+    trigger: function(gain : AudioParam, time : number, adsrIndex : number) {
         
         const adsr = this.values[adsrIndex]
         const { attack, decay, sustain, curve } = adsr
@@ -97,14 +97,14 @@ export const ADSR_Controller = {
         if (curve === 'linear')
         {
             gain.linearRampToValueAtTime(0.01, time)
-            gain.linearRampToValueAtTime(volume, attack + time)
-            gain.linearRampToValueAtTime(volume * sustain ** 2, time + attack + decay)
+            gain.linearRampToValueAtTime(1, attack + time)
+            gain.linearRampToValueAtTime(sustain ** 2, time + attack + decay)
         }
         else if (curve === 'exponential')
         {
             gain.exponentialRampToValueAtTime(0.01, time)
-            gain.exponentialRampToValueAtTime(volume, attack + time)
-            gain.exponentialRampToValueAtTime(volume * sustain ** 2, time + attack + decay)
+            gain.exponentialRampToValueAtTime(1, attack + time)
+            gain.exponentialRampToValueAtTime(sustain ** 2, time + attack + decay)
         }
         else if (curve === 'logarithmic') {
             gain.setValueCurveAtTime(logarUp, time, attack)
@@ -112,17 +112,17 @@ export const ADSR_Controller = {
         }
         else
         {
-            gain.setTargetAtTime(volume, time, attack)                        // Attack phase
-            gain.setTargetAtTime(volume * sustain ** 2, time + attack, decay) // Decay phase
+            gain.setTargetAtTime(1, time, attack)                        // Attack phase
+            gain.setTargetAtTime(sustain ** 2, time + attack, decay) // Decay phase
         }
     },
 
     
-    triggerSource: function(source : SourceNode, gain : AudioParam, time : number, volume : number, index? : number) {
+    triggerSource: function(source : SourceNode, gain : AudioParam, time : number, index? : number) {
         const { attack, decay, sustain } = this.values[index ?? this.index]
         gain.cancelScheduledValues(time)                                  // Cancel existing triggers
-        gain.setTargetAtTime(volume, time, attack)                        // Attack phase
-        gain.setTargetAtTime(volume * sustain ** 2, time + attack, decay) // Decay phase
+        gain.setTargetAtTime(1, time, attack)                        // Attack phase
+        gain.setTargetAtTime(sustain ** 2, time + attack, decay) // Decay phase
         source.start(time)
     },
 

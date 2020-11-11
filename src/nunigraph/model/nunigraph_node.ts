@@ -9,7 +9,7 @@ import { Envelope } from '../../webaudio2/envelope/envelope.js'
 import 
     { audioCtx, OscillatorNode2 , BufferNode2, GateSequencer
     , SampleSequencer, AudioBufferCaptureNode, NuniGraphAudioNode
-    , PianoRoll12Tone
+    , PianoRoll12Tone, Sequencer
     } from '../../webaudio2/internal.js'
 
 
@@ -93,6 +93,19 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         {
         // CompressorNode throws error
             Object.assign(this.audioNode, JSON.parse(JSON.stringify(audioNodeProperties)))
+            
+            // ! PAINFUL BUG FIX >:(
+            // Fixing bug: Sequencer channelVolume doesn't get copied over because it's a gain node.
+            // requestAnimationFrame is needed because GateSequencer's input(s) need to be remmapped..
+            requestAnimationFrame(() => {
+            if (this.audioNode as any instanceof Sequencer)
+            {
+                const { channelVolumes, channelData } = this.audioNode
+                for (const key in channelData)
+                {
+                    channelVolumes[key].gain.value = channelData[key].volume
+                }
+            }})
         }
 
         this.audioParamValues = JSON.parse(JSON.stringify(audioParamValues))

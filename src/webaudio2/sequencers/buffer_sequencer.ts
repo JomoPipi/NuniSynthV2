@@ -45,7 +45,7 @@ export class SampleSequencer extends Sequencer {
             }
         this.stepMatrix[this.nextId] = this.createStepRow()
         this.channelVolumes[this.nextId] = this.ctx.createGain()
-            .connect(this.volumeNode) as GainNode
+        this.channelVolumes[this.nextId].connect(this.volumeNode) as GainNode
             this.channelVolumes[this.nextId].gain.value = 1
         this.nextId++
         this.refresh()
@@ -82,17 +82,18 @@ export class SampleSequencer extends Sequencer {
         // const key = 'Q'.charCodeAt(0) // noteData.keyIndex
         // src.detune.value = KB.scale[KB.keymap[key]]
 
-        const { volume } = this.channelData[id]
-
         const adsr = new GainNode(this.ctx)
         adsr.gain.setValueAtTime(0, 0)
+
+
+        if (!this.channelVolumes[id]) console.log('moter fucker')
         adsr.connect(this.channelVolumes[id])
         
         // Connect the source to the envelope
         src.connect(adsr)
 
         // Schedule the envelope on
-        ADSR_Controller.triggerSource(src, adsr.gain, time, volume, this.adsrIndex)
+        ADSR_Controller.triggerSource(src, adsr.gain, time, this.adsrIndex)
 
         // Schedule the envelope off
         const stopTime = ADSR_Controller.untriggerAndGetStopTime(

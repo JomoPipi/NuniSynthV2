@@ -24,7 +24,7 @@ export class GateSequencer extends Sequencer {
         this.channelData[id] = { volume: 1 }
         const adsr = this.channelEnvelopes[id] = new GainNode(this.ctx)
         this.channelVolumes[id] = this.ctx.createGain()
-            .connect(this.volumeNode) as GainNode
+        this.channelVolumes[id].connect(this.volumeNode) as GainNode
             this.channelVolumes[id].gain.value = 1
         adsr.gain.value = 0
         audioNode.connect(adsr)
@@ -36,7 +36,7 @@ export class GateSequencer extends Sequencer {
     refresh() {
         for (const key in this.channelEnvelopes) 
         {
-            this.channelEnvelopes[key].connect(this.volumeNode)
+            this.channelEnvelopes[key].connect(this.channelVolumes[key])
         }
         Sequencer.prototype.refresh.call(this)
     }
@@ -44,6 +44,7 @@ export class GateSequencer extends Sequencer {
     removeInput({ id } : NuniNode) {
 
         this.channelEnvelopes[id].disconnect()
+        this.channelVolumes[id].disconnect()
         delete this.channelEnvelopes[id]
         delete this.channelData[id]
         delete this.channelVolumes[id]
@@ -55,11 +56,10 @@ export class GateSequencer extends Sequencer {
 
         // AD : Overlap-toggle
 
-        const { volume } = this.channelData[id]
         const adsr = this.channelEnvelopes[id]
         const gain = adsr.gain
         const duration = this.tick
-        ADSR_Controller.trigger(gain, time, volume, this.adsrIndex)
+        ADSR_Controller.trigger(gain, time, this.adsrIndex)
         ADSR_Controller.untriggerAdsr(gain, time + duration, this.adsrIndex)
     }
     
