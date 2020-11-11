@@ -309,7 +309,7 @@ export class Sequencer extends VolumeNodeContainer {
             }
             
             add_volume_knob: {
-                // const value = channelData[key].volume
+                // const value = channelData[key].volume 
                 const value = channelVolumes[key].gain.value
                 
                 const dial = new JsDial()
