@@ -212,16 +212,17 @@ export class NuniGraphController {
         for (const { id } of this.g.oneWayConnections[node.id] || [])
         {
             const moduleNode = this.g.nodes.find(node => 
-                node.id === id && node.type === NodeTypes.MODULE) as NuniGraphNode<NodeTypes.MODULE>
+                node.id === id && node.type === NodeTypes.MODULE
+                ) as NuniGraphNode<NodeTypes.MODULE>
 
             if (moduleNode)
             {
                 // We have to close this inputNode's window if it's open.
                 const inputNode 
-                    = moduleNode.audioNode.controller.g.nodes.find(node =>
-                        node.INPUT_NODE_ID?.id === node.id)
-
-                if (!inputNode) throw 'error, this should be here'
+                    = moduleNode.audioNode.controller.g.nodes.find(_node => 
+                        _node.INPUT_NODE_ID?.id === node.id)
+                
+                if (!inputNode) throw 'error: this should be here'
 
                 moduleNode.audioNode.controller.closeWindow(inputNode.id)
             }

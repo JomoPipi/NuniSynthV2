@@ -1,3 +1,4 @@
+import { audioCtx } from "../audiocontext2";
 
 
 
@@ -147,7 +148,14 @@ class CustomProcessor extends AudioWorkletProcessor {
           }
         }
         if (msg.data.songPositionMillis) {
-          this.wasmInstance.setMilliSecondPosition(msg.data.songPositionMillis);
+            throw 'it is truthy'
+          if (this.wasmInstance)
+          {
+            console.log('wasm instance is defined!')
+            throw 'it is truthy'
+            this.wasmInstance.setMilliSecondPosition(msg.data.songPositionMillis);
+          }
+          else throw 'wasmInstance not defined yet'
         }
         if (msg.data === 'end') {
           this.processorActive = false;
@@ -394,13 +402,16 @@ export class ProcessorNode {
         this.inputChannelNode.connect(this.audioWorkletNode)
         
         const bytes = await fetch('song.wasm')
-            .then(r => r.arrayBuffer());
+            .then(r => r.arrayBuffer())
 
         this.audioWorkletNode.port.postMessage({ topic: "wasm", 
             samplerate: this.ctx.sampleRate, 
             wasm: bytes, 
             toggleSongPlay: true
-        });
+        })
+
+        // this.audioWorkletNode.port.postMessage(
+        //   { songPositionMillis: this.ctx.currentTime * 2000 | 0 })
     }
 }
 ;(<any>window).CustomAudioNode = CustomAudioNode
