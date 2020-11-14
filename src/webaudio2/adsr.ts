@@ -167,7 +167,10 @@ canvas.onclick = () => {
     ADSR_Controller.render()
 }
 
-type RenderOptions = Partial<{ updateKnobs : boolean }>
+type RenderOptions = Partial<{ 
+    updateKnobs? : Function 
+    lineWidth? : number
+    }>
 
 type ADSRData = 
     { attack: number
@@ -177,14 +180,14 @@ type ADSRData =
     , curve: CurveType
     }
 
-function renderADSR(
+export function renderADSR(
     adsr : ADSRData, 
     ctx : CanvasRenderingContext2D, 
     H : number, 
     W : number, 
     options : RenderOptions = {}) {
     
-    ctx.lineWidth = 4
+    ctx.lineWidth = options.lineWidth || 4
     const { attack, decay, sustain, release } = adsr
     const sum = attack + decay + 0.25 + release
     const adsrWidths = 
@@ -224,13 +227,18 @@ function renderADSR(
     })
     ctx.closePath()
 
-    ctx.fillStyle = 'white'
-    ctx.font = '20px arial'
-    ctx.fillText(adsr.curve, W - 110, 20)
+    ctx.fillStyle = 'gray'
+    const px = W / 5 | 0
+    ctx.font = `${px}px arial`
+    ctx.fillText(adsr.curve.slice(0,3), W - W/2|0, px)
 
-    if (options.updateKnobs)
+    if (typeof options.updateKnobs === 'boolean') // Because of loadNuniFile
     {
         updateKnobs()
+    }
+    else
+    {
+        options.updateKnobs && options.updateKnobs()
     }
 }
 
@@ -254,20 +262,6 @@ const adsrDials =
         return a
     }, {} as Indexable<JsDial>)
     
-{ 
-    D('select-adsr').appendChild(createRadioButtonGroup(
-        { text: 'ADSR '
-        , buttons: [...'ABCD']
-        , selected: 'A'
-        , onclick: (data : any, index : number) => {
-            const adsr = ADSR_Controller
-            adsr.index = index
-            adsr.render({ updateKnobs: true })
-        }
-        , orientation: 2
-        }))
-}
-
 function updateKnobs() {
     const adsr = ADSR_Controller
     for (const s of ADSR) 
@@ -275,3 +269,17 @@ function updateKnobs() {
         adsrDials[s].update((<Indexed>adsr.values[adsr.index])[s] ** .5)
     }
 }
+
+D('select-adsr').appendChild(createRadioButtonGroup(
+    { text: 'ADSR '
+    , buttons: [...'ABCD']
+    , selected: 'A'
+    , onclick: 
+        (data : any, index : number) => {
+            const adsr = ADSR_Controller
+            adsr.index = index
+
+            adsr.render({ updateKnobs })
+        }
+    , orientation: 2
+    }))

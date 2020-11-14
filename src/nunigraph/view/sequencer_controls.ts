@@ -6,8 +6,9 @@
 
 
 import { Sequencer, SampleSequencer, MasterClock } from '../../webaudio2/internal.js'
-import { createToggleButton, createRadioButtonGroup, createNumberDialComponent } from '../../UI_library/internal.js'
+import { createToggleButton, createRadioButtonGroup, createNumberDialComponent, JsDial } from '../../UI_library/internal.js'
 import { createSubdivSelect } from './dialogbox_components.js'
+import { renderADSR } from '../../webaudio2/adsr.js'
 
 export function sequencerControls(an : Sequencer) {
 
@@ -94,29 +95,76 @@ function createTopRowControls(an : Sequencer) {
     }
 
     choose_ADSR: {
-        
-        // const knobs = D('adsr-knobs')
-        // const ADSR = 'attack,decay,sustain,release'.split(',')
-        // const adsrDials =
-        //     ADSR.reduce((a,s) => {
-        //         const dial = new JsDial()
-        //         const adsr = ADSR_Controller as Indexed
-                
-        //         dial.value = adsr.values[adsr.index][s]
-        //         dial.sensitivity = 2 ** -10
-        //         dial.render()
-        //         dial.attach((value : number) => {
-        //             adsr.values[adsr.index][s] = value * value
-        //             adsr.render()
-        //         })
-        //         knobs.appendChild(dial.html)
-        
-        //         a[s] = dial
-        //         return a
-        //     }, {} as Indexable<JsDial>)
+            
+        const canvas = E('canvas')
+            canvas.width = 56
+            canvas.height = 35
+            canvas.style.cursor = 'pointer' // The way to get back to global ADSRs
+        const ctx = canvas.getContext('2d')!
+        const knobs = E('span', { className: 'flex-center' })
+            knobs.style.textAlign = 'start' // This stops the knobs from shifting
+        const ADSR = 'attack,decay,sustain,release'.split(',')
+        const render = () =>
+            renderADSR(an.localADSR, ctx, canvas.height, canvas.width, { lineWidth: 2 })
+        const adsrDials =
+            ADSR.reduce((a : any, s : any) => {
+                const dial = new JsDial()
+                const adsr = an.localADSR as any
+
+                dial.value = adsr[s]
+                dial.size = 25
+                dial.sensitivity = 2 ** -10
+                dial.render()
+                dial.attach((value : number) => {
+                    adsr[s] = value * value
+                    render()
+                })
+                knobs.appendChild(dial.html)
+
+                a[s] = dial
+                return a
+            }, {} as Indexable<JsDial>)
+        render()
+
+        function updateKnobs() {
+            const adsr = an.localADSR
+            for (const s of ADSR) 
+            {
+                adsrDials[s].update((<Indexed>adsr)[s] ** .5)
+            }
+        }
+        updateKnobs()
+
+        type CurveType = 'linear' | 'logarithmic' | 'exponential' | 'S'
+        const next = 
+            { linear: 'logarithmic'
+            , logarithmic: 'exponential'
+            , exponential: 'S'
+            , S: 'linear'
+            } as Record<CurveType,CurveType>
+
+        const text = E('span', { text: 'ADSR' })
+        const setHandlers = () => {
+            canvas.onclick = () => {
+                an.localADSR.curve = next[an.localADSR.curve]
+                render()
+            }
+            text.onclick = () => {
+                localADSR.style.display = 'none'
+                globalADSRs.style.display = 'inline'
+                text.onclick = null
+                canvas.onclick = null
+            }
+        }
 
         const LOCAL = 5
-        const localADSR = E('span', { text: ' local' })
+        if (an.adsrIndex === LOCAL)
+        {
+            setHandlers()
+        }
+        const localADSR = E('div', 
+            { children: [canvas, knobs]
+            })
             localADSR.style.display = an.adsrIndex === LOCAL ? 'inline' : 'none'
         const buttons = [...'ABCD⎍…']
         const globalADSRs = createRadioButtonGroup(
@@ -130,13 +178,14 @@ function createTopRowControls(an : Sequencer) {
                     {
                         localADSR.style.display = 'inline'
                         globalADSRs.style.display = 'none'
+                        setHandlers()
                     }
                 }
             })
             globalADSRs.style.display = an.adsrIndex === LOCAL ? 'none' : 'inline'
+            
         const container = E('span', 
-            { children: [globalADSRs, localADSR]
-            , text: 'ADSR'
+            { children: [text, globalADSRs, localADSR]
             })
 
         controls.appendChild(container)

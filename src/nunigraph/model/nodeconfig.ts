@@ -486,6 +486,7 @@ const Transferable_AudioNodeProperties = Object.assign(
     , nSteps      : true
     , adsrIndex   : true
     , graphCode   : true
+    , localADSR   : true
     , stepMatrix  : true
     , phaseShift  : true
     , channelData : true
