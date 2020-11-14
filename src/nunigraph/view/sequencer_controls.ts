@@ -94,15 +94,52 @@ function createTopRowControls(an : Sequencer) {
     }
 
     choose_ADSR: {
+        
+        // const knobs = D('adsr-knobs')
+        // const ADSR = 'attack,decay,sustain,release'.split(',')
+        // const adsrDials =
+        //     ADSR.reduce((a,s) => {
+        //         const dial = new JsDial()
+        //         const adsr = ADSR_Controller as Indexed
+                
+        //         dial.value = adsr.values[adsr.index][s]
+        //         dial.sensitivity = 2 ** -10
+        //         dial.render()
+        //         dial.attach((value : number) => {
+        //             adsr.values[adsr.index][s] = value * value
+        //             adsr.render()
+        //         })
+        //         knobs.appendChild(dial.html)
+        
+        //         a[s] = dial
+        //         return a
+        //     }, {} as Indexable<JsDial>)
+
+        const LOCAL = 5
+        const localADSR = E('span', { text: ' local' })
+            localADSR.style.display = an.adsrIndex === LOCAL ? 'inline' : 'none'
         const buttons = [...'ABCD⎍…']
-        controls.appendChild(createRadioButtonGroup(
+        const globalADSRs = createRadioButtonGroup(
             { buttons
             , selected: buttons[an.adsrIndex]
-            , onclick: (data : string, index : number) => {
-                an.adsrIndex = index
-            }
+            , onclick: 
+                (data : string, index : number) => {
+                    an.adsrIndex = index
+
+                    if (index === LOCAL)
+                    {
+                        localADSR.style.display = 'inline'
+                        globalADSRs.style.display = 'none'
+                    }
+                }
+            })
+            globalADSRs.style.display = an.adsrIndex === LOCAL ? 'none' : 'inline'
+        const container = E('span', 
+            { children: [globalADSRs, localADSR]
             , text: 'ADSR'
-            }))
+            })
+
+        controls.appendChild(container)
     }
 
     toggleSyncPlay: {

@@ -80,6 +80,7 @@ const squareADSR = // Needs to be somewhat smooth to prevent pop sounds
     }
 
 const canvas = D('adsr-canvas') as HTMLCanvasElement
+const ctx = canvas.getContext('2d')!
 
 export const ADSR_Controller = {
     canvas,
@@ -145,8 +146,12 @@ export const ADSR_Controller = {
         return time + release * releaseTimeConstant
     },
 
-    render: (options? : any) => {}
+    render: function (options? : any) {
+        const adsr = ADSR_Controller.values[this.index]
+        renderADSR(adsr, ctx, canvas.height, canvas.width, options)
+    }
 }
+ADSR_Controller.render()
 
 canvas.onclick = () => {
     const adsr = ADSR_Controller.values[ADSR_Controller.index]
@@ -164,85 +169,70 @@ canvas.onclick = () => {
 
 type RenderOptions = Partial<{ updateKnobs : boolean }>
 
-;{
-    const adsr = ADSR_Controller
-    const isAux = false // s === 'aux-' // (aux-adsr = A and D only)
-    const ctx = adsr.canvas.getContext('2d')!
-    
-    adsr.render = function (options : RenderOptions = {}) {
-        const H = this.canvas.height, W = this.canvas.width
-        ctx.lineWidth = 5
-        const { attack, decay, sustain, release } = this.values[this.index]
-
-        const sum = attack + decay + 0.25 + release
-        const adsrWidths = [
-            attack  / sum,
-            decay   / sum,
-            0.25    / sum,
-            // Release is done by default 
-        ]
-        const [aw,dw,sw] = adsrWidths
-
-        const t1 = aw
-        const t2 = t1 + dw
-        const t3 = t2 + sw
-        const t4 = 1
-        const margin = 5
-
-        const arr = [
-            [t1, 0],
-            [t2, 1 - sustain],
-            [t3, 1 - sustain],
-            [t4, 1]
-        ]
-
-        if (isAux) 
-        {
-            // The only difference between ADSR and AD.
-            // I know it's not currently being used, 
-            // but I don't want to delete this.
-            arr[1][1] = 1
-            arr[2] = arr[3]
-        }
-
-        ctx.clearRect(0,0,W,H)
-        let lastX = margin, lastY = H - margin
-        arr.forEach(([x,y],i) => {
-            ctx.beginPath()
-            ctx.moveTo(lastX, lastY)
-            ctx.strokeStyle = '#8a8,#a88,#88a,#a8a'.split(',')[i]
-
-            lastX = x * (W - margin * 2) + margin, 
-            lastY = y * (H - margin * 2) + margin
-            ctx.lineTo(lastX, lastY)
-            
-            // ctx.quadraticCurveTo(lastX, lastY, lastX, lastY)
-            // ctx.bezierCurveTo(
-            //     lastX, 
-            //     lastY, 
-            //     lastX, 
-            //     lastY, 
-            //     lastX, 
-            //     lastY)
-
-            ctx.stroke() 
-            ctx.closePath()
-        })
-        ctx.closePath()
-
-        ctx.fillStyle = 'white'
-        ctx.font = '20px arial'
-        ctx.fillText(ADSR_Controller.values[ADSR_Controller.index].curve, W - 110, 20)
-
-        if (options.updateKnobs)
-        {
-            updateKnobs()
-        }
+type ADSRData = 
+    { attack: number
+    , decay: number
+    , sustain: number
+    , release: number
+    , curve: CurveType
     }
 
-    adsr.render()
+function renderADSR(
+    adsr : ADSRData, 
+    ctx : CanvasRenderingContext2D, 
+    H : number, 
+    W : number, 
+    options : RenderOptions = {}) {
+    
+    ctx.lineWidth = 4
+    const { attack, decay, sustain, release } = adsr
+    const sum = attack + decay + 0.25 + release
+    const adsrWidths = 
+        [ attack / sum
+        , decay  / sum
+        , 0.25   / sum
+        // Release is done by default because the width of the canvas stays constant
+        ]
+    const [aw,dw,sw] = adsrWidths
+
+    const t1 = aw
+    const t2 = t1 + dw
+    const t3 = t2 + sw
+    const t4 = 1
+    const margin = 5
+
+    const arr = [
+        [t1, 0],
+        [t2, 1 - sustain],
+        [t3, 1 - sustain],
+        [t4, 1]
+    ]
+
+    ctx.clearRect(0,0,W,H)
+    let lastX = margin, lastY = H - margin
+    arr.forEach(([x,y],i) => {
+        ctx.beginPath()
+        ctx.moveTo(lastX, lastY)
+        ctx.strokeStyle = '#8a8,#a88,#88a,#a8a'.split(',')[i]
+
+        lastX = x * (W - margin * 2) + margin, 
+        lastY = y * (H - margin * 2) + margin
+        ctx.lineTo(lastX, lastY)
+
+        ctx.stroke() 
+        ctx.closePath()
+    })
+    ctx.closePath()
+
+    ctx.fillStyle = 'white'
+    ctx.font = '20px arial'
+    ctx.fillText(adsr.curve, W - 110, 20)
+
+    if (options.updateKnobs)
+    {
+        updateKnobs()
+    }
 }
- 
 
 const knobs = D('adsr-knobs')
 const ADSR = 'attack,decay,sustain,release'.split(',')
