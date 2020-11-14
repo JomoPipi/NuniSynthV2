@@ -112,7 +112,7 @@ function createTopRowControls(an : Sequencer) {
                 const adsr = an.localADSR as any
 
                 dial.value = adsr[s]
-                dial.size = 25
+                dial.size = 24
                 dial.sensitivity = 2 ** -10
                 dial.render()
                 dial.attach((value : number) => {
@@ -187,6 +187,14 @@ function createTopRowControls(an : Sequencer) {
         const container = E('span', 
             { children: [text, globalADSRs, localADSR]
             })
+
+            // Using JavaScript to ensure the widths are the same!😃 
+            const [a,b] = [globalADSRs.style.display, localADSR.style.display]
+            const w1 = container.offsetWidth
+            globalADSRs.style.display = b; localADSR.style.display = a
+            const w2 = container.offsetWidth
+            globalADSRs.style.display = a; localADSR.style.display = b
+            container.style.minWidth = Math.max(w1,w2) + 'px'
 
         controls.appendChild(container)
     }
