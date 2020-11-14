@@ -59,8 +59,8 @@ export class GateSequencer extends Sequencer {
         const adsr = this.channelEnvelopes[id]
         const gain = adsr.gain
         const duration = this.tick
-        ADSR_Controller.trigger(gain, time, this.adsrIndex)
-        ADSR_Controller.untriggerAdsr(gain, time + duration, this.adsrIndex)
+        ADSR_Controller.trigger(gain, time, this.adsrIndex, this.localADSR)
+        ADSR_Controller.untriggerAdsr(gain, time + duration, this.adsrIndex, this.localADSR)
     }
     
     replaceInput({ id, audioNode } : NuniNode, newNode : NuniNode) {

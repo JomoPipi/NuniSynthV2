@@ -41,9 +41,9 @@ export class SampleSequencer extends Sequencer {
     // }
 
     createChannelVolume(id : number) {
-        this.channelVolumes[this.nextId] = this.ctx.createGain()
-        this.channelVolumes[this.nextId].connect(this.volumeNode) as GainNode
-        this.channelVolumes[this.nextId].gain.value = 1
+        this.channelVolumes[id] = this.ctx.createGain()
+        this.channelVolumes[id].connect(this.volumeNode) as GainNode
+        this.channelVolumes[id].gain.value = 1
         return this.channelVolumes[id]
     }
 
@@ -81,9 +81,14 @@ export class SampleSequencer extends Sequencer {
 
     playStepAtTime(id : number, time : number) { // }, duration : number) {
 
+        if (!this.channelVolumes[id]) 
+        {
+            log(':: chvolumes,chdata =',Object.keys(this.channelVolumes), Object.keys(this.channelData))
+            console.log('done the dirty work?', this.hasDoneTheDirtyWork)
+            const remark = 'Okay, then. Go finish the dirty work first!'
+            return;
+        }
         const duration = this.tick
-
-        // const noteData = this.noteMatrix[id][this.currentStep]
 
         const src = this.createSource(id)
         // const key = 'Q'.charCodeAt(0) // noteData.keyIndex
@@ -92,21 +97,19 @@ export class SampleSequencer extends Sequencer {
         const adsr = new GainNode(this.ctx)
         adsr.gain.setValueAtTime(0, 0)
 
-
-        if (!this.channelVolumes[id]) console.log('moter fucker')
         adsr.connect(this.channelVolumes[id])
         
         // Connect the source to the envelope
         src.connect(adsr)
 
         // Schedule the envelope on
-        ADSR_Controller.triggerSource(src, adsr.gain, time, this.adsrIndex)
+        ADSR_Controller.triggerSource(src, adsr.gain, time, this.adsrIndex, this.localADSR)
 
         // Schedule the envelope off
         const stopTime = ADSR_Controller.untriggerAndGetStopTime(
             adsr.gain, 
             time + duration, 
-            this.adsrIndex)
+            this.adsrIndex, this.localADSR)
             
         src.stop(stopTime)
     }

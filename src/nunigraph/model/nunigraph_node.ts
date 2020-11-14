@@ -97,21 +97,28 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
             // ! PAINFUL BUG FIX >:(
             // Fixing bug: Sequencer channelVolume doesn't get copied over because it's a gain node.
             // requestAnimationFrame is needed because GateSequencer's input(s) need to be remmapped..
-            requestAnimationFrame(() => {
+            // TODO: put this in a function: audioNode.doBadCode()
             if (this.audioNode as any instanceof Sequencer)
             {
-                const { channelVolumes, channelData } = this.audioNode
-                for (const key in channelData)
-                {
-                    if (!channelVolumes[key])
-                    {
-                        if (this.type === NodeTypes.SGS) throw 'Oh, okay. Do it for SGS as well.'
-                        this.audioNode.createChannelVolume(key)
+                requestAnimationFrame(() => {
+                    if (this.type === NodeTypes.B_SEQ) 
+                    { // This fixed a bug:
+                        this.audioNode.channelVolumes = {}
                     }
-                    channelVolumes[key].gain.value = channelData[key].volume
-                }
-                this.audioNode.refresh()
-            }})
+                    const { channelVolumes, channelData } = this.audioNode
+                    for (const key in channelData)
+                    {
+                        if (!channelVolumes[key])
+                        {
+                            if (this.type === NodeTypes.SGS) throw 'Oh, okay. Do it for SGS as well.'
+                            this.audioNode.createChannelVolume(key)
+                        }
+                        channelVolumes[key].gain.value = channelData[key].volume
+                    }
+                    this.audioNode.refresh()
+                    this.audioNode.hasDoneTheDirtyWork = true
+                })
+            }
         }
 
         this.audioParamValues = JSON.parse(JSON.stringify(audioParamValues))

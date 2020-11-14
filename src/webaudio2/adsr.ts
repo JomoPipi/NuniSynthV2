@@ -88,9 +88,9 @@ export const ADSR_Controller = {
 
     values: [...Array(N_ADSRs)].map(defaultADSR).concat([squareADSR]),
 
-    trigger: function(gain : AudioParam, time : number, adsrIndex : number) {
-        
-        const adsr = this.values[adsrIndex]
+    trigger: function(gain : AudioParam, time : number, adsrIndex : number, customADSR? : Indexed) {
+        const i = adsrIndex ?? this.index
+        const adsr = i === 5 && customADSR || this.values[i]
         const { attack, decay, sustain, curve } = adsr
         gain.cancelScheduledValues(time)           
         
@@ -118,23 +118,28 @@ export const ADSR_Controller = {
     },
 
     
-    triggerSource: function(source : SourceNode, gain : AudioParam, time : number, index? : number) {
-        const { attack, decay, sustain } = this.values[index ?? this.index]
+    triggerSource: function(source : SourceNode, gain : AudioParam, time : number, index? : number, customADSR? : Indexed) {
+        const i = index ?? this.index
+        const adsr = i === 5 && customADSR || this.values[i]
+        const { attack, decay, sustain } = adsr
         gain.cancelScheduledValues(time)                                  // Cancel existing triggers
         gain.setTargetAtTime(1, time, attack)                        // Attack phase
         gain.setTargetAtTime(sustain ** 2, time + attack, decay) // Decay phase
         source.start(time)
     },
 
-    untriggerAdsr: function(gain : AudioParam, time : number, adsrIndex? : number) {
-        const adsr = this.values[adsrIndex ?? this.index]
+    untriggerAdsr: function(gain : AudioParam, time : number, adsrIndex? : number, customADSR? : Indexed) {
+        const i = adsrIndex ?? this.index
+        const adsr = i === 5 && customADSR || this.values[i]
         const { release } = adsr
         gain.cancelScheduledValues(time)
         gain.setTargetAtTime(0, time, release)
     },
 
-    untriggerAndGetStopTime: function(gain : AudioParam, time : number, index? : number) {
-        const { release } = this.values[index ?? this.index]
+    untriggerAndGetStopTime: function(gain : AudioParam, time : number, index? : number, customADSR? : Indexed) {
+        const i = index ?? this.index
+        const adsr = i === 5 && customADSR || this.values[i]
+        const { release } = adsr
         gain.cancelScheduledValues(time)
         gain.setTargetAtTime(0, time, release)
         return time + release * releaseTimeConstant

@@ -14,6 +14,16 @@ type ChannelData = {
     bufferKey? : number
     }
 
+type CurveType = 'linear' | 'logarithmic' | 'exponential' | 'S'
+type ADSRData = 
+    { attack: number
+    , decay: number
+    , sustain: number
+    , release: number
+    , curve: CurveType
+    }
+
+
 export class Sequencer extends VolumeNodeContainer {
     /**
      * This creates an N-step sequencer out of
@@ -40,6 +50,14 @@ export class Sequencer extends VolumeNodeContainer {
     protected HTMLBoxes : Indexable<Indexable<HTMLElement>>
     channelData : Indexable<ChannelData>
     channelVolumes : Indexable<GainNode>
+    hasDoneTheDirtyWork = false // See painful bugfix in NuniGraphNode.ts
+    localADSR : ADSRData =
+        { attack: 0.010416984558105469
+        , decay: 0.17708349227905273
+        , sustain: 0.2166603088378906
+        , release: 0.3812504768371582
+        , curve: 'S'
+        }
 
     constructor(ctx : AudioContext) {
         super(ctx)
