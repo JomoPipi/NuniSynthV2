@@ -16,7 +16,7 @@ import { createDraggableNumberInput } from "../../UI_library/internal.js"
 const subdivisionList = [
     1, 2, 4, 8, 16, 32, 64, 128,
     3, 6, 12, 24, 48, 96, 
-    0.5, 0.25, 0.125
+    0.5, 0.25, 0.125, 0.0625
     ]
 for (let i = 5; i < 64; i++) 
 {
@@ -60,7 +60,8 @@ export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv :
         : '1/' + an.subdiv
 
     const freeKnob = createDraggableNumberInput(
-        an.subdiv, () => an.subdiv, (value : number) => fn!(an.subdiv = value), 
+        an.subdiv, () => an.subdiv, 
+        (value : number) => fn!(an.subdiv = clamp(0.01,value,1e9)||0.01), 
         { amount: 2**(-7)
         , min: 1
         , max: 999
@@ -76,6 +77,7 @@ export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv :
             an.subdivisionSynced = true
             an.isInSync = false
             freeKnob.style.display = 'inline'
+            freeKnob.value = an.subdiv.toString()
             return
         }
         else 
