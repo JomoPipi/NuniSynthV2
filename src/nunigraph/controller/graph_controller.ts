@@ -428,7 +428,9 @@ export class NuniGraphController {
                 })
 
             input.oninput = () => {
-                node.title = input.value
+                node.title
+                = input.value 
+                = input.value.replace(/[\/\\\?\%\*\:\|\"\<\>\.\,\;\=]/g, '') // Illegal characters for filename
                 _this.renderer.render()
             }
             return input
