@@ -71,7 +71,7 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.COMPRESSOR]: 'Compression'
     }
 
-const NodeEmojiLabel : { readonly [key in NodeTypes] : string } =  
+const NodeTypeEmojiLabel : { readonly [key in NodeTypes] : string } =  
     { [NodeTypes.GAIN]:   '🔊'
     , [NodeTypes.OSC]:    '∿'
     , [NodeTypes.FILTER]: '🌫️'

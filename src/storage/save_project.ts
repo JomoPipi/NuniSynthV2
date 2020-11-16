@@ -8,19 +8,22 @@
 import { GraphController } from '../nunigraph/init.js'
 import { ADSR_Controller } from '../webaudio2/adsr.js'
 import { MasterClock } from '../webaudio2/sequencers/master_clock.js'
+import { UserOptions, defaultUserConfig } from './user_options.js'
 
 export function makeNuniFile() {
     return JSON.stringify(
         { graphCode: GraphController.g.toJSON()
         , values: ADSR_Controller.values
         , tempo: MasterClock.getTempo()
+        , userConfig: UserOptions.config
         })
 }
 makeNuniFile.currentFileName = ''
 
 export function loadNuniFile(nuniFile : string) {
     GraphController.closeAllWindows()
-    const { graphCode, values, tempo } = JSON.parse(nuniFile)
+    const { graphCode, values, tempo, userConfig } = JSON.parse(nuniFile)
+    UserOptions.config = userConfig || defaultUserConfig()
     GraphController.g.fromJSON(graphCode)
 
     // ADSR_Controller.values = values

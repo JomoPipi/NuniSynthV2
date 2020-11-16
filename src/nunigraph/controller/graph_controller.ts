@@ -19,8 +19,6 @@ import { contextmenu, addModuleToList } from './graph_contextmenu.js'
 
 export const ActiveControllers = [] as NuniGraphController[]
 
-let openWindowGlobalIndexThatKeepsRising = 0
-
 type DeleteNodeOptions = {
     force? : boolean
     noRender? : boolean
@@ -347,7 +345,7 @@ export class NuniGraphController {
         // Create dialogBox:
         const dialogBox =
             createDraggableWindow(
-                { text: `${NodeEmojiLabel[node.type]} ᴵᴰ ${node.id}`
+                { text: `${NodeTypeEmojiLabel[node.type]} ᴵᴰ ${node.id}`
                 , clickCallback
                 , closeCallback
                 , color: node.id === 0 
@@ -391,7 +389,7 @@ export class NuniGraphController {
         const _this = this
 
         function moveTheWindowToTheTop(box : HTMLElement) {
-            box.style.zIndex = (++openWindowGlobalIndexThatKeepsRising).toString()
+            box.style.zIndex = (++DIRTYGLOBALS.RISING_GLOBAL_Z_INDEX).toString()
         }
 
         function closeCallback() {
@@ -472,7 +470,7 @@ export class NuniGraphController {
 
         DIRTYGLOBALS.lastControllerToOpenTheContextmenu = this
 
-        contextmenu.style.zIndex = (openWindowGlobalIndexThatKeepsRising + 1).toString()
+        contextmenu.style.zIndex = (DIRTYGLOBALS.RISING_GLOBAL_Z_INDEX + 1).toString()
         contextmenu.style.display = 'grid'
 
         // Place the menu in a 
