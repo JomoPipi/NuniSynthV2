@@ -341,7 +341,7 @@ function gainControls(node : NuniGraphNode) {
 
 
 function activateKeyboardButton(an : NuniSourceNode) {
-
+    
     return createToggleButton(
         an,
         'kbMode',
@@ -354,8 +354,32 @@ function activateKeyboardButton(an : NuniSourceNode) {
 
 
 function showSubtypes(node : NuniGraphNode, saveCallback: Function) : Node {
-    const subtypes = AudioNodeSubTypes[node.type]
     const box = E('span')
+
+    // if (HasCustomSubtype[node.type]) //
+    if (node.type === NodeTypes.OSC)
+    {
+
+        const waves = AudioNodeSubTypes[NodeTypes.OSC]
+
+        const waveTypes = waves.map(name => {
+            const img = E('img') as HTMLImageElement
+            img.src = 'sine.svg' // name + '.svg'
+            return img
+        })
+
+        ;(box.onclick = setWave)({ target: waveTypes[waves.indexOf(node.audioNode.type)] })
+        box.append(...waveTypes)
+
+        return box;
+        
+        function setWave(e : any) {
+            if (!waveTypes.includes(e.target)) return;
+            for (const t of waveTypes) t.classList.toggle('selected', t === e.target)
+        }
+    }
+
+    const subtypes = AudioNodeSubTypes[node.type]
     const an = node.audioNode as { type : any }
 
     if (subtypes.length > 0) // Show subtypes selector
