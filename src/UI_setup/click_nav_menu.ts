@@ -102,29 +102,7 @@ function showConfigWindow() {
         {
             window.removeEventListener('click', onclick)
             document.body.removeChild(configWindow)
+            UserOptions.save() // Save config when we click out
         }
     }
 }
-
-// .info-menu-container {
-//     display: none;
-//     color: var(--color6);
-//     position: absolute;
-//     background-color: rgba(0,0,0,0.5);
-//     // pointer-events: none;
-//     top: 0px;
-//     bottom: 0px;
-//     left: 0px;
-//     right: 0px;
-//     text-align: center;
-//     z-index: 4;
-// }
-
-// .info-menu {
-//     border: 3px solid blue;
-//     background-color: var(--color0);
-//     width: 400px;
-//     height: 400px;
-//     margin-top: 5%;
-//     margin-left: calc(50% - 200px);
-// }
