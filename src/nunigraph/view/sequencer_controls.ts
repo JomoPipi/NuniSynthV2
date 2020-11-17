@@ -149,15 +149,19 @@ function createTopRowControls(an : Sequencer) {
                 an.localADSR.curve = next[an.localADSR.curve]
                 render()
             }
-            text.onclick = () => {
-                localADSR.style.display = 'none'
-                globalADSRs.style.display = 'inline'
-                text.onclick = null
-                canvas.onclick = null
-            }
+            // text.onclick = () => {
+            //     localADSR.style.display = 'none'
+            //     globalADSRs.style.display = 'inline'
+            //     text.onclick = null
+            //     canvas.onclick = null
+            // }
         }
 
         const LOCAL = 5
+
+        // TODO: remove adsrIndexes !== 5
+        an.adsrIndex = LOCAL
+
         if (an.adsrIndex === LOCAL)
         {
             setHandlers()
