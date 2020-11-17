@@ -364,7 +364,8 @@ function showSubtypes(node : NuniGraphNode, saveCallback: Function) : Node {
 
         const waveTypes = waves.map(name => {
             const img = E('img') as HTMLImageElement
-            img.src = 'sine.svg' // name + '.svg'
+            img.src = `images/${name}.svg`
+            img.dataset.name = name
             return img
         })
 
@@ -375,7 +376,15 @@ function showSubtypes(node : NuniGraphNode, saveCallback: Function) : Node {
         
         function setWave(e : any) {
             if (!waveTypes.includes(e.target)) return;
-            for (const t of waveTypes) t.classList.toggle('selected', t === e.target)
+            for (const t of waveTypes) 
+            {
+                const selected = t === e.target
+                t.classList.toggle('selected', selected)
+                if (selected) 
+                {
+                    node.audioNode.type = e.target.dataset.name
+                }
+            }
         }
     }
 
