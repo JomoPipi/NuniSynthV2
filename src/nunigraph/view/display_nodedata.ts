@@ -24,6 +24,7 @@ import { createSubdivSelect } from './dialogbox_components.js'
 import { GraphController } from '../init.js'
 import { doUntilMouseUp } from '../../UI_library/events/until_mouseup.js'
 import { ProcessorNode } from '../../webaudio2/processor/processornode.js'
+import { ActiveControllers } from '../controller/graph_controller.js'
 
 
 
@@ -357,32 +358,43 @@ function showSubtypes(node : NuniGraphNode, saveCallback: Function) : Node {
     const box = E('span')
 
     // if (HasCustomSubtype[node.type]) //
-    if (node.type === NodeTypes.OSC)
+    // if (node.type === NodeTypes.OSC)
+    if (GraphIconImageObjects[node.audioNode.type])
     {
+        const types = AudioNodeSubTypes[node.type]
 
-        const waves = AudioNodeSubTypes[NodeTypes.OSC]
-
-        const waveTypes = waves.map(name => {
+        const typeImages = types.map(name => {
+            
             const img = E('img') as HTMLImageElement
             img.src = `images/${name}.svg`
             img.dataset.name = name
             return img
         })
 
-        ;(box.onclick = setWave)({ target: waveTypes[waves.indexOf(node.audioNode.type)] })
-        box.append(...waveTypes)
+        ;(box.onclick = setType)
+        ({ target: typeImages[types.indexOf(node.audioNode.type)] })
+        box.append(...typeImages)
 
         return box;
         
-        function setWave(e : any) {
-            if (!waveTypes.includes(e.target)) return;
-            for (const t of waveTypes) 
+        function setType(e : any) {
+            if (!typeImages.includes(e.target)) return;
+            for (const img of typeImages) 
             {
-                const selected = t === e.target
-                t.classList.toggle('selected', selected)
+                const selected = img === e.target
+                img.classList.toggle('selected', selected)
                 if (selected) 
                 {
                     node.audioNode.type = e.target.dataset.name
+                }
+            }
+            for (const controller of ActiveControllers)
+            {
+                if (controller.g.nodes.includes(node))
+                {
+                    // Update the outward appearance of the node
+                    controller.renderer.render()
+                    break
                 }
             }
         }

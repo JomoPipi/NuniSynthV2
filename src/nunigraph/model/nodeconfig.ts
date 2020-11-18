@@ -91,6 +91,46 @@ const NodeTypeEmojiLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.COMPRESSOR]: '💢'
     }
 
+type GraphIcon = string // The possible URLs will be Enumed'
+
+const GraphIconUrls = 
+    [ 'sine'
+    , 'triangle'
+    , 'square'
+    , 'sawtooth'
+    , 'custom'
+    ]
+
+const GraphIconImageObjects =
+    GraphIconUrls.reduce((acc, name) => {
+        const url = `images/${name}.svg`
+        const img = new Image()
+        img.src = url
+        acc[name] = img
+        return acc
+    }, {} as Indexed)
+    
+
+const NodeTypeGraphIcon : { readonly [key in NodeTypes] : GraphIcon } =
+    { [NodeTypes.GAIN]:   '🔊'
+    , [NodeTypes.OSC]:    '∿'
+    , [NodeTypes.FILTER]: '🌫️'
+    , [NodeTypes.PANNER]: '⧟'
+    , [NodeTypes.DELAY]:  '🕖'
+    , [NodeTypes.BUFFER]: '📼'
+    , [NodeTypes.SGS]:    '⛩️'
+    , [NodeTypes.B_SEQ]:  '📼'
+    , [NodeTypes.CSN]:    '🎚️'
+    , [NodeTypes.RECORD]: '🎙️'
+    , [NodeTypes.MODULE]: '🎛️'
+    
+    , [NodeTypes.PIANOR]: '🎼 '
+    , [NodeTypes.ENV]:    'Envelope (doesn\'t do anything)'
+    , [NodeTypes.CUSTOM]: 'Custom Module (should be hidden)'
+    , [NodeTypes.PROCESSOR]: '💻'
+    , [NodeTypes.COMPRESSOR]: '💢'
+    }
+
 const createAudioNode : { readonly [key in NodeTypes] : string } =
     { [NodeTypes.GAIN]:   'createGain'
     , [NodeTypes.OSC]:    'createOscillator2'

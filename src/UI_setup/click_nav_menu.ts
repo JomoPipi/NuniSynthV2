@@ -13,7 +13,7 @@ import
 import { modularizeGraph } from '../nunigraph/controller/graph_handlers.js'
 import { setTheme } from './theme_setup.js'
 import { UserOptions } from '../storage/user_options.js'
-import { GraphController } from '../nunigraph/init.js'
+import { ActiveControllers } from '../nunigraph/controller/graph_controller.js'
 
 const tabs = 
     [ 'graph-tab'
@@ -77,7 +77,8 @@ function showConfigWindow() {
         configWindow.appendChild(box)
         checkBox.oninput = () => {
             (UserOptions.config as any)[key] = checkBox.checked
-            GraphController.renderer.render()
+            ActiveControllers.forEach(controller =>
+                controller.renderer.render())
         }
     }
 

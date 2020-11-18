@@ -39,9 +39,46 @@ onmessage = (e : MessageEvent) =>
     {
         drawFrequencySpectrum(e)
     }
+    // else if (e.data.buffer2)
+    // {
+    //     drawTimeDomain(e)
+    // }
 }
 
+// function drawTimeDomain(e : MessageEvent) {
+//     const buffer2 = e.data.buffer2
+//     const dataArray = new Uint8Array(buffer2)
+
+//     ctx.fillStyle = 'rgb(200, 200, 200)'
+//     ctx.clearRect(0, 0, W, H)
+//     ctx.strokeStyle = gradient
+
+//     const sliceWidth = W * 1.0 / bufferLength
+//     let x = 0, max = -Infinity
+//     const Y = H*1/4
+
+//     ctx.beginPath()
+//     for(var i = 0; i < bufferLength; i++) {
+//         const v = dataArray[i] / 128.0
+//         const y = v * H/2 + Y
+
+//         if(i === 0)
+//             ctx.moveTo(x, y)
+//         else
+//             ctx.lineTo(x, y)
+    
+//         x += sliceWidth
+//         max = Math.max(max, dataArray[i])
+//     }
+//     if (max === 255) ctx.strokeStyle = 'red'
+
+//     ctx.lineTo(W, H/2)
+//     ctx.stroke()
+// }
+
 function drawFrequencySpectrum(e : MessageEvent) {
+    // if (e.data.buffer2) drawTimeDomain(e)
+    
     const fbc_array = new Uint8Array(e.data.buffer)
 
     let x = 0, isClipping = false

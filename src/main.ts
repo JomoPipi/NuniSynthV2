@@ -5,6 +5,8 @@
 
 
 
+DIRTYGLOBALS
+
 import './UI_setup/internal.js'
 import './scale_utils/internal.js'
 import './buffer_utils/internal.js'

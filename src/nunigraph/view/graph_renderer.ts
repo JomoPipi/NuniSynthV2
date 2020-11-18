@@ -8,7 +8,6 @@
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { NuniGraph } from '../model/nunigraph.js'
 import { snapToGrid } from './snap_to_grid.js'
-import { ActiveControllers } from '../controller/graph_controller.js'
 import { UserOptions } from '../../storage/user_options.js'
 
 export enum HOVER { EDGE, SELECT, CONNECTION, EMPTY }
@@ -457,7 +456,16 @@ export class NuniGraphRenderer {
             {
                 ctx.fillStyle = '#FFF'
                 ctx.font = '30px Arial'
-                ctx.fillText(NodeTypeEmojiLabel[node.type], X - 20, Y + 11)
+                const icon = NodeTypeGraphIcon[node.type]
+                if (node.type === NodeTypes.OSC)
+                {
+                    const img = GraphIconImageObjects[node.audioNode.type]
+                    ctx.drawImage(img, X - 20, Y - 16);
+                }
+                else
+                {
+                    ctx.fillText(icon, X - 20, Y + 11)
+                }
             }
         }
     }
