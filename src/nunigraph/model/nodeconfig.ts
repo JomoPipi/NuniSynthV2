@@ -12,7 +12,7 @@ enum NodeTypes
     FILTER = 'filter',
     PANNER = 'panner',
     DELAY = 'delay',
-    BUFFER = 'buffer',
+    SAMPLE = 'buffer',
     SGS = 'subgraph-sequencer',
     B_SEQ = 'buffer-sequencer',
     CSN = 'constant-source',
@@ -57,7 +57,7 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.FILTER]: 'Filter'
     , [NodeTypes.PANNER]: 'Panner'
     , [NodeTypes.DELAY]:  'Delay'
-    , [NodeTypes.BUFFER]: 'Sample'
+    , [NodeTypes.SAMPLE]: 'Sample'
     , [NodeTypes.SGS]:    'Gate Sequencer'
     , [NodeTypes.B_SEQ]:  'Sample Sequencer'
     , [NodeTypes.CSN]:    'Number Value'
@@ -77,7 +77,7 @@ const NodeTypeEmojiLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.FILTER]: '🌫️'
     , [NodeTypes.PANNER]: '⧟'
     , [NodeTypes.DELAY]:  '🕖'
-    , [NodeTypes.BUFFER]: '📼'
+    , [NodeTypes.SAMPLE]: '📀'
     , [NodeTypes.SGS]:    '⛩️'
     , [NodeTypes.B_SEQ]:  '📼'
     , [NodeTypes.CSN]:    '🎚️'
@@ -117,7 +117,7 @@ const NodeTypeGraphIcon : { readonly [key in NodeTypes] : GraphIcon } =
     , [NodeTypes.FILTER]: '🌫️'
     , [NodeTypes.PANNER]: '⧟'
     , [NodeTypes.DELAY]:  '🕖'
-    , [NodeTypes.BUFFER]: '📼'
+    , [NodeTypes.SAMPLE]: '📼'
     , [NodeTypes.SGS]:    '⛩️'
     , [NodeTypes.B_SEQ]:  '📼'
     , [NodeTypes.CSN]:    '🎚️'
@@ -137,7 +137,7 @@ const createAudioNode : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.FILTER]: 'createBiquadFilter'
     , [NodeTypes.PANNER]: 'createStereoPanner'
     , [NodeTypes.DELAY]:  'createDelay'
-    , [NodeTypes.BUFFER]: 'createBuffer2'
+    , [NodeTypes.SAMPLE]: 'createBuffer2'
     , [NodeTypes.SGS]:    'createGateSequencer'
     , [NodeTypes.B_SEQ]:  'createSampleSequencer'
     , [NodeTypes.CSN]:    'createConstantSource'
@@ -157,7 +157,7 @@ const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.FILTER]: true
     , [NodeTypes.PANNER]: true
     , [NodeTypes.DELAY]:  true
-    , [NodeTypes.BUFFER]: false
+    , [NodeTypes.SAMPLE]: false
     , [NodeTypes.SGS]:    true
     , [NodeTypes.B_SEQ]:  false
     , [NodeTypes.CSN]:    false
@@ -177,7 +177,7 @@ const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.FILTER]: false
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
-    , [NodeTypes.BUFFER]: false
+    , [NodeTypes.SAMPLE]: false
     , [NodeTypes.SGS]:    true
     , [NodeTypes.B_SEQ]:  false
     , [NodeTypes.CSN]:    false
@@ -197,7 +197,7 @@ const MustBeStarted : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.FILTER]: false
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
-    , [NodeTypes.BUFFER]: false
+    , [NodeTypes.SAMPLE]: false
     , [NodeTypes.SGS]:    false
     , [NodeTypes.B_SEQ]:  false
     , [NodeTypes.CSN]:    true
@@ -217,7 +217,7 @@ const HasAudioParams : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.FILTER]: true
     , [NodeTypes.PANNER]: true
     , [NodeTypes.DELAY]:  true
-    , [NodeTypes.BUFFER]: true
+    , [NodeTypes.SAMPLE]: true
     , [NodeTypes.SGS]:    false
     , [NodeTypes.B_SEQ]:  false
     , [NodeTypes.CSN]:    true
@@ -237,7 +237,7 @@ const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.FILTER]: false
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
-    , [NodeTypes.BUFFER]: false
+    , [NodeTypes.SAMPLE]: false
     , [NodeTypes.SGS]:    false
     , [NodeTypes.B_SEQ]:  false
     , [NodeTypes.CSN]:    false
@@ -257,7 +257,7 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.FILTER]: false
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
-    , [NodeTypes.BUFFER]: false
+    , [NodeTypes.SAMPLE]: false
     , [NodeTypes.SGS]:    true
     , [NodeTypes.B_SEQ]:  false
     , [NodeTypes.CSN]:    false
@@ -279,7 +279,7 @@ const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.FILTER]: true
     , [NodeTypes.PANNER]: true
     , [NodeTypes.DELAY]:  true
-    , [NodeTypes.BUFFER]: true
+    , [NodeTypes.SAMPLE]: true
     , [NodeTypes.SGS]:    true
     , [NodeTypes.B_SEQ]:  true
     , [NodeTypes.CSN]:    true
@@ -300,7 +300,7 @@ const AudioNodeParams : Record<NodeTypes,AudioParams[]> =
     , [NodeTypes.FILTER]: ['frequency','Q','gain','detune']
     , [NodeTypes.PANNER]: ['pan']
     , [NodeTypes.DELAY]:  ['delayTime']
-    , [NodeTypes.BUFFER]: ['playbackRate','detune']
+    , [NodeTypes.SAMPLE]: ['playbackRate','detune']
     , [NodeTypes.SGS]:    []
     , [NodeTypes.B_SEQ]:  ['playbackRate','detune']
     , [NodeTypes.CSN]:    ['offset']
@@ -323,7 +323,7 @@ const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
         ,"highshelf", "peaking", "notch", "allpass"]
     , [NodeTypes.PANNER]: []
     , [NodeTypes.DELAY]:  []
-    , [NodeTypes.BUFFER]: []
+    , [NodeTypes.SAMPLE]: []
     , [NodeTypes.SGS]:    []
     , [NodeTypes.B_SEQ]:  []
     , [NodeTypes.CSN]:    []
@@ -344,7 +344,7 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.FILTER]: 'rgba(0,255,0,0.5)'
     , [NodeTypes.PANNER]: 'rgba(255,128,0,0.5)'
     , [NodeTypes.DELAY]:  'rgba(255,255,0,0.5)'
-    , [NodeTypes.BUFFER]: 'rgba(0,255,255,0.5)'
+    , [NodeTypes.SAMPLE]: 'rgba(0,255,255,0.5)'
     , [NodeTypes.SGS]:    'rgba(255,0,255,0.5)'
     , [NodeTypes.B_SEQ]:  'rgba(0,255,195,0.5)'
     , [NodeTypes.CSN]:    'rgba(255,200,200,0.5)'
@@ -364,7 +364,7 @@ const NodeTypeColors2 : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.FILTER]: 'rgb(0,255,0)'
     , [NodeTypes.PANNER]: 'rgb(255,128,0)'
     , [NodeTypes.DELAY]:  'rgb(255,255,0)'
-    , [NodeTypes.BUFFER]: 'rgb(0,255,255)'
+    , [NodeTypes.SAMPLE]: 'rgb(0,255,255)'
     , [NodeTypes.SGS]:    'rgb(255,0,255)'
     , [NodeTypes.B_SEQ]:  'rgb(0,255,195)'
     , [NodeTypes.CSN]:    'rgb(255,200,200)'
@@ -451,6 +451,24 @@ const hasLinearSlider : { readonly [key in AudioParams] : boolean } =
     , release: false
     }
 
+type SliderType = 'linear' | 'exponential' 
+// const AudioParamSliderType : { readonly [key in AudioParams] : SliderType } = 
+//     { gain:         false
+//     , frequency:    false
+//     , detune:       true
+//     , Q:            true
+//     , pan:          true
+//     , delayTime:    false
+//     , playbackRate: false
+//     , offset:       false
+
+//     , threshold: true
+//     , knee: true
+//     , ratio: true
+//     , attack: false
+//     , release: false
+//     }
+
 const isSubdividable : { readonly [key in AudioParams] : boolean } = 
     { gain:         false
     , frequency:    true
@@ -468,10 +486,27 @@ const isSubdividable : { readonly [key in AudioParams] : boolean } =
     , release: false
     }
 
-const sliderFactor : { readonly [key in AudioParams] : number } = 
-    { gain:         10**-2
+const AudioParamKnobTurns : { readonly [key in AudioParams] : number } = 
+    { gain:         2
+    , frequency:    1
+    , detune:       128
+    , Q:            1
+    , pan:          1
+    , delayTime:    1
+    , playbackRate: 2
+    , offset:       8
+
+    , threshold: 1
+    , knee: 1
+    , ratio: 1
+    , attack: 1
+    , release: 1
+    }
+
+const AudioParamSliderFactor : { readonly [key in AudioParams] : number } = 
+    { gain:         2**-8
     , frequency:    2**-7
-    , detune:       1.0
+    , detune:       1
     , Q:            .05
     , pan:          .005
     , delayTime:    .005

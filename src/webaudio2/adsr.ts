@@ -89,7 +89,7 @@ export const ADSR_Controller = {
 
     values: [...Array(N_ADSRs)].map(defaultADSR).concat([squareADSR]),
 
-    trigger: function(gain : AudioParam, time : number, adsrIndex : number, customADSR? : Indexed) {
+    trigger(gain : AudioParam, time : number, adsrIndex : number, customADSR? : Indexed) {
         const i = adsrIndex ?? this.index
         const adsr = i === 5 && customADSR || this.values[i]
         const { attack, decay, sustain, curve } = adsr
@@ -119,7 +119,7 @@ export const ADSR_Controller = {
     },
 
     
-    triggerSource: function(source : SourceNode, gain : AudioParam, time : number, index? : number, customADSR? : Indexed) {
+    triggerSource(source : SourceNode, gain : AudioParam, time : number, index? : number, customADSR? : Indexed) {
         const i = index ?? this.index
         const adsr = i === 5 && customADSR || this.values[i]
         const { attack, decay, sustain } = adsr
@@ -129,7 +129,7 @@ export const ADSR_Controller = {
         source.start(time)
     },
 
-    untriggerAdsr: function(gain : AudioParam, time : number, adsrIndex? : number, customADSR? : Indexed) {
+    untriggerAdsr(gain : AudioParam, time : number, adsrIndex? : number, customADSR? : Indexed) {
         const i = adsrIndex ?? this.index
         const adsr = i === 5 && customADSR || this.values[i]
         const { release } = adsr
@@ -137,7 +137,7 @@ export const ADSR_Controller = {
         gain.setTargetAtTime(0, time, release)
     },
 
-    untriggerAndGetStopTime: function(gain : AudioParam, time : number, index? : number, customADSR? : Indexed) {
+    untriggerAndGetStopTime(gain : AudioParam, time : number, index? : number, customADSR? : Indexed) {
         const i = index ?? this.index
         const adsr = i === 5 && customADSR || this.values[i]
         const { release } = adsr
@@ -146,7 +146,7 @@ export const ADSR_Controller = {
         return time + release * releaseTimeConstant
     },
 
-    render: function (options? : any) {
+    render(options? : any) {
         const adsr = ADSR_Controller.values[this.index]
         renderADSR(adsr, ctx, canvas.height, canvas.width, options)
     }

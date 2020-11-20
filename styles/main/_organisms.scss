@@ -69,7 +69,13 @@ $number-grab-width: 120px;
     align-self: center;
     justify-self: center;
 }
-
+.params-box-2 {
+    display: grid;
+    grid-template-rows: 0.75fr 1fr;
+    box-sizing: border-box;
+    align-self: center;
+    justify-self: center;
+}
 
 
 

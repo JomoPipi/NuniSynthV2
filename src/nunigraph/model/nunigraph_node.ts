@@ -21,7 +21,7 @@ type AudioNodeMap = {
     [NodeTypes.FILTER]: BiquadFilterNode
     [NodeTypes.PANNER]: StereoPannerNode
     [NodeTypes.DELAY]:  DelayNode
-    [NodeTypes.BUFFER]: BufferNode2
+    [NodeTypes.SAMPLE]: BufferNode2
     [NodeTypes.SGS]:    GateSequencer
     [NodeTypes.B_SEQ]:  SampleSequencer
     [NodeTypes.CSN]:    ConstantSourceNode

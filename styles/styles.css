@@ -687,6 +687,28 @@ code {
           animation: gradient 1.618s ease infinite;
 }
 
+.number-input-2 {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  font: 0.75em Roboto;
+  letter-spacing: 0.1em;
+  background: transparent;
+  color: var(--color5);
+  border: 0px solid transparent;
+  width: 39px;
+  text-align: center;
+}
+
+.number-input-2:hover {
+  background: -webkit-gradient(linear, left top, left bottom, from(var(--color3)), to(var(--color4)));
+  background: linear-gradient(var(--color3), var(--color4));
+}
+
+.number-input-2::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 @-webkit-keyframes gradient {
   0% {
     background-position: 0% 50%;
@@ -856,6 +878,19 @@ code {
   -ms-grid-rows: 0.75fr 1fr;
       grid-template-rows: 0.75fr 1fr;
   width: 120px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  -ms-grid-row-align: center;
+      align-self: center;
+  -ms-grid-column-align: center;
+      justify-self: center;
+}
+
+.params-box-2 {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-rows: 0.75fr 1fr;
+      grid-template-rows: 0.75fr 1fr;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   -ms-grid-row-align: center;
@@ -1541,6 +1576,11 @@ a {
 
 .clearboth {
   clear: both;
+}
+
+.max-height-250 {
+  max-height: 250px;
+  overflow-y: scroll;
 }
 
 .apply-btn {

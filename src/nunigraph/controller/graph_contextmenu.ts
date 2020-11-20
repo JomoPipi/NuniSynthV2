@@ -79,7 +79,7 @@ function createNode<T extends NodeTypes>(type : T, e : MouseEvent) : NuniGraphNo
 const nodesSortedByRecurrence : NodeTypes[] = 
     [ NodeTypes.GAIN
     , NodeTypes.OSC
-    , NodeTypes.BUFFER
+    , NodeTypes.SAMPLE
     , NodeTypes.B_SEQ
     , NodeTypes.SGS
     , NodeTypes.CSN
@@ -134,7 +134,7 @@ export function addModuleToList(title : string, graphCode : string) {
 
 // Fill up the menu
 const btnList = E('ul', { text: ' Create New Node...' })
-const container2 = E('li', { children: [btnList] })
+const container2 = E('li',  { children: [btnList] })
 const container = E('ul', { children: [container2] })
 contextmenu.appendChild(container)
 

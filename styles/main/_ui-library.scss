@@ -135,6 +135,27 @@
         animation: gradient 1.618s ease infinite;
     }
 }
+
+.number-input-2 {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    font: 0.75em Roboto;
+    letter-spacing: 0.1em;
+    background: transparent;
+    color: var(--color5);
+    border: 0px solid transparent;
+    width: 39px;
+    text-align: center;
+    
+    &:hover {
+        background: linear-gradient(var(--color3), var(--color4));  
+    }
+}
+.number-input-2::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 @keyframes gradient {
 	0% {
 		background-position: 0% 50%;

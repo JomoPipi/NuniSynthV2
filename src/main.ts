@@ -56,3 +56,6 @@ window.onload = () => {
 
 // https://codepen.io/Grilly86/pen/vIALz
 // https://codepen.io/tomhodgins/pen/ZOmxaZ
+
+// Sick ADSR
+// https://codepen.io/jhnsnc/pen/KXYayG

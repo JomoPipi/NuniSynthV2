@@ -17,7 +17,7 @@ import
     } from '../../webaudio2/internal.js'
 import 
     { createDraggableNumberInput
-    , createToggleButton
+    , createNumberDialComponent2, createNumberDialComponent3, createToggleButton
     , JsDial
     } from '../../UI_library/internal.js'
 import { createSubdivSelect } from './dialogbox_components.js'
@@ -493,7 +493,7 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
         const textBox = E('span', { children: [text] })
 
         // const box = E('div', { className: 'flat-grid some-margin' })
-        const box = E('div', { className: 'params-box' })
+        const box = E('div')//, { className: 'params-box-2' })
 
         const updateFunc = isGain
             ? (newValue : number) => {
@@ -508,20 +508,24 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
         }
         
         const settings = 
-            { amount: sliderFactor[param]
+            { amount: AudioParamSliderFactor[param]
             , min: AudioParamRanges[param][0]
             , max: AudioParamRanges[param][1]
             , isLinear: hasLinearSlider[param]
             }
 
+        const rounds = AudioParamKnobTurns[param]
         const numberInput = 
-            createDraggableNumberInput(
-                initialValue, 
-                mousedownFunc, 
-                updateFunc,
-                settings)
+            // createDraggableNumberInput( // Not so user friendly
+            // createNumberDialComponent2( // The solution
+            //     initialValue, 
+            //     mousedownFunc, 
+            //     updateFunc,
+            //     settings)
+            createNumberDialComponent3(initialValue, updateFunc, settings, rounds)
 
-        box.append(textBox, numberInput)
+        // box.append(textBox, numberInput)
+        box.append(numberInput.container, E('br'), textBox)
 
         allParams.appendChild(box)
 
@@ -536,7 +540,8 @@ function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node
                 const newValue = param === 'frequency'
                     ? value / (60 * 4 / MasterClock.getTempo()) // Frequency
                     : (60 * 4 / MasterClock.getTempo() / value) // Time Interval
-                numberInput.value = newValue.toString()
+                    // numberInput.value = newValue.toString()
+                    numberInput.setValue(newValue)
                 updateFunc(newValue)
             }
         }

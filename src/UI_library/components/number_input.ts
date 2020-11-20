@@ -6,6 +6,7 @@
 
 
 import { doUntilMouseUp } from "../events/until_mouseup.js"
+import { JsDial } from "./jsdials.js"
 
 
 
@@ -73,6 +74,149 @@ function realUpdateFunc(fn : (value : number) => void, settings : UpdateFuncSett
         const newValue  = clamp(min, value + factor * amount, max)
 
         fn(newValue)
-        return newValue.toPrecision(7)
+        const precision = newValue >= 100 
+            ? Math.log10(newValue)+1 
+            : newValue >= 1
+            ? 3
+            : 7
+        return newValue.toPrecision(precision)
     }
+}
+
+export function createNumberDialComponent2(
+    initialValue : number, 
+    mousedownFunc : () => number,
+    updateFunc : (value : number) => void,
+    settings : UpdateFuncSettings) {
+
+    const sizeOfRange = settings.max - settings.min
+
+    const knob = new JsDial()
+        knob.sensitivity = 2**7
+        const knobMax = sizeOfRange**(1/4)
+        knob.max = knobMax
+        
+    const valueInput = E('input', 
+        { className: 'number-input-2'
+        , props: 
+            { type: 'number'
+            , value: initialValue
+            }
+        })
+
+    const container = E('div', { children: [valueInput, knob.html] })
+        container.style.display = 'inline-grid'
+        // container.style.gridTemplateRows = '20% 80%'
+        // container.style.border = '1px solid red' // = `#${100 + Math.random() * 900 | 0}`
+
+    const component = 
+        { container
+        , setValue(n : number) {} 
+        }
+    
+
+    const state = { startX: 0, startY: 0, startValue: 0 }
+
+    const update = realUpdateFunc(updateFunc, settings)
+
+    const mousedown = function(e : MouseEvent) {
+        state.startX = e.clientX
+        state.startY = e.clientY
+        state.startValue = mousedownFunc()
+    }
+
+    const mousemove = function(e : MouseEvent) {
+        e.stopPropagation()
+        if (e.buttons !== 1) return;
+        valueInput.value = 
+            update(
+                state.startY-e.clientY + (e.clientX-state.startX)/128.0, 
+                state.startValue)
+        updateKnob()
+    }
+    updateKnob()
+
+    knob.html.onmousedown = doUntilMouseUp(mousemove, { mousedown })
+    valueInput.oninput = () => { updateFunc(+valueInput.value), updateKnob() }
+
+    return component
+
+    function updateKnob() {
+        const knobValue = +valueInput.value * settings.amount
+        knob.update(knobValue)
+    }
+}
+
+
+
+
+export function createNumberDialComponent3(
+    initialValue : number, 
+    callback : (n : number) => void,
+    settings : UpdateFuncSettings,
+    rounds : number) {
+
+    const mapValue = settings.isLinear
+        ? (x : number) => x
+        : (x : number) => x ** 4
+        // : (x : number) => 2 ** x
+
+    const unmapValue = settings.isLinear
+        ? (x : number) => x
+        : (x : number) => x ** (1/4.0)
+        // : (x : number) => Math.log2(x)
+
+    
+    const dial = new JsDial(1)
+    dial.min = unmapValue(settings.min)
+    dial.max = unmapValue(settings.max)
+    dial.value = unmapValue(initialValue)
+    dial.sensitivity = settings.amount
+    dial.rounds = rounds
+    dial.render()
+
+    // const valueText = E('span', 
+    //     { text: `${volumeTodB(value).toFixed(1)}dB` })
+    
+
+    const valueInput = E('input', 
+        { className: 'number-input-2'
+        , props: 
+            { type: 'number'
+            , value: initialValue
+            }
+        })
+
+    valueInput.oninput = () => {
+        const value = +valueInput.value
+        callback(value)
+        dial.value = unmapValue(value)
+        dial.render()
+    }
+
+    dial.attach((v : number) => {
+        const value = mapValue(v)
+        callback(value)
+        valueInput.value = value.toString()
+        // valueText.innerText =
+        //     `${volumeTodB(value).toFixed(1)}dB`
+    })
+    // if (!options.something)
+    // {
+    //     dial.html.ondblclick = dial.update.bind(null, 1)
+    // }
+
+    const container = E('div', { children: [valueInput, dial.html] })
+        container.style.display = 'inline-grid'
+        // container.style.gridTemplateRows = '20% 80%'
+        // container.style.border = '1px solid red' // = `#${100 + Math.random() * 900 | 0}`
+
+    const component = 
+        { container
+        , setValue(n : number) {} 
+        }
+
+    return component
+    // const box = E('div', { children: [dial.html, valueText] })
+    // return box
 }

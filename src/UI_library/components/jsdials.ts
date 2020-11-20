@@ -42,7 +42,10 @@ export class JsDial {
         this.value = this.min = this.sensitivity = 2**-8
         this.imgDegreeOffset = 195
         this.arcLength = 320
-        this.update = x => void 0
+        this.update = (value : number) => {
+            this.value = value
+            this.render()
+        }
         this.rounds = 1
     }
 
