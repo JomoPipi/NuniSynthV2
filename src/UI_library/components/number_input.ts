@@ -156,14 +156,17 @@ export function createNumberDialComponent3(
     settings : UpdateFuncSettings,
     rounds : number) {
 
+    const exponent = 5
+
     const mapValue = settings.isLinear
         ? (x : number) => x
-        : (x : number) => x ** 4
+        : (x : number) => 5 * x ** 3
         // : (x : number) => 2 ** x
 
     const unmapValue = settings.isLinear
         ? (x : number) => x
-        : (x : number) => x ** (1/4.0)
+        // : (x : number) => x ** (1/exponent)
+        : (x : number) => Math.cbrt(x/5)
         // : (x : number) => Math.log2(x)
 
     
@@ -197,9 +200,12 @@ export function createNumberDialComponent3(
     dial.attach((v : number) => {
         const value = mapValue(v)
         callback(value)
-        valueInput.value = value.toString()
-        // valueText.innerText =
-        //     `${volumeTodB(value).toFixed(1)}dB`
+        valueInput.value = Math.abs(value) >= 100
+            ? value.toFixed(0)
+            : value.toFixed(3 - Math.ceil(Math.log10(Math.abs(value))))
+            // : value >= 10
+            // ? value.toFixed(1)
+            // ? 
     })
     // if (!options.something)
     // {
@@ -209,14 +215,15 @@ export function createNumberDialComponent3(
     const container = E('div', { children: [valueInput, dial.html] })
         container.style.display = 'inline-grid'
         // container.style.gridTemplateRows = '20% 80%'
-        // container.style.border = '1px solid red' // = `#${100 + Math.random() * 900 | 0}`
-
+        // container.style.backgroundColor = 'red'
+        
     const component = 
         { container
-        , setValue(n : number) {} 
+        , setValue(n : number) 
+            {
+                dial.update(unmapValue(n))
+            } 
         }
 
     return component
-    // const box = E('div', { children: [dial.html, valueText] })
-    // return box
 }

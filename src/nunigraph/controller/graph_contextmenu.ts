@@ -154,7 +154,7 @@ btnList.appendChild(modulesBtn)
 for (const type of nodesSortedByRecurrence) 
 {
     const surface = E('a', 
-        { text: NodeLabel[type]
+        { text: NodeTypeEmojiLabel[type] + NodeLabel[type]
         , props: { href: '#' } // <- TODO: ask someone if this is needed
         })
     const btn = E('li',

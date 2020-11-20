@@ -117,7 +117,7 @@ const NodeTypeGraphIcon : { readonly [key in NodeTypes] : GraphIcon } =
     , [NodeTypes.FILTER]: '🌫️'
     , [NodeTypes.PANNER]: '⧟'
     , [NodeTypes.DELAY]:  '🕖'
-    , [NodeTypes.SAMPLE]: '📼'
+    , [NodeTypes.SAMPLE]: '📀'
     , [NodeTypes.SGS]:    '⛩️'
     , [NodeTypes.B_SEQ]:  '📼'
     , [NodeTypes.CSN]:    '🎚️'
@@ -509,9 +509,9 @@ const AudioParamSliderFactor : { readonly [key in AudioParams] : number } =
     , detune:       1
     , Q:            .05
     , pan:          .005
-    , delayTime:    .005
-    , playbackRate: 2**-6
-    , offset:       10**-2
+    , delayTime:    2**-11
+    , playbackRate: 2**-10
+    , offset:       2**-8
 
     , threshold: 10**-2
     , knee: 10**-2
