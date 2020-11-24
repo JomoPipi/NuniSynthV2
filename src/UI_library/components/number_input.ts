@@ -200,12 +200,8 @@ export function createNumberDialComponent3(
     dial.attach((v : number) => {
         const value = mapValue(v)
         callback(value)
-        valueInput.value = Math.abs(value) >= 100
-            ? value.toFixed(0)
-            : value.toFixed(3 - Math.ceil(Math.log10(Math.abs(value))))
-            // : value >= 10
-            // ? value.toFixed(1)
-            // ? 
+        const precision = clamp(0, 3 - Math.ceil(Math.log10(Math.abs(value))), 9)
+        valueInput.value = value.toFixed(precision)
     })
     // if (!options.something)
     // {
