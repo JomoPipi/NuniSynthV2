@@ -59,9 +59,6 @@ export class AutomationNode {
             and arr[i].x < arr[i+1].x + MIN_X_GAP */
         this.points = []
         this.points.push({ x: 0, y: 1 })
-
-        this.points.push({ x: .4, y: 0.3 })
-
         this.points.push({ x: 1, y: 1 })
     }
 
@@ -185,10 +182,40 @@ export class AutomationNode {
     private mousemove(e : MouseEvent) {
         if (this.draggingNode < 0) return
 
-        const [x, y] = this.mapCanvasCoordinateToPoint(e.offsetX, e.offsetY)
+        const { x: X, y: Y } = this.canvas.getBoundingClientRect()
+        const mouseX = e.clientX - X
+        const mouseY = e.clientY - Y
+        const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, mouseY)
+
+        // Erase unordered points with lower index
+        for (let i = 0; i < this.draggingNode; i++)
+        {
+            if (this.points[i].x >= this.points[this.draggingNode].x)
+            {
+                this.points.splice(i, this.draggingNode - i)
+                this.draggingNode = i
+                break
+            }
+        }
+
+        // Erase unordered points with higher index
+        for (let i = this.points.length-1; i > this.draggingNode; i--)
+        {
+            if (this.points[i].x <= this.points[this.draggingNode].x)
+            {
+                this.points.splice(this.draggingNode+1, i-this.draggingNode)
+                break
+            }
+        }
+
+
         const p = this.points[this.draggingNode]
-        p.x = x
-        p.y = y
+        // Prevent dragging the x coordinates of end nodes
+        if (0 < this.draggingNode && this.draggingNode < this.points.length - 1)
+        {
+            p.x = clamp(0.005, x, 1 - 0.005)
+        }
+        p.y = clamp(0, y, 1)
 
         this.render()
     }
