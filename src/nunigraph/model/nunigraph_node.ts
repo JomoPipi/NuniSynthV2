@@ -9,7 +9,7 @@ import { Envelope } from '../../webaudio2/envelope/envelope.js'
 import 
     { audioCtx, OscillatorNode2 , BufferNode2, GateSequencer
     , SampleSequencer, AudioBufferCaptureNode, NuniGraphAudioNode
-    , PianoRoll12Tone, Sequencer
+    , PianoRoll12Tone, Sequencer, AutomationNode
     } from '../../webaudio2/internal.js'
 
 
@@ -27,6 +27,7 @@ type AudioNodeMap = {
     [NodeTypes.CSN]:    ConstantSourceNode
     [NodeTypes.RECORD]: AudioBufferCaptureNode
     [NodeTypes.MODULE]: NuniGraphAudioNode
+    [NodeTypes.AUTO]:   AutomationNode
 
     [NodeTypes.PIANOR]: PianoRoll12Tone
     [NodeTypes.ENV]:    Envelope

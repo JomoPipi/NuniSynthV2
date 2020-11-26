@@ -15,6 +15,7 @@ import { NuniGraphAudioNode } from './nunigraph_audionode.js'
 import { Envelope } from './envelope/envelope.js'
 import { PianoRoll12Tone } from './sequencers/pianoroll_12tone.js'
 import { ProcessorNode } from './processor/processornode.js'
+import { AutomationNode } from './sequencers/automationnode.js'
 
 
 class AudioContext2 extends AudioContext {
@@ -78,6 +79,10 @@ class AudioContext2 extends AudioContext {
 
     createCompressorNode() {
         return new DynamicsCompressorNode(this)
+    }
+
+    createAutomationNode() {
+        return new AutomationNode(this)
     }
 }
 

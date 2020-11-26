@@ -18,6 +18,7 @@ enum NodeTypes
     CSN = 'constant-source',
     RECORD = 'audio-capture',
     MODULE = 'module',
+    AUTO = 'automation',
 
     PIANOR = 'piano-roll',
     ENV = 'envelope', // <- Not used
@@ -63,6 +64,7 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.CSN]:    'Number Value'
     , [NodeTypes.RECORD]: 'Recorder'
     , [NodeTypes.MODULE]: 'Module'
+    , [NodeTypes.AUTO]:   'Automation'
     
     , [NodeTypes.PIANOR]: '12-Tone Piano Roll'
     , [NodeTypes.ENV]:    'Envelope (doesn\'t do anything)'
@@ -83,6 +85,7 @@ const NodeTypeEmojiLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.CSN]:    '🎚️'
     , [NodeTypes.RECORD]: '🎙️'
     , [NodeTypes.MODULE]: '🎛️'
+    , [NodeTypes.AUTO]:   '🤖'
     
     , [NodeTypes.PIANOR]: '🎼 '
     , [NodeTypes.ENV]:    'Envelope (doesn\'t do anything)'
@@ -123,6 +126,7 @@ const NodeTypeGraphIcon : { readonly [key in NodeTypes] : GraphIcon } =
     , [NodeTypes.CSN]:    '🎚️'
     , [NodeTypes.RECORD]: '🎙️'
     , [NodeTypes.MODULE]: '🎛️'
+    , [NodeTypes.AUTO]:   '🤖'
     
     , [NodeTypes.PIANOR]: '🎼 '
     , [NodeTypes.ENV]:    'Envelope (doesn\'t do anything)'
@@ -143,6 +147,7 @@ const createAudioNode : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.CSN]:    'createConstantSource'
     , [NodeTypes.RECORD]: 'createAudioBufferCaptureNode'
     , [NodeTypes.MODULE]: 'createNuniGraphAudioNode'
+    , [NodeTypes.AUTO]:   'createAutomationNode'
     
     , [NodeTypes.PIANOR]: 'create12TonePianoRoll'
     , [NodeTypes.ENV]:    'createEnvelopeNode'
@@ -163,6 +168,7 @@ const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: true
+    , [NodeTypes.AUTO]:   true
     
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    true
@@ -183,6 +189,7 @@ const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: true
+    , [NodeTypes.AUTO]:   false
     
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
@@ -203,6 +210,7 @@ const MustBeStarted : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.CSN]:    true
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: false
+    , [NodeTypes.AUTO]:   false
     
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
@@ -223,6 +231,7 @@ const HasAudioParams : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.CSN]:    true
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: false
+    , [NodeTypes.AUTO]:   false
     
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
@@ -243,6 +252,7 @@ const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: false
+    , [NodeTypes.AUTO]:   false
     
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
@@ -263,6 +273,7 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: true
+    , [NodeTypes.AUTO]:   false
 
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
@@ -285,6 +296,7 @@ const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.CSN]:    true
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: false
+    , [NodeTypes.AUTO]:   false
 
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    true
@@ -306,6 +318,7 @@ const AudioNodeParams : Record<NodeTypes,AudioParams[]> =
     , [NodeTypes.CSN]:    ['offset']
     , [NodeTypes.RECORD]: []
     , [NodeTypes.MODULE]: []
+    , [NodeTypes.AUTO]:   []
     
     , [NodeTypes.PIANOR]: [] // TODO: add offset
     , [NodeTypes.ENV]:    []
@@ -329,6 +342,7 @@ const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
     , [NodeTypes.CSN]:    []
     , [NodeTypes.RECORD]: []
     , [NodeTypes.MODULE]: []
+    , [NodeTypes.AUTO]:   []
 
     , [NodeTypes.PIANOR]: []
     , [NodeTypes.ENV]:    []
@@ -350,6 +364,7 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.CSN]:    'rgba(255,200,200,0.5)'
     , [NodeTypes.RECORD]: 'rgba(220,150,220,1)'
     , [NodeTypes.MODULE]: 'rgba(255,240,255,0.5)'
+    , [NodeTypes.AUTO]:   'rgba(150,255,0,0.5)'
     
     , [NodeTypes.PIANOR]: 'rgba(105,100,255,0.5)'
     , [NodeTypes.ENV]:    'rgba(105,255,255,0.5)'
@@ -370,6 +385,7 @@ const NodeTypeColors2 : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.CSN]:    'rgb(255,200,200)'
     , [NodeTypes.RECORD]: 'rgb(220,150,220)'
     , [NodeTypes.MODULE]: 'rgb(255,240,255)'
+    , [NodeTypes.AUTO]:   'rgb(150,255,0)'
     
     , [NodeTypes.PIANOR]: 'rgb(105,100,255)'
     , [NodeTypes.ENV]:    'rgb(105,100,255)'

@@ -80,6 +80,7 @@ const nodesSortedByRecurrence : NodeTypes[] =
     [ NodeTypes.GAIN
     , NodeTypes.OSC
     , NodeTypes.SAMPLE
+    , NodeTypes.AUTO
     , NodeTypes.B_SEQ
     , NodeTypes.SGS
     , NodeTypes.CSN

@@ -13,7 +13,7 @@ import { createResizeableGraphEditor } from './resizeable_graph_editor.js'
 import 
     { NuniSourceNode, BufferNode2, Sequencer
     , AudioBufferCaptureNode, NuniGraphAudioNode
-    , MasterClock, PianoRoll12Tone, OscillatorNode2 
+    , MasterClock, PianoRoll12Tone, OscillatorNode2, AutomationNode 
     } from '../../webaudio2/internal.js'
 import 
     { createDraggableNumberInput
@@ -44,6 +44,11 @@ export function createValuesWindow(
     if (NodeTypeWarnings[node.type]) 
     {
         controls.appendChild(warningButton(node.type))
+    }
+
+    if (audioNode instanceof AutomationNode)
+    {
+        controls.appendChild(audioNode.getController())
     }
 
     if (audioNode instanceof NuniGraphAudioNode) 
