@@ -39,7 +39,10 @@ export function createValuesWindow(
     const { audioNode } = node
     const controls = E('div')
     
-    controls.appendChild(showSubtypes(node, saveCallback))
+    if (AudioNodeSubTypes[node.type].length)
+    {
+        controls.appendChild(showSubtypes(node, saveCallback))
+    }
 
     if (NodeTypeWarnings[node.type]) 
     {
@@ -370,7 +373,7 @@ function showSubtypes(node : NuniGraphNode, saveCallback: Function) : Node {
 
         const typeImages = types.map(name => {
             
-            const img = E('img') as HTMLImageElement
+            const img = E('img', { className: 'dim' }) as HTMLImageElement
             img.src = `images/${name}.svg`
             img.dataset.name = name
             return img
@@ -383,11 +386,12 @@ function showSubtypes(node : NuniGraphNode, saveCallback: Function) : Node {
         return box;
         
         function setType(e : any) {
+            const selectionClass = 'opaque' // 'selected'
             if (!typeImages.includes(e.target)) return;
             for (const img of typeImages) 
             {
                 const selected = img === e.target
-                img.classList.toggle('selected', selected)
+                img.classList.toggle(selectionClass, selected)
                 if (selected) 
                 {
                     node.audioNode.type = e.target.dataset.name

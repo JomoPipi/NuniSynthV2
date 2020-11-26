@@ -1583,6 +1583,14 @@ a {
   overflow-y: scroll;
 }
 
+.dim {
+  opacity: 0.375;
+}
+
+.opaque {
+  opacity: 1;
+}
+
 .apply-btn {
   margin: 5px;
   padding: 0px 5px;
