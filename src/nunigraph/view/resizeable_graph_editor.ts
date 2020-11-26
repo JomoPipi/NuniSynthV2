@@ -22,7 +22,7 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
     const bottomMiddleEdge = E('span')
         
     bottomRow.append(dragCornernesw, bottomMiddleEdge, dragCorner)
-
+    
     const NONE = 0, VERTICAL = 1, HORIZONTAL = 2
     const state = 
         { xy: [0,0]
@@ -33,6 +33,8 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
         }
 
     box.onmousedown = doUntilMouseUp(mousemove, { mousedown })
+
+    requestAnimationFrame(() => audioNode.controller.renderer.updateNodeRadius())
 
     function mousedown(e : MouseEvent) {
 
@@ -59,7 +61,7 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
         state.canvasMinWidth = canvas.offsetWidth
         canvas.width = w
     }
-
+    
     function mousemove(e : MouseEvent) {
         // This is here to prevent the `render` (at the bottom) from interfering with
         // the render function from GraphController.prototype.mousemove
@@ -71,6 +73,8 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
         const [x,y] = state.xy
         const [w,h] = state.wh
         
+        const factor = PHI + 0.35
+
         if (state.resizeDirection & HORIZONTAL) 
         {
             if (state.doLeft)
@@ -85,16 +89,46 @@ export function createResizeableGraphEditor(audioNode : NuniGraphAudioNode) {
                     .style.left = _X + 'px'
 
                 canvas.width = Math.max(0, w + x - _X)
+                canvas.height = canvas.width / factor
             }
             else
             {
                 canvas.width = Math.max(0, w + X - x)
+                canvas.height = canvas.width / factor
             }
         }
         if (state.resizeDirection & VERTICAL) 
         {
             canvas.height = Math.max(0, h + Y - y)
+            canvas.width = canvas.height * factor
         }
+
+        audioNode.controller.renderer.updateNodeRadius()
+
+        // if (state.resizeDirection & HORIZONTAL) 
+        // {
+        //     if (state.doLeft)
+        //     {
+        //         // To prevent moving the container, 
+        //         // we must not go lower than the min width
+        //         // X <= w + x - minWidth
+        //         const _X = Math.min(X, w + x - state.canvasMinWidth)
+
+        //         canvas.parentElement!.parentElement!
+        //             .parentElement!.parentElement!.parentElement!
+        //             .style.left = _X + 'px'
+
+        //         canvas.width = Math.max(0, w + x - _X)
+        //     }
+        //     else
+        //     {
+        //         canvas.width = Math.max(0, w + X - x)
+        //     }
+        // }
+        // if (state.resizeDirection & VERTICAL) 
+        // {
+        //     canvas.height = Math.max(0, h + Y - y)
+        // }
 
         audioNode.controller.renderer.render()
     }

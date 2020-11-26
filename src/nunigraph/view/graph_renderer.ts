@@ -93,6 +93,17 @@ export class NuniGraphRenderer {
 
     }
 
+    updateNodeRadius() {
+        const N = this.canvas.offsetHeight ** 0.5
+        this.nodeRadius = N
+        this.nodeLineWidth = this.nodeRadius/5 + 3
+        this.connectionLineWidth = PHI * N / 40
+        this.innerEdgeBoundary = this.nodeRadius / 1.5
+        this.outerEdgeBoundary = this.nodeRadius + this.nodeLineWidth
+        this.triangleRadius = this.nodeRadius / 3.0
+        this.triangleSize = this.innerEdgeBoundary
+    }
+
     removeFromConnectionsCache(id : number) {
         // Removes any cache data attributed with the node id
         for (const connectionId in this.connectionsCache) 
@@ -103,16 +114,6 @@ export class NuniGraphRenderer {
                 delete this.connectionsCache[connectionId]
             }
         }
-    }
-
-    setNodeRadius(r : number) {
-        this.nodeRadius = r
-        this.nodeLineWidth = this.nodeRadius/5 + 3
-        this.connectionLineWidth = PHI
-        this.innerEdgeBoundary = this.nodeRadius / 1.5
-        this.outerEdgeBoundary = this.nodeRadius + this.nodeLineWidth
-        this.triangleRadius = this.nodeRadius / 3.0
-        this.triangleSize = this.innerEdgeBoundary
     }
 
     private dashedBox(x : number, y : number, X : number, Y : number) {
@@ -211,7 +212,7 @@ export class NuniGraphRenderer {
         const { ctx, g } = this
         ctx.lineWidth = 0.4
         ctx.strokeStyle = 'rgba(255,255,255,0.5)'
-        const gridGrap = 30 // W / 25 // (W+H) / 50
+        const gridGrap = W / 30
 
         for (let i = 0; i < Math.max(W, H); i += gridGrap) 
         {
