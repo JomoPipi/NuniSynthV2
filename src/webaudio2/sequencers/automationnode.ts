@@ -247,8 +247,13 @@ export class AutomationNode {
             const m = (y1 - y2) / (x1 - x2)
             const b = y1 - m * x1
             const Y = m * mouseX + b
+            const X = (mouseY - b) / m
+
+            const distanceToLine = m > 1
+                ? Math.abs(X - mouseX)
+                : Math.abs(Y - mouseY)
             
-            if (Math.abs(Y - mouseY) <= LINE_WIDTH + tolerance)
+            if (distanceToLine <= LINE_WIDTH + tolerance)
             {
                 const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, Y)
                 return { type: 'line', index: i, x, y }
