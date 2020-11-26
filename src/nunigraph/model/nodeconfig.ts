@@ -153,7 +153,7 @@ const createAudioNode : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.ENV]:    'createEnvelopeNode'
     , [NodeTypes.CUSTOM]: 'createCustomNode'
     , [NodeTypes.PROCESSOR]: 'createProcessorNode'
-    , [NodeTypes.COMPRESSOR]: 'createCompressorNode'
+    , [NodeTypes.COMPRESSOR]: 'createDynamicsCompressor'
     }
 
 const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
@@ -529,11 +529,11 @@ const AudioParamSliderFactor : { readonly [key in AudioParams] : number } =
     , playbackRate: 2**-10
     , offset:       2**-8
 
-    , threshold: 10**-2
-    , knee: 10**-2
+    , threshold: 10**-1.5
+    , knee: 10**-1.5
     , ratio: 10**-2
-    , attack: 10**-2
-    , release: 10**-2
+    , attack: 2**-9
+    , release: 2**-9
     }
 
 interface CustomAudioNodeProperties

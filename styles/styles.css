@@ -589,8 +589,8 @@ code {
   height: 40px;
   margin: 2px;
   border-radius: 100%;
-  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.7))), url("images/shadow-knob2.jfif");
-  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7)), url("images/shadow-knob2.jfif");
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.7))), url("images/shadow-knob3.png");
+  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7)), url("images/shadow-knob3.png");
   background-size: 100% 100%;
   pointer-events: none;
 }

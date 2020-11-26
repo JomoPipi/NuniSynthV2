@@ -77,10 +77,6 @@ class AudioContext2 extends AudioContext {
         return new ProcessorNode(this)
     }
 
-    createCompressorNode() {
-        return new DynamicsCompressorNode(this)
-    }
-
     createAutomationNode() {
         return new AutomationNode(this)
     }
