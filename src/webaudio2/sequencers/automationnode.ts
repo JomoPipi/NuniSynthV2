@@ -43,10 +43,8 @@ export class AutomationNode {
 
     constructor(ctx : AudioContext) {
         this.ctx = ctx
-        this.canvas = E('canvas', { className: 'selected' })
+        this.canvas = E('canvas'); this.canvas.style.backgroundColor = '#111'
         this.ctx2d = this.canvas.getContext('2d')!
-        this.ctx2d.strokeStyle = 'cyan'
-        this.ctx2d.fillStyle = 'orange'
         this.ctx2d.lineWidth = LINE_WIDTH
 
         /* 
@@ -65,14 +63,14 @@ export class AutomationNode {
 
 
 
-    getController() {
+    getController(ancestor : HTMLElement) {
         if (!this.controllerHTML)
         {
             requestAnimationFrame(this.render.bind(this))
             
             const mousemoveFunc = () => { this.render() }
             
-            const box = createResizeableCanvas({ canvas: this.canvas, mousemoveFunc })
+            const box = createResizeableCanvas({ canvas: this.canvas, mousemoveFunc }, ancestor)
             this.controllerHTML = box
 
             this.canvas.onmousedown = // e => this.mousedown(e)
@@ -87,17 +85,17 @@ export class AutomationNode {
 
 
     private render() {
+        this.ctx2d.strokeStyle =
+        this.ctx2d.fillStyle = 'pink'
         const H = this.canvas.offsetHeight
         const W = this.canvas.offsetWidth
         this.ctx2d.clearRect(0, 0, W, H)
-        this.connectPoints()
+        this.drawLines()
         this.drawNodes()
+        this.drawStats(W, H)
     }
-
-
-
-
-    private connectPoints() {
+    
+    private drawLines() {
         const { ctx2d } = this
         ctx2d.beginPath()
         ctx2d.moveTo(...this.mapPointToCanvasCoordinate(this.points[0].x, this.points[0].y))
@@ -108,9 +106,6 @@ export class AutomationNode {
         ctx2d.stroke()
         ctx2d.closePath()
     }
-
-
-
 
     private drawNodes() {
         const { ctx2d } = this
@@ -125,6 +120,12 @@ export class AutomationNode {
         }
     }
 
+    private drawStats(W : number, H : number) {
+        const { ctx2d: c } = this
+        c.fillText('1', W - MARGIN, MARGIN)
+        c.fillText('0', W - MARGIN, H - MARGIN)
+    }
+
 
 
 
@@ -134,9 +135,6 @@ export class AutomationNode {
             , MARGIN + (this.canvas.offsetHeight - MARGIN * 2) * (1 - y)
             ])
     }
-
-
-
 
     private mapCanvasCoordinateToPoint(x : number, y : number) : [number, number] {
         return (

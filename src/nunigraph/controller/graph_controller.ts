@@ -359,7 +359,8 @@ export class NuniGraphController {
             createValuesWindow(
                 node, 
                 () => this.save(),
-                deleteCallBack))
+                deleteCallBack,
+                dialogBox))
 
         dialogBoxesContainer.appendChild(dialogBox)
 

@@ -24,7 +24,7 @@ type Args = {
     keepRatio? : boolean
 }
 
-export function createResizeableCanvas({ canvas, initFunc, mousedownFunc, mousemoveFunc, keepRatio } : Args) {
+export function createResizeableCanvas({ canvas, initFunc, mousedownFunc, mousemoveFunc, keepRatio } : Args, ancestor : HTMLElement) {
     const box = E('div')
     
     const topRow = E('div', { className: 'full' }); topRow.style.height = '5px'
@@ -99,10 +99,11 @@ export function createResizeableCanvas({ canvas, initFunc, mousedownFunc, mousem
                 // X <= w + x - minWidth
                 const _X = Math.min(X, w + x - state.canvasMinWidth)
 
-                // TODO: pass in outer container.
-                canvas.parentElement!.parentElement!
-                    .parentElement!.parentElement!.parentElement!
-                    .style.left = _X + 'px'
+                // // TODO: pass in outer container.
+                // canvas.parentElement!.parentElement!
+                //     .parentElement!.parentElement!.parentElement!
+                //     .style.left = _X + 'px'
+                ancestor.style.left = _X + 'px'
 
                 canvas.width = Math.max(0, w + x - _X)
                 if (keepRatio)

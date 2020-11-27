@@ -9,7 +9,7 @@ import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { sequencerControls } from './sequencer_controls.js'
 import { BufferUtils  } from '../../buffer_utils/internal.js'
 import { audioCaptureNodeControls } from './audio_capture_controls.js'
-import { createResizeableGraphEditor } from './resizeable_graph_editor.js'
+// import { createResizeableGraphEditor } from './resizeable_graph_editor.js'
 import 
     { NuniSourceNode, BufferNode2, Sequencer
     , AudioBufferCaptureNode, NuniGraphAudioNode
@@ -34,7 +34,8 @@ import { ActiveControllers } from '../controller/graph_controller.js'
 export function createValuesWindow(
     node : NuniGraphNode, 
     saveCallback : Function,
-    deleteCallback : Function) {
+    deleteCallback : Function,
+    ancestor : HTMLElement) {
 
     const { audioNode } = node
     const controls = E('div')
@@ -51,7 +52,7 @@ export function createValuesWindow(
 
     if (audioNode instanceof AutomationNode)
     {
-        controls.appendChild(audioNode.getController())
+        controls.appendChild(audioNode.getController(ancestor))
     }
 
     if (audioNode instanceof NuniGraphAudioNode) 
@@ -68,7 +69,7 @@ export function createValuesWindow(
             audioNode.controller.renderer.render()
         }
         
-        const box = createResizeableCanvas({ canvas: audioNode.canvas, initFunc, mousemoveFunc, keepRatio: true })
+        const box = createResizeableCanvas({ canvas: audioNode.canvas, initFunc, mousemoveFunc, keepRatio: true }, ancestor)
         controls.appendChild(box)
 
         // controls.appendChild(createResizeableGraphEditor(audioNode))
@@ -114,7 +115,7 @@ export function createValuesWindow(
     else if (audioNode instanceof ProcessorNode)
     {
         controls.appendChild(createResizeableWindow(
-            audioNode.getUIComponent(), audioNode.resizeUI.bind(audioNode)))
+            audioNode.getUIComponent(), ancestor, audioNode.resizeUI.bind(audioNode)))
     }
 
 
@@ -136,7 +137,7 @@ export function createValuesWindow(
     
     return controls
 }
-function createResizeableWindow(content : HTMLDivElement, resizeCallback? : any) {
+function createResizeableWindow(content : HTMLDivElement, ancestor : HTMLElement, resizeCallback? : any) {
     const box = E('div')
     const canvas = content
 
@@ -201,8 +202,9 @@ function createResizeableWindow(content : HTMLDivElement, resizeCallback? : any)
                 // X <= w + x - minWidth
                 const _X = Math.min(X, w + x - canvasMinWidth)
 
-                canvas.parentElement!.parentElement!
-                    .parentElement!.parentElement!.parentElement!
+                // canvas.parentElement!.parentElement!
+                //     .parentElement!.parentElement!.parentElement!
+                ancestor
                     .style.left = _X + 'px'
 
                 canvas.style.width = Math.max(0, w + x - _X) + 'px'
