@@ -305,26 +305,26 @@ const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.COMPRESSOR]:true
     }
 
-const HasResizeableNodeWindow  : { readonly [key in NodeTypes] : boolean } =
-    { [NodeTypes.GAIN]:   false
-    , [NodeTypes.OSC]:    false
-    , [NodeTypes.FILTER]: false
-    , [NodeTypes.PANNER]: false
-    , [NodeTypes.DELAY]:  false
-    , [NodeTypes.SAMPLE]: true
-    , [NodeTypes.SGS]:    false
-    , [NodeTypes.B_SEQ]:  false
-    , [NodeTypes.CSN]:    false
-    , [NodeTypes.RECORD]: false
-    , [NodeTypes.MODULE]: true
-    , [NodeTypes.AUTO]:   true
+// const HasResizeableNodeWindow  : { readonly [key in NodeTypes] : boolean } =
+//     { [NodeTypes.GAIN]:   false
+//     , [NodeTypes.OSC]:    false
+//     , [NodeTypes.FILTER]: false
+//     , [NodeTypes.PANNER]: false
+//     , [NodeTypes.DELAY]:  false
+//     , [NodeTypes.SAMPLE]: true
+//     , [NodeTypes.SGS]:    false
+//     , [NodeTypes.B_SEQ]:  false
+//     , [NodeTypes.CSN]:    false
+//     , [NodeTypes.RECORD]: false
+//     , [NodeTypes.MODULE]: true
+//     , [NodeTypes.AUTO]:   true
 
-    , [NodeTypes.PIANOR]: true
-    , [NodeTypes.ENV]:    false
-    , [NodeTypes.CUSTOM]: true
-    , [NodeTypes.PROCESSOR]:true
-    , [NodeTypes.COMPRESSOR]:false
-    }
+//     , [NodeTypes.PIANOR]: true
+//     , [NodeTypes.ENV]:    false
+//     , [NodeTypes.CUSTOM]: true
+//     , [NodeTypes.PROCESSOR]:true
+//     , [NodeTypes.COMPRESSOR]:false
+//     }
 
 const AudioNodeParams : Record<NodeTypes,AudioParams[]> =
     { [NodeTypes.GAIN]:   ['gain']
