@@ -6,6 +6,7 @@
 
 
 import { doUntilMouseUp } from "../../UI_library/events/until_mouseup.js"
+import { createResizeableCanvas } from "../../UI_library/internal.js"
 
 
 
@@ -68,11 +69,11 @@ export class AutomationNode {
         if (!this.controllerHTML)
         {
             requestAnimationFrame(this.render.bind(this))
-
-            this.controllerHTML = E('div', 
-                { children: [this.canvas]
-                // , className: 'some-padding'
-                })
+            
+            const mousemoveFunc = () => { this.render() }
+            
+            const box = createResizeableCanvas({ canvas: this.canvas, mousemoveFunc })
+            this.controllerHTML = box
 
             this.canvas.onmousedown = // e => this.mousedown(e)
                 doUntilMouseUp(e => this.mousemove(e), { mousedown: e => this.mousedown(e) })
