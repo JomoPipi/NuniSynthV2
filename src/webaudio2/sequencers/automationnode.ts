@@ -28,7 +28,6 @@ type TargetData =
 |
     { type : 'empty' } 
 
-const MIN_X_GAP = 0.02
 const MARGIN = 7
 const NODE_RADIUS = 2
 const LINE_WIDTH = 1

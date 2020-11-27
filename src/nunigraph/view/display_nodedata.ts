@@ -17,7 +17,7 @@ import
     } from '../../webaudio2/internal.js'
 import 
     { createDraggableNumberInput
-    , createNumberDialComponent2, createNumberDialComponent3, createToggleButton
+    , createNumberDialComponent2, createNumberDialComponent3, createResizeableCanvas, createToggleButton
     , JsDial
     } from '../../UI_library/internal.js'
 import { createSubdivSelect } from './dialogbox_components.js'
@@ -56,7 +56,22 @@ export function createValuesWindow(
 
     if (audioNode instanceof NuniGraphAudioNode) 
     {
-        controls.appendChild(createResizeableGraphEditor(audioNode))
+
+        const initFunc = () =>
+            requestAnimationFrame(() => {
+                audioNode.controller.renderer.updateNodeRadius()
+                audioNode.controller.renderer.render()
+            })
+        
+        const mousemoveFunc = () => {
+            audioNode.controller.renderer.updateNodeRadius()
+            audioNode.controller.renderer.render()
+        }
+        
+        const box = createResizeableCanvas({ canvas: audioNode.canvas, initFunc, mousemoveFunc, keepRatio: true })
+        controls.appendChild(box)
+
+        // controls.appendChild(createResizeableGraphEditor(audioNode))
     }
 
     if (audioNode instanceof AudioBufferCaptureNode) 
@@ -275,9 +290,10 @@ content : HTMLCanvasElement) {
                 // X <= w + x - minWidth
                 const _X = Math.min(X, w + x - canvasMinWidth)
 
-                canvas.parentElement!.parentElement!
-                    .parentElement!.parentElement!.parentElement!
-                    .style.left = _X + 'px'
+                // TODO: comment this back in is theres canvas bugs
+                // canvas.parentElement!.parentElement!
+                //     .parentElement!.parentElement!.parentElement!
+                //     .style.left = _X + 'px'
 
                 canvas.width = Math.max(0, w + x - _X)
             }
