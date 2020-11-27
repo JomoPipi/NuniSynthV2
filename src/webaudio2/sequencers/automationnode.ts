@@ -6,7 +6,7 @@
 
 
 import { doUntilMouseUp } from "../../UI_library/events/until_mouseup.js"
-import { createResizeableCanvas } from "../../UI_library/internal.js"
+import { createResizeableCanvas, createResizeableWindow } from "../../UI_library/internal.js"
 
 
 
@@ -70,6 +70,7 @@ export class AutomationNode {
             
             const mousemoveFunc = () => { this.render() }
             
+            // const box = createResizeableWindow()
             const box = createResizeableCanvas({ canvas: this.canvas, mousemoveFunc }, ancestor)
             this.controllerHTML = box
 
