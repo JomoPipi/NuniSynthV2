@@ -6,7 +6,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",
-    "dev": "node './scripts/dev.mjs'",
+    "dev": "node ./scripts/dev.mjs",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
@@ -73,6 +73,7 @@
     }
   },
   "dependencies": {
+    "@lume/element": "^0.2.4",
     "@types/dom-mediacapture-record": "^1.0.7",
     "electron-packager": "^15.1.0",
     "electron-squirrel-startup": "^1.0.0"
