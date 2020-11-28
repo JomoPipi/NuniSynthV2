@@ -5,7 +5,7 @@
 
 
 
-import { doUntilMouseUp } from "../events/until_mouseup";
+import { doUntilMouseUp } from "../events/until_mouseup.js";
 
 
 
@@ -13,7 +13,7 @@ import { doUntilMouseUp } from "../events/until_mouseup";
 
 
 
-export function createResizeableWindow(content : HTMLDivElement, ancestor : HTMLElement, resizeCallback? : any) {
+export function createResizeableWindow(content : HTMLElement, ancestor : HTMLElement, resizeCallback? : any) {
     const box = E('div')
     const canvas = content
 

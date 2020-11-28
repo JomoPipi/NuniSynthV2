@@ -305,6 +305,28 @@ const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.COMPRESSOR]:true
     }
 
+// Goal: convert this to IsNativeAudioNode
+const UsesConnectionProtocol2  : { readonly [key in NodeTypes] : boolean } =
+    { [NodeTypes.GAIN]:   false
+    , [NodeTypes.OSC]:    false
+    , [NodeTypes.FILTER]: false
+    , [NodeTypes.PANNER]: false
+    , [NodeTypes.DELAY]:  false
+    , [NodeTypes.SAMPLE]: false
+    , [NodeTypes.SGS]:    false
+    , [NodeTypes.B_SEQ]:  false
+    , [NodeTypes.CSN]:    false
+    , [NodeTypes.RECORD]: false
+    , [NodeTypes.MODULE]: false
+    , [NodeTypes.AUTO]:   true
+
+    , [NodeTypes.PIANOR]: false
+    , [NodeTypes.ENV]:    false
+    , [NodeTypes.CUSTOM]: false
+    , [NodeTypes.PROCESSOR]:false
+    , [NodeTypes.COMPRESSOR]:false
+    }
+
 // const HasResizeableNodeWindow  : { readonly [key in NodeTypes] : boolean } =
 //     { [NodeTypes.GAIN]:   false
 //     , [NodeTypes.OSC]:    false

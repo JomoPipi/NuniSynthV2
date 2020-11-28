@@ -7,6 +7,7 @@
 
 import { doUntilMouseUp } from "../../UI_library/events/until_mouseup.js"
 import { createResizeableCanvas, createResizeableWindow } from "../../UI_library/internal.js"
+import { VolumeNodeContainer } from "../volumenode_container.js"
 
 
 
@@ -33,8 +34,8 @@ const MARGIN = 7
 const NODE_RADIUS = 2
 const LINE_WIDTH = 1
 
-export class AutomationNode {
-    private ctx : AudioContext
+export class AutomationNode extends VolumeNodeContainer {
+    ctx : AudioContext
     private canvas : HTMLCanvasElement
     private ctx2d : CanvasRenderingContext2D
     private points : Point[]
@@ -42,6 +43,7 @@ export class AutomationNode {
     private draggingNode = -1
 
     constructor(ctx : AudioContext) {
+        super(ctx)
         this.ctx = ctx
         this.canvas = E('canvas'); this.canvas.style.backgroundColor = '#111'
         this.ctx2d = this.canvas.getContext('2d')!
@@ -68,9 +70,9 @@ export class AutomationNode {
         {
             requestAnimationFrame(this.render.bind(this))
             
-            const mousemoveFunc = () => { this.render() }
+            const mousemoveFunc = this.render.bind(this)
             
-            // const box = createResizeableWindow()
+            // const box = createResizeableWindow(this.canvas, ancestor, mousemoveFunc) // TODO: <- fix that
             const box = createResizeableCanvas({ canvas: this.canvas, mousemoveFunc }, ancestor)
             this.controllerHTML = box
 
@@ -212,7 +214,7 @@ export class AutomationNode {
         // Prevent dragging the x coordinates of end nodes
         if (0 < this.draggingNode && this.draggingNode < this.points.length - 1)
         {
-            p.x = clamp(0.005, x, 1 - 0.005)
+            p.x = clamp(0.0, x, 1)
         }
         p.y = clamp(0, y, 1)
 
