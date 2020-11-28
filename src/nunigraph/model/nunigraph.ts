@@ -166,8 +166,7 @@ export class NuniGraph {
             connections.push(destinationData)
         }
     
-        const destination = this.prepareDestination(connectionType)(node2.audioNode)
-        this.connect_audioNode_to_destination(node1, destination)
+        this.connect_audioNode_to_destination(node1, node2, connectionType)
     }
 
 
@@ -195,16 +194,21 @@ export class NuniGraph {
 
         connections.splice(connectionIndex, 1)
 
-        const destination = this.prepareDestination(connectionType)(node2.audioNode)
-        this.disconnect_audioNode_from_destination(node1, destination)
+        this.disconnect_audioNode_from_destination(node1, node2, connectionType)
     }
 
 
 
     
-    private connect_audioNode_to_destination(node1 : NuniGraphNode, destination : Destination) {
+    private connect_audioNode_to_destination(
+        node1 : NuniGraphNode, 
+        node2 : NuniGraphNode, 
+        connectionType : ConnectionType) {
+
+        const destination = this.prepareDestination(connectionType)(node2.audioNode)
         
-        if (destination instanceof NuniGraphAudioNode || destination instanceof GateSequencer) 
+        if (destination instanceof NuniGraphAudioNode || destination instanceof GateSequencer
+            || UsesConnectionProtocol2[node2.type])
         {
             destination.addInput(node1)
         }
@@ -225,10 +229,16 @@ export class NuniGraph {
 
 
 
-    private disconnect_audioNode_from_destination(node1 : NuniGraphNode, destination : Destination) {
+    private disconnect_audioNode_from_destination(
+        node1 : NuniGraphNode, 
+        node2 : NuniGraphNode, 
+        connectionType : ConnectionType) {
+
+        const destination = this.prepareDestination(connectionType)(node2.audioNode)
 
         // TODO: Change this methods to disconnect_node_from_destination, and put this condition in a config object.
-        if (destination instanceof GateSequencer || destination instanceof NuniGraphAudioNode) 
+        if (destination instanceof GateSequencer || destination instanceof NuniGraphAudioNode
+            || UsesConnectionProtocol2[node2.type])
         {
             destination.removeInput(node1)
         } 

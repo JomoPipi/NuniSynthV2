@@ -84,8 +84,13 @@ export class AutomationNode extends VolumeNodeContainer {
         return this.controllerHTML
     }
 
+    addInput(node : Indexed) {
+        node.audioNode.connect(this.volumeNode)
+    }
 
-
+    removeInput(node : Indexed) {
+        node.audioNode.disconnect(this.volumeNode)
+    }
 
     private render() {
         this.ctx2d.strokeStyle =
