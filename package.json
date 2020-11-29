@@ -14,8 +14,6 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
-    "pack": "build --dir",
-    "dist": "build",
     "webpack": "webpack"
   },
   "build": {
