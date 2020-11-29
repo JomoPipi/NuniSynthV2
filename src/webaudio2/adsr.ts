@@ -246,7 +246,7 @@ const knobs = D('adsr-knobs')
 const ADSR = 'attack,decay,sustain,release'.split(',')
 const adsrDials =
     ADSR.reduce((a,s) => {
-        const dial = new JsDial()
+        const dial = new JsDial(1)
         const adsr = ADSR_Controller as Indexed
         
         dial.value = adsr.values[adsr.index][s]

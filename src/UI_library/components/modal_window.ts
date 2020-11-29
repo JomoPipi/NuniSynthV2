@@ -33,7 +33,7 @@ export function createModalWindow(
     const bottomRowContainer = E('div', { className: 'resizeable-window-bottom-row' })
 
     const topLeftCorner = E('div', { className: 'nwse-corner-drag-box' })
-    const topMiddleEdge = E('span')
+    const topEdge = E('span')
     const topRightCorner = E('div', { className: 'nesw-corner-drag-box' })
 
     const leftEdge = E('div', { className: 'ew-edge-drag' })
@@ -41,11 +41,11 @@ export function createModalWindow(
 
     const bottomLeftCorner = E('div', { className: 'nesw-corner-drag-box' })
     const bottomRightCorner = E('div', { className: 'nwse-corner-drag-box' })
-    const bottomMiddleEdge = E('span')
+    const bottomEdge = E('span')
         
-    topRowContainer.append(topLeftCorner, topMiddleEdge, topRightCorner)
+    topRowContainer.append(topLeftCorner, topEdge, topRightCorner)
     middleRowContainer.append(leftEdge, innerBox, rightEdge)
-    bottomRowContainer.append(bottomLeftCorner, bottomMiddleEdge, bottomRightCorner)
+    bottomRowContainer.append(bottomLeftCorner, bottomEdge, bottomRightCorner)
 
     outerBox.append(topRowContainer, middleRowContainer, bottomRowContainer)
 
@@ -69,6 +69,8 @@ export function createModalWindow(
     
     // Let the window be displayed if someone clicks on it.
     outerBox.onmousedown = clickCallback.bind(null, outerBox)
+        
+    innerBox.style.overflow = 'hidden'
 
 
 
@@ -87,14 +89,14 @@ export function createModalWindow(
 
     function mousedown(e : MouseEvent) {
         doLeft = [leftEdge, bottomLeftCorner, topLeftCorner].includes(e.target as HTMLDivElement)
-        doTop  = [topLeftCorner, topMiddleEdge, topRightCorner].includes(e.target as HTMLDivElement)
+        doTop  = [topLeftCorner, topEdge, topRightCorner].includes(e.target as HTMLDivElement)
 
         resizeDirection =
         [topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner].includes(e.target as HTMLDivElement)
             ? BOTH
             : e.target === rightEdge || e.target === leftEdge
             ? HORIZONTAL
-            : e.target === topMiddleEdge || e.target === bottomMiddleEdge
+            : e.target === topEdge || e.target === bottomEdge
             ? VERTICAL
             : NONE
 
@@ -196,9 +198,9 @@ function addDragFunction(bar : HTMLElement, box : HTMLElement, clickCallback : F
 //     const bottomRow = E('div', { className: 'resizeable-window-bottom-row' })
 //     const dragCorner = E('div', { className: 'nwse-corner-drag-box' })
 //     const dragCornernesw = E('div', { className: 'nesw-corner-drag-box' })
-//     const bottomMiddleEdge = E('span')
+//     const bottomEdge = E('span')
         
-//     bottomRow.append(dragCornernesw, bottomMiddleEdge, dragCorner)
+//     bottomRow.append(dragCornernesw, bottomEdge, dragCorner)
 //     middleRowContainer.append(leftEdge, content, rightEdge)
 //     box.append(topRow, middleRowContainer, bottomRow)
 
@@ -219,7 +221,7 @@ function addDragFunction(bar : HTMLElement, box : HTMLElement, clickCallback : F
 //             ? 3
 //             : e.target === rightEdge || e.target === leftEdge
 //             ? HORIZONTAL
-//             : e.target === bottomMiddleEdge 
+//             : e.target === bottomEdge 
 //             ? VERTICAL
 //             : NONE
 

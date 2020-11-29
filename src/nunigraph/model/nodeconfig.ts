@@ -360,7 +360,7 @@ const HasResizeableNodeWindow  : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.CSN]:    false
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: false // true
-    , [NodeTypes.AUTO]:   true
+    , [NodeTypes.AUTO]:   false // true
 
     , [NodeTypes.PIANOR]: false // true
     , [NodeTypes.ENV]:    false

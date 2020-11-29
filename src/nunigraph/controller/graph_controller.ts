@@ -344,7 +344,7 @@ export class NuniGraphController {
         }
 
         // Create dialogBox:
-        const contentContainer = E('div') 
+        const contentContainer = E('div', { className: 'full' })
         const dialogBox = HasResizeableNodeWindow[node.type]
             ? 
             createModalWindow(

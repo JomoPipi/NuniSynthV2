@@ -5,6 +5,7 @@
 
 
 
+import { createSubdivSelect } from "../../nunigraph/view/dialogbox_components.js"
 import { AutomationPointsEditor } from "../../UI_library/components/automation_editor.js"
 import { VolumeNodeContainer } from "../volumenode_container.js"
 
@@ -26,7 +27,20 @@ export class AutomationNode extends VolumeNodeContainer {
     }
 
     getController(ancestor : HTMLElement) {
-        return E('div', { children: [this.controller.getController(ancestor), E('button', { text: 'hello' })] })
+        const controller = E('div')
+        const thiS = this
+        const subdivSelect = createSubdivSelect(
+            { 
+                get subdiv() { return thiS.nMeasures }
+            , 
+                set subdiv(value) { 
+                    thiS.nMeasures = 1 / value
+                }
+            }, { allowFree: true })
+
+        controller.append(this.controller.getController(ancestor), subdivSelect)
+
+        return controller
     }
 
     addInput(node : Indexed) {

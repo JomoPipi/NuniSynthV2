@@ -5,7 +5,7 @@
 
 
 
-import { createDraggableNumberInput } from "../../UI_library/internal.js"
+import { createDraggableNumberInput, JsDial } from "../../UI_library/internal.js"
 
 
 
@@ -59,31 +59,46 @@ export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv :
         ? `${Math.round(1 / an.subdiv)} bars` 
         : '1/' + an.subdiv
 
-    const freeKnob = createDraggableNumberInput(
-        an.subdiv, () => an.subdiv, 
-        (value : number) => fn!(an.subdiv = clamp(0.01,value,1e9)||0.01), 
-        { amount: 2**(-7)
-        , min: 1
-        , max: 999
-        , isLinear: false
-        , width: 80
-        , height: 30 
+    // const freeKnob = createDraggableNumberInput(
+    //     an.subdiv, () => an.subdiv, 
+    //     (value : number) => {
+    //             an.subdiv = clamp(0.01,value,1e9)||0.01
+    //             fn && fn(value)
+    //         },
+    //     { amount: 2**(-7)
+    //     , min: 1
+    //     , max: 999
+    //     , isLinear: false
+    //     , width: 80
+    //     , height: 30 
+    //     })
+
+    const freeKnob = new JsDial(1)
+        freeKnob.min = -3
+        freeKnob.max = 9
+        freeKnob.rounds = 1
+        freeKnob.size = 20
+        freeKnob.sensitivity = 2**-6
+        freeKnob.html.style.display = an.subdivisionSynced ? 'inline' : 'none'
+        freeKnob.attach((value : number) => {
+            const v = 2 ** value
+            an.subdiv = clamp(0.01, v, 1e9)||0.01
+            fn && fn(v)
         })
-        freeKnob.style.display = an.subdivisionSynced ? 'inline' : 'none'
     
     select.onchange = function() {
         if (select.value === freeTempo)
         {
             an.subdivisionSynced = true
             an.isInSync = false
-            freeKnob.style.display = 'inline'
-            freeKnob.value = an.subdiv.toString()
+            freeKnob.html.style.display = 'inline'
+            freeKnob.update(an.subdiv)
             return
         }
         else 
         {
             an.subdivisionSynced = false
-            freeKnob.style.display = 'none'
+            freeKnob.html.style.display = 'none'
         }
         const n = select.value.endsWith('bars') 
             ? 1.0/+select.value.split(' ')[0]
@@ -94,7 +109,7 @@ export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv :
     }
 
 
-    return E('span', { children: [select, freeKnob] })
+    return E('div', { className: 'flex-center', children: [select, freeKnob.html] })
 }
 
 export function createSubdivSelect2(fn? : (value : number) => void) {

@@ -6,9 +6,6 @@
 
 
 import { doUntilMouseUp } from "../events/until_mouseup.js"
-import { createResizeableCanvas } from "../internal.js"
-import { createModalWindow } from "./modal_window.js"
-
 
 
 
@@ -49,7 +46,7 @@ export class AutomationPointsEditor {
         /* 
             Points: 
             Array<[x,y]> 
-            where 0 <= x <= 1 
+            where 0 <= x <= 1
             and 0 <= y <= 1
             and arr[0].x === 0
             and arr[n-1].x === 1
@@ -70,10 +67,10 @@ export class AutomationPointsEditor {
             const mousemoveFunc = this.render.bind(this)
             
             // const box = createResizeableWindow(this.canvas, ancestor, mousemoveFunc) // TODO: <- fix that
-            const box = createResizeableCanvas({ canvas: this.canvas, mousemoveFunc }, ancestor)
+            // const box = createResizeableCanvas({ canvas: this.canvas, mousemoveFunc }, ancestor)
             // const box = E('div', { children: [this.canvas, E('button', {text: 'hello!'})]})
             
-            this.controllerHTML = box
+            this.controllerHTML = this.canvas // box
 
             this.canvas.onmousedown = // e => this.mousedown(e)
                 doUntilMouseUp(e => this.mousemove(e), { mousedown: e => this.mousedown(e) })
