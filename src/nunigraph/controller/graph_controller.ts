@@ -15,6 +15,7 @@ import { createValuesWindow } from '../view/display_nodedata.js'
 import { createSelectionPrompt } from '../../UI_library/components/selection_prompt.js'
 import { startCustomNodeWizard } from './customnodewizard.js'
 import { contextmenu, addModuleToList } from './graph_contextmenu.js'
+import { createModalWindow } from '../../UI_library/components/modal_window.js'
 // import { openWindow, closeWindow, showContextMenu } from './window_toggler.js'
 
 export const ActiveControllers = [] as NuniGraphController[]
@@ -343,19 +344,33 @@ export class NuniGraphController {
         }
 
         // Create dialogBox:
-        const dialogBox =
+        const contentContainer = E('div') 
+        const dialogBox = HasResizeableNodeWindow[node.type]
+            ? 
+            createModalWindow(
+            { text: `${NodeTypeEmojiLabel[node.type]} ᴵᴰ ${node.id}`
+            , clickCallback
+            , closeCallback
+            , contentContainer
+            , color: node.id === 0 
+                ? MasterGainColor 
+                : NodeTypeColors[node.type]
+            , barContent
+            })
+            : 
             createDraggableWindow(
-                { text: `${NodeTypeEmojiLabel[node.type]} ᴵᴰ ${node.id}`
-                , clickCallback
-                , closeCallback
-                , color: node.id === 0 
-                    ? MasterGainColor 
-                    : NodeTypeColors[node.type]
-                , barContent
-                })
+            { text: `${NodeTypeEmojiLabel[node.type]} ᴵᴰ ${node.id}`
+            , clickCallback
+            , closeCallback
+            , contentContainer
+            , color: node.id === 0 
+                ? MasterGainColor 
+                : NodeTypeColors[node.type]
+            , barContent
+            })
         this.getOpenWindow[node.id] = dialogBox
 
-        dialogBox.children[1].appendChild(
+        contentContainer.appendChild(
             createValuesWindow(
                 node, 
                 () => this.save(),

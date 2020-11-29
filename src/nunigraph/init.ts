@@ -12,10 +12,11 @@ import { NuniGraphController, ActiveControllers } from './controller/graph_contr
 
 import 
     { KB, audioCtx, Sequencer, BufferNode2
-    , MasterClock, NuniSourceNode, NuniGraphAudioNode, PianoRoll12Tone, OscillatorNode2
+    , MasterClock, NuniSourceNode, NuniGraphAudioNode, PianoRoll12Tone, OscillatorNode2, AutomationNode
     } from '../webaudio2/internal.js'
 import { snapToGrid } from './view/snap_to_grid.js'
 import { WaveformUtils } from '../waveform_utils/mutable_waveform.js'
+import { NuniGraphNode } from './model/nunigraph_node.js'
 
     
     
@@ -66,26 +67,26 @@ Graph_Attachments: {
 
     const g = GraphController.g
 
-    function* yeildNodes(g : NuniGraph) : Generator {
-        for (const { audioNode } of g.nodes) 
+    function* yieldNodes(g : NuniGraph) : Generator<NuniGraphNode> {
+        for (const node of g.nodes) 
         {
-            if (audioNode instanceof NuniGraphAudioNode)
+            if (node.type === NodeTypes.MODULE)
             {
-                yield* yeildNodes(audioNode.controller.g)
+                yield* yieldNodes(node.audioNode.controller.g)
             } 
             else 
             {
-                yield audioNode
+                yield node
             }
         }
     }
     if (DEBUG) 
     {
-        (<any>window).getAudioNodes = () => [...yeildNodes(g)]
+        (<any>window).getAudioNodes = () => [...yieldNodes(g)]
     }
     
     KB.attachToGraph(function*() {
-        for (const an of yeildNodes(g)) 
+        for (const { audioNode: an } of yieldNodes(g)) 
         {
             if (an instanceof NuniSourceNode) 
             { // && an.kbMode !== 'none') {
@@ -93,20 +94,20 @@ Graph_Attachments: {
             }
         }
     })
-
+    
     MasterClock.setSchedule(() => {
-        for (const an of yeildNodes(g))
+        for (const { audioNode: an, type } of yieldNodes(g))
         {
-            if (an instanceof Sequencer || an instanceof PianoRoll12Tone) 
+            if (IsClockDependent[type]) 
             {
                 an.scheduleNotes()
             }
         }
     },
     (tempo : number) => {
-        for (const an of yeildNodes(g))
+        for (const { audioNode: an, type } of yieldNodes(g))
         {
-            if (an instanceof Sequencer || an instanceof PianoRoll12Tone) 
+            if (IsClockDependent[type]) 
             {
                 an.updateTempo(tempo)
             }
@@ -115,7 +116,7 @@ Graph_Attachments: {
 
     BufferUtils.initBufferPresets(audioCtx)
     BufferUtils.setRefreshBufferFunc((index : number) => {
-        for (const an of yeildNodes(g)) 
+        for (const { audioNode: an } of yieldNodes(g)) 
         {
             if (an instanceof BufferNode2 && an.bufferKey === index) 
             {
@@ -125,7 +126,7 @@ Graph_Attachments: {
     })
 
     WaveformUtils.onWaveformChange(() => {
-        for (const an of yeildNodes(g))
+        for (const { audioNode: an } of yieldNodes(g))
         {
             if (an instanceof OscillatorNode2 && an.type === 'custom')
             {

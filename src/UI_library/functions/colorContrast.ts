@@ -6,6 +6,7 @@
 
 
 export function rgbaColorContrast(rgba: string) {
+    if (!rgba) return ''
     const [r,g,b] = 
         rgba.slice(
             rgba.indexOf('(')+1,

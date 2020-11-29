@@ -18,38 +18,33 @@ type DraggableWindowOptions = {
     clickCallback : (box : HTMLElement) => void
     closeCallback : (box : HTMLElement) => void
     color : string
+    contentContainer : HTMLElement
     barContent? : HTMLElement
     }
 
 export function createDraggableWindow(
-    { text, clickCallback, closeCallback, color, barContent } : DraggableWindowOptions) {
+    { text, clickCallback, closeCallback, contentContainer, color, barContent } : DraggableWindowOptions) {
 
-    const box = E('div', { className: 'window show' })
+    const bar = E('div', { text: text + ' ', className: 'draggable-window-bar' })
+    const exitBtn = E('button', { text: 'x', className: 'exit-button' })
+    const box = E('div', { className: 'window show', children: [bar, contentContainer] })
 
     box.style.left = '50vw'
     box.style.top = '50vh'
 
-    const bar = E('div', { text: text + ' ', className: 'draggable-window-bar' })
-    const exitBtn = E('button', { text: 'x', className: 'exit-button' })
-
     bar.style.backgroundColor = color || '#555'
     bar.style.color = rgbaColorContrast(color || '#555')
 
-    box.appendChild(bar)
 
     if (barContent) bar.append(barContent)
-
     bar.appendChild(exitBtn)
 
-    const closeBox = () => closeCallback(box)
-    exitBtn.onclick = closeBox
+    exitBtn.onclick = closeCallback.bind(null, box)
 
     addDragFunction(bar, box, clickCallback)
     
     // Let the window be displayed if someone clicks on it.
     box.onmousedown = clickCallback.bind(null, box)
-
-    box.appendChild(E('div')) // content box
 
     return box
 }

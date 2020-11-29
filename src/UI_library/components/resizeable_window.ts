@@ -15,7 +15,6 @@ import { doUntilMouseUp } from "../events/until_mouseup.js";
 
 export function createResizeableWindow(content : HTMLElement, ancestor : HTMLElement, resizeCallback? : any) {
     const box = E('div')
-    const canvas = content
 
     const topRow = E('div', { className: 'full' }); topRow.style.height = '5px'
     const leftEdge = E('div', { className: 'ew-edge-drag' })
@@ -52,13 +51,13 @@ export function createResizeableWindow(content : HTMLElement, ancestor : HTMLEle
         if (resizeDirection === NONE) return;
 
         xy = [e.clientX, e.clientY]
-        wh = [canvas.offsetWidth, canvas.offsetHeight]
+        wh = [content.offsetWidth, content.offsetHeight]
 
-        // Set the canvas' min width
-        const w = canvas.style.width
-        canvas.style.width = '0px'
-        canvasMinWidth = canvas.offsetWidth
-        canvas.style.width = w
+        // Set the content' min width
+        const w = content.style.width
+        content.style.width = '0px'
+        canvasMinWidth = content.offsetWidth
+        content.style.width = w
     }
 
     function mousemove(e : MouseEvent) {
@@ -78,26 +77,26 @@ export function createResizeableWindow(content : HTMLElement, ancestor : HTMLEle
                 // X <= w + x - minWidth
                 const _X = Math.min(X, w + x - canvasMinWidth)
 
-                // canvas.parentElement!.parentElement!
+                // content.parentElement!.parentElement!
                 //     .parentElement!.parentElement!.parentElement!
                 ancestor
                     .style.left = _X + 'px'
 
-                canvas.style.width = Math.max(0, w + x - _X) + 'px'
+                content.style.width = Math.max(0, w + x - _X) + 'px'
             }
             else
             {
-                canvas.style.width = Math.max(0, w + X - x) + 'px'
+                content.style.width = Math.max(0, w + X - x) + 'px'
             }
         }
         if (resizeDirection & VERTICAL) 
         {
-            canvas.style.height = Math.max(0, h + Y - y) + 'px'
+            content.style.height = Math.max(0, h + Y - y) + 'px'
         }
 
     }
 
-    middleRowContainer.append(leftEdge, canvas, rightEdge)
+    middleRowContainer.append(leftEdge, content, rightEdge)
     box.append(topRow, middleRowContainer, bottomRow)
 
     return box
