@@ -36,6 +36,7 @@ export class DraggableWindow extends Element {
                     </button>
                     ${this.barContent || ""}
                 </div>
+                <div class="contentBox"></div>
             </div>
         `;
     };

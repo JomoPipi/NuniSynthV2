@@ -342,7 +342,6 @@ export class NuniGraphController {
             barContent.appendChild(gearButton)
         }
 
-        // Create dialogBox:
         const dialogBox =
             createDraggableWindow(
                 { text: `${NodeTypeEmojiLabel[node.type]} ᴵᴰ ${node.id}`
@@ -355,7 +354,7 @@ export class NuniGraphController {
                 })
         this.getOpenWindow[node.id] = dialogBox
 
-        dialogBox.children[1].appendChild(
+        dialogBox.children[0].children[1].appendChild(
             createValuesWindow(
                 node, 
                 () => this.save(),
