@@ -354,14 +354,14 @@ export class NuniGraphController {
                 })
         this.getOpenWindow[node.id] = dialogBox
 
+        dialogBoxesContainer.appendChild(dialogBox)
+
         dialogBox.children[0].children[1].appendChild(
             createValuesWindow(
                 node, 
                 () => this.save(),
                 deleteCallBack,
                 dialogBox))
-
-        dialogBoxesContainer.appendChild(dialogBox)
 
         // Place diaglogBox:
         moveTheWindowToTheTop(dialogBox)
