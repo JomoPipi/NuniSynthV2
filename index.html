@@ -25,11 +25,11 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/styles/favicon.ico">
     
     <script src="ace.js" type="text/javascript" charset="utf-8"></script>
-    <script src="dist/helpers/helpers.js" defer></script>
+    <script src="dist/helpers/helpers.js"></script>
 
-    <script src="dist/nunigraph/model/nodeconfig.js" defer></script>
+    <script src="dist/nunigraph/model/nodeconfig.js"></script>
 
-    <script type="module" src="dist/main.js" defer></script>
+    <!-- <script type="module" src="dist/main.js" defer></script> -->
 
     <script> 
         // Set default zoom to 1
@@ -664,5 +664,8 @@
 
 
 
+    <script>
+        require("./dist/bundle.js")
+    </script>
 </body>
 </html>

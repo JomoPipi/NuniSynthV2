@@ -12,7 +12,8 @@
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
     "pack": "build --dir",
-    "dist": "build"
+    "dist": "build",
+    "webpack": "webpack"
   },
   "build": {
     "appId": "NuniSynth",
@@ -77,15 +78,22 @@
     "@types/dom-mediacapture-record": "^1.0.7"
   },
   "devDependencies": {
+    "@babel/cli": "^7.12.8",
+    "@babel/core": "^7.12.9",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.1",
+    "@babel/plugin-proposal-optional-chaining": "^7.12.7",
     "@electron-forge/cli": "^6.0.0-beta.54",
     "@electron-forge/maker-deb": "^6.0.0-beta.54",
     "@electron-forge/maker-rpm": "^6.0.0-beta.54",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
     "@electron-forge/maker-zip": "^6.0.0-beta.54",
+    "babel-loader": "^8.2.2",
     "electron": "11.0.3",
     "electron-builder": "^22.9.1",
     "electron-packager": "^15.1.0",
     "electron-squirrel-startup": "^1.0.0",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.2",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^4.2.0"
   }
 }

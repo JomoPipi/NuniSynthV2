@@ -2,7 +2,7 @@ import { doUntilMouseUp } from "../events/until_mouseup.js";
 import { rgbaColorContrast } from "../functions/colorContrast.js";
 import { UI_clamp } from "../functions/ui_clamp.js";
 import { Element, reactive, element } from "@lume/element";
-import { html } from "@lume/element/dist/html";
+import { html } from "@lume/element/dist/html.js";
 
 @element("draggable-window")
 export class DraggableWindow extends Element {

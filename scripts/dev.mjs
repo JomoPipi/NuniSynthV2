@@ -5,4 +5,8 @@ import { promisify } from "util";
 
 const exec = promisify(_exec);
 
-await Promise.all([exec("npx tsc --watch"), exec("npm start")]);
+await Promise.all([
+    exec("npx tsc --watch"),
+    exec("npx webpack --watch"),
+    exec("npm start"),
+]);
