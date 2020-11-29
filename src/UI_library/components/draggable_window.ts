@@ -42,10 +42,10 @@ export class DraggableWindow extends Element {
     };
 
     css = /* css */ `
-        /* .window {
+        .window {
             left: 50vw;
             top: 50vh;
-        } */
+        }
 
         .draggable-window-bar {
             backgroundColor: ${this.color || "#555"};
