@@ -8,6 +8,9 @@
 const { app, BrowserWindow, contentTracing } = require('electron')
 const path = require('path')
 
+app.commandLine.appendSwitch('enable-experimental-productivity-features')
+app.commandLine.appendSwitch('enable-experimental-web-platform-features')
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) 
 { // eslint-disable-line global-require
