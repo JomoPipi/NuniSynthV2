@@ -7,7 +7,7 @@
 
 import { AudioBufferCaptureNode, MasterClock } from "../../webaudio2/internal.js";
 import { BufferUtils } from "../../buffer_utils/internal.js";
-import { createSubdivSelect } from "./dialogbox_components.js";
+import { createSubdivSelect } from "./create_subdivselect.js";
 
 
 

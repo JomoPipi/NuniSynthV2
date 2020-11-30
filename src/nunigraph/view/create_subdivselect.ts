@@ -5,7 +5,8 @@
 
 
 
-import { createDraggableNumberInput, JsDial } from "../../UI_library/internal.js"
+import { createVersatileNumberDialComponent } from "../../UI_library/components/versatile_numberdial.js"
+import { createNumberDialComponent3, JsDial } from "../../UI_library/internal.js"
 
 
 
@@ -33,13 +34,22 @@ type Options =
 
 const freeTempo = 'Free'
 
+const subdivisionToString = (n : number) => 
+    n <= 1 
+        ? `${Math.round(1/n)} bar${n === 1 ? 's' : ''}` 
+        : '1/' + n
+
 const makeSubdivisionOption = (n : number) =>
     E('option', 
-        { text: n < 1 
-            ? `${Math.round(1/n)} bars` 
-            : '1/' + n
+        { text: subdivisionToString(n)
         , className: 'list-btn' 
         })
+
+const subdivStringToNumericalValue = subdivisionList.reduce((a,value) => 
+    (a[subdivisionToString(value)] = value, a) , {} as Record<string, number>)
+
+const numericalValueToSubdivString = subdivisionList.reduce((a,value) => 
+    (a[value] = subdivisionToString(value), a) , {} as Record<number, string>)
 
 export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv : number, isInSync? : boolean }, options ?: Options) {
     const { fn, allowFree }  = options || {}
@@ -102,7 +112,7 @@ export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv :
         }
         const n = select.value.endsWith('bars') 
             ? 1.0/+select.value.split(' ')[0]
-            : +select.value.split('/')[1]
+            : +select.value.split('/')[1];
 
         an.subdiv = n
         fn && fn(n)
@@ -128,4 +138,30 @@ export function createSubdivSelect2(fn? : (value : number) => void) {
     }
 
     return E('span', { children: [select] })
+}
+
+export function createSubdivSelect3(initialValue : number, updateFn : (value : number) => void) {
+    /** Makes use of VersatileNumberComponent */
+
+    // const freeKnob = new JsDial(1)
+    //     freeKnob.min = 0
+    //     freeKnob.max = subdivisionList.length-1
+    //     freeKnob.rounds = 1
+    //     freeKnob.size = 20
+    //     freeKnob.sensitivity = 2**-6
+    //     // freeKnob.html.style.display = an.subdivisionSynced ? 'inline' : 'none'
+    //     freeKnob.attach((value : number) => {
+    //         // const v = 2 ** value
+    //         // an.subdiv = clamp(0.01, v, 1e9)||0.01
+    //         fn && fn(value)
+    //     })
+    
+    // const numberDial = createNumberDialComponent3(initialValue, fn, { amount: 1, min: 0, max: subdivisionList.length-1, isLinear: true }, 1)
+    const innerFn = (x : number | string) => updateFn(typeof x === "number" ? x : subdivStringToNumericalValue[x])
+
+    const numberDial = createVersatileNumberDialComponent(initialValue, subdivisionList.map(subdivisionToString),
+        { fn: innerFn
+        , continuousDial: { min: Math.min(...subdivisionList), max: Math.max(...subdivisionList) }
+        })
+    return numberDial
 }

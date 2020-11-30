@@ -19,7 +19,7 @@ import
     { createNumberDialComponent3, createResizeableCanvas, createToggleButton, createResizeableWindow
     , JsDial
     } from '../../UI_library/internal.js'
-import { createSubdivSelect } from './dialogbox_components.js'
+import { createSubdivSelect } from './create_subdivselect.js'
 import { GraphController } from '../init.js'
 import { doUntilMouseUp } from '../../UI_library/events/until_mouseup.js'
 import { ProcessorNode } from '../../webaudio2/processor/processornode.js'

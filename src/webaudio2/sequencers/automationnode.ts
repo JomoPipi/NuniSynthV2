@@ -5,7 +5,7 @@
 
 
 
-import { createSubdivSelect } from "../../nunigraph/view/dialogbox_components.js"
+import { createSubdivSelect } from "../../nunigraph/view/create_subdivselect.js"
 import { AutomationPointsEditor } from "../../UI_library/components/automation_editor.js"
 import { VolumeNodeContainer } from "../volumenode_container.js"
 

@@ -7,7 +7,7 @@
 
 import { Sequencer, SampleSequencer, MasterClock } from '../../webaudio2/internal.js'
 import { createToggleButton, createRadioButtonGroup, createNumberDialComponent, JsDial } from '../../UI_library/internal.js'
-import { createSubdivSelect } from './dialogbox_components.js'
+import { createSubdivSelect, createSubdivSelect3 } from './create_subdivselect.js'
 import { renderADSR } from '../../webaudio2/adsr.js'
 
 export function sequencerControls(an : Sequencer) {
@@ -88,10 +88,14 @@ function createTopRowControls(an : Sequencer) {
     }
 
     changeSubdivision: {
-        controls.appendChild(createSubdivSelect(an ,
-            { fn: _ => an.updateTempo(MasterClock.getTempo())
-            , allowFree: true 
-            }))
+        // controls.appendChild(createSubdivSelect(an ,
+        //     { fn: _ => an.updateTempo(MasterClock.getTempo())
+        //     , allowFree: true 
+        //     }))
+        controls.appendChild(createSubdivSelect3(
+            an.subdiv, 
+            value => an.subdiv = value
+            ).container)
     }
 
     choose_ADSR: {
