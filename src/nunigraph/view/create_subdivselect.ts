@@ -161,7 +161,8 @@ export function createSubdivSelect3(initialValue : number, updateFn : (value : n
 
     const numberDial = createVersatileNumberDialComponent(initialValue, subdivisionList.map(subdivisionToString),
         { fn: innerFn
+        , mapStringToNumber: s => subdivStringToNumericalValue[s]
         , continuousDial: { min: Math.min(...subdivisionList), max: Math.max(...subdivisionList) }
         })
-    return numberDial
+    return { container: numberDial }
 }

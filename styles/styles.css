@@ -391,10 +391,6 @@ code {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-.hide {
-  display: none;
-}
-
 .some-margin {
   margin: 10px;
 }
@@ -731,6 +727,11 @@ code {
   100% {
     background-position: 0% 50%;
   }
+}
+
+.number-dial-container {
+  display: -ms-inline-grid;
+  display: inline-grid;
 }
 
 .list-btn {
@@ -1518,6 +1519,10 @@ a {
     -webkit-transform: translate(-40px, 0px) rotate(-90deg);
     transform: translate(-40px, 0px) rotate(-90deg);
   }
+}
+
+.hide {
+  display: none;
 }
 
 .selected {

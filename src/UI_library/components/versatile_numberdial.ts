@@ -5,8 +5,18 @@
 
 
 
+import { createDiscreteDialComponent } from './discrete_dial.js'
+import { createNumberDialComponent3 } from './number_input.js'
+
+
+
+
+
+
+
 type AdditionalArgs = {
-    fn? : (value : number | string) => void
+    fn : (value : number | string) => void
+    mapStringToNumber : (s : string) => number
     discreteDial?: { 
         discreteModeTickFactor : number
     }
@@ -35,6 +45,20 @@ export function createVersatileNumberDialComponent(
  *      - has corresponding read-only text 
  *
  * **/
+    const { min, max } = options.continuousDial
+    const value = typeof initialValue === 'number' ? initialValue : options.mapStringToNumber(initialValue)
+    const continunousModeComponent = createNumberDialComponent3(value, options.fn, { min, max, amount: 2**-8, isLinear: false }, 1)
 
-    return E('div')
+    const discreteModeComponent = createDiscreteDialComponent(optionList)
+
+    ;(typeof initialValue === 'number' ? discreteModeComponent : continunousModeComponent.container).classList.toggle('hide')
+    
+    const box = E('div', { children: [continunousModeComponent.container, discreteModeComponent] })
+
+    box.ondblclick = () => {
+        discreteModeComponent.classList.toggle('hide')
+        continunousModeComponent.container.classList.toggle('hide')
+    }
+
+    return box
 }
