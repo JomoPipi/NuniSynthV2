@@ -6,14 +6,13 @@ import { doUntilMouseUp } from "../events/until_mouseup.js"
 
 
 
-const classes = [
-    'shadow-knob',
-    'shadow-knob2'
+const classes = 
+    [ 'shadow-knob'
+    , 'shadow-knob2'
     ]
 
 export class JsDial {
     
-    [x : string] : unknown
     sensitivity : number
     lastY : number
     lastX : number
@@ -36,7 +35,6 @@ export class JsDial {
             , children: [this.dial]
             }) 
             
-        this.isActive = false
         this.lastY = this.lastX = 0
         this.max = 1
         this.value = this.min = this.sensitivity = 2**-8
@@ -62,7 +60,6 @@ export class JsDial {
         const mousedown = ({ clientX, clientY } : MouseEvent) => {
             this.lastX = clientX
             this.lastY = clientY
-            this.isActive = true
             startFunc && startFunc()
             this.render()
         }
@@ -79,7 +76,6 @@ export class JsDial {
         }
 
         const mouseup = () => { 
-            this.isActive = false
             endFunc && endFunc()
         }
 

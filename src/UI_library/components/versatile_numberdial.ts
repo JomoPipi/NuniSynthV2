@@ -46,17 +46,18 @@ export function createVersatileNumberDialComponent(
  *
  * **/
     const { min, max } = options.continuousDial
-    const value = typeof initialValue === 'number' ? initialValue : options.mapStringToNumber(initialValue)
-    const continunousModeComponent = createNumberDialComponent3(value, options.fn, { min, max, amount: 2**-8, isLinear: false }, 1)
+    const numvalue = typeof initialValue === 'number' ? initialValue : options.mapStringToNumber(initialValue)
+    const strindex = typeof initialValue === 'string' ? optionList.indexOf(initialValue) : 0
+    const continunousModeComponent = createNumberDialComponent3(numvalue, options.fn, { min, max, amount: 2**-8, isLinear: false }, 1)
 
-    const discreteModeComponent = createDiscreteDialComponent(optionList)
+    const discreteModeComponent = createDiscreteDialComponent(strindex, optionList, options.fn)
 
-    ;(typeof initialValue === 'number' ? discreteModeComponent : continunousModeComponent.container).classList.toggle('hide')
+    ;(typeof initialValue === 'number' ? discreteModeComponent : continunousModeComponent).container.classList.toggle('hide')
     
-    const box = E('div', { children: [continunousModeComponent.container, discreteModeComponent] })
+    const box = E('div', { children: [continunousModeComponent.container, discreteModeComponent.container] })
 
     box.ondblclick = () => {
-        discreteModeComponent.classList.toggle('hide')
+        discreteModeComponent.container.classList.toggle('hide')
         continunousModeComponent.container.classList.toggle('hide')
     }
 
