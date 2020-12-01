@@ -164,5 +164,6 @@ export function createSubdivSelect3(initialValue : number, updateFn : (value : n
         , mapStringToNumber: s => subdivStringToNumericalValue[s]
         , continuousDial: { min: Math.min(...subdivisionList), max: Math.max(...subdivisionList) }
         })
-    return { container: numberDial }
+        
+    return { container: E('div', { text: 'subdiv', children: [numberDial] }) }
 }

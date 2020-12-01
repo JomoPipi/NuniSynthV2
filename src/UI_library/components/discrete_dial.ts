@@ -7,12 +7,6 @@
 
 import { doUntilMouseUp } from "../events/until_mouseup.js"
 
-
-
-
-
-
-
 export function createDiscreteDialComponent(
     initialIndex : number, 
     optionList : string[], 
@@ -45,7 +39,7 @@ const classes =
 class DiscreteDial {
     readonly n : number
     value : number = 0
-    tickLength : number = 30
+    tickLength : number = 70
     dial : HTMLElement
     html : HTMLElement
     rounds : number = 1
@@ -98,7 +92,7 @@ class DiscreteDial {
             
             this.realValue += (this.lastY - y + x - this.lastX)
             
-            this.value = Math.round(this.realValue / 100) % this.n
+            this.value = Math.round(this.realValue / this.tickLength) % this.n
             this.lastX = x
             this.lastY = y
 
@@ -122,7 +116,7 @@ class DiscreteDial {
         this.dial.style.transform = 
             `rotate(${
                 -this.rounds * this.arcLength *
-                Math.round(this.realValue / 100) * 100 +
+                Math.round(this.realValue / this.tickLength) * 100 +
                 this.imgDegreeOffset}deg)`
     }
 }

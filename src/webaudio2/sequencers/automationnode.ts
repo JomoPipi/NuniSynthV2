@@ -5,7 +5,7 @@
 
 
 
-import { createSubdivSelect } from "../../nunigraph/view/create_subdivselect.js"
+import { createSubdivSelect, createSubdivSelect3 } from "../../nunigraph/view/create_subdivselect.js"
 import { AutomationPointsEditor } from "../../UI_library/components/automation_editor.js"
 import { VolumeNodeContainer } from "../volumenode_container.js"
 
@@ -18,6 +18,7 @@ export class AutomationNode extends VolumeNodeContainer {
     phaseShift = 0
     isPlaying = true
     tempo = 120
+    updateProgressLine = (value : number) => {}
 
     private controller = new AutomationPointsEditor()
 
@@ -27,18 +28,29 @@ export class AutomationNode extends VolumeNodeContainer {
     }
 
     getController(ancestor : HTMLElement) {
+        const nodeCanvas = this.controller.getController(ancestor)
         const controller = E('div')
-        const thiS = this
-        const subdivSelect = createSubdivSelect(
-            { 
-                get subdiv() { return thiS.nMeasures }
-            , 
-                set subdiv(value) { 
-                    thiS.nMeasures = 1 / value
-                }
-            }, { allowFree: true })
 
-        controller.append(this.controller.getController(ancestor), subdivSelect)
+        const progressLine = E('canvas')
+        drawProgressLine : {
+            const h = 2
+            progressLine.style.display = 'block'
+            progressLine.height = h
+            
+            this.updateProgressLine = v => {
+                const ctx = progressLine.getContext('2d')!
+                ctx.fillStyle = 'yellow'
+                ctx.clearRect(0, 0, progressLine.width, h)
+                ctx.fillRect(0, 0, progressLine.width * v, h)
+            }
+        }
+
+        const subdivSelect = createSubdivSelect3(
+            1 / this.nMeasures, 
+            value => this.nMeasures = 1 / value
+            ).container
+
+        controller.append(nodeCanvas, progressLine, subdivSelect)
 
         return controller
     }
@@ -82,6 +94,8 @@ export class AutomationNode extends VolumeNodeContainer {
         const time = this.ctx.currentTime
         const currentTime = time - this.startTime
         const durationOfLoop = (60*4 / this.tempo) * this.nMeasures
+        const percentage = (currentTime % durationOfLoop) / durationOfLoop
+        this.updateProgressLine(percentage)
         while (this.measureTime < currentTime + 0.200) 
         {
             for (const { x, y } of this.controller.points)

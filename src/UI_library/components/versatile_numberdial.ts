@@ -26,6 +26,7 @@ type AdditionalArgs = {
         sensitivity? : number
         rounds? : number
     }
+    
 }
 
 export function createVersatileNumberDialComponent(
@@ -54,7 +55,8 @@ export function createVersatileNumberDialComponent(
 
     ;(typeof initialValue === 'number' ? discreteModeComponent : continunousModeComponent).container.classList.toggle('hide')
     
-    const box = E('div', { children: [continunousModeComponent.container, discreteModeComponent.container] })
+    const children = [continunousModeComponent.container, discreteModeComponent.container]
+    const box = E('div', { children })
 
     box.ondblclick = () => {
         discreteModeComponent.container.classList.toggle('hide')
