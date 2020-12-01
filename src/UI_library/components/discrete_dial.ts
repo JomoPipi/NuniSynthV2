@@ -18,13 +18,22 @@ export function createDiscreteDialComponent(
     optionList : string[], 
     fn : (s : string) => void) {
     
+    const textBox = E('div', { className: 'number-input-2', text: optionList[initialIndex] })
     const dial = new DiscreteDial(optionList.length)
 
         dial.value = initialIndex
 
-        dial.onrotation(i => fn(optionList[i]))
+        dial.onrotation(i => {
+            fn(optionList[i])
+            textBox.innerText = optionList[i]
+        })
 
-    return { container: dial.html }
+    const container = E('div', 
+        { className: 'number-dial-container'
+        , children: [textBox, dial.html]
+        })
+
+    return { container }
     // return E('div', { text: 'TODO' })
 }
 
@@ -44,9 +53,10 @@ class DiscreteDial {
     imgDegreeOffset = 195
     update : Function = (value : number) => {}
 
-    private realValue = 0
-    private startX : number = 0
-    private startY : number = 0
+    private realValue = 1e9
+    // private readonly realValue_OFFSET = 1e9
+    private lastX : number = 0
+    private lastY : number = 0
 
     constructor (n : number, CSS_classIndex? : number) {
         this.n = n 
@@ -79,16 +89,18 @@ class DiscreteDial {
 
     onrotation(fn : (index : number ) => void) {
         const mousedown = ({ clientX, clientY } : MouseEvent) => {
-            this.startX = clientX
-            this.startY = clientY
+            this.lastX = clientX
+            this.lastY = clientY
             this.render()
         }
         
         const mousemove = ({ clientX: x, clientY: y } : MouseEvent) => {
             
-            this.realValue = Math.round((this.startX - y + x - this.startY) / this.tickLength)
-            console.log('rv=',this.realValue)
-            this.value = this.realValue % this.n
+            this.realValue += (this.lastY - y + x - this.lastX)
+            
+            this.value = Math.round(this.realValue / 100) % this.n
+            this.lastX = x
+            this.lastY = y
 
             this.render()
             fn(this.value)
@@ -106,10 +118,11 @@ class DiscreteDial {
     }
 
     render() {
+        console.log('realvalue =',this.realValue)
         this.dial.style.transform = 
             `rotate(${
-                -this.rounds * this.arcLength * 
-                this.realValue +
+                -this.rounds * this.arcLength *
+                Math.round(this.realValue / 100) * 100 +
                 this.imgDegreeOffset}deg)`
     }
 }

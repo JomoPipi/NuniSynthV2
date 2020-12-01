@@ -695,11 +695,6 @@ code {
   text-align: center;
 }
 
-.number-input-2:hover {
-  background: -webkit-gradient(linear, left top, left bottom, from(var(--color3)), to(var(--color4)));
-  background: linear-gradient(var(--color3), var(--color4));
-}
-
 .number-input-2::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;

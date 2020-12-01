@@ -156,8 +156,6 @@ export function createNumberDialComponent3(
     settings : UpdateFuncSettings,
     rounds : number) {
 
-    const exponent = 5
-
     const mapValue = settings.isLinear
         ? (x : number) => x
         : (x : number) => 5 * x ** 3
@@ -208,7 +206,10 @@ export function createNumberDialComponent3(
     //     dial.html.ondblclick = dial.update.bind(null, 1)
     // }
 
-    const container = E('div', { className: 'number-dial-container', children: [valueInput, dial.html] })
+    const container = E('div', 
+        { className: 'number-dial-container'
+        , children: [valueInput, dial.html]
+        })
         // container.style.gridTemplateRows = '20% 80%'
         // container.style.backgroundColor = 'red'
         

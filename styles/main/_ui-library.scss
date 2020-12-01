@@ -147,10 +147,6 @@
     border: 0px solid transparent;
     width: 44px;
     text-align: center;
-    
-    &:hover {
-        background: linear-gradient(var(--color3), var(--color4));  
-    }
 }
 .number-input-2::-webkit-inner-spin-button {
     -webkit-appearance: none;

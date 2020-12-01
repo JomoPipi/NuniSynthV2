@@ -80,6 +80,12 @@ const distance = (x : number, y : number, x2 : number, y2 : number) =>
 const clamp = (min : number, value : number, max : number) => 
     Math.max(Math.min(max,value), min)
 
+const wrap = (min : number, value : number, max : number) => 
+    value < min
+        ? value + max
+        : value > max
+        ? value - max
+        : value
 
 
     
