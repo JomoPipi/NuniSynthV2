@@ -11,6 +11,11 @@ const classes =
     , 'shadow-knob2'
     ]
 
+type Options = {
+    mousedown? : (e : MouseEvent) => void
+    mouseup? : (e : MouseEvent) => void
+}
+
 export class JsDial {
     
     sensitivity : number
@@ -55,16 +60,16 @@ export class JsDial {
             px + 'px'
     }
     
-    attach(func : (n : number) => void, startFunc? : Function, endFunc? : Function) {
-
-        const mousedown = ({ clientX, clientY } : MouseEvent) => {
+    attach(func : (n : number) => void, { mousedown, mouseup } : Options = {}) {
+        const _mousedown = (e : MouseEvent) => {
+            const { clientX, clientY } = e
             this.lastX = clientX
             this.lastY = clientY
-            startFunc && startFunc()
+            mousedown && mousedown(e)
             this.render()
         }
         
-        const mousemove = ({ clientX: x, clientY: y } : MouseEvent) => {
+        const _mousemove = ({ clientX: x, clientY: y } : MouseEvent) => {
             
             this.value += (this.lastY - y + x - this.lastX) * this.sensitivity
             this.value = clamp(this.min, this.value, this.max)
@@ -75,11 +80,7 @@ export class JsDial {
             func(this.value)
         }
 
-        const mouseup = () => { 
-            endFunc && endFunc()
-        }
-
-        this.dial.onmousedown = doUntilMouseUp(mousemove, { mousedown, mouseup })
+        this.dial.onmousedown = doUntilMouseUp(_mousemove, { mousedown: _mousedown, mouseup })
 
         this.update = (value : number) => {
             this.value = value

@@ -5,13 +5,12 @@
 
 
 
-import { createSubdivSelect, createSubdivSelect3 } from "../../nunigraph/view/create_subdivselect.js"
+import { createSubdivSelect3 } from "../../nunigraph/view/create_subdivselect.js"
 import { AutomationPointsEditor } from "../../UI_library/components/automation_editor.js"
 import { VolumeNodeContainer } from "../volumenode_container.js"
 
 export class AutomationNode extends VolumeNodeContainer {
     ctx : AudioContext
-    nMeasures = 1
     currentPoint = 0
     startTime = 0
     measureTime = 0
@@ -20,6 +19,7 @@ export class AutomationNode extends VolumeNodeContainer {
     tempo = 120
     updateProgressLine = (value : number) => {}
 
+    private nMeasures = 1
     private controller = new AutomationPointsEditor()
 
     constructor(ctx : AudioContext) {
@@ -39,7 +39,7 @@ export class AutomationNode extends VolumeNodeContainer {
             
             this.updateProgressLine = v => {
                 const ctx = progressLine.getContext('2d')!
-                ctx.fillStyle = 'yellow'
+                ctx.fillStyle = '#AB6'
                 ctx.clearRect(0, 0, progressLine.width, h)
                 ctx.fillRect(0, 0, progressLine.width * v, h)
             }
@@ -47,7 +47,8 @@ export class AutomationNode extends VolumeNodeContainer {
 
         const subdivSelect = createSubdivSelect3(
             1 / this.nMeasures, 
-            value => this.nMeasures = 1 / value
+            value => this.nMeasures = 1 / clamp(1e-9, value, 1e9),
+            { mouseup: () => { this.stop(); this.play() } }
             ).container
 
         controller.append(nodeCanvas, progressLine, subdivSelect)
@@ -78,25 +79,24 @@ export class AutomationNode extends VolumeNodeContainer {
     }
     
     stop() {
-        this.volumeNode.gain.cancelScheduledValues(0)
+        this.volumeNode.gain.cancelScheduledValues(this.ctx.currentTime)
         this.isPlaying = false
     }
-
 
     nextMeasure(durationOfLoop : number) {
         this.currentPoint++
         if (this.currentPoint >= this.controller.points.length) this.currentPoint = 0
         this.measureTime += durationOfLoop
     }
-
+    
     scheduleNotes() {
         if (!this.isPlaying) return;
         const time = this.ctx.currentTime
         const currentTime = time - this.startTime
-        const durationOfLoop = (60*4 / this.tempo) * this.nMeasures
-        const percentage = (currentTime % durationOfLoop) / durationOfLoop
+        const durationOfLoop = 60 * 4 * this.nMeasures / this.tempo
+        const percentage = 1 - (this.measureTime - currentTime - 0.2) / durationOfLoop
         this.updateProgressLine(percentage)
-        while (this.measureTime < currentTime + 0.200) 
+        while (this.measureTime < currentTime + 0.150) 
         {
             for (const { x, y } of this.controller.points)
             {

@@ -26,7 +26,8 @@ type AdditionalArgs = {
         sensitivity? : number
         rounds? : number
     }
-    
+    mousedown? : (e : MouseEvent) => void
+    mouseup? : (e : MouseEvent) => void
 }
 
 export function createVersatileNumberDialComponent(
@@ -49,9 +50,9 @@ export function createVersatileNumberDialComponent(
     const { min, max } = options.continuousDial
     const numvalue = typeof initialValue === 'number' ? initialValue : options.mapStringToNumber(initialValue)
     const strindex = typeof initialValue === 'string' ? optionList.indexOf(initialValue) : 0
-    const continunousModeComponent = createNumberDialComponent3(numvalue, options.fn, { min, max, amount: 2**-8, isLinear: false }, 1)
+    const continunousModeComponent = createNumberDialComponent3(numvalue, options.fn, { min, max, amount: 2**-8, isLinear: false, mouseup: options.mouseup }, 1)
 
-    const discreteModeComponent = createDiscreteDialComponent(strindex, optionList, options.fn)
+    const discreteModeComponent = createDiscreteDialComponent(strindex, optionList, options.fn, { mouseup: options.mouseup })
 
     ;(typeof initialValue === 'number' ? discreteModeComponent : continunousModeComponent).container.classList.toggle('hide')
     

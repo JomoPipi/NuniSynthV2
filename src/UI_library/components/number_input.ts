@@ -21,6 +21,7 @@ type UpdateFuncSettings = {
     isLinear : boolean
     width? : number
     height? : number
+    mouseup? : (e : MouseEvent) => void
     }
 
 export function createDraggableNumberInput(
@@ -200,7 +201,7 @@ export function createNumberDialComponent3(
         callback(value)
         const precision = clamp(0, 3 - Math.ceil(Math.log10(Math.abs(value))), 9)
         valueInput.value = value.toFixed(precision)
-    })
+    }, { mouseup: settings.mouseup })
     // if (!options.something)
     // {
     //     dial.html.ondblclick = dial.update.bind(null, 1)

@@ -15,17 +15,19 @@ import { createNumberDialComponent3, JsDial } from "../../UI_library/internal.js
 
 
 const subdivisionList = [
-    1, 2, 4, 8, 16, 32, 64, 128,
-    3, 6, 12, 24, 48, 96, 
-    0.5, 0.25, 0.125, 0.0625
+    2,   4, 8, 16, 32, 64, 128,
+    1.5, 3, 6, 12, 24, 48,  96, 
+    1, 0.5, 0.25, 0.125, 0.0625,
+    5, 7, 9, 11, 13, 17, 19, 23
     ]
-for (let i = 5; i < 64; i++) 
-{
-    if (!subdivisionList.includes(i)) 
-    {
-        subdivisionList.push(i)
-    }
-}
+    
+// for (let i = 5; i < 64; i++) 
+// {
+//     if (!subdivisionList.includes(i)) 
+//     {
+//         subdivisionList.push(i)
+//     }
+// }
 
 type Options = 
     { fn? : (value : number) => void 
@@ -140,7 +142,13 @@ export function createSubdivSelect2(fn? : (value : number) => void) {
     return E('span', { children: [select] })
 }
 
-export function createSubdivSelect3(initialValue : number, updateFn : (value : number) => void) {
+
+type Options3 = {
+    mousedown? : (e : MouseEvent) => void
+    mouseup? : (e : MouseEvent) => void
+}
+
+export function createSubdivSelect3(initialValue : number, updateFn : (value : number) => void, options? : Options3) {
     /** Makes use of VersatileNumberComponent */
 
     // const freeKnob = new JsDial(1)
@@ -163,6 +171,7 @@ export function createSubdivSelect3(initialValue : number, updateFn : (value : n
         { fn: innerFn
         , mapStringToNumber: s => subdivStringToNumericalValue[s]
         , continuousDial: { min: Math.min(...subdivisionList), max: Math.max(...subdivisionList) }
+        , mouseup: options?.mouseup
         })
         
     return { container: E('div', { text: 'subdiv', children: [numberDial] }) }
