@@ -81,3 +81,19 @@
 .error-msg {
     color: pink;
 }
+
+.fader-0 {
+    display: block;
+    width: 40px;
+
+    ::-webkit-slider-runnable-track {
+        background: var(--color2);
+        height: 2px;
+    }
+    
+    ::-webkit-slider-thumb {
+        background: var(--color0);
+        height: 10px;
+        width: 10px;
+    }
+}

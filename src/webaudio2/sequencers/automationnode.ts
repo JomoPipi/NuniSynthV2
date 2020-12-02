@@ -7,6 +7,7 @@
 
 import { createSubdivSelect3 } from "../../nunigraph/view/create_subdivselect.js"
 import { AutomationPointsEditor } from "../../UI_library/components/automation_editor.js"
+import { JsDial } from "../../UI_library/internal.js"
 import { VolumeNodeContainer } from "../volumenode_container.js"
 
 export class AutomationNode extends VolumeNodeContainer {
@@ -30,7 +31,6 @@ export class AutomationNode extends VolumeNodeContainer {
 
     getController(ancestor : HTMLElement) {
         const nodeCanvas = this.controller.getController(ancestor)
-        const controller = E('div')
 
         const progressLine = E('canvas')
         drawProgressLine : {
@@ -52,8 +52,22 @@ export class AutomationNode extends VolumeNodeContainer {
             { mouseup: () => { this.stop(); this.play() } }
             ).container
 
-        controller.append(nodeCanvas, progressLine, subdivSelect)
+        const phaseShifter = E('div', { text: 'phase' })
+            {
+            const percent = E('div', { text: '0.0%' }); percent.style.width = '50px'
+            const control = E('input', { className: 'fader-0' })
+            control.style.display = 'block'
+            control.type = 'range'
+            control.min = control.value = '0'
+            control.max = '1'
+            control.step = (2**-8).toString()
+            control.oninput = () => percent.innerText = `${(100 * (this.phaseShift = +control.value)).toFixed(1)}%`
+            phaseShifter.append(percent, control)
+            }
 
+        const hardwareControls = E('div', { className: 'space-evenly', children: [subdivSelect, phaseShifter] })
+
+        const controller = E('div', { children: [nodeCanvas, progressLine, hardwareControls] })
         return controller
     }
 
@@ -100,7 +114,8 @@ export class AutomationNode extends VolumeNodeContainer {
     scheduleNotes() {
         if (!this.isPlaying) return;
         const time = this.ctx.currentTime
-        const currentTime = time - this.startTime
+        const phase = this.phaseShift * this.durationOfLoop
+        const currentTime = time - this.startTime + phase
         const percentage = 1 - (this.measureTime - currentTime - 0.200) / this.durationOfLoop
         // TODO: check if window is open before doing this:
         this.updateProgressLine(percentage)
@@ -108,7 +123,7 @@ export class AutomationNode extends VolumeNodeContainer {
         {
             for (const { x, y } of this.controller.points)
             {
-                const autoTime = this.measureTime + x * this.durationOfLoop
+                const autoTime = this.measureTime + x * this.durationOfLoop + phase
                 this.volumeNode.gain.linearRampToValueAtTime(y, autoTime)
             }
             this.nextMeasure()
