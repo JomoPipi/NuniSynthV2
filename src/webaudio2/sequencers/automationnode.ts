@@ -94,16 +94,16 @@ export class AutomationNode extends VolumeNodeContainer {
         const time = this.ctx.currentTime
         const currentTime = time - this.startTime
         const durationOfLoop = 60 * 4 * this.nMeasures / this.tempo
-        const percentage = 1 - (this.measureTime - currentTime - 0.2) / durationOfLoop
+        const percentage = 1 - (this.measureTime - currentTime - 0.200) / durationOfLoop
+        // TODO: check if window is open before doing this:
         this.updateProgressLine(percentage)
-        while (this.measureTime < currentTime + 0.150) 
+        while (this.measureTime < currentTime + 0.200) 
         {
             for (const { x, y } of this.controller.points)
             {
                 const autoTime = this.measureTime + x * durationOfLoop
                 this.volumeNode.gain.linearRampToValueAtTime(y, autoTime)
             }
-
             this.nextMeasure(durationOfLoop)
         }
     }

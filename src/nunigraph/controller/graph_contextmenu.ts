@@ -39,7 +39,7 @@ contextmenu.onclick = (e : any) => {
 }
 
 function createNode<T extends NodeTypes>(type : T, e : MouseEvent) : NuniGraphNode<T> {
-
+    log('in here', e)
     const controller 
         = DIRTYGLOBALS.lastControllerToOpenTheContextmenu 
         || GraphController
@@ -152,18 +152,29 @@ const modulesBtn = E('li',
     })
 
 btnList.appendChild(modulesBtn)
-for (const type of nodesSortedByRecurrence) 
+for (const type of nodesSortedByRecurrence)
 {
-    const surface = E('a', 
-        { text: NodeTypeEmojiLabel[type] + NodeLabel[type]
-        , props: { href: '#' } // <- TODO: ask someone if this is needed
+    const emoji = E('span', { text: NodeTypeEmojiLabel[type] })
+        emoji.style.width = '25px'
+        emoji.style.display = 'inline-block'
+        emoji.style.textAlign = 'center'
+    const label = E('span', { text: NodeLabel[type] })
+    const surface = E('a',
+        { children: [emoji, label]
+        , props: { href: '#' }
         })
+    // const surface = E('a', 
+    //     { text: NodeTypeEmojiLabel[type] + NodeLabel[type]
+    //     , props: { href: '#' } // <- TODO: ask someone if this is needed
+    //     })
     const btn = E('li',
         { className: 'contextmenu-btn'
         , children: [surface] 
         })
 
-    surface.dataset.createNodeType = type
+    surface.dataset.createNodeType = 
+    emoji.dataset.createNodeType = type
+    label.dataset.createNodeType = type
     btn.style.borderColor = NodeTypeColors[type]
 
     btnList.appendChild(btn)
