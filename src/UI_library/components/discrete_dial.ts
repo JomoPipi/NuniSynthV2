@@ -103,7 +103,6 @@ class DiscreteDial {
     }
 
     render() {
-        console.log('realvalue =',this.realValue)
         this.dial.style.transform = 
             `rotate(${
                 -this.rounds * this.arcLength *

@@ -11,20 +11,21 @@ import { VolumeNodeContainer } from "../volumenode_container.js"
 
 export class AutomationNode extends VolumeNodeContainer {
     ctx : AudioContext
-    currentPoint = 0
     startTime = 0
     measureTime = 0
     phaseShift = 0
-    isPlaying = true
+    isPlaying = false
     tempo = 120
     updateProgressLine = (value : number) => {}
 
+    private durationOfLoop = -1
     private nMeasures = 1
     private controller = new AutomationPointsEditor()
 
     constructor(ctx : AudioContext) {
         super(ctx)
         this.ctx = ctx
+        this.play()
     }
 
     getController(ancestor : HTMLElement) {
@@ -47,7 +48,7 @@ export class AutomationNode extends VolumeNodeContainer {
 
         const subdivSelect = createSubdivSelect3(
             1 / this.nMeasures, 
-            value => this.nMeasures = 1 / clamp(1e-9, value, 1e9),
+            value => this.updateMeasures(1 / clamp(1e-9, value, 1e9)),
             { mouseup: () => { this.stop(); this.play() } }
             ).container
 
@@ -71,11 +72,20 @@ export class AutomationNode extends VolumeNodeContainer {
         this.play()
     }
 
+    updateMeasures(n : number) {
+        this.nMeasures = n
+        this.durationOfLoop = 60 * 4 * this.nMeasures / this.tempo
+    }
+
     play() {
         this.isPlaying = true
+        this.startTime = 0
         this.measureTime = 0
-        this.currentPoint = 0
-        this.startTime = 0 // this.isInSync ? 0 : this.ctx.currentTime + 0.005
+        this.durationOfLoop = 60 * 4 * this.nMeasures / this.tempo
+
+        // Prevent lag:
+        const currentTime = this.ctx.currentTime
+        while (this.measureTime < currentTime - this.durationOfLoop) this.nextMeasure()
     }
     
     stop() {
@@ -83,28 +93,25 @@ export class AutomationNode extends VolumeNodeContainer {
         this.isPlaying = false
     }
 
-    nextMeasure(durationOfLoop : number) {
-        this.currentPoint++
-        if (this.currentPoint >= this.controller.points.length) this.currentPoint = 0
-        this.measureTime += durationOfLoop
+    nextMeasure() {
+        this.measureTime += this.durationOfLoop
     }
     
     scheduleNotes() {
         if (!this.isPlaying) return;
         const time = this.ctx.currentTime
         const currentTime = time - this.startTime
-        const durationOfLoop = 60 * 4 * this.nMeasures / this.tempo
-        const percentage = 1 - (this.measureTime - currentTime - 0.200) / durationOfLoop
+        const percentage = 1 - (this.measureTime - currentTime - 0.200) / this.durationOfLoop
         // TODO: check if window is open before doing this:
         this.updateProgressLine(percentage)
         while (this.measureTime < currentTime + 0.200) 
         {
             for (const { x, y } of this.controller.points)
             {
-                const autoTime = this.measureTime + x * durationOfLoop
+                const autoTime = this.measureTime + x * this.durationOfLoop
                 this.volumeNode.gain.linearRampToValueAtTime(y, autoTime)
             }
-            this.nextMeasure(durationOfLoop)
+            this.nextMeasure()
         }
     }
 }

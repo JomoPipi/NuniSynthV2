@@ -163,17 +163,13 @@ for (const type of nodesSortedByRecurrence)
         { children: [emoji, label]
         , props: { href: '#' }
         })
-    // const surface = E('a', 
-    //     { text: NodeTypeEmojiLabel[type] + NodeLabel[type]
-    //     , props: { href: '#' } // <- TODO: ask someone if this is needed
-    //     })
     const btn = E('li',
         { className: 'contextmenu-btn'
         , children: [surface] 
         })
 
     surface.dataset.createNodeType = 
-    emoji.dataset.createNodeType = type
+    emoji.dataset.createNodeType =
     label.dataset.createNodeType = type
     btn.style.borderColor = NodeTypeColors[type]
 
