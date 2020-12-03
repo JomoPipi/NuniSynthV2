@@ -40,6 +40,7 @@ export class AutomationPointsEditor {
     private lastMousedownX = 0
     private lastMousedownY = 0
     private currentSelectionBox? : [number,number,number,number]
+    private selectedPoints : Point[] = []
 
     constructor() {
         this.canvas = E('canvas'); this.canvas.style.backgroundColor = '#111'
@@ -66,12 +67,6 @@ export class AutomationPointsEditor {
         if (!this.controllerHTML)
         {
             requestAnimationFrame(this.render.bind(this))
-            
-            const mousemoveFunc = this.render.bind(this)
-            
-            // const box = createResizeableWindow(this.canvas, ancestor, mousemoveFunc) // TODO: <- fix that
-            // const box = createResizeableCanvas({ canvas: this.canvas, mousemoveFunc }, ancestor)
-            // const box = E('div', { children: [this.canvas, E('button', {text: 'hello!'})]})
             
             this.controllerHTML = this.canvas // box
 
@@ -120,7 +115,8 @@ export class AutomationPointsEditor {
         const { ctx } = this
         ctx.beginPath()
         ctx.moveTo(...this.mapPointToCanvasCoordinate(this.points[0].x, this.points[0].y))
-        for (const { x, y } of this.points.slice(1))
+        const sortedPoints = this.points.slice(1).concat(this.selectedPoints).sort((a,b) => a.x - b.x)
+        for (const { x, y } of sortedPoints)
         {
             ctx.lineTo(...this.mapPointToCanvasCoordinate(x,y))
         }
@@ -137,18 +133,16 @@ export class AutomationPointsEditor {
             const [X,Y] = [x+w, y+h]
             ;[[x1,x2],[y1,y2]] = [[x,X],[y,Y]].map(arr=>arr.sort((a,b) => a - b))
         }
-        for (const { x, y } of this.points)
+        const sortedPoints = this.points.slice(1).concat(this.selectedPoints).sort((a,b) => a.x - b.x)
+        for (const { x, y } of sortedPoints)
         {
             const [X, Y] = this.mapPointToCanvasCoordinate(x, y)
+            const selected = x1 <= X && X <= x2 && y1 <= Y && Y <= y2
             ctx.beginPath()
             ctx.arc(X, Y, NODE_RADIUS, 0, TAU)
             ctx.closePath()
             ctx.stroke()
-
-            ctx.fillStyle = x1 <= X && X <= x2 && y1 <= Y && Y <= y2
-                ? 'white'
-                : 'pink'
-
+            ctx.fillStyle = selected ? 'cyan' : 'pink'
             ctx.fill()
         }
     }
@@ -233,8 +227,26 @@ export class AutomationPointsEditor {
     }
 
     private mouseup(e : MouseEvent) {
+        if (this.currentSelectionBox) this.selectPoints()
+
         this.currentSelectionBox = undefined
         this.render()
+    }
+
+    private selectPoints() {
+        const [x,y,w,h] = this.currentSelectionBox!
+        const [X,Y] = [x+w, y+h]
+        const [[x1,x2],[y1,y2]] = [[x,X],[y,Y]].map(arr=>arr.sort((a,b) => a - b))
+        this.selectedPoints = []
+        const points : Point[] = []
+        for (const point of this.points)
+        {
+            const { x, y } = point
+            const [ X, Y ] = this.mapPointToCanvasCoordinate(x, y)
+            const selected = x1 <= X && X <= x2 && y1 <= Y && Y <= y2
+            ;(selected ? this.selectedPoints : points).push(point)
+        }
+        // this.points = points
     }
 
 

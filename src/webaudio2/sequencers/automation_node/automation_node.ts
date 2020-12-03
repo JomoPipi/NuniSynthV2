@@ -97,9 +97,9 @@ export class AutomationNode extends VolumeNodeContainer {
         this.measureTime = 0
         this.durationOfLoop = 60 * 4 * this.nMeasures / this.tempo
 
-        // Prevent lag:
-        const currentTime = this.ctx.currentTime
-        while (this.measureTime < currentTime - this.durationOfLoop) this.nextMeasure()
+        // Prevent lag during scheduleNotes:
+        const t = Math.max(0, this.ctx.currentTime - this.durationOfLoop)
+        this.measureTime = Math.floor(t / this.durationOfLoop) * this.durationOfLoop
     }
     
     stop() {
