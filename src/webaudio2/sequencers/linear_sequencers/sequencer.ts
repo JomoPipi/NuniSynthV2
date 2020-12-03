@@ -118,7 +118,14 @@ export class Sequencer extends VolumeNodeContainer {
         this.isPlaying = true
         this.noteTime = 0
         this.currentStep = 0
-        this.startTime = this.isInSync ? 0 : this.ctx.currentTime + 0.005
+        this.startTime = this.ctx.currentTime + 0.005
+        if (this.isInSync)
+        {
+            const measureLength = this.tick * this.nSteps
+            const t = Math.max(0, this.ctx.currentTime - measureLength)
+            this.startTime = 0
+            this.noteTime = Math.floor(t / measureLength) * measureLength
+        }
     }
 
     scheduleNotes() {
