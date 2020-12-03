@@ -51,7 +51,7 @@ export function createValuesWindow(
 
     if (audioNode instanceof AutomationNode)
     {
-        controls.appendChild(audioNode.getController(ancestor))
+        controls.appendChild(audioNode.getController())
     }
 
     if (audioNode instanceof NuniGraphAudioNode) 

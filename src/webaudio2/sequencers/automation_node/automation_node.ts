@@ -5,10 +5,10 @@
 
 
 
-import { createSubdivSelect3 } from "../../nunigraph/view/create_subdivselect.js"
-import { AutomationPointsEditor } from "../../UI_library/components/automation_editor.js"
-import { JsDial } from "../../UI_library/internal.js"
-import { VolumeNodeContainer } from "../volumenode_container.js"
+import { createSubdivSelect3 } from "../../../nunigraph/view/create_subdivselect.js"
+import { AutomationPointsEditor } from "./automation_editor.js"
+import { JsDial } from "../../../UI_library/internal.js"
+import { VolumeNodeContainer } from "../../volumenode_container.js"
 
 export class AutomationNode extends VolumeNodeContainer {
     ctx : AudioContext
@@ -29,8 +29,8 @@ export class AutomationNode extends VolumeNodeContainer {
         this.play()
     }
 
-    getController(ancestor : HTMLElement) {
-        const nodeCanvas = this.controller.getController(ancestor)
+    getController() {
+        const nodeCanvas = this.controller.getController()
 
         const progressLine = E('canvas')
         drawProgressLine : {
@@ -61,7 +61,7 @@ export class AutomationNode extends VolumeNodeContainer {
             control.min = control.value = '0'
             control.max = '1'
             control.step = (2**-8).toString()
-            control.oninput = () => percent.innerText = `${(100 * (this.phaseShift = +control.value)).toFixed(1)}%`
+            control.oninput = () => percent.innerText = (100 * (this.phaseShift = +control.value)).toFixed(0) + '%'
             phaseShifter.append(percent, control)
             }
 

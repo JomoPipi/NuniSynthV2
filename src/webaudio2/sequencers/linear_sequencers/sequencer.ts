@@ -5,9 +5,9 @@
 
 
 
-import { MasterClock } from './master_clock.js'
-import { VolumeNodeContainer } from '../volumenode_container.js'
-import { JsDial } from '../../UI_library/internal.js'
+import { MasterClock } from '../master_clock.js'
+import { VolumeNodeContainer } from '../../volumenode_container.js'
+import { JsDial } from '../../../UI_library/internal.js'
 
 type ChannelData = {
     volume : number // Deprecated

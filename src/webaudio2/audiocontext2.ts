@@ -7,15 +7,15 @@
 
 import { BufferNode2 } from './note_in/buffer2.js'
 import { OscillatorNode2 } from './note_in/oscillator2.js'
-import { GateSequencer } from './sequencers/subgraph_sequencer.js'
-import { SampleSequencer } from './sequencers/buffer_sequencer.js'
+import { GateSequencer } from './sequencers/linear_sequencers/subgraph_sequencer.js'
+import { SampleSequencer } from './sequencers/linear_sequencers/buffer_sequencer.js'
 import { graphVisualEqualizer } from '../visualizer/global_visualizer.js'
 import { AudioBufferCaptureNode } from './record/sample_creator_node.js'
 import { NuniGraphAudioNode } from './nunigraph_audionode.js'
 import { Envelope } from './envelope/envelope.js'
-import { PianoRoll12Tone } from './sequencers/pianoroll_12tone.js'
+import { PianoRoll12Tone } from './sequencers/linear_sequencers/pianoroll_12tone.js'
 import { ProcessorNode } from './processor/processornode.js'
-import { AutomationNode } from './sequencers/automationnode.js'
+import { AutomationNode } from './sequencers/automation_node/automation_node.js'
 
 
 class AudioContext2 extends AudioContext {

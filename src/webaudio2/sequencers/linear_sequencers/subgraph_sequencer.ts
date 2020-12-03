@@ -5,7 +5,7 @@
 
 
 
-import { ADSR_Controller } from '../adsr.js'
+import { ADSR_Controller } from '../../adsr.js'
 import { Sequencer } from './sequencer.js'
 
 

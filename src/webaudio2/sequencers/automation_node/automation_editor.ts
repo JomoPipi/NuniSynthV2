@@ -5,7 +5,7 @@
 
 
 
-import { doUntilMouseUp } from "../events/until_mouseup.js"
+import { doUntilMouseUp } from "../../../UI_library/events/until_mouseup.js"
 
 
 
@@ -59,7 +59,7 @@ export class AutomationPointsEditor {
 
 
 
-    getController(ancestor : HTMLElement) {
+    getController() {
         if (!this.controllerHTML)
         {
             requestAnimationFrame(this.render.bind(this))
@@ -74,6 +74,16 @@ export class AutomationPointsEditor {
 
             this.canvas.onmousedown = // e => this.mousedown(e)
                 doUntilMouseUp(e => this.mousemove(e), { mousedown: e => this.mousedown(e) })
+
+            this.canvas.ondblclick = e => {
+                const t = this.getCanvasTarget(e.offsetX, e.offsetY)
+                if (t.type === 'node')
+                {
+                    this.points.splice(t.index, 1)
+                    this.render()
+                }
+            }
+
     
             return this.controllerHTML
         }

@@ -5,7 +5,7 @@
 
 
 
-import { Theme } from '../../UI_setup/theme_setup.js'
+import { Theme } from '../../../UI_setup/theme_setup.js'
 
 export class PianoRoll12Tone {
 
