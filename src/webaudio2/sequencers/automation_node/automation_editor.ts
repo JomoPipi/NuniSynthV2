@@ -37,6 +37,9 @@ export class AutomationPointsEditor {
     private ctx : CanvasRenderingContext2D
     private controllerHTML? : HTMLElement
     private draggingNode = -1
+    private lastMousedownX = 0
+    private lastMousedownY = 0
+    private currentSelectionBox? : [number,number,number,number]
 
     constructor() {
         this.canvas = E('canvas'); this.canvas.style.backgroundColor = '#111'
@@ -73,7 +76,10 @@ export class AutomationPointsEditor {
             this.controllerHTML = this.canvas // box
 
             this.canvas.onmousedown = // e => this.mousedown(e)
-                doUntilMouseUp(e => this.mousemove(e), { mousedown: e => this.mousedown(e) })
+                doUntilMouseUp(e => this.mousemove(e), 
+                    { mousedown: e => this.mousedown(e)
+                    , mouseup: e => this.mouseup(e)
+                    })
 
             this.canvas.ondblclick = e => {
                 const t = this.getCanvasTarget(e.offsetX, e.offsetY)
@@ -99,6 +105,15 @@ export class AutomationPointsEditor {
         this.drawLines()
         this.drawNodes()
         this.drawStats(W, H)
+
+        if (this.currentSelectionBox)
+        {
+            this.ctx.strokeStyle = 'yellow'
+            this.ctx.setLineDash([5,3])
+            this.ctx.strokeRect(...this.currentSelectionBox)
+            this.ctx.setLineDash([1,0])
+            this.ctx.fillStyle = 'pink'
+        }
     }
     
     private drawLines() {
@@ -115,6 +130,13 @@ export class AutomationPointsEditor {
 
     private drawNodes() {
         const { ctx } = this
+        let [x1,x2,y1,y2] : any = []
+        if (this.currentSelectionBox)
+        {
+            const [x,y,w,h] = this.currentSelectionBox
+            const [X,Y] = [x+w, y+h]
+            ;[[x1,x2],[y1,y2]] = [[x,X],[y,Y]].map(arr=>arr.sort((a,b) => a - b))
+        }
         for (const { x, y } of this.points)
         {
             const [X, Y] = this.mapPointToCanvasCoordinate(x, y)
@@ -122,6 +144,11 @@ export class AutomationPointsEditor {
             ctx.arc(X, Y, NODE_RADIUS, 0, TAU)
             ctx.closePath()
             ctx.stroke()
+
+            ctx.fillStyle = x1 <= X && X <= x2 && y1 <= Y && Y <= y2
+                ? 'white'
+                : 'pink'
+
             ctx.fill()
         }
     }
@@ -149,6 +176,10 @@ export class AutomationPointsEditor {
     private mousedown(e : MouseEvent) {
         const [x, y] = [e.offsetX, e.offsetY]
         const msg = this.getCanvasTarget(x,  y)
+        this.currentSelectionBox = undefined
+        this.draggingNode = -1
+        this.lastMousedownX = x
+        this.lastMousedownY = y
 
         if (msg.type === 'line')
         {
@@ -164,59 +195,48 @@ export class AutomationPointsEditor {
                 }
             }
         }
-
-        if (msg.type === 'node')
+        else if (msg.type === 'node')
         {
             this.draggingNode = msg.index
             return
         }
-
         else
         {
-            this.draggingNode = -1
+            this.currentSelectionBox = [x, y, 0, 0]
         }
     }
 
     private mousemove(e : MouseEvent) {
-        if (this.draggingNode < 0) return
+        const { x, y } = this.canvas.getBoundingClientRect()
+        const mouseX = e.clientX - x
+        const mouseY = e.clientY - y
 
-        const { x: X, y: Y } = this.canvas.getBoundingClientRect()
-        const mouseX = e.clientX - X
-        const mouseY = e.clientY - Y
-        const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, mouseY)
-
-        // Erase unordered points with lower index
-        for (let i = 0; i < this.draggingNode; i++)
+        if (this.draggingNode >= 0) 
         {
-            if (this.points[i].x >= this.points[this.draggingNode].x)
-            {
-                this.points.splice(i, this.draggingNode - i)
-                this.draggingNode = i
-                break
-            }
+            this.dragSelectedNode(mouseX, mouseY)
         }
-
-        // Erase unordered points with higher index
-        for (let i = this.points.length-1; i > this.draggingNode; i--)
+        else if (this.currentSelectionBox)
         {
-            if (this.points[i].x <= this.points[this.draggingNode].x)
-            {
-                this.points.splice(this.draggingNode+1, i-this.draggingNode)
-                break
-            }
+            this.currentSelectionBox = 
+                [ this.lastMousedownX
+                , this.lastMousedownY
+                , mouseX - this.lastMousedownX
+                , mouseY - this.lastMousedownY
+                ]
         }
-
-
-        const p = this.points[this.draggingNode]
-        // Prevent dragging the x coordinates of end nodes
-        if (0 < this.draggingNode && this.draggingNode < this.points.length - 1)
+        else
         {
-            p.x = clamp(0.0, x, 1)
+            return;
         }
-        p.y = clamp(0, y, 1)
 
         this.render()
     }
+
+    private mouseup(e : MouseEvent) {
+        this.currentSelectionBox = undefined
+        this.render()
+    }
+
 
 
 
@@ -260,5 +280,38 @@ export class AutomationPointsEditor {
         
         // Clicked empty area
         return { type: 'empty' }
+    }
+
+    dragSelectedNode(mouseX : number, mouseY : number) {
+        const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, mouseY)
+
+        // Erase unordered points with lower index
+        for (let i = 0; i < this.draggingNode; i++)
+        {
+            if (this.points[i].x >= this.points[this.draggingNode].x)
+            {
+                this.points.splice(i, this.draggingNode - i)
+                this.draggingNode = i
+                break
+            }
+        }
+
+        // Erase unordered points with higher index
+        for (let i = this.points.length-1; i > this.draggingNode; i--)
+        {
+            if (this.points[i].x <= this.points[this.draggingNode].x)
+            {
+                this.points.splice(this.draggingNode+1, i-this.draggingNode)
+                break
+            }
+        }
+
+        const p = this.points[this.draggingNode]
+        // Prevent dragging the x coordinates of end nodes
+        if (0 < this.draggingNode && this.draggingNode < this.points.length - 1)
+        {
+            p.x = clamp(0.0, x, 1)
+        }
+        p.y = clamp(0, y, 1)
     }
 }
