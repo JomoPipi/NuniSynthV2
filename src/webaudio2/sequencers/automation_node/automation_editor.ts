@@ -14,21 +14,22 @@ import { doUntilMouseUp } from "../../../UI_library/events/until_mouseup.js"
 
 type Point = { x : number, y : number }
 
-type TargetData = 
-    { type : 'node'
-    , index : number
-    }
-|
-    { type : 'line'
-    , index : number
-    , x : number
-    , y : number
-    }
-|
-    { type : 'empty' } 
+type TargetData = { 
+    type : 'point'
+    index : number
+} | { 
+    type : 'line'
+    index : number
+    x : number
+    y : number
+} | { 
+    type : 'empty'
+    mouseX : number
+    mouseY : number
+} 
 
 const MARGIN = 7
-const NODE_RADIUS = 2
+const POINT_RADIUS = 2
 const LINE_WIDTH = 1
 
 export class AutomationPointsEditor {
@@ -36,11 +37,12 @@ export class AutomationPointsEditor {
     private canvas : HTMLCanvasElement
     private ctx : CanvasRenderingContext2D
     private controllerHTML? : HTMLElement
-    private draggingNode = -1
-    private lastMousedownX = 0
-    private lastMousedownY = 0
-    private currentSelectionBox? : [number,number,number,number]
-    private selectedPoints : Point[] = []
+    private draggingPoint = -1
+    private lastMousedownMsg : TargetData = { type: 'empty', mouseX: 0, mouseY: 0 }
+    private lastMouse_moveMsg : TargetData = { type: 'empty', mouseX: 0, mouseY: 0 }
+    private mouseIsDown = false
+    private canvasSelectionRange? : [number, number]
+    private selectedPointRange? : [number, number]
 
     constructor() {
         this.canvas = E('canvas'); this.canvas.style.backgroundColor = '#111'
@@ -78,15 +80,12 @@ export class AutomationPointsEditor {
 
             this.canvas.ondblclick = e => {
                 const t = this.getCanvasTarget(e.offsetX, e.offsetY)
-                if (t.type === 'node')
+                if (t.type === 'point')
                 {
                     this.points.splice(t.index, 1)
                     this.render()
                 }
             }
-
-    
-            return this.controllerHTML
         }
         return this.controllerHTML
     }
@@ -98,16 +97,11 @@ export class AutomationPointsEditor {
         const W = this.canvas.offsetWidth
         this.ctx.clearRect(0, 0, W, H)
         this.drawLines()
-        this.drawNodes()
+        this.drawPoints()
         this.drawStats(W, H)
-
-        if (this.currentSelectionBox)
+        if (this.canvasSelectionRange)
         {
-            this.ctx.strokeStyle = 'yellow'
-            this.ctx.setLineDash([5,3])
-            this.ctx.strokeRect(...this.currentSelectionBox)
-            this.ctx.setLineDash([1,0])
-            this.ctx.fillStyle = 'pink'
+            this.drawSelectionBox(H, ...this.canvasSelectionRange)
         }
     }
     
@@ -115,8 +109,7 @@ export class AutomationPointsEditor {
         const { ctx } = this
         ctx.beginPath()
         ctx.moveTo(...this.mapPointToCanvasCoordinate(this.points[0].x, this.points[0].y))
-        const sortedPoints = this.points.slice(1).concat(this.selectedPoints).sort((a,b) => a.x - b.x)
-        for (const { x, y } of sortedPoints)
+        for (const { x, y } of this.points.slice(1))
         {
             ctx.lineTo(...this.mapPointToCanvasCoordinate(x,y))
         }
@@ -124,25 +117,16 @@ export class AutomationPointsEditor {
         ctx.closePath()
     }
 
-    private drawNodes() {
+    private drawPoints() {
         const { ctx } = this
-        let [x1,x2,y1,y2] : any = []
-        if (this.currentSelectionBox)
-        {
-            const [x,y,w,h] = this.currentSelectionBox
-            const [X,Y] = [x+w, y+h]
-            ;[[x1,x2],[y1,y2]] = [[x,X],[y,Y]].map(arr=>arr.sort((a,b) => a - b))
-        }
-        const sortedPoints = this.points.slice(1).concat(this.selectedPoints).sort((a,b) => a.x - b.x)
-        for (const { x, y } of sortedPoints)
+        for (const { x, y } of this.points)
         {
             const [X, Y] = this.mapPointToCanvasCoordinate(x, y)
-            const selected = x1 <= X && X <= x2 && y1 <= Y && Y <= y2
             ctx.beginPath()
-            ctx.arc(X, Y, NODE_RADIUS, 0, TAU)
+            ctx.arc(X, Y, POINT_RADIUS, 0, TAU)
             ctx.closePath()
             ctx.stroke()
-            ctx.fillStyle = selected ? 'cyan' : 'pink'
+            ctx.fillStyle = /* selected ? 'cyan' : */ 'pink'
             ctx.fill()
         }
     }
@@ -167,37 +151,42 @@ export class AutomationPointsEditor {
             ])
     }
 
+    private insertPoint(x : number, y : number) {
+        for (let i = 0; i < this.points.length; i++)
+        {
+            if (x <= this.points[i].x)
+            {
+                this.points.splice(i, 0, { x, y })
+                this.render()
+                return i
+            }
+        }
+        throw `invalid point: (${x},${y})`
+    }
+
     private mousedown(e : MouseEvent) {
         const [x, y] = [e.offsetX, e.offsetY]
-        const msg = this.getCanvasTarget(x,  y)
-        this.currentSelectionBox = undefined
-        this.draggingNode = -1
-        this.lastMousedownX = x
-        this.lastMousedownY = y
+        const msg = this.lastMousedownMsg = this.getCanvasTarget(x,  y)
+        this.canvasSelectionRange = undefined
+        this.draggingPoint = -1
+        this.mouseIsDown = true
+        // this.lastMousedownX = x
+        // this.lastMousedownY = y
 
         if (msg.type === 'line')
         {
             const { x, y } = msg
-            for (let i = 0; i < this.points.length; i++)
-            {
-                if (x <= this.points[i].x)
-                {
-                    this.points.splice(i, 0, { x, y })
-                    this.draggingNode = i
-                    this.render()
-                    return
-                }
-            }
-        }
-        else if (msg.type === 'node')
-        {
-            this.draggingNode = msg.index
+            const index = this.insertPoint(x, y)
+            this.draggingPoint = index
+            this.render()
             return
         }
-        else
+        else if (msg.type === 'point')
         {
-            this.currentSelectionBox = [x, y, 0, 0]
+            this.draggingPoint = msg.index
+            return
         }
+        else {}
     }
 
     private mousemove(e : MouseEvent) {
@@ -205,18 +194,13 @@ export class AutomationPointsEditor {
         const mouseX = e.clientX - x
         const mouseY = e.clientY - y
 
-        if (this.draggingNode >= 0) 
+        if (this.draggingPoint >= 0) 
         {
-            this.dragSelectedNode(mouseX, mouseY)
+            this.dragSelectedPoints(mouseX, mouseY)
         }
-        else if (this.currentSelectionBox)
+        else if (this.mouseIsDown && this.lastMousedownMsg.type === 'empty')
         {
-            this.currentSelectionBox = 
-                [ this.lastMousedownX
-                , this.lastMousedownY
-                , mouseX - this.lastMousedownX
-                , mouseY - this.lastMousedownY
-                ]
+            this.canvasSelectionRange = [this.lastMousedownMsg.mouseX, mouseX]
         }
         else
         {
@@ -227,43 +211,25 @@ export class AutomationPointsEditor {
     }
 
     private mouseup(e : MouseEvent) {
-        if (this.currentSelectionBox) this.selectPoints()
-
-        this.currentSelectionBox = undefined
+        if (this.lastMousedownMsg.type === "empty" && this.canvasSelectionRange)
+        {
+            this.selectPointsInRange()
+        }
+        this.mouseIsDown = false
         this.render()
     }
-
-    private selectPoints() {
-        const [x,y,w,h] = this.currentSelectionBox!
-        const [X,Y] = [x+w, y+h]
-        const [[x1,x2],[y1,y2]] = [[x,X],[y,Y]].map(arr=>arr.sort((a,b) => a - b))
-        this.selectedPoints = []
-        const points : Point[] = []
-        for (const point of this.points)
-        {
-            const { x, y } = point
-            const [ X, Y ] = this.mapPointToCanvasCoordinate(x, y)
-            const selected = x1 <= X && X <= x2 && y1 <= Y && Y <= y2
-            ;(selected ? this.selectedPoints : points).push(point)
-        }
-        // this.points = points
-    }
-
-
-
-
 
     private getCanvasTarget(mouseX : number, mouseY : number) : TargetData {
         const points = this.points.map(({x, y}) => this.mapPointToCanvasCoordinate(x, y))
         const tolerance = 3
 
-        // Check for node touch:
+        // Check for point touch:
         for (let i = 0; i < points.length; i++)
         {
             const [x, y] = points[i]
-            if (distance(x, y, mouseX, mouseY) <= NODE_RADIUS + tolerance)
+            if (distance(x, y, mouseX, mouseY) <= POINT_RADIUS + tolerance)
             {
-                return { type: 'node', index: i }
+                return { type: 'point', index: i }
             }
         }
 
@@ -291,36 +257,70 @@ export class AutomationPointsEditor {
         }
         
         // Clicked empty area
-        return { type: 'empty' }
+        return { type: 'empty', mouseX, mouseY }
     }
 
-    dragSelectedNode(mouseX : number, mouseY : number) {
+    private drawSelectionBox(H : number, startMouseX : number, currentMouseX : number) {
+        const [startX, endX]  = 
+            [ (startMouseX - MARGIN) / (this.canvas.offsetWidth - MARGIN * 2)
+            , (currentMouseX - MARGIN) / (this.canvas.offsetWidth - MARGIN * 2)
+            ].sort((a,b) => a - b)
+        this.ctx.fillStyle = 'rgba(255,255,0,0.1)'
+        this.ctx.fillRect(startMouseX, 0, currentMouseX - startMouseX, H)
+    }
+    
+    private selectPointsInRange() {
+        if (!this.canvasSelectionRange) throw 'Misuse of this function'
+        const [x1, x2] = this.canvasSelectionRange
+        const [startX, endX]  = 
+            [ (x1 - MARGIN) / (this.canvas.offsetWidth - MARGIN * 2)
+            , (x2 - MARGIN) / (this.canvas.offsetWidth - MARGIN * 2)
+            ].sort((a,b) => a - b)
+
+        // insert points at the start and ends of the selection
+        for (const x of [startX, endX])
+        {
+            const segmentIndex = 
+                this.points.slice(0,-1).findIndex((p, i) => p.x < x && x < this.points[i+1].x)
+            if (segmentIndex < 0) continue
+
+            const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = this.points.slice(segmentIndex)
+
+            const m = (y1 - y2)/(x1 - x2)
+            const b = y1 - m * x1
+            const y = m * x + b
+
+            this.insertPoint(x, y)
+        }
+    }
+
+    private dragSelectedPoints(mouseX : number, mouseY : number) {
         const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, mouseY)
 
         // Erase unordered points with lower index
-        for (let i = 0; i < this.draggingNode; i++)
+        for (let i = 0; i < this.draggingPoint; i++)
         {
-            if (this.points[i].x >= this.points[this.draggingNode].x)
+            if (this.points[i].x >= this.points[this.draggingPoint].x)
             {
-                this.points.splice(i, this.draggingNode - i)
-                this.draggingNode = i
+                this.points.splice(i, this.draggingPoint - i)
+                this.draggingPoint = i
                 break
             }
         }
 
         // Erase unordered points with higher index
-        for (let i = this.points.length-1; i > this.draggingNode; i--)
+        for (let i = this.points.length-1; i > this.draggingPoint; i--)
         {
-            if (this.points[i].x <= this.points[this.draggingNode].x)
+            if (this.points[i].x <= this.points[this.draggingPoint].x)
             {
-                this.points.splice(this.draggingNode+1, i-this.draggingNode)
+                this.points.splice(this.draggingPoint+1, i-this.draggingPoint)
                 break
             }
         }
 
-        const p = this.points[this.draggingNode]
-        // Prevent dragging the x coordinates of end nodes
-        if (0 < this.draggingNode && this.draggingNode < this.points.length - 1)
+        const p = this.points[this.draggingPoint]
+        // Prevent dragging the x coordinates of end points
+        if (0 < this.draggingPoint && this.draggingPoint < this.points.length - 1)
         {
             p.x = clamp(0.0, x, 1)
         }
