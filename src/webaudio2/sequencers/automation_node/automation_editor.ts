@@ -119,7 +119,7 @@ export class AutomationPointsEditor {
 
     private drawPoints() {
         const { ctx } = this
-        const [a, b] = this.selectedPointRange || [-1, -1]
+        const [a, b] = this.selectedPointRange || [2, 2]
         for (let i = 0; i < this.points.length; i++)
         {
             const { x, y } = this.points[i]
