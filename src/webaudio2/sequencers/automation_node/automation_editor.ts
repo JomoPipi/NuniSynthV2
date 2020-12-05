@@ -119,14 +119,17 @@ export class AutomationPointsEditor {
 
     private drawPoints() {
         const { ctx } = this
-        for (const { x, y } of this.points)
+        const [a, b] = this.selectedPointRange || [-1, -1]
+        for (let i = 0; i < this.points.length; i++)
         {
+            const { x, y } = this.points[i]
             const [X, Y] = this.mapPointToCanvasCoordinate(x, y)
             ctx.beginPath()
             ctx.arc(X, Y, POINT_RADIUS, 0, TAU)
             ctx.closePath()
             ctx.stroke()
-            ctx.fillStyle = /* selected ? 'cyan' : */ 'pink'
+            const selected = a <= i && i <= b
+            ctx.fillStyle = selected ? 'cyan' : 'pink'
             ctx.fill()
         }
     }
@@ -168,6 +171,7 @@ export class AutomationPointsEditor {
         const [x, y] = [e.offsetX, e.offsetY]
         const msg = this.lastMousedownMsg = this.getCanvasTarget(x,  y)
         this.canvasSelectionRange = undefined
+        this.selectedPointRange = undefined
         this.draggingPoint = -1
         this.mouseIsDown = true
         // this.lastMousedownX = x
@@ -215,6 +219,7 @@ export class AutomationPointsEditor {
         {
             this.selectPointsInRange()
         }
+        this.canvasSelectionRange = undefined
         this.mouseIsDown = false
         this.render()
     }
@@ -278,11 +283,10 @@ export class AutomationPointsEditor {
             ].sort((a,b) => a - b)
 
         // insert points at the start and ends of the selection
-        for (const x of [startX, endX])
-        {
+        ;[startX, endX].forEach((x, i) => {
             const segmentIndex = 
                 this.points.slice(0,-1).findIndex((p, i) => p.x < x && x < this.points[i+1].x)
-            if (segmentIndex < 0) continue
+            if (segmentIndex < 0) return
 
             const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = this.points.slice(segmentIndex)
 
@@ -291,7 +295,10 @@ export class AutomationPointsEditor {
             const y = m * x + b
 
             this.insertPoint(x, y)
-        }
+        })
+
+        this.selectedPointRange = [startX, endX]
+            .map(x => this.points.findIndex(p => p.x === x)) as [number, number]
     }
 
     private dragSelectedPoints(mouseX : number, mouseY : number) {
