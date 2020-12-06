@@ -14,7 +14,7 @@ import { doUntilMouseUp } from "../../../UI_library/events/until_mouseup.js"
 
 type Point = { x : number, y : number }
 
-type TargetData = { 
+type TargetData = ({ 
     type : 'point'
     index : number
 } | { 
@@ -24,24 +24,24 @@ type TargetData = {
     y : number
 } | { 
     type : 'empty'
-    mouseX : number
-    mouseY : number
 } | {
     type : 'handlebar'
     index : number
+    snapshotOfPoints : Point[]
+}) & {
+    mouseX : number
+    mouseY : number
 }
 
 interface TransformArgs {
-    x : number
-    y : number
     dx : number
     dy : number
 }
 
-const TRANSFORMS : [s : string, f : (v : TransformArgs) => Point][] =
-    [ ['green', ({ x, y, dx, dy }) => ({ x: x + dx, y: y + dy })]
-    , ['yellow', x => ({ x: 0, y: 0 })]
-    , ['red', x => ({ x: 0, y: 0 })]
+const TRANSFORMS : [s : string, f : (points : Point[], args : TransformArgs) => Point[]][] =
+    [ ['green', (ps, { dx, dy }) => ps.map(({ x, y }) => ({ x: x + dx, y: y + dy }))]
+    // , ['yellow', x => ({ x: 0, y: 0 })]
+    // , ['red', x => ({ x: 0, y: 0 })]
     ]
 
 const MARGIN = 30
@@ -258,22 +258,20 @@ export class AutomationPointsEditor {
     }
 
     private mousemove(e : MouseEvent) {
+        const { x, y } = this.canvas.getBoundingClientRect()
+        const mouseX = e.clientX - x
+        const mouseY = e.clientY - y
 
         if (this.lastMousedownMsg.type === 'handlebar')
         {
-            this.transformSelectedPoints(e, this.lastMousedownMsg.index)
+            this.transformSelectedPoints(mouseX, mouseY, this.lastMousedownMsg.index)
         }
         else if (this.draggingPoint >= 0) 
         {
-            const { x, y } = this.canvas.getBoundingClientRect()
-            const mouseX = e.clientX - x
-            const mouseY = e.clientY - y
             this.dragSelectedPoints(mouseX, mouseY)
         }
         else if (this.mouseIsDown && this.lastMousedownMsg.type === 'empty')
         {
-            const { x } = this.canvas.getBoundingClientRect()
-            const mouseX = e.clientX - x
             this.canvasSelectionRange = [this.lastMousedownMsg.mouseX, mouseX]
         }
         else
@@ -308,7 +306,13 @@ export class AutomationPointsEditor {
                 const [X, Y] = this.mapPointToCanvasCoordinate(x, y)
                 if (distance(mouseX, mouseY, X, Y) <= POINT_RADIUS + TOLERANCE)
                 {
-                    return { type: 'handlebar', index: i }
+                    return (
+                        { type: 'handlebar'
+                        , index: i
+                        , snapshotOfPoints: JSON.parse(JSON.stringify(this.points))
+                        , mouseX
+                        , mouseY 
+                        })
                 }
             }
         }
@@ -319,7 +323,7 @@ export class AutomationPointsEditor {
             const [x, y] = points[i]
             if (distance(x, y, mouseX, mouseY) <= POINT_RADIUS + TOLERANCE)
             {
-                return { type: 'point', index: i }
+                return { type: 'point', index: i, mouseX, mouseY }
             }
         }
 
@@ -342,7 +346,7 @@ export class AutomationPointsEditor {
             if (distanceToLine <= LINE_WIDTH + TOLERANCE)
             {
                 const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, Y)
-                return { type: 'line', index: i, x, y }
+                return { type: 'line', index: i, x, y, mouseX, mouseY }
             }
         }
         
@@ -415,25 +419,31 @@ export class AutomationPointsEditor {
         p.y = clamp(0, y, 1)
     }
 
-    private transformSelectedPoints({ movementX, movementY } : MouseEvent, index : number) {
-        const H = this.canvas.offsetHeight
-        const W = this.canvas.offsetWidth
-        const dx = movementX / W
-        const dy = -movementY / H
+    private transformSelectedPoints(currentMouseX : number, currentMouseY : number, index : number) {
+        // const realH = this.canvas.offsetHeight - MARGIN * 2
+        // const realW = this.canvas.offsetWidth - MARGIN * 2
+        // const dx = movementX / realW
+        // const dy = movementY / realH
+        if (this.lastMousedownMsg.type !== 'handlebar') throw 'Someone is not using this method properly'
+        const { mouseX: lastMouseX, mouseY: lastMouseY, snapshotOfPoints: points } = this.lastMousedownMsg
+        const [x1, y1] = this.mapCanvasCoordinateToPoint(lastMouseX, lastMouseY)
+        const [x2, y2] = this.mapCanvasCoordinateToPoint(currentMouseX, currentMouseY)
+        const dx = x2 - x1
+        const dy = y2 - y1
         
         const [startIndex, endIndex] = this.rangeOfSelectedPoints!
-        const points = this.points.slice(startIndex, endIndex+1)
-        const newPoints = 
-            points.map(({ x, y }) =>
-                TRANSFORMS[index][1]({ x, y, dx, dy }))
-
+        const selectedPoints = points.slice(startIndex, endIndex+1)
+        const newPoints = TRANSFORMS[index][1](selectedPoints, { dx, dy })
+        
         // Don't take selected points out of range
-        if (newPoints.some(({ x, y }) => (x < 0 || y < 0 || x > 1 || y > 1) && (log('x, y =',x,y), 1))) return;
+        if (newPoints.some(({ x, y }) => (x < 0 || y < 0 || x > 1 || y > 1))) return;
         
         const startX = newPoints[0].x
         const endX = newPoints[newPoints.length-1].x
-        const leftPoints = this.points.slice(0, startIndex).filter(({ x }) => x < startX)
-        const rightPoints = this.points.slice(endIndex + 1).filter(({ x }) => x > endX)
+        const leftPoints = [points[0]]
+            .concat(points.slice(1, startIndex).filter(({ x }) => x < startX))
+        const rightPoints = points.slice(endIndex + 1, -1).filter(({ x }) => x > endX)
+            .concat([points[points.length-1]])
 
         this.rangeOfSelectedPoints = [leftPoints.length, leftPoints.length + newPoints.length - 1]
         this.points = leftPoints.concat(newPoints).concat(rightPoints)
