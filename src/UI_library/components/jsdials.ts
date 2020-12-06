@@ -1,6 +1,14 @@
+
+
+
+
+
+
+
 import { doUntilMouseUp } from "../events/until_mouseup.js"
 
-
+const hideCursor = D('no-cursor')
+if (!hideCursor) throw 'Put a transparent fullscreen element in the html with id "no-cursor".'
 
 
 
@@ -67,6 +75,7 @@ export class JsDial {
             this.lastY = clientY
             mousedown && mousedown(e)
             this.render()
+            hideCursor.classList.add('show')
         }
         
         const _mousemove = ({ clientX: x, clientY: y } : MouseEvent) => {
@@ -80,7 +89,12 @@ export class JsDial {
             func(this.value)
         }
 
-        this.dial.onmousedown = doUntilMouseUp(_mousemove, { mousedown: _mousedown, mouseup })
+        const _mouseup = (e : MouseEvent) => {
+            hideCursor.classList.remove('show')
+            mouseup && mouseup(e)
+        }
+
+        this.dial.onmousedown = doUntilMouseUp(_mousemove, { mousedown: _mousedown, mouseup: _mouseup })
 
         this.update = (value : number) => {
             this.value = value

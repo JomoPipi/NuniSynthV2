@@ -297,7 +297,6 @@ export class AutomationPointsEditor {
                 const [X, Y] = this.mapPointToCanvasCoordinate(x, y)
                 if (distance(mouseX, mouseY, X, Y) <= POINT_RADIUS + TOLERANCE)
                 {
-                    console.log('clicked', color)
                     return { type: 'handlebar', index: i }
                 }
             }

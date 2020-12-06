@@ -22,7 +22,7 @@
     border-color: cyan;
 }
 
-.wait-cursor {
+.transparent-fullscreen {
     display: none;
     background: transparent;
     position: absolute;
@@ -31,7 +31,16 @@
     width: 100vw;
     height: 100vh;
     z-index: 999999;
+}
+
+.wait-cursor {
+    @extend .transparent-fullscreen;
     cursor: wait;
+}
+
+.no-cursor {
+    @extend .transparent-fullscreen;
+    cursor: none;
 }
 
 .custom-node-wizard-container {

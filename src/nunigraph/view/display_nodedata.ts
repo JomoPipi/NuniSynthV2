@@ -138,8 +138,7 @@ export function createValuesWindow(
 }
 
     
-function createResizeableCanvasWindow(
-content : HTMLCanvasElement) {
+function createResizeableCanvasWindow(content : HTMLCanvasElement) {
     const box = E('div')
     const canvas = content
 
