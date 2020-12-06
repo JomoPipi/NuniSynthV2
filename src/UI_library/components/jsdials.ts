@@ -7,13 +7,6 @@
 
 import { doUntilMouseUp } from "../events/until_mouseup.js"
 
-const hideCursor = D('no-cursor')
-if (!hideCursor) throw 'Put a transparent fullscreen element in the html with id "no-cursor".'
-
-
-
-
-
 const classes = 
     [ 'shadow-knob'
     , 'shadow-knob2'
@@ -70,11 +63,10 @@ export class JsDial {
         const _mousedown = (e : MouseEvent) => {
             mousedown && mousedown(e)
             this.render()
-            hideCursor.classList.add('show')
             this.html.requestPointerLock()
         }
 
-        const _mousemove = ({ clientX: x, clientY: y, movementX: dx, movementY: dy } : MouseEvent) => {
+        const _mousemove = ({ movementX: dx, movementY: dy } : MouseEvent) => {
 
             this.value += (-dy + dx * this.x_sensitivity) * this.sensitivity
             this.value = clamp(this.min, this.value, this.max)
@@ -84,8 +76,8 @@ export class JsDial {
         }
 
         const _mouseup = (e : MouseEvent) => {
-            document.exitPointerLock()
-            hideCursor.classList.remove('show')
+            requestAnimationFrame(() => // Avoid interrupting double click
+            document.exitPointerLock())
             mouseup && mouseup(e)
         }
 

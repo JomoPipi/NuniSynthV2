@@ -35,7 +35,6 @@ export function createDiscreteDialComponent(
         })
 
     return { container }
-    // return E('div', { text: 'TODO' })
 }
 
 const classes = 
@@ -57,8 +56,6 @@ class DiscreteDial {
 
     private realValue = 1e9
     // private readonly realValue_OFFSET = 1e9
-    private lastX : number = 0
-    private lastY : number = 0
 
     constructor (n : number, options : Options) {
         this.n = n 
@@ -73,25 +70,25 @@ class DiscreteDial {
     }
 
     onrotation(fn : (index : number ) => void) {
-        const mousedown = ({ clientX, clientY } : MouseEvent) => {
-            this.lastX = clientX
-            this.lastY = clientY
+
+        const mousedown = () => {
+            this.html.requestPointerLock()
             this.render()
         }
-        
-        const mousemove = ({ clientX: x, clientY: y } : MouseEvent) => {
+        const mousemove = ({ movementX: dx, movementY: dy } : MouseEvent) => {
             
-            this.realValue += (this.lastY - y + x - this.lastX)
-            
+            this.realValue += dy + dx
             this.value = Math.round(this.realValue / this.tickLength) % this.n
-            this.lastX = x
-            this.lastY = y
 
             this.render()
             fn(this.value)
         }
+        const mouseup = (e : MouseEvent) => {
+            requestAnimationFrame(() => // Avoid interrupting double click
+            document.exitPointerLock())
+        }
 
-        this.dial.onmousedown = doUntilMouseUp(mousemove, { mousedown, mouseup: this.options.mouseup })
+        this.dial.onmousedown = doUntilMouseUp(mousemove, { mousedown, mouseup })
 
         this.update = (value : number) => {
             this.value = value
@@ -110,3 +107,24 @@ class DiscreteDial {
                 this.imgDegreeOffset}deg)`
     }
 }
+
+// Non-pointerlocking events:
+// const mousedown = ({ clientX, clientY } : MouseEvent) => {
+//     this.lastX = clientX
+//     this.lastY = clientY
+//     this.render()
+// }
+
+// const mousemove = ({ clientX: x, clientY: y } : MouseEvent) => {
+    
+//     this.realValue += (this.lastY - y + x - this.lastX)
+    
+//     this.value = Math.round(this.realValue / this.tickLength) % this.n
+//     this.lastX = x
+//     this.lastY = y
+
+//     this.render()
+//     fn(this.value)
+// }
+
+// this.dial.onmousedown = doUntilMouseUp(mousemove, { mousedown, mouseup: this.options.mouseup })

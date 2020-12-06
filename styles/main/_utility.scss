@@ -38,11 +38,6 @@
     cursor: wait;
 }
 
-.no-cursor {
-    @extend .transparent-fullscreen;
-    cursor: none;
-}
-
 .custom-node-wizard-container {
     display: none;
     background: transparent;

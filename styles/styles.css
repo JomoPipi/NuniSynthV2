@@ -1550,7 +1550,7 @@ a {
   border-color: cyan;
 }
 
-.transparent-fullscreen, .wait-cursor, .no-cursor {
+.transparent-fullscreen, .wait-cursor {
   display: none;
   background: transparent;
   position: absolute;
@@ -1563,10 +1563,6 @@ a {
 
 .wait-cursor {
   cursor: wait;
-}
-
-.no-cursor {
-  cursor: none;
 }
 
 .custom-node-wizard-container {
