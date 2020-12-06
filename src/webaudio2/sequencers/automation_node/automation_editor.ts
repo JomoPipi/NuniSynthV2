@@ -49,8 +49,9 @@ const TRANSFORMS : [s : string, f : (points : Point[], args : TransformArgs) => 
         }]
     , ['red', // y-axis stretch
         (ps, { dx, dy }) => {
-            const minY = ps.reduce((a, { y }) => Math.min(a,y), 1)
-            const maxY = ps.reduce((a, { y }) => Math.max(a,y), 0)
+            const minY = ps.reduce((a, { y }) => Math.min(a, y), 1)
+            const maxY = ps.reduce((a, { y }) => Math.max(a, y), 0)
+            if (minY === maxY) return ps // Avoid division by 0
             return ps.map(({ x, y }) => ({ x, y: minY + (dy+0.5) * ((y - minY) / (maxY - minY)) }))
         }]
     ]
