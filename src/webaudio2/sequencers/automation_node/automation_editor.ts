@@ -40,7 +40,14 @@ interface TransformArgs {
 }
 
 const TRANSFORMS : [s : string, f : (points : Point[], args : TransformArgs) => Point[]][] =
-    [ ['green', (ps, { dx, dy }) => ps.map(({ x, y }) => ({ x: x + dx, y: y + dy }))] // Translation
+    [ ['green', // Translate x
+        (ps, { dx, dy }) => 
+            ps.map(({ x, y }) => ({ x: x + dx, y }))
+        ]
+    , ['cyan', // Translate y
+        (ps, { dx, dy }) => 
+            ps.map(({ x, y }) => ({ x, y: y + dy }))
+        ]
     , ['yellow', // x-axis stretch
         (ps, { dx, dy }) => {
             const minX = ps[0].x
@@ -51,7 +58,7 @@ const TRANSFORMS : [s : string, f : (points : Point[], args : TransformArgs) => 
         (ps, { dx, dy }) => {
             const minY = ps.reduce((a, { y }) => Math.min(a, y), 1)
             const maxY = ps.reduce((a, { y }) => Math.max(a, y), 0)
-            if (minY === maxY) return ps // Avoid division by 0
+            if (minY === maxY) return ps.map(({ x, y }) => ({ x, y: y + dy })) // Avoid division by 0
             return ps.map(({ x, y }) => ({ x, y: minY + (dy+0.5) * ((y - minY) / (maxY - minY)) }))
         }]
     ]
@@ -377,26 +384,34 @@ export class AutomationPointsEditor {
             .sort((a,b) => a - b)
             .map(x => clamp(0, x, 1))
 
-        // insert points at the start and ends of the selection
-        ;[startX, endX].forEach((x, i) => {
-            // return; // Comment out to see the difference
-            const segmentIndex = 
-                this.points.slice(0,-1).findIndex((p, i) => p.x < x && x < this.points[i+1].x)
-            if (segmentIndex < 0) return
+        // ! Insert points at the start and ends of the selection:
+        // ;[startX, endX].forEach((x, i) => {
+        //     // return; // Comment out to see the difference
+        //     const segmentIndex = 
+        //         this.points.slice(0,-1).findIndex((p, i) => p.x < x && x < this.points[i+1].x)
+        //     if (segmentIndex < 0) return
 
-            const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = this.points.slice(segmentIndex)
+        //     const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = this.points.slice(segmentIndex)
 
-            const m = (y1 - y2)/(x1 - x2)
-            const b = y1 - m * x1
-            const y = m * x + b
+        //     const m = (y1 - y2)/(x1 - x2)
+        //     const b = y1 - m * x1
+        //     const y = m * x + b
 
-            this.insertPoint(x, y)
-        })
+        //     this.insertPoint(x, y)
+        // })
+        // this.rangeOfSelectedPoints = [startX, endX]
+        //     .map(x => 
+        //         clamp(1, this.points.findIndex(p => p.x === x), this.points.length-2)
+        //         ) as [number, number]
 
-        this.rangeOfSelectedPoints = [startX, endX]
-            .map(x => 
-                clamp(1, this.points.findIndex(p => p.x === x), this.points.length-2)
-                ) as [number, number]
+        // ! Don't insert points at the start and ends of selection:
+        this.rangeOfSelectedPoints = 
+            [ this.points.findIndex(p => p.x > startX)
+            , endX >= 1 
+                ? this.points.length-2 
+                : this.points.slice(0,-1).findIndex((p,i) => p.x <= endX && endX < this.points[i+1].x)
+            ]
+            .map(x => clamp(1, x, this.points.length-2)) as [number, number]
         
         if (this.rangeOfSelectedPoints[0] === this.rangeOfSelectedPoints[1])
         {
