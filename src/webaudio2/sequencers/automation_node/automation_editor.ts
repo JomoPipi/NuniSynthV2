@@ -31,6 +31,19 @@ type TargetData = {
     index : number
 }
 
+interface TransformArgs {
+    x : number
+    y : number
+    dx : number
+    dy : number
+}
+
+const TRANSFORMS : [s : string, f : (v : TransformArgs) => Point][] =
+    [ ['green', ({ x, y, dx, dy }) => ({ x: x + dx, y: y + dy })]
+    , ['yellow', x => ({ x: 0, y: 0 })]
+    , ['red', x => ({ x: 0, y: 0 })]
+    ]
+
 const MARGIN = 30
 const POINT_RADIUS = 2
 const LINE_WIDTH = 1
@@ -165,13 +178,6 @@ export class AutomationPointsEditor {
         }
     }
 
-    private static TRANSFORMS : [s : string, f : (v : number) => void][]
-        =
-        [ ['green', x => void 0]
-        , ['yellow', x => void 0]
-        , ['red', x => void 0]
-        ]
-
     private getTransformHandlebars() : [number, number, string][] {
         const dy = 0.2
         const xgap = 0.04
@@ -183,10 +189,9 @@ export class AutomationPointsEditor {
         {
             max = Math.max(max, this.points[i].y)
         }
-        const T = AutomationPointsEditor.TRANSFORMS
-        for (let i = 0; i < T.length; i++)
+        for (let i = 0; i < TRANSFORMS.length; i++)
         {
-            points.push([x - xgap * i, dy + max, T[i][0]] as [number,number,string])
+            points.push([x - xgap * i, dy + max, TRANSFORMS[i][0]] as [number,number,string])
         }
         return points
     }
@@ -244,7 +249,7 @@ export class AutomationPointsEditor {
         }
         else if (msg.type === 'handlebar')
         {
-
+            // msg.index is the transform index
         }
         else
         {
@@ -253,16 +258,22 @@ export class AutomationPointsEditor {
     }
 
     private mousemove(e : MouseEvent) {
-        const { x, y } = this.canvas.getBoundingClientRect()
-        const mouseX = e.clientX - x
-        const mouseY = e.clientY - y
 
-        if (this.draggingPoint >= 0) 
+        if (this.lastMousedownMsg.type === 'handlebar')
         {
+            this.transformSelectedPoints(e, this.lastMousedownMsg.index)
+        }
+        else if (this.draggingPoint >= 0) 
+        {
+            const { x, y } = this.canvas.getBoundingClientRect()
+            const mouseX = e.clientX - x
+            const mouseY = e.clientY - y
             this.dragSelectedPoints(mouseX, mouseY)
         }
         else if (this.mouseIsDown && this.lastMousedownMsg.type === 'empty')
         {
+            const { x } = this.canvas.getBoundingClientRect()
+            const mouseX = e.clientX - x
             this.canvasSelectionRange = [this.lastMousedownMsg.mouseX, mouseX]
         }
         else
@@ -351,6 +362,7 @@ export class AutomationPointsEditor {
 
         // insert points at the start and ends of the selection
         ;[startX, endX].forEach((x, i) => {
+            // return; // Comment out to see the difference
             const segmentIndex = 
                 this.points.slice(0,-1).findIndex((p, i) => p.x < x && x < this.points[i+1].x)
             if (segmentIndex < 0) return
@@ -365,7 +377,9 @@ export class AutomationPointsEditor {
         })
 
         this.rangeOfSelectedPoints = [startX, endX]
-            .map(x => this.points.findIndex(p => p.x === x)) as [number, number]
+            .map(x => 
+                clamp(1, this.points.findIndex(p => p.x === x), this.points.length-2)
+                ) as [number, number]
     }
 
     private dragSelectedPoints(mouseX : number, mouseY : number) {
@@ -399,5 +413,29 @@ export class AutomationPointsEditor {
             p.x = clamp(0.0, x, 1)
         }
         p.y = clamp(0, y, 1)
+    }
+
+    private transformSelectedPoints({ movementX, movementY } : MouseEvent, index : number) {
+        const H = this.canvas.offsetHeight
+        const W = this.canvas.offsetWidth
+        const dx = movementX / W
+        const dy = -movementY / H
+        
+        const [startIndex, endIndex] = this.rangeOfSelectedPoints!
+        const points = this.points.slice(startIndex, endIndex+1)
+        const newPoints = 
+            points.map(({ x, y }) =>
+                TRANSFORMS[index][1]({ x, y, dx, dy }))
+
+        // Don't take selected points out of range
+        if (newPoints.some(({ x, y }) => (x < 0 || y < 0 || x > 1 || y > 1) && (log('x, y =',x,y), 1))) return;
+        
+        const startX = newPoints[0].x
+        const endX = newPoints[newPoints.length-1].x
+        const leftPoints = this.points.slice(0, startIndex).filter(({ x }) => x < startX)
+        const rightPoints = this.points.slice(endIndex + 1).filter(({ x }) => x > endX)
+
+        this.rangeOfSelectedPoints = [leftPoints.length, leftPoints.length + newPoints.length - 1]
+        this.points = leftPoints.concat(newPoints).concat(rightPoints)
     }
 }
