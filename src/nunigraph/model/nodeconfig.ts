@@ -584,7 +584,7 @@ const AudioParamKnobTurns : { readonly [key in AudioParams] : number } =
 
 const AudioParamSliderFactor : { readonly [key in AudioParams] : number } = 
     { gain:         2**-8
-    , frequency:    2**-7
+    , frequency:    2**-6
     , detune:       1
     , Q:            .05
     , pan:          .005

@@ -27,8 +27,7 @@ type Options = {
 export class JsDial {
     
     sensitivity : number
-    lastY : number
-    lastX : number
+    private x_sensitivity = 2 ** -4
     value : number
     max : number
     min : number
@@ -48,7 +47,6 @@ export class JsDial {
             , children: [this.dial]
             }) 
             
-        this.lastY = this.lastX = 0
         this.max = 1
         this.value = this.min = this.sensitivity = 2**-8
         this.imgDegreeOffset = 195
@@ -70,26 +68,23 @@ export class JsDial {
     
     attach(func : (n : number) => void, { mousedown, mouseup } : Options = {}) {
         const _mousedown = (e : MouseEvent) => {
-            const { clientX, clientY } = e
-            this.lastX = clientX
-            this.lastY = clientY
             mousedown && mousedown(e)
             this.render()
             hideCursor.classList.add('show')
+            this.html.requestPointerLock()
         }
-        
-        const _mousemove = ({ clientX: x, clientY: y } : MouseEvent) => {
-            
-            this.value += (this.lastY - y + x - this.lastX) * this.sensitivity
+
+        const _mousemove = ({ clientX: x, clientY: y, movementX: dx, movementY: dy } : MouseEvent) => {
+
+            this.value += (-dy + dx * this.x_sensitivity) * this.sensitivity
             this.value = clamp(this.min, this.value, this.max)
-            this.lastX = x
-            this.lastY = y
 
             this.render()
             func(this.value)
         }
 
         const _mouseup = (e : MouseEvent) => {
+            document.exitPointerLock()
             hideCursor.classList.remove('show')
             mouseup && mouseup(e)
         }
@@ -120,3 +115,28 @@ export class JsDial {
                 this.imgDegreeOffset}deg)`
     }
 }
+
+// non-pointerlocking events:
+// const _mousedown = (e : MouseEvent) => {
+//     const { clientX, clientY } = e
+//     this.lastX = clientX
+//     this.lastY = clientY
+//     mousedown && mousedown(e)
+//     this.render()
+//     hideCursor.classList.add('show')
+// }
+
+// const _mousemove = ({ clientX: x, clientY: y } : MouseEvent) => {
+//     this.value += (this.lastY - y + (x - this.lastX) * this.x_sensitivity) * this.sensitivity
+//     this.value = clamp(this.min, this.value, this.max)
+//     this.lastX = x
+//     this.lastY = y
+
+//     this.render()
+//     func(this.value)
+// }
+
+// const _mouseup = (e : MouseEvent) => {
+//     hideCursor.classList.remove('show')
+//     mouseup && mouseup(e)
+// }
