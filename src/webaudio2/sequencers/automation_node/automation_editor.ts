@@ -28,6 +28,7 @@ type TargetData = ({
     type : 'handlebar'
     index : number
     snapshotOfPoints : Point[]
+    snapshotOfSelectedRange : [number, number]
 }) & {
     mouseX : number
     mouseY : number
@@ -39,12 +40,22 @@ interface TransformArgs {
 }
 
 const TRANSFORMS : [s : string, f : (points : Point[], args : TransformArgs) => Point[]][] =
-    [ ['green', (ps, { dx, dy }) => ps.map(({ x, y }) => ({ x: x + dx, y: y + dy }))]
-    // , ['yellow', x => ({ x: 0, y: 0 })]
-    // , ['red', x => ({ x: 0, y: 0 })]
+    [ ['green', (ps, { dx, dy }) => ps.map(({ x, y }) => ({ x: x + dx, y: y + dy }))] // Translation
+    , ['yellow', // x-axis stretch
+        (ps, { dx, dy }) => {
+            const minX = ps[0].x
+            const maxX = ps[ps.length-1].x
+            return ps.map(({ x, y }) => ({ x: minX + (dx + 0.25) * ((x - minX) / (maxX - minX)), y }))
+        }]
+    , ['red', // y-axis stretch
+        (ps, { dx, dy }) => {
+            const minY = ps.reduce((a, { y }) => Math.min(a,y), 1)
+            const maxY = ps.reduce((a, { y }) => Math.max(a,y), 0)
+            return ps.map(({ x, y }) => ({ x, y: minY + (dy+0.5) * ((y - minY) / (maxY - minY)) }))
+        }]
     ]
 
-const MARGIN = 30
+const MARGIN = 25
 const POINT_RADIUS = 2
 const LINE_WIDTH = 1
 
@@ -268,7 +279,7 @@ export class AutomationPointsEditor {
         }
         else if (this.draggingPoint >= 0) 
         {
-            this.dragSelectedPoints(mouseX, mouseY)
+            this.dragSinglePoint(mouseX, mouseY)
         }
         else if (this.mouseIsDown && this.lastMousedownMsg.type === 'empty')
         {
@@ -310,6 +321,7 @@ export class AutomationPointsEditor {
                         { type: 'handlebar'
                         , index: i
                         , snapshotOfPoints: JSON.parse(JSON.stringify(this.points))
+                        , snapshotOfSelectedRange: [...this.rangeOfSelectedPoints]
                         , mouseX
                         , mouseY 
                         })
@@ -384,9 +396,14 @@ export class AutomationPointsEditor {
             .map(x => 
                 clamp(1, this.points.findIndex(p => p.x === x), this.points.length-2)
                 ) as [number, number]
+        
+        if (this.rangeOfSelectedPoints[0] === this.rangeOfSelectedPoints[1])
+        {
+            this.rangeOfSelectedPoints = undefined // It's no fun to select only one point
+        }
     }
 
-    private dragSelectedPoints(mouseX : number, mouseY : number) {
+    private dragSinglePoint(mouseX : number, mouseY : number) {
         const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, mouseY)
 
         // Erase unordered points with lower index
@@ -425,23 +442,27 @@ export class AutomationPointsEditor {
         // const dx = movementX / realW
         // const dy = movementY / realH
         if (this.lastMousedownMsg.type !== 'handlebar') throw 'Someone is not using this method properly'
-        const { mouseX: lastMouseX, mouseY: lastMouseY, snapshotOfPoints: points } = this.lastMousedownMsg
-        const [x1, y1] = this.mapCanvasCoordinateToPoint(lastMouseX, lastMouseY)
+        const { mouseX, mouseY, snapshotOfPoints: points, snapshotOfSelectedRange } = this.lastMousedownMsg
+        const [x1, y1] = this.mapCanvasCoordinateToPoint(mouseX, mouseY)
         const [x2, y2] = this.mapCanvasCoordinateToPoint(currentMouseX, currentMouseY)
         const dx = x2 - x1
         const dy = y2 - y1
         
-        const [startIndex, endIndex] = this.rangeOfSelectedPoints!
+        const [startIndex, endIndex] = snapshotOfSelectedRange
         const selectedPoints = points.slice(startIndex, endIndex+1)
         const newPoints = TRANSFORMS[index][1](selectedPoints, { dx, dy })
         
         // Don't take selected points out of range
-        if (newPoints.some(({ x, y }) => (x < 0 || y < 0 || x > 1 || y > 1))) return;
-        
+        if (newPoints.some(({ x, y }) => (x <= 0 || y < 0 || x >= 1 || y > 1))) return;
+
+         // Horizontal stretch can cause this:
+        if (newPoints[0].x > newPoints[newPoints.length-1].x) newPoints.reverse()
+
         const startX = newPoints[0].x
         const endX = newPoints[newPoints.length-1].x
         const leftPoints = [points[0]]
             .concat(points.slice(1, startIndex).filter(({ x }) => x < startX))
+            
         const rightPoints = points.slice(endIndex + 1, -1).filter(({ x }) => x > endX)
             .concat([points[points.length-1]])
 
