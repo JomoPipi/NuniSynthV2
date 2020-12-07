@@ -66,7 +66,6 @@ const TRANSFORMS : [s : string, f : (points : Point[], args : TransformArgs) => 
 const MARGIN = 25
 const POINT_RADIUS = 2
 const LINE_WIDTH = 1
-const closeEnoughToDeleteNeighborPointUponInsertion = 0.1
 
 // const SELECT_MODE = '👉'
 // const FREEHAND_MODE = '✏️'
@@ -151,7 +150,7 @@ export class AutomationPointsEditor {
         const W = this.canvas.offsetWidth
         this.ctx.clearRect(0, 0, W, H)
         this.drawLines()
-        this.drawPoints(W)
+        this.drawPoints()
         this.drawStats(W, H)
 
         switch (this.mode) {
@@ -233,8 +232,14 @@ export class AutomationPointsEditor {
         {
             if (x <= this.points[i].x)
             {
-                const toDelete = +(Math.abs(x - this.points[i].x) < closeEnoughToDeleteNeighborPointUponInsertion)
-                this.points.splice(i, toDelete, { x, y })
+                if (x === this.points[i].x)
+                {
+                    this.points[i].y = y
+                }
+                else
+                {
+                    this.points.splice(i, 0, { x, y })
+                }
                 this.render()
                 return i
             }
@@ -546,17 +551,31 @@ export class AutomationPointsEditor {
 
 
     //* FREEHAND MODE STUFF *//
+
+    // Prevents points from being too dense:
+    private readonly freehandXGap = 2 ** -5
+    private lastInsertedX = -1
+
     private FREEHAND_MODE_mousedown(msg : TargetData) {
         const { mouseX, mouseY } = msg
         const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, mouseY)
-
+        this.insertPoint(this.lastInsertedX = clamp(0, x, 1), clamp(0, y, 1))
+        this.render()
     }
 
     private FREEHAND_MODE_mousemove(mouseX : number, mouseY : number) {
-
+        const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, mouseY)
+        if (Math.abs(this.lastInsertedX - x) > this.freehandXGap)
+        {
+            const nextX = clamp(0, x, 1)
+            const [a, b] = [this.lastInsertedX, nextX].sort((a, b) => a - b)
+            // Remove points we "run" over
+            this.points = this.points.filter(({ x }) => x <= a || x >= b)
+            // Add a new point
+            this.insertPoint(this.lastInsertedX = nextX, clamp(0, y, 1))
+        }
+        this.render()
     }
 
-    private FREEHAND_MODE_mouseup() {
-        
-    }
+    private FREEHAND_MODE_mouseup() {}
 }
