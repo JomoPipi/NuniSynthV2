@@ -54,7 +54,7 @@ class DiscreteDial {
     update : Function = (value : number) => {}
     options : Options
 
-    private realValue = 1e9
+    private realValue = 1e9 + this.tickLength * 3
     // private readonly realValue_OFFSET = 1e9
 
     constructor (n : number, options : Options) {
@@ -67,6 +67,8 @@ class DiscreteDial {
             { className: classes[options.CSS_classIndex || 0]
             , children: [this.dial]
             })
+
+        this.update(0)
     }
 
     onrotation(fn : (index : number ) => void) {
@@ -77,7 +79,7 @@ class DiscreteDial {
         }
         const mousemove = ({ movementX: dx, movementY: dy } : MouseEvent) => {
             
-            this.realValue += dy + dx
+            this.realValue += -dy + dx
             this.value = Math.round(this.realValue / this.tickLength) % this.n
 
             this.render()
