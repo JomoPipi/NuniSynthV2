@@ -724,6 +724,51 @@ code {
   }
 }
 
+.toggle0 {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 8px;
+  display: inline-block;
+  position: relative;
+  border-radius: 50px;
+  overflow: hidden;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  background-color: #707070;
+  -webkit-transition: background-color ease 0.3s;
+  transition: background-color ease 0.3s;
+  display: block;
+  margin: auto auto;
+}
+
+.toggle0:before {
+  content: " ";
+  display: block;
+  position: absolute;
+  z-index: 2;
+  width: 6px;
+  height: 6px;
+  background: var(--color0);
+  left: 1px;
+  top: 1px;
+  border-radius: 50%;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  -webkit-transition: all cubic-bezier(0.3, 1.5, 0.7, 1) 0.3s;
+  transition: all cubic-bezier(0.3, 1.5, 0.7, 1) 0.3s;
+}
+
+.toggle0:checked {
+  background-color: #928e91;
+}
+
+.toggle0:checked:before {
+  left: 8px;
+}
+
 .number-dial-container {
   display: -ms-inline-grid;
   display: inline-grid;

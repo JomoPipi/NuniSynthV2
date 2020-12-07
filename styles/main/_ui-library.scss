@@ -164,3 +164,46 @@
 		background-position: 0% 50%;
 	}
 }
+
+.toggle0 {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 8px;
+    display: inline-block;
+    position: relative;
+    border-radius: 50px;
+    overflow: hidden;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    background-color: #707070;
+    transition: background-color ease 0.3s;
+    // transform: rotate(90deg);
+    display: block;
+    margin: auto auto;
+  }
+  
+  .toggle0:before {
+    content: " ";
+    display: block;
+    position: absolute;
+    z-index: 2;
+    width: 6px;
+    height: 6px;
+    background: var(--color0);
+    left: 1px;
+    top: 1px;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    transition: all cubic-bezier(0.3, 1.5, 0.7, 1) 0.3s;
+  }
+  
+  .toggle0:checked {
+    background-color: #928e91;
+  }
+  
+  .toggle0:checked:before {
+    left: 8px;
+  }

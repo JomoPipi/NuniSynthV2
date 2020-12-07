@@ -70,20 +70,20 @@ const LINE_WIDTH = 1
 // const SELECT_MODE = '👉'
 // const FREEHAND_MODE = '✏️'
 
-export enum MODES {
-    SELECT_MODE,
-    FREEHAND_MODE
-}
+const SELECT_MODE = 0
+const FREEHAND_MODE = 1
+const MODES = [0, 1]
 
 export class AutomationPointsEditor {
     points : Point[]
-    mode : MODES = MODES.SELECT_MODE
+    mode : number = SELECT_MODE
     private canvas : HTMLCanvasElement
     private ctx : CanvasRenderingContext2D
-    private controllerHTML? : HTMLElement
-    private draggingPoint = -1
-    private lastMousedownMsg : TargetData = { type: 'empty', mouseX: 0, mouseY: 0 }
     private mouseIsDown = false
+    private lastMousedownMsg : TargetData = { type: 'empty', mouseX: 0, mouseY: 0 }
+    private controllerHTML? : HTMLElement
+
+    private draggingPoint = -1
     private canvasSelectionRange? : [number, number]
     private rangeOfSelectedPoints? : [number, number]
 
@@ -199,11 +199,101 @@ export class AutomationPointsEditor {
         c.fillText('0', x, H - MARGIN)
     }
 
+    private mapPointToCanvasCoordinate(x : number, y : number) : [number, number] {
+        return (
+            [ MARGIN + (this.canvas.offsetWidth - MARGIN * 2) * x
+            , MARGIN + (this.canvas.offsetHeight - MARGIN * 2) * (1 - y)
+            ])
+    }
+
+    private mapCanvasCoordinateToPoint(x : number, y : number) : [number, number] {
+        return (
+            [ (x - MARGIN) / (this.canvas.offsetWidth - MARGIN * 2)
+            , 1 - (y - MARGIN) / (this.canvas.offsetHeight - MARGIN * 2)
+            ])
+    }
+
+    private insertPoint(x : number, y : number) {
+        for (let i = 0; i < this.points.length; i++)
+        {
+            if (x <= this.points[i].x)
+            {
+                this.points.splice(i, 0, { x, y })
+                this.render()
+                return i
+            }
+        }
+        throw `invalid point: (${x},${y})`
+    }
+    
+    private getCanvasTarget(mouseX : number, mouseY : number) : TargetData {
+        const points = this.points.map(({x, y}) => this.mapPointToCanvasCoordinate(x, y))
+        const TOLERANCE = 2
+
+        // Check for handlebar hit if points are selected:
+        if (this.rangeOfSelectedPoints)
+        {
+            const hb = this.getTransformHandlebars()
+            for (let i = 0; i < hb.length; i++)
+            {
+                const [x, y, color] = hb[i]
+                const [X, Y] = this.mapPointToCanvasCoordinate(x, y)
+                if (distance(mouseX, mouseY, X, Y) <= POINT_RADIUS + TOLERANCE)
+                {
+                    return (
+                        { type: 'handlebar'
+                        , index: i
+                        , snapshotOfPoints: JSON.parse(JSON.stringify(this.points))
+                        , snapshotOfSelectedRange: [...this.rangeOfSelectedPoints]
+                        , mouseX
+                        , mouseY 
+                        })
+                }
+            }
+        }
+
+        // Check for point hit:
+        for (let i = 0; i < points.length; i++)
+        {
+            const [x, y] = points[i]
+            if (distance(x, y, mouseX, mouseY) <= POINT_RADIUS + TOLERANCE)
+            {
+                return { type: 'point', index: i, mouseX, mouseY }
+            }
+        }
+
+        // Check for line hit:
+        for (let i = 0; i < points.length-1; i++)
+        {
+            const [x2, y2] = points[i+1]
+            if (mouseX >= x2) continue
+            const [x1, y1] = points[i]
+
+            const m = (y1 - y2) / (x1 - x2)
+            const b = y1 - m * x1
+            const Y = m * mouseX + b
+            const X = (mouseY - b) / m
+
+            const distanceToLine = m > 1
+                ? Math.abs(X - mouseX)
+                : Math.abs(Y - mouseY)
+            
+            if (distanceToLine <= LINE_WIDTH + TOLERANCE)
+            {
+                const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, Y)
+                return { type: 'line', index: i, x, y, mouseX, mouseY }
+            }
+        }
+        
+        // Hit empty area:
+        return { type: 'empty', mouseX, mouseY }
+    }
+
+
+
+
+    //** Selection / Transform Mode
     private drawSelectionBox(H : number, startMouseX : number, currentMouseX : number) {
-        const [startX, endX]  = 
-            [ (startMouseX - MARGIN) / (this.canvas.offsetWidth - MARGIN * 2)
-            , (currentMouseX - MARGIN) / (this.canvas.offsetWidth - MARGIN * 2)
-            ].sort((a,b) => a - b)
         this.ctx.fillStyle = 'rgba(255,255,0,0.1)'
         this.ctx.fillRect(startMouseX, 0, currentMouseX - startMouseX, H)
     }
@@ -231,33 +321,6 @@ export class AutomationPointsEditor {
             points.push([x - xgap * i, dy + max, TRANSFORMS[i][0]] as [number,number,string])
         }
         return points
-    }
-
-    private mapPointToCanvasCoordinate(x : number, y : number) : [number, number] {
-        return (
-            [ MARGIN + (this.canvas.offsetWidth - MARGIN * 2) * x
-            , MARGIN + (this.canvas.offsetHeight - MARGIN * 2) * (1 - y)
-            ])
-    }
-
-    private mapCanvasCoordinateToPoint(x : number, y : number) : [number, number] {
-        return (
-            [ (x - MARGIN) / (this.canvas.offsetWidth - MARGIN * 2)
-            , 1 - (y - MARGIN) / (this.canvas.offsetHeight - MARGIN * 2)
-            ])
-    }
-
-    private insertPoint(x : number, y : number) {
-        for (let i = 0; i < this.points.length; i++)
-        {
-            if (x <= this.points[i].x)
-            {
-                this.points.splice(i, 0, { x, y })
-                this.render()
-                return i
-            }
-        }
-        throw `invalid point: (${x},${y})`
     }
 
     private mousedown(e : MouseEvent) {
@@ -328,69 +391,6 @@ export class AutomationPointsEditor {
         this.render()
     }
 
-    private getCanvasTarget(mouseX : number, mouseY : number) : TargetData {
-        const points = this.points.map(({x, y}) => this.mapPointToCanvasCoordinate(x, y))
-        const TOLERANCE = 3
-
-        // Check for handlebar touch is points are selected
-        if (this.rangeOfSelectedPoints)
-        {
-            const hb = this.getTransformHandlebars()
-            for (let i = 0; i < hb.length; i++)
-            {
-                const [x, y, color] = hb[i]
-                const [X, Y] = this.mapPointToCanvasCoordinate(x, y)
-                if (distance(mouseX, mouseY, X, Y) <= POINT_RADIUS + TOLERANCE)
-                {
-                    return (
-                        { type: 'handlebar'
-                        , index: i
-                        , snapshotOfPoints: JSON.parse(JSON.stringify(this.points))
-                        , snapshotOfSelectedRange: [...this.rangeOfSelectedPoints]
-                        , mouseX
-                        , mouseY 
-                        })
-                }
-            }
-        }
-
-        // Check for point touch:
-        for (let i = 0; i < points.length; i++)
-        {
-            const [x, y] = points[i]
-            if (distance(x, y, mouseX, mouseY) <= POINT_RADIUS + TOLERANCE)
-            {
-                return { type: 'point', index: i, mouseX, mouseY }
-            }
-        }
-
-        // Check for line touch
-        for (let i = 0; i < points.length-1; i++)
-        {
-            const [x2, y2] = points[i+1]
-            if (mouseX >= x2) continue
-            const [x1, y1] = points[i]
-
-            const m = (y1 - y2) / (x1 - x2)
-            const b = y1 - m * x1
-            const Y = m * mouseX + b
-            const X = (mouseY - b) / m
-
-            const distanceToLine = m > 1
-                ? Math.abs(X - mouseX)
-                : Math.abs(Y - mouseY)
-            
-            if (distanceToLine <= LINE_WIDTH + TOLERANCE)
-            {
-                const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, Y)
-                return { type: 'line', index: i, x, y, mouseX, mouseY }
-            }
-        }
-        
-        // Clicked empty area
-        return { type: 'empty', mouseX, mouseY }
-    }
-
     private selectPointsInRange() {
         if (!this.canvasSelectionRange) throw 'Misuse of this function'
         const [x1, x2] = this.canvasSelectionRange
@@ -401,7 +401,7 @@ export class AutomationPointsEditor {
             .sort((a,b) => a - b)
             .map(x => clamp(0, x, 1))
 
-        // ! Insert points at the start and ends of the selection:
+        //! Insert points at the start and ends of the selection: //!
         // ;[startX, endX].forEach((x, i) => {
         //     // return; // Comment out to see the difference
         //     const segmentIndex = 
@@ -421,7 +421,7 @@ export class AutomationPointsEditor {
         //         clamp(1, this.points.findIndex(p => p.x === x), this.points.length-2)
         //         ) as [number, number]
 
-        // ! Don't insert points at the start and ends of selection:
+        //! Don't insert points at the start and ends of selection: //!
         this.rangeOfSelectedPoints = 
             [ this.points.findIndex(p => p.x > startX)
             , endX >= 1 
@@ -435,6 +435,8 @@ export class AutomationPointsEditor {
         {
             this.rangeOfSelectedPoints = undefined
         }
+
+        //? Which one do we like better //?
     }
 
     private dragSinglePoint(mouseX : number, mouseY : number) {

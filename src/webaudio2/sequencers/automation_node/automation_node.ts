@@ -66,13 +66,16 @@ export class AutomationNode extends VolumeNodeContainer {
             }
 
         const modeSelect = createRadioButtonGroup(
-            { buttons: ['👉', '✏️']
+            { buttons: ['👌', '✏️']
             , selected: 0
             , className: 'top-bar-btn'
             , onclick: (_, index) => this.pointEditor.setMode(index)
             })
 
-        const hardwareControls = E('div', { className: 'space-evenly', children: [subdivSelect, phaseShifter, modeSelect] })
+        const hardwareControls = E('div', 
+            { className: 'space-evenly some-padding'
+            , children: [subdivSelect, phaseShifter, modeSelect] 
+            })
 
         const controller = E('div', { children: [nodeCanvas, progressLine, hardwareControls] })
         return controller

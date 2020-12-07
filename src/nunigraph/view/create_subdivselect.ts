@@ -174,5 +174,5 @@ export function createSubdivSelect3(initialValue : number, updateFn : (value : n
         , mouseup: options?.mouseup
         })
         
-    return { container: E('div', { text: 'subdiv', children: [numberDial] }) }
+    return { container: E('div', { /* text: 'subdiv',*/ children: [numberDial] }) }
 }

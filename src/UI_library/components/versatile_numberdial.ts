@@ -56,12 +56,13 @@ export function createVersatileNumberDialComponent(
 
     ;(typeof initialValue === 'number' ? discreteModeComponent : continunousModeComponent).container.classList.toggle('hide')
     
-    const children = [continunousModeComponent.container, discreteModeComponent.container]
+    const toggle = E('input', { className: 'toggle0' }); toggle.type = 'checkbox'
+    const children = [continunousModeComponent.container, discreteModeComponent.container, toggle]
     const box = E('div', { children })
 
-    box.ondblclick = () => {
-        discreteModeComponent.container.classList.toggle('hide')
-        continunousModeComponent.container.classList.toggle('hide')
+    toggle.oninput = () => {
+        discreteModeComponent.container.classList.toggle('hide', !toggle.checked)
+        continunousModeComponent.container.classList.toggle('hide', toggle.checked)
     }
 
     return box
