@@ -52,14 +52,14 @@ const TRANSFORMS : [s : string, f : (points : Point[], args : TransformArgs) => 
         (ps, { dx, dy }) => {
             const minX = ps[0].x
             const maxX = ps[ps.length-1].x
-            return ps.map(({ x, y }) => ({ x: minX + (dx + 0.25) * ((x - minX) / (maxX - minX)), y }))
+            return ps.map(({ x, y }) => ({ x: x + dx * ((x - minX) / (maxX - minX)), y }))
         }]
     , ['red', // y-axis stretch
         (ps, { dx, dy }) => {
             const minY = ps.reduce((a, { y }) => Math.min(a, y), 1)
             const maxY = ps.reduce((a, { y }) => Math.max(a, y), 0)
             if (minY === maxY) return ps.map(({ x, y }) => ({ x, y: y + dy })) // Avoid division by 0
-            return ps.map(({ x, y }) => ({ x, y: minY + (dy+0.5) * ((y - minY) / (maxY - minY)) }))
+            return ps.map(({ x, y }) => ({ x, y: y + dy * ((y - minY) / (maxY - minY)) }))
         }]
     ]
 
@@ -177,8 +177,9 @@ export class AutomationPointsEditor {
 
     private drawStats(W : number, H : number) {
         const { ctx: c } = this
-        c.fillText('1', W - MARGIN, MARGIN)
-        c.fillText('0', W - MARGIN, H - MARGIN)
+        const x = W - MARGIN * 0.75 | 0
+        c.fillText('1', x, MARGIN)
+        c.fillText('0', x, H - MARGIN)
     }
 
     private drawSelectionBox(H : number, startMouseX : number, currentMouseX : number) {
@@ -413,9 +414,10 @@ export class AutomationPointsEditor {
             ]
             .map(x => clamp(1, x, this.points.length-2)) as [number, number]
         
-        if (this.rangeOfSelectedPoints[0] === this.rangeOfSelectedPoints[1])
+        // Don't select fewer than 2 points
+        if (this.rangeOfSelectedPoints[0] >= this.rangeOfSelectedPoints[1])
         {
-            this.rangeOfSelectedPoints = undefined // It's no fun to select only one point
+            this.rangeOfSelectedPoints = undefined
         }
     }
 
