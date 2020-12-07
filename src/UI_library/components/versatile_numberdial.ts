@@ -26,8 +26,8 @@ type AdditionalArgs = {
         sensitivity? : number
         rounds? : number
     }
-    mousedown? : (e : MouseEvent) => void
-    mouseup? : (e : MouseEvent) => void
+    mousedown? : MouseHandler
+    mouseup? : MouseHandler
 }
 
 export function createVersatileNumberDialComponent(

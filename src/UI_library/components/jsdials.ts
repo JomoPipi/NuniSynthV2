@@ -13,8 +13,8 @@ const classes =
     ]
 
 type Options = {
-    mousedown? : (e : MouseEvent) => void
-    mouseup? : (e : MouseEvent) => void
+    mousedown? : MouseHandler
+    mouseup? : MouseHandler
 }
 
 export class JsDial {

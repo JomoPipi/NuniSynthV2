@@ -8,8 +8,8 @@
 import { doUntilMouseUp } from "../events/until_mouseup.js"
 
 type Options = {
-    mousedown? : (e : MouseEvent) => void
-    mouseup? : (e : MouseEvent) => void
+    mousedown? : MouseHandler
+    mouseup? : MouseHandler
     CSS_classIndex? : number
 }
 

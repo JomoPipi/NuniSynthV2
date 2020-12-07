@@ -59,8 +59,8 @@ export class NuniGraphController {
     private lastMouse_DownXY : [number,number]
 
     private _keydown : (e : KeyboardEvent) => void
-    private _mouseup : (e : MouseEvent) => void
-    private _mouse_move : (e : MouseEvent) => void
+    private _mouseup : MouseHandler
+    private _mouse_move : MouseHandler
 
     constructor (
         g : NuniGraph, 

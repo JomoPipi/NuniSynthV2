@@ -21,7 +21,7 @@ type UpdateFuncSettings = {
     isLinear : boolean
     width? : number
     height? : number
-    mouseup? : (e : MouseEvent) => void
+    mouseup? : MouseHandler
     }
 
 export function createDraggableNumberInput(

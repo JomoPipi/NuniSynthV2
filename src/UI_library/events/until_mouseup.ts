@@ -5,7 +5,7 @@
 
 
 
-type Handler = (e : MouseEvent) => void
+type Handler = MouseHandler
 
 export function doUntilMouseUp(
     mousemove : Handler, 

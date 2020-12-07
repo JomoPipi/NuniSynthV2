@@ -66,6 +66,7 @@ const TRANSFORMS : [s : string, f : (points : Point[], args : TransformArgs) => 
 const MARGIN = 25
 const POINT_RADIUS = 2
 const LINE_WIDTH = 1
+const closeEnoughToDeleteNeighborPointUponInsertion = 0.1
 
 // const SELECT_MODE = '👉'
 // const FREEHAND_MODE = '✏️'
@@ -76,7 +77,8 @@ const MODES = [0, 1]
 
 export class AutomationPointsEditor {
     points : Point[]
-    mode : number = SELECT_MODE
+    // private modeEngine : ModeEngine
+    private mode : number = SELECT_MODE
     private canvas : HTMLCanvasElement
     private ctx : CanvasRenderingContext2D
     private mouseIsDown = false
@@ -149,15 +151,23 @@ export class AutomationPointsEditor {
         const W = this.canvas.offsetWidth
         this.ctx.clearRect(0, 0, W, H)
         this.drawLines()
-        this.drawPoints()
+        this.drawPoints(W)
         this.drawStats(W, H)
-        if (this.canvasSelectionRange)
-        {
-            this.drawSelectionBox(H, ...this.canvasSelectionRange)
-        }
-        if (this.rangeOfSelectedPoints)
-        {
-            this.drawTransformHandlebars()
+
+        switch (this.mode) {
+            case SELECT_MODE:
+                if (this.canvasSelectionRange)
+                {
+                    this.drawSelectionBox(H, ...this.canvasSelectionRange)
+                }
+                if (this.rangeOfSelectedPoints)
+                {
+                    this.drawTransformHandlebars()
+                }
+                break
+            
+            case FREEHAND_MODE: 
+                break
         }
     }
     
@@ -174,12 +184,17 @@ export class AutomationPointsEditor {
     }
 
     private drawPoints() {
-        const [a, b] = this.rangeOfSelectedPoints || [1e9,-1]
+        const [startIndex, endIndex] = this.rangeOfSelectedPoints || [1e9,-1]
+        const [selectStart, selectEnd] = (this.canvasSelectionRange || [NaN, NaN]).sort((a,b) => a - b)
+        
         for (let i = 0; i < this.points.length; i++)
         {
             const { x, y } = this.points[i]
             const [X, Y] = this.mapPointToCanvasCoordinate(x, y)
-            this.drawPoint(X, Y, a <= i && i <= b ? 'cyan' : 'pink')
+            const color = (startIndex <= i && i <= endIndex) || (selectStart <= X && X <= selectEnd)
+                ? 'cyan' 
+                : 'pink'
+            this.drawPoint(X, Y, color)
         }
     }
 
@@ -188,7 +203,7 @@ export class AutomationPointsEditor {
         this.ctx.arc(X, Y, POINT_RADIUS, 0, TAU)
         this.ctx.closePath()
         this.ctx.stroke()
-        this.ctx.fillStyle = color 
+        this.ctx.fillStyle = color
         this.ctx.fill()
     }
 
@@ -218,7 +233,8 @@ export class AutomationPointsEditor {
         {
             if (x <= this.points[i].x)
             {
-                this.points.splice(i, 0, { x, y })
+                const toDelete = +(Math.abs(x - this.points[i].x) < closeEnoughToDeleteNeighborPointUponInsertion)
+                this.points.splice(i, toDelete, { x, y })
                 this.render()
                 return i
             }
@@ -292,7 +308,98 @@ export class AutomationPointsEditor {
 
 
 
-    //** Selection / Transform Mode
+    //** MouseHandlers
+    private mousedown(e : MouseEvent) {
+        const [x, y] = [e.offsetX, e.offsetY]
+        const msg = this.lastMousedownMsg = this.getCanvasTarget(x,  y)
+        this.canvasSelectionRange = undefined
+        this.draggingPoint = -1
+        this.mouseIsDown = true
+
+        switch (this.mode) {
+            case SELECT_MODE: this.SELECT_MODE_mousedown(msg); break
+            case FREEHAND_MODE: this.FREEHAND_MODE_mousedown(msg); break
+        }
+    }
+
+    private mousemove(e : MouseEvent) {
+        const { x, y } = this.canvas.getBoundingClientRect()
+        const mouseX = e.clientX - x
+        const mouseY = e.clientY - y
+
+        switch (this.mode) {
+            case SELECT_MODE: this.SELECT_MODE_mousemove(mouseX, mouseY); break
+            case FREEHAND_MODE: this.FREEHAND_MODE_mousemove(mouseX, mouseY); break
+        }
+    }
+
+    private mouseup(e : MouseEvent) {
+        switch (this.mode) {
+            case SELECT_MODE: this.SELECT_MODE_mouseup(); break
+            case FREEHAND_MODE: this.FREEHAND_MODE_mouseup(); break
+        }
+
+        this.canvasSelectionRange = undefined
+        this.mouseIsDown = false
+        this.render()
+    }
+
+
+
+
+    //* SELECT MODE STUFF *//
+    private SELECT_MODE_mousedown(msg : TargetData) {
+        if (msg.type === 'line')
+        {
+            this.rangeOfSelectedPoints = undefined
+            const { x, y } = msg
+            const index = this.insertPoint(x, y)
+            this.draggingPoint = index
+        }
+        else if (msg.type === 'point')
+        {
+            this.rangeOfSelectedPoints = undefined
+            this.draggingPoint = msg.index
+            return
+        }
+        else if (msg.type === 'handlebar')
+        {
+            return
+        }
+        else if (msg.type === 'empty')
+        {
+            this.rangeOfSelectedPoints = undefined
+        }
+        this.render()
+    }
+
+    private SELECT_MODE_mousemove(mouseX : number, mouseY : number) {
+        if (this.lastMousedownMsg.type === 'handlebar')
+        {
+            this.transformSelectedPoints(mouseX, mouseY, this.lastMousedownMsg.index)
+        }
+        else if (this.draggingPoint >= 0) 
+        {
+            this.dragSinglePoint(mouseX, mouseY)
+        }
+        else if (this.mouseIsDown && this.lastMousedownMsg.type === 'empty')
+        {
+            this.canvasSelectionRange = [this.lastMousedownMsg.mouseX, mouseX]
+        }
+        else
+        {
+            return;
+        }
+        this.render()
+    }
+
+    private SELECT_MODE_mouseup() {
+        if (this.lastMousedownMsg.type === "empty" && this.canvasSelectionRange)
+        {
+            this.selectPointsInRange()
+        }
+    }
+
     private drawSelectionBox(H : number, startMouseX : number, currentMouseX : number) {
         this.ctx.fillStyle = 'rgba(255,255,0,0.1)'
         this.ctx.fillRect(startMouseX, 0, currentMouseX - startMouseX, H)
@@ -321,74 +428,6 @@ export class AutomationPointsEditor {
             points.push([x - xgap * i, dy + max, TRANSFORMS[i][0]] as [number,number,string])
         }
         return points
-    }
-
-    private mousedown(e : MouseEvent) {
-        const [x, y] = [e.offsetX, e.offsetY]
-        const msg = this.lastMousedownMsg = this.getCanvasTarget(x,  y)
-        this.canvasSelectionRange = undefined
-        this.draggingPoint = -1
-        this.mouseIsDown = true
-        // this.lastMousedownX = x
-        // this.lastMousedownY = y
-
-        if (msg.type === 'line')
-        {
-            this.rangeOfSelectedPoints = undefined
-            const { x, y } = msg
-            const index = this.insertPoint(x, y)
-            this.draggingPoint = index
-        }
-        else if (msg.type === 'point')
-        {
-            this.rangeOfSelectedPoints = undefined
-            this.draggingPoint = msg.index
-            return
-        }
-        else if (msg.type === 'handlebar')
-        {
-            return
-        }
-        else if (msg.type === 'empty')
-        {
-            this.rangeOfSelectedPoints = undefined
-        }
-        this.render()
-    }
-
-    private mousemove(e : MouseEvent) {
-        const { x, y } = this.canvas.getBoundingClientRect()
-        const mouseX = e.clientX - x
-        const mouseY = e.clientY - y
-
-        if (this.lastMousedownMsg.type === 'handlebar')
-        {
-            this.transformSelectedPoints(mouseX, mouseY, this.lastMousedownMsg.index)
-        }
-        else if (this.draggingPoint >= 0) 
-        {
-            this.dragSinglePoint(mouseX, mouseY)
-        }
-        else if (this.mouseIsDown && this.lastMousedownMsg.type === 'empty')
-        {
-            this.canvasSelectionRange = [this.lastMousedownMsg.mouseX, mouseX]
-        }
-        else
-        {
-            return;
-        }
-
-        this.render()
-    }
-
-    private mouseup(e : MouseEvent) {
-        if (this.lastMousedownMsg.type === "empty" && this.canvasSelectionRange)
-        {
-            this.selectPointsInRange()
-        }
-        this.canvasSelectionRange = undefined
-        this.mouseIsDown = false
-        this.render()
     }
 
     private selectPointsInRange() {
@@ -473,10 +512,7 @@ export class AutomationPointsEditor {
     }
 
     private transformSelectedPoints(currentMouseX : number, currentMouseY : number, index : number) {
-        // const realH = this.canvas.offsetHeight - MARGIN * 2
-        // const realW = this.canvas.offsetWidth - MARGIN * 2
-        // const dx = movementX / realW
-        // const dy = movementY / realH
+        
         if (this.lastMousedownMsg.type !== 'handlebar') throw 'Someone is not using this method properly'
         const { mouseX, mouseY, snapshotOfPoints: points, snapshotOfSelectedRange } = this.lastMousedownMsg
         const [x1, y1] = this.mapCanvasCoordinateToPoint(mouseX, mouseY)
@@ -504,5 +540,23 @@ export class AutomationPointsEditor {
 
         this.rangeOfSelectedPoints = [leftPoints.length, leftPoints.length + newPoints.length - 1]
         this.points = leftPoints.concat(newPoints).concat(rightPoints)
+    }
+
+
+
+
+    //* FREEHAND MODE STUFF *//
+    private FREEHAND_MODE_mousedown(msg : TargetData) {
+        const { mouseX, mouseY } = msg
+        const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, mouseY)
+
+    }
+
+    private FREEHAND_MODE_mousemove(mouseX : number, mouseY : number) {
+
+    }
+
+    private FREEHAND_MODE_mouseup() {
+        
     }
 }

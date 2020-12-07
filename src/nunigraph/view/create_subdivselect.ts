@@ -144,8 +144,8 @@ export function createSubdivSelect2(fn? : (value : number) => void) {
 
 
 type Options3 = {
-    mousedown? : (e : MouseEvent) => void
-    mouseup? : (e : MouseEvent) => void
+    mousedown? : MouseHandler
+    mouseup? : MouseHandler
 }
 
 export function createSubdivSelect3(initialValue : number, updateFn : (value : number) => void, options? : Options3) {
