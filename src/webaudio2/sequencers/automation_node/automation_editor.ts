@@ -67,14 +67,22 @@ const MARGIN = 25
 const POINT_RADIUS = 2
 const LINE_WIDTH = 1
 
+// const SELECT_MODE = '👉'
+// const FREEHAND_MODE = '✏️'
+
+export enum MODES {
+    SELECT_MODE,
+    FREEHAND_MODE
+}
+
 export class AutomationPointsEditor {
     points : Point[]
+    mode : MODES = MODES.SELECT_MODE
     private canvas : HTMLCanvasElement
     private ctx : CanvasRenderingContext2D
     private controllerHTML? : HTMLElement
     private draggingPoint = -1
     private lastMousedownMsg : TargetData = { type: 'empty', mouseX: 0, mouseY: 0 }
-    private lastMouse_moveMsg : TargetData = { type: 'empty', mouseX: 0, mouseY: 0 }
     private mouseIsDown = false
     private canvasSelectionRange? : [number, number]
     private rangeOfSelectedPoints? : [number, number]
@@ -124,6 +132,15 @@ export class AutomationPointsEditor {
         }
         return this.controllerHTML
     }
+
+    setMode(mode : number) {
+        this.mode = mode
+        this.rangeOfSelectedPoints = undefined
+        this.render()
+    }
+
+
+
 
     private render() {
         this.ctx.strokeStyle =
@@ -258,8 +275,6 @@ export class AutomationPointsEditor {
             const { x, y } = msg
             const index = this.insertPoint(x, y)
             this.draggingPoint = index
-            this.render()
-            return
         }
         else if (msg.type === 'point')
         {
@@ -269,12 +284,13 @@ export class AutomationPointsEditor {
         }
         else if (msg.type === 'handlebar')
         {
-            // msg.index is the transform index
+            return
         }
-        else
+        else if (msg.type === 'empty')
         {
             this.rangeOfSelectedPoints = undefined
         }
+        this.render()
     }
 
     private mousemove(e : MouseEvent) {

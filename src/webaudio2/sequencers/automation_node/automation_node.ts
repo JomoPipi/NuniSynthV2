@@ -7,7 +7,7 @@
 
 import { createSubdivSelect3 } from "../../../nunigraph/view/create_subdivselect.js"
 import { AutomationPointsEditor } from "./automation_editor.js"
-import { JsDial } from "../../../UI_library/internal.js"
+import { createRadioButtonGroup, JsDial } from "../../../UI_library/internal.js"
 import { VolumeNodeContainer } from "../../volumenode_container.js"
 
 export class AutomationNode extends VolumeNodeContainer {
@@ -21,7 +21,7 @@ export class AutomationNode extends VolumeNodeContainer {
 
     private durationOfLoop = -1
     private nMeasures = 1
-    private controller = new AutomationPointsEditor()
+    private pointEditor = new AutomationPointsEditor()
 
     constructor(ctx : AudioContext) {
         super(ctx)
@@ -30,7 +30,7 @@ export class AutomationNode extends VolumeNodeContainer {
     }
 
     getController() {
-        const nodeCanvas = this.controller.getController()
+        const nodeCanvas = this.pointEditor.getController()
 
         const progressLine = E('canvas')
         drawProgressLine : {
@@ -65,7 +65,14 @@ export class AutomationNode extends VolumeNodeContainer {
             phaseShifter.append(percent, control)
             }
 
-        const hardwareControls = E('div', { className: 'space-evenly', children: [subdivSelect, phaseShifter] })
+        const modeSelect = createRadioButtonGroup(
+            { buttons: ['👉', '✏️']
+            , selected: 0
+            , className: 'top-bar-btn'
+            , onclick: (_, index) => this.pointEditor.setMode(index)
+            })
+
+        const hardwareControls = E('div', { className: 'space-evenly', children: [subdivSelect, phaseShifter, modeSelect] })
 
         const controller = E('div', { children: [nodeCanvas, progressLine, hardwareControls] })
         return controller
@@ -121,7 +128,7 @@ export class AutomationNode extends VolumeNodeContainer {
         this.updateProgressLine(percentage)
         while (this.measureTime < currentTime + 0.200) 
         {
-            for (const { x, y } of this.controller.points)
+            for (const { x, y } of this.pointEditor.points)
             {
                 const autoTime = this.measureTime + x * this.durationOfLoop + phase
                 this.volumeNode.gain.linearRampToValueAtTime(y, autoTime)
