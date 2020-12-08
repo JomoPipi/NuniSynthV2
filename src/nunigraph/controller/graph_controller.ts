@@ -291,7 +291,7 @@ export class NuniGraphController {
         // If window is already open, move it to the top
         if (this.getOpenWindow[node.id]) 
         {
-            moveTheWindowToTheTop(this.getOpenWindow[node.id])
+            moveTheWindowToTheTop(this.getOpenWindow[node.id], node)
             return;
         }
 
@@ -380,7 +380,7 @@ export class NuniGraphController {
         dialogBoxesContainer.appendChild(dialogBox)
 
         // Place diaglogBox:
-        moveTheWindowToTheTop(dialogBox)
+        moveTheWindowToTheTop(dialogBox, node)
         if (this.lastNodeWindowPosition[node.id]) 
         {
             // Place it where it was:
@@ -404,8 +404,24 @@ export class NuniGraphController {
 
         const _this = this
 
-        function moveTheWindowToTheTop(box : HTMLElement) {
-            box.style.zIndex = (++DIRTYGLOBALS.RISING_GLOBAL_Z_INDEX).toString()
+        function moveTheWindowToTheTop(box : HTMLElement, node : NuniGraphNode) {
+            if (!is(node,NodeTypes.MODULE))
+            {
+                box.style.zIndex = (++DIRTYGLOBALS.RISING_GLOBAL_Z_INDEX).toString()
+            }
+            else
+            {
+                const oldzi = +box.style.zIndex
+                const newzi = ++DIRTYGLOBALS.RISING_GLOBAL_Z_INDEX
+                const delta = newzi - oldzi
+                box.style.zIndex = newzi.toString()
+                const openChildWindow = node.audioNode.controller.getOpenWindow
+                for (const id in openChildWindow)
+                {
+                    openChildWindow[id].style.zIndex = 
+                        (+openChildWindow[id].style.zIndex + delta).toString()
+                }
+            }
         }
 
         function closeCallback() {
@@ -418,7 +434,7 @@ export class NuniGraphController {
         }
 
         function clickCallback(box : HTMLElement) {
-            moveTheWindowToTheTop(box)
+            moveTheWindowToTheTop(box, node)
 
             if (SelectWhenDialogBoxIsClicked[node.type])
             {
