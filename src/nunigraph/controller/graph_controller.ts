@@ -418,7 +418,7 @@ export class NuniGraphController {
                 const openChildWindow = node.audioNode.controller.getOpenWindow
                 for (const id in openChildWindow)
                 {
-                    openChildWindow[id].style.zIndex = 
+                    openChildWindow[id].style.zIndex =
                         (+openChildWindow[id].style.zIndex + delta).toString()
                 }
             }
