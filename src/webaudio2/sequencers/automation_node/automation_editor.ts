@@ -553,7 +553,6 @@ export class AutomationPointsEditor {
     //* FREEHAND MODE STUFF *//
 
     // Prevents points from being too dense:
-    private readonly freehandXGap = 2 ** -5
     private lastInsertedX = -1
 
     private FREEHAND_MODE_mousedown(msg : TargetData) {
@@ -563,9 +562,11 @@ export class AutomationPointsEditor {
         this.render()
     }
 
+    private FREEHAND_MODE_iterations = 0
     private FREEHAND_MODE_mousemove(mouseX : number, mouseY : number) {
         const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, mouseY)
-        if (Math.abs(this.lastInsertedX - x) > this.freehandXGap)
+        const TICK = 1
+        if (this.FREEHAND_MODE_iterations++ % TICK === 0)
         {
             const nextX = clamp(0, x, 1)
             const [a, b] = [this.lastInsertedX, nextX].sort((a, b) => a - b)
@@ -577,5 +578,40 @@ export class AutomationPointsEditor {
         this.render()
     }
 
-    private FREEHAND_MODE_mouseup() {}
+    private FREEHAND_MODE_mouseup() {
+        // Optimize points:
+        // For each three consecutive points
+        // if the distance from the middle point 
+        // to the line made by the other two
+        // differs by less than a certain amount
+        // then we delete it
+        // repeat the process until no more points need to be deleted
+        const optimizePoints = () => {
+            const threshold = 0.01
+            const toDelete = {} as Record<number, true>
+            let goAgain = false
+            for (let i = 0; i < this.points.length - 2; i++)
+            {
+                const [p1, { x, y }, p3] = this.points.slice(i)
+                // Line 1:
+                const m1 = (p1.y - p3.y) / (p1.x - p3.x)
+                const b1 = p1.y - m1 * p1.x
+                // Line 2:
+                const m2 = -1 / m1
+                const b2 = y - m2 * x
+                // Solution:
+                const X = (b1 - b2) / (m2 - m1)
+                const Y = m1 * X + b1
+    
+                if (distance(x, y, X, Y) < threshold)
+                {
+                    toDelete[++i] = goAgain = true
+                }
+            }
+            this.points = this.points.filter((_,i) => !toDelete[i])
+            if (goAgain) optimizePoints()
+        }
+        optimizePoints()
+        this.render()
+    }
 }

@@ -418,8 +418,10 @@ export class NuniGraphController {
                 const openChildWindow = node.audioNode.controller.getOpenWindow
                 for (const id in openChildWindow)
                 {
-                    openChildWindow[id].style.zIndex =
-                        (+openChildWindow[id].style.zIndex + delta).toString()
+                    const newzi = +openChildWindow[id].style.zIndex + delta
+                    openChildWindow[id].style.zIndex = newzi.toString()
+                    DIRTYGLOBALS.RISING_GLOBAL_Z_INDEX = 
+                        Math.max(newzi, DIRTYGLOBALS.RISING_GLOBAL_Z_INDEX)
                 }
             }
         }
