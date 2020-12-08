@@ -124,7 +124,7 @@ export class AutomationPointsEditor {
 
             this.canvas.ondblclick = e => {
                 const t = this.getCanvasTarget(e.offsetX, e.offsetY)
-                if (t.type === 'point')
+                if (t.type === 'point' && 0 < t.index && t.index < this.points.length - 1)
                 {
                     this.points.splice(t.index, 1)
                     this.render()
@@ -248,7 +248,7 @@ export class AutomationPointsEditor {
     }
     
     private getCanvasTarget(mouseX : number, mouseY : number) : TargetData {
-        const points = this.points.map(({x, y}) => this.mapPointToCanvasCoordinate(x, y))
+        const points = this.points.map(({ x, y }) => this.mapPointToCanvasCoordinate(x, y))
         const TOLERANCE = 2
 
         // Check for handlebar hit if points are selected:
@@ -286,22 +286,25 @@ export class AutomationPointsEditor {
         // Check for line hit:
         for (let i = 0; i < points.length-1; i++)
         {
-            const [x2, y2] = points[i+1]
-            if (mouseX >= x2) continue
-            const [x1, y1] = points[i]
+            const [[x1, y1], [x2, y2]] = points.slice(i)
+            if (mouseX < x1 || mouseX > x2) continue
+            // Line 1:
+            const m1 = (y1 - y2) / (x1 - x2)
+            const b1 = y1 - m1 * x1
+            // Line 2:
+            const m2 = -1 / m1
+            const b2 = mouseY - m2 * mouseX
+            // Solution:
+            const X = (b1 - b2) / (m2 - m1)
+            const Y = m1 * X + b1
 
-            const m = (y1 - y2) / (x1 - x2)
-            const b = y1 - m * x1
-            const Y = m * mouseX + b
-            const X = (mouseY - b) / m
+            const [distanceToLine, _y] = m1 === 0
+                ? [Math.abs(mouseY - y1), y1] 
+                : [distance(mouseX, mouseY, X, Y), Y]
 
-            const distanceToLine = m > 1
-                ? Math.abs(X - mouseX)
-                : Math.abs(Y - mouseY)
-            
             if (distanceToLine <= LINE_WIDTH + TOLERANCE)
             {
-                const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, Y)
+                const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, _y)
                 return { type: 'line', index: i, x, y, mouseX, mouseY }
             }
         }
