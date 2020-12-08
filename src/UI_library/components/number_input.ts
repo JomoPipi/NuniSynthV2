@@ -24,6 +24,9 @@ type UpdateFuncSettings = {
     mouseup? : MouseHandler
     }
 
+const myToFixed = (value : number) => 
+    value.toFixed(clamp(0, 3 - Math.ceil(Math.log10(Math.abs(value))), 9))
+
 export function createDraggableNumberInput(
     initialValue : number, 
     mousedownFunc : () => number,
@@ -176,16 +179,12 @@ export function createNumberDialComponent3(
     dial.sensitivity = settings.amount
     dial.rounds = rounds
     dial.render()
-
-    // const valueText = E('span', 
-    //     { text: `${volumeTodB(value).toFixed(1)}dB` })
     
-
     const valueInput = E('input', 
         { className: 'number-input-2'
         , props: 
             { type: 'number'
-            , value: initialValue
+            , value: myToFixed(initialValue)
             }
         })
 
@@ -199,8 +198,7 @@ export function createNumberDialComponent3(
     dial.attach((v : number) => {
         const value = mapValue(v)
         callback(value)
-        const precision = clamp(0, 3 - Math.ceil(Math.log10(Math.abs(value))), 9)
-        valueInput.value = value.toFixed(precision)
+        valueInput.value = myToFixed(value)
     }, { mouseup: settings.mouseup })
     // if (!options.something)
     // {
