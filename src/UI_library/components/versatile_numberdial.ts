@@ -16,7 +16,8 @@ import { createNumberDialComponent3 } from './number_input.js'
 
 type AdditionalArgs = {
     fn : (value : number | string) => void
-    mapStringToNumber : (s : string) => number
+    mapStringToNumber : Record<string, number>
+    mapNumberToString : (n : number) => string
     discreteDial?: { 
         discreteModeTickFactor : number
     }
@@ -28,6 +29,7 @@ type AdditionalArgs = {
     }
     mousedown? : MouseHandler
     mouseup? : MouseHandler
+    forceMode? : 'discrete' | 'continuous'
 }
 
 export function createVersatileNumberDialComponent(
@@ -48,21 +50,43 @@ export function createVersatileNumberDialComponent(
  *
  * **/
     const { min, max } = options.continuousDial
-    const numvalue = typeof initialValue === 'number' ? initialValue : options.mapStringToNumber(initialValue)
-    const strindex = typeof initialValue === 'string' ? optionList.indexOf(initialValue) : 0
-    const continunousModeComponent = createNumberDialComponent3(numvalue, options.fn, { min, max, amount: 2**-8, isLinear: false, mouseup: options.mouseup }, 1)
+    const numvalue = typeof initialValue === 'number' ? initialValue : options.mapStringToNumber[initialValue]
+    const strindex = optionList.indexOf(typeof initialValue === 'string' ? initialValue : options.mapNumberToString(initialValue))
+    const continunousModeComponent = createNumberDialComponent3(numvalue, options.fn, 
+        { min, max, amount: 2**-8, isLinear: false, mouseup: options.mouseup }, 1)
 
     const discreteModeComponent = createDiscreteDialComponent(strindex, optionList, options.fn, { mouseup: options.mouseup })
 
-    ;(typeof initialValue === 'number' ? discreteModeComponent : continunousModeComponent).container.classList.toggle('hide')
-    
     const toggle = E('input', { className: 'toggle0' }); toggle.type = 'checkbox'
     const children = [continunousModeComponent.container, discreteModeComponent.container, toggle]
     const box = E('div', { children })
 
+    if (typeof initialValue === 'number') setContinuousMode(true)
+    
+    if (options.forceMode === 'continuous' && typeof initialValue === 'string')
+    {
+        setContinuousMode(true)
+    }
+    else if (options.forceMode === 'discrete' && typeof initialValue === 'number')
+    {
+        setContinuousMode(false)
+    }
+
     toggle.oninput = () => {
-        discreteModeComponent.container.classList.toggle('hide', !toggle.checked)
-        continunousModeComponent.container.classList.toggle('hide', toggle.checked)
+        setContinuousMode(toggle.checked)
+    }
+
+    function setContinuousMode(yes : boolean) {
+        if (yes) 
+        {
+            continunousModeComponent.setValue(options.mapStringToNumber[optionList[discreteModeComponent.getIndex()]])
+        }
+        else
+        {
+            discreteModeComponent.setIndex(optionList.indexOf(options.mapNumberToString(continunousModeComponent.getValue())))
+        }
+        discreteModeComponent.container.classList.toggle('hide', toggle.checked = yes)
+        continunousModeComponent.container.classList.toggle('hide', !yes)
     }
 
     return box

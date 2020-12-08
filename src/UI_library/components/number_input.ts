@@ -217,7 +217,11 @@ export function createNumberDialComponent3(
         , setValue(n : number) 
             {
                 dial.update(unmapValue(n))
-            } 
+            }
+        , getValue()
+            {
+                return mapValue(dial.value)
+            }
         }
 
     return component

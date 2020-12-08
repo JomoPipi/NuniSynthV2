@@ -22,19 +22,23 @@ export function createDiscreteDialComponent(
     const textBox = E('div', { className: 'number-input-2', text: optionList[initialIndex] })
     const dial = new DiscreteDial(optionList.length, options)
 
-        dial.value = initialIndex
-
         dial.onrotation(i => {
             fn(optionList[i])
             textBox.innerText = optionList[i]
         })
+
+        dial.update(initialIndex)
 
     const container = E('div', 
         { className: 'number-dial-container'
         , children: [textBox, dial.html]
         })
 
-    return { container }
+    return (
+        { container
+        , getIndex() { return dial.value }
+        , setIndex(i : number) { dial.update(i) }
+        })
 }
 
 const classes = 
