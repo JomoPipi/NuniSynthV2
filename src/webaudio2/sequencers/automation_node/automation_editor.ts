@@ -602,8 +602,11 @@ export class AutomationPointsEditor {
                 // Solution:
                 const X = (b1 - b2) / (m2 - m1)
                 const Y = m1 * X + b1
-    
-                if (distance(x, y, X, Y) < threshold)
+
+                const distanceToLine = m1 === 0
+                    ? Math.abs(y - p1.y) 
+                    : distance(x, y, X, Y)
+                if (distanceToLine < threshold)
                 {
                     toDelete[++i] = goAgain = true
                 }
