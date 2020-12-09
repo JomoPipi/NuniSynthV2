@@ -5,10 +5,10 @@
 
 
 
-import { Sequencer, SampleSequencer, MasterClock } from '../../webaudio2/internal.js'
+import { Sequencer, SampleSequencer, MasterClock } from '../internal.js'
 import { createToggleButton, createRadioButtonGroup, createNumberDialComponent, JsDial } from '../../UI_library/internal.js'
-import { createSubdivSelect, createSubdivSelect3 } from './create_subdivselect.js'
-import { renderADSR } from '../../webaudio2/adsr.js'
+import { createSubdivSelect3 } from '../../nunigraph/view/create_subdivselect.js'
+import { renderADSR } from '../adsr.js'
 
 export function sequencerControls(an : Sequencer) {
 
@@ -88,14 +88,11 @@ function createTopRowControls(an : Sequencer) {
     }
 
     changeSubdivision: {
-        // controls.appendChild(createSubdivSelect(an ,
-        //     { fn: _ => an.updateTempo(MasterClock.getTempo())
-        //     , allowFree: true 
-        //     }))
         controls.appendChild(createSubdivSelect3(
             an.subdiv, 
-            value => an.subdiv = value
-            ).container)
+            value => an.subdiv = value,
+            { mouseup() { an.sync() }
+            }).container)
     }
 
     choose_ADSR: {

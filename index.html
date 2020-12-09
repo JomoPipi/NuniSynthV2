@@ -443,37 +443,34 @@
                 </div>
   
                 <div class="builder-section">
-                  Buffer Expression:
+                  Sample Expression:
                   <button id="buffer-formula-templates-button" class="apply-btn" style="float:right"> 
                       Presets 📋 </button>
   
                   <br>
                   <span class="smaller-text">
   
-                      <span class="code2">  n  </span> represents the position of each sample in the buffer.
-                      Samples should be numbers -1 and 1. Use JavaScript
-                        <a 
-                          target="_blank" 
-                          href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators"> 
-                          operators </a> 
-                      and
-                        <a 
-                          target="_blank"
-                          href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math"> 
-                          functions </a>.
+                      <span class="code2">  n  </span> 
+                      represents the position of each sample in the buffer.
+                      Samples should be numbers between 
+                      <span class="code2"> -1 </span> and 
+                      <span class="code2"> 1 </span>. examples and play with the numbers and operators.
+                      <span class="code2"> SAMPLES[A] </span>, 
+                      <span class="code2"> SAMPLES[B] </span>, 
+                      <span class="code2"> SAMPLES[C] </span>, etc. points to stored buffers.
                       <br>
                       
                   </span>
                   
                   <code>
                     for n in range [0, 48000 * seconds]: <br>
-                    &nbsp; &nbsp; samples[n] =
+                    &nbsp; &nbsp; data[n] =
                   </code>
   
                   <input
                       type="text" 
                       id="buffer-formula"
-                      class="text-input-wide center"
+                      class="text-input-wide center buffer-formula"
                       value="sin(n/30) + sin(n/20)"> 
   
                   <button id="apply-buffer-formula" class="apply-btn"> apply </button>

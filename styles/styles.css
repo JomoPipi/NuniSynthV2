@@ -1035,6 +1035,10 @@ code {
   visibility: visible;
 }
 
+.buffer-formula {
+  font-family: Lucida Console;
+}
+
 .adsr-and-kb {
   display: -ms-grid;
   display: grid;

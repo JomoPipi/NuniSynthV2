@@ -6,7 +6,7 @@
 
 
 import { NuniGraphNode } from '../model/nunigraph_node.js'
-import { sequencerControls } from './sequencer_controls.js'
+import { sequencerControls } from '../../webaudio2/sequencers/sequencer_controls.js'
 import { BufferUtils  } from '../../buffer_utils/internal.js'
 import { audioCaptureNodeControls } from './audio_capture_controls.js'
 // import { createResizeableGraphEditor } from './resizeable_graph_editor.js'

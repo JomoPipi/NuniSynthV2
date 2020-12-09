@@ -5,7 +5,7 @@
 
 
 
-import { createNumberDialComponent } from "../../UI_library/internal.js"
+import { createNumberDialComponent, createNumberDialComponent3 } from "../../UI_library/internal.js"
 
 
 
@@ -15,30 +15,51 @@ import { createNumberDialComponent } from "../../UI_library/internal.js"
 
 let activated = false, isPaused = false, _tempo = 69
 let _setTempo = (t : number) => {}
+let _sync = () => {}
 
-const tempoComponent = createNumberDialComponent(
+// const tempoComponent = createNumberDialComponent(
+//     120, 
+//     (value : number) => {
+//         _setTempo(value)
+//         return (_tempo = clamp(1, value, 69420))
+//     },
+//     { dial: 
+//         { sensitivity: 2**-2
+//         , min: 20
+//         , max: 999
+//         , rounds: 8
+//         }
+//     })
+
+const tempoComponent = createNumberDialComponent3(
     120, 
     (value : number) => {
         _setTempo(value)
         return (_tempo = clamp(1, value, 69420))
-    },
-    { dial: 
-        { sensitivity: 2**-2
+    }, 
+        { amount: 1
         , min: 20
         , max: 999
-        , rounds: 8
+        , isLinear: true
+        , mouseup() { _sync() }
         }
-    })
+    , 8)
+
+interface ScheduleArgs {
+    setTempo(tempo : number) : void
+    sync : () => void
+}
 
 export const MasterClock = {
 
-    setSchedule: (scheduleNotes : () => void, setTempo : (tempo : number) => void) => {
+    setSchedule: (scheduleNotes : () => void, { setTempo, sync } : ScheduleArgs) => {
         if (activated) 
         {
             throw 'MasterClock already has a schedule.'
         }
         activated = true
         _setTempo = setTempo
+        _sync = sync
         startScheduling(scheduleNotes)
     },
 
@@ -51,7 +72,7 @@ export const MasterClock = {
 
 MasterClock.setTempo(120)
 
-D('tempo-input-container').appendChild(tempoComponent)
+D('tempo-input-container').appendChild(tempoComponent.container)
 
 function startScheduling(scheduleNotes : () => void) {
 
@@ -74,7 +95,7 @@ function count() {
     if(!start) 
     {
         start = new Date().getTime()
-        tempoComponent.classList.add('selected2')
+        tempoComponent.container.classList.add('selected2')
     } 
     else 
     {
@@ -93,7 +114,7 @@ function count() {
         counter = 0
         delta = 0
         start = 0
-        tempoComponent.classList.remove('selected2')
+        tempoComponent.container.classList.remove('selected2')
     }, 2000)
 }
 tapBtn.addEventListener('click', count)

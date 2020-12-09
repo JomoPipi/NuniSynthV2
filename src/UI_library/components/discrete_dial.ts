@@ -25,7 +25,7 @@ export function createDiscreteDialComponent(
         dial.onrotation(i => {
             fn(optionList[i])
             textBox.innerText = optionList[i]
-        })
+        }, { mouseup: options.mouseup })
 
         dial.update(initialIndex)
 
@@ -45,7 +45,7 @@ const classes =
     [ 'shadow-knob'
     , 'shadow-knob2'
     ]
-
+    
 class DiscreteDial {
     readonly n : number
     value : number = 0
@@ -75,26 +75,27 @@ class DiscreteDial {
         this.update(0)
     }
 
-    onrotation(fn : (index : number ) => void) {
+    onrotation(fn : (index : number ) => void, { mousedown, mouseup } : Options = {}) {
 
-        const mousedown = () => {
+        const _mousedown = (e : MouseEvent) => {
+            mousedown && mousedown(e)
             this.html.requestPointerLock()
             this.render()
         }
         const mousemove = ({ movementX: dx, movementY: dy } : MouseEvent) => {
-            
             this.realValue += -dy + dx
             this.value = Math.round(this.realValue / this.tickLength) % this.n
 
             this.render()
             fn(this.value)
         }
-        const mouseup = (e : MouseEvent) => {
+        const _mouseup = (e : MouseEvent) => {
+            mouseup && mouseup(e)
             requestAnimationFrame(() => // Avoid interrupting double click
             document.exitPointerLock())
         }
 
-        this.dial.onmousedown = doUntilMouseUp(mousemove, { mousedown, mouseup })
+        this.dial.onmousedown = doUntilMouseUp(mousemove, { mousedown: _mousedown, mouseup: _mouseup })
 
         this.update = (value : number) => {
             this.value = value

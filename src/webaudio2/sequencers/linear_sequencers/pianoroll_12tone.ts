@@ -61,8 +61,8 @@ export class PianoRoll12Tone {
     scheduleNotes() {
         this.pianoRoll.scheduleNotes()
     }
-    updateTempo(tempo : number) {
-        this.pianoRoll.updateTempo(tempo)
+    setTempo(tempo : number) {
+        this.pianoRoll.setTempo(tempo)
     }
     play() {
         this.pianoRoll.play(this.ctx, ({ t, g, n } : any) => {
@@ -70,6 +70,7 @@ export class PianoRoll12Tone {
             this.csn.offset.setValueAtTime(0, g)
         })
     }
+    sync() {}
     get MMLString() {
         return this.pianoRoll.getMMLString()
     }

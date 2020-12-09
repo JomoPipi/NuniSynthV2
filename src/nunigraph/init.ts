@@ -104,12 +104,23 @@ Graph_Attachments: {
             }
         }
     },
-    (tempo : number) => {
-        for (const { audioNode: an, type } of yieldNodes(g))
-        {
-            if (IsClockDependent[type]) 
+    {  
+        setTempo: (tempo : number) => {
+            for (const { audioNode: an, type } of yieldNodes(g))
             {
-                an.updateTempo(tempo)
+                if (IsClockDependent[type]) 
+                {
+                    an.setTempo(tempo)
+                }
+            }
+        },
+        sync() {
+            for (const { audioNode: an, type } of yieldNodes(g))
+            {
+                if (IsClockDependent[type] && an.isPlaying) 
+                {
+                    an.sync()
+                }
             }
         }
     })

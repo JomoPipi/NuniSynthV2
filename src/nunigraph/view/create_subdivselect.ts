@@ -38,7 +38,7 @@ const freeTempo = 'Free'
 
 const subdivisionToString = (n : number) => 
     n <= 1 
-        ? `${Math.round(1/n)} bar${n === 1 ? '' : 's'}` 
+        ? `${Math.round(1/n)} bars` 
         : '1/' + n
 
 const makeSubdivisionOption = (n : number) =>

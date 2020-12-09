@@ -13,10 +13,10 @@ import { VolumeNodeContainer } from "../../volumenode_container.js"
 export class AutomationNode extends VolumeNodeContainer {
     ctx : AudioContext
     phaseShift = 0
+    isPlaying = true
     private _nMeasures = 1
     private startTime = 0
     private measureTime = 0
-    private isPlaying = false
     private tempo = 120
     private updateProgressLine = (value : number) => {}
     private durationOfLoop = -1
@@ -58,7 +58,7 @@ export class AutomationNode extends VolumeNodeContainer {
         const subdivSelect = createSubdivSelect3(
             1 / this._nMeasures, 
             value => this.nMeasures = 1 / clamp(1e-9, value, 1e9),
-            { mouseup: () => { this.stop(); this.play() } }
+            { mouseup: () => this.sync() }
             ).container
 
         const phaseShifter = E('div', { text: 'phase' })
@@ -105,9 +105,12 @@ export class AutomationNode extends VolumeNodeContainer {
         node.audioNode.disconnect(this.volumeNode)
     }
 
-    updateTempo(tempo : number) {
+    setTempo(tempo : number) {
         this.tempo = clamp(1, tempo, Infinity)
+        this.durationOfLoop = 60 * 4 * this._nMeasures / this.tempo
+    }
 
+    sync() {
         this.stop()
         this.play()
     }
@@ -116,7 +119,7 @@ export class AutomationNode extends VolumeNodeContainer {
         this.isPlaying = true
         this.startTime = 0
         this.measureTime = 0
-        this.durationOfLoop = 60 * 4 * this.nMeasures / this.tempo
+        this.durationOfLoop = 60 * 4 * this._nMeasures / this.tempo
 
         // Prevent lag during scheduleNotes:
         const t = Math.max(0, this.ctx.currentTime - this.durationOfLoop)

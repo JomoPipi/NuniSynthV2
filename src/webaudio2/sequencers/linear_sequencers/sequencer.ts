@@ -44,6 +44,7 @@ export class Sequencer extends VolumeNodeContainer {
     
     readonly ctx : AudioContext
     protected tick : number
+    private tempo = 120
     HTMLGrid : HTMLElement
     isPlaying : boolean
     windowIsOpen : boolean
@@ -62,7 +63,7 @@ export class Sequencer extends VolumeNodeContainer {
     constructor(ctx : AudioContext) {
         super(ctx)
         this.ctx = ctx
-        this.tick = (60*4 / MasterClock.getTempo()) / this.subdiv
+        this.tick = (60*4 / MasterClock.getTempo()) / this._subdiv
         this.HTMLGrid = createBeatGrid()
         this.isInSync = true
         this.isPlaying = true
@@ -75,32 +76,17 @@ export class Sequencer extends VolumeNodeContainer {
         // this.controls = new SequencerControls(this)
     }
 
-    get subdiv() { return this._subdiv }
-    set subdiv(division : number) { 
-        this._subdiv = division
-        this.updateTempo(MasterClock.getTempo())
+    setTempo(tempo : number) {
+        this.tempo = clamp(1, tempo, Infinity)
+        this.tick = (60 * 4 / tempo) / this._subdiv
     }
 
-    updateTempo(tempo : number) {
-        tempo = clamp(1, tempo, Infinity)
-        const newTick = (60 * 4 / tempo) / this._subdiv
-        
-        if (this.tick !== newTick)
-        {
-            this.tick = newTick
-
-            if (this.isInSync) 
-            {
-                this.stop()
-                this.play()
-            }
-        }
+    set subdiv(subdivision : number) {
+        this._subdiv = subdivision
+        this.tick = (60 * 4 / this.tempo) / this._subdiv
     }
-
-    createStepRow() {
-        const row = Array(this.nSteps).fill(0)
-        row[0] = 1
-        return row
+    get subdiv() {
+        return this._subdiv
     }
 
     updateSteps(nSteps : number) {
@@ -114,6 +100,11 @@ export class Sequencer extends VolumeNodeContainer {
         this.nSteps = nSteps
     }
 
+    sync() {
+        this.stop()
+        this.play()
+    }
+
     play() {
         this.isPlaying = true
         this.noteTime = 0
@@ -124,8 +115,21 @@ export class Sequencer extends VolumeNodeContainer {
             const measureLength = this.tick * this.nSteps
             const t = Math.max(0, this.ctx.currentTime - measureLength)
             this.startTime = 0
-            this.noteTime = Math.floor(t / measureLength) * measureLength
+            this.noteTime = Math.floor(t / measureLength) * (measureLength-1)
         }
+    }
+
+    stop() {
+        this.isPlaying = false
+
+        for (const key in this.HTMLBoxes) 
+        {
+            for (const step in this.HTMLBoxes[key]) 
+            {
+                this.HTMLBoxes[key][step].classList.remove('highlighted')
+            }
+        }
+        // this.controls.unhighlightGrid()
     }
 
     scheduleNotes() {
@@ -190,21 +194,14 @@ export class Sequencer extends VolumeNodeContainer {
         throw 'Implement this in a concrete class.'
     }
 
-    stop() {
-        this.isPlaying = false
-
-        for (const key in this.HTMLBoxes) 
-        {
-            for (const step in this.HTMLBoxes[key]) 
-            {
-                this.HTMLBoxes[key][step].classList.remove('highlighted')
-            }
-        }
-        // this.controls.unhighlightGrid()
-    }
-
     refresh() {
         this.setupGrid()
+    }
+
+    createStepRow() {
+        const row = Array(this.nSteps).fill(0)
+        row[0] = 1
+        return row
     }
 
     setupGrid() {

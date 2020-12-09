@@ -19,7 +19,7 @@ export function formulateBuffer(index : number) {
 
     const buffer = audioCtx
         .createBuffer(
-            2, 
+            1, 
             audioCtx.sampleRate * seconds, 
             audioCtx.sampleRate)
     
@@ -37,7 +37,6 @@ export function formulateBuffer(index : number) {
         BufferUtils.refreshAffectedBuffers()
         BufferUtils.updateBufferUI()
     }
-    
 
     function validateExp(expression : string) {
         const 
@@ -47,20 +46,31 @@ export function formulateBuffer(index : number) {
             , LOG2E, max, min, pow, round, sign, SQRT1_2, SQRT2
             , tanh, trunc
             } = Math
+
         try 
         {
             eval(`
                 for (let channel = 0; channel < buffer.numberOfChannels; channel++) 
                 {  
                     const nowBuffering = buffer.getChannelData(channel)
-                    for (let n = 1; n < buffer.length; n++) 
+                    const L = buffer.length
+                    for (let n = 1; n < L; n++) 
                     {
                         nowBuffering[n] = clamp(-1, ${expression}, 1)
+                    }
+                    
+                    // Reduce clipping by curving the ends
+                    const amount = 500
+                    for (let n = 1; n < amount; n++)
+                    {
+                        const value = (n / amount) ** 0.75
+                        nowBuffering[n] *= value
+                        nowBuffering[L-n] *= value
                     }
                 }
             `)
         }
-        catch (e) 
+        catch (e)
         {
             return e
         }

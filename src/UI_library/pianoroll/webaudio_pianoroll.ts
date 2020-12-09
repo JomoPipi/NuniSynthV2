@@ -152,7 +152,7 @@ class Pianoroll extends HTMLElement {
         this.locate=function(tick){
             this.cursor=tick;
         };
-        this.updateTempo = (tempo) => {
+        this.setTempo = (tempo) => {
             this.tempo = tempo
         }
         this.updateTimer=function(){
