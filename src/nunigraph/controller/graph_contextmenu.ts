@@ -58,6 +58,7 @@ function createNode<T extends NodeTypes>(type : T, e : MouseEvent) : NuniGraphNo
                 .parentNode.parentNode
                 .parentNode.parentNode
                 .parentNode // TODO: clean this line up...
+        //* This can be fixed by creating the container in the controller and holding a reference to it
 
         // In the top right corner of the contextmenu?
         // node.x = clamp(0, (contextmenu.offsetLeft - offsetLeft) / offsetWidth, 1)

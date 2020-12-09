@@ -6,7 +6,7 @@
 
 
 import { NuniGraphRenderer, HOVER, HoverResponse } from '../view/graph_renderer.js'
-import { NuniGraphAudioNode } from '../../webaudio2/internal.js'
+import { AutomationNode, NuniGraphAudioNode } from '../../webaudio2/internal.js'
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { NuniGraph } from '../model/nunigraph.js'
 import { clipboard } from './clipboard.js'
@@ -477,6 +477,7 @@ export class NuniGraphController {
         const node = this.g.nodes.find(({ id: _id }) => _id === id)!
         if (!node) throw 'Figure out what to do from here'
 
+        // TODO: add HasADialogBoxCloseFunction config object for these cases:
         if (node.audioNode instanceof NuniGraphAudioNode) 
         {
             const controller = node.audioNode.controller
@@ -486,6 +487,10 @@ export class NuniGraphController {
                 ActiveControllers.splice(index, 1)
                 node.audioNode.deactivateWindow()
             }
+        }
+        else if (node.audioNode instanceof AutomationNode)
+        {
+            node.audioNode.deactivateWindow()
         }
 
         const nodeWindow = this.getOpenWindow[id]

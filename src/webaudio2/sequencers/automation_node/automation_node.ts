@@ -7,7 +7,7 @@
 
 import { createSubdivSelect3 } from "../../../nunigraph/view/create_subdivselect.js"
 import { AutomationPointsEditor } from "./automation_editor.js"
-import { createRadioButtonGroup, JsDial } from "../../../UI_library/internal.js"
+import { createRadioButtonGroup } from "../../../UI_library/internal.js"
 import { VolumeNodeContainer } from "../../volumenode_container.js"
 
 export class AutomationNode extends VolumeNodeContainer {
@@ -21,6 +21,7 @@ export class AutomationNode extends VolumeNodeContainer {
     private updateProgressLine = (value : number) => {}
     private durationOfLoop = -1
     private pointEditor = new AutomationPointsEditor()
+    private dialogBoxIsOpen = false
 
     constructor(ctx : AudioContext) {
         super(ctx)
@@ -37,16 +38,17 @@ export class AutomationNode extends VolumeNodeContainer {
     }
 
     getController() {
+        this.dialogBoxIsOpen = true
         const nodeCanvas = this.pointEditor.getController()
 
         const progressLine = E('canvas')
-        drawProgressLine : {
+        drawProgressLine: {
+            const ctx = progressLine.getContext('2d')!
             const h = 2
             progressLine.style.display = 'block'
             progressLine.height = h
             
             this.updateProgressLine = v => {
-                const ctx = progressLine.getContext('2d')!
                 ctx.fillStyle = '#AB6'
                 ctx.clearRect(0, 0, progressLine.width, h)
                 ctx.fillRect(0, 0, progressLine.width * v, h)
@@ -91,6 +93,10 @@ export class AutomationNode extends VolumeNodeContainer {
         return controller
     }
 
+    deactivateWindow() {
+        this.dialogBoxIsOpen = false
+    }
+
     addInput(node : Indexed) {
         node.audioNode.connect(this.volumeNode)
     }
@@ -133,7 +139,10 @@ export class AutomationNode extends VolumeNodeContainer {
         const currentTime = time - this.startTime + phase
         const percentage = 1 - (this.measureTime - currentTime - 0.200) / this.durationOfLoop
         // TODO: check if window is open before doing this:
-        this.updateProgressLine(percentage)
+        if (this.dialogBoxIsOpen)
+        {
+            this.updateProgressLine(percentage)
+        }
         while (this.measureTime < currentTime + 0.200) 
         {
             for (const { x, y } of this.pointEditor.points)

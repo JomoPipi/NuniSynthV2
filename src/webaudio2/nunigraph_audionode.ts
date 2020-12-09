@@ -22,7 +22,7 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
     canvas : HTMLCanvasElement
     controller : NuniGraphController
     inputs : Indexed // NuniGraphNode<GAIN>
-    private _windowIsOpen : boolean
+    private dialogBoxIsOpen : boolean
 
     constructor(ctx : AudioContext) {
         super(ctx) 
@@ -34,18 +34,18 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
             throw 'Why is create controller undefined'
 
         this.inputs = {}
-        this._windowIsOpen = false
+        this.dialogBoxIsOpen = false
     }
 
     activateWindow() {
         this.controller.activateEventHandlers()
-        this._windowIsOpen = true
+        this.dialogBoxIsOpen = true
     }
 
     deactivateWindow() {
         this.controller.deactivateEventHandlers()
         this.controller.closeAllWindows()
-        this._windowIsOpen = false
+        this.dialogBoxIsOpen = false
     }
 
     get graphCode() {
@@ -82,7 +82,7 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
             
             audioNode.connect(inputNode.audioNode)
         }
-        if (this._windowIsOpen) 
+        if (this.dialogBoxIsOpen) 
         {
             this.controller.renderer.render()
         }
@@ -95,7 +95,7 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
         this.controller.g.deleteNode(inputNode) // NuniGraphNode
         delete this.inputs[id]
         
-        if (this._windowIsOpen)
+        if (this.dialogBoxIsOpen)
         {
             this.controller.renderer.render()
         }
@@ -122,7 +122,7 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
         {
             throw 'inputNode should be there'
         }
-        if (this._windowIsOpen) 
+        if (this.dialogBoxIsOpen) 
         {
             this.controller.renderer.render()
         }
