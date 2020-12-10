@@ -41,7 +41,16 @@ pageGroupify(D('scale-kinds'), [
 
     D('info-button').onclick = () => {
         const showMenu = container.classList.toggle('show')
-        container.onclick = showMenu ? clickInsideContainer : null
+        if (showMenu)
+        {
+            container.onclick = clickInsideContainer
+            container.style.zIndex = 
+                (++DIRTYGLOBALS.RISING_GLOBAL_Z_INDEX).toString()
+        }
+        else
+        {
+            container.onclick = null
+        }
     }
 
     function clickInsideContainer(e : MouseEvent) {
