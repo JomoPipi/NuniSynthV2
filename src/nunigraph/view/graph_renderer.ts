@@ -18,6 +18,10 @@ export type HoverResponse
     | { type : HOVER.CONNECTION, node? : null, connectionId : string }
     | { type : HOVER.EMPTY, node? : null, connectionId? : never }
 
+const is
+    = <T extends NodeTypes>(node : NuniGraphNode, type : T) 
+    : node is NuniGraphNode<T> => node.type === type
+
 type GraphRenderOptions = {
     H : number
     W : number
@@ -458,7 +462,7 @@ export class NuniGraphRenderer {
                 ctx.fillStyle = '#FFF'
                 ctx.font = '30px Arial'
                 const icon = NodeTypeGraphIcon[node.type]
-                if (node.type === NodeTypes.OSC)
+                if (is(node, NodeTypes.OSC))
                 {
                     const img = GraphIconImageObjects[node.audioNode.type]
                     ctx.drawImage(img, X - 20, Y - 16);

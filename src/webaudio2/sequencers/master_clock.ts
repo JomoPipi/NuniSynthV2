@@ -46,13 +46,14 @@ const tempoComponent = createNumberDialComponent3(
     , 8)
 
 interface ScheduleArgs {
+    scheduleNotes() : void
     setTempo(tempo : number) : void
-    sync : () => void
+    sync() : void
 }
 
 export const MasterClock = {
 
-    setSchedule: (scheduleNotes : () => void, { setTempo, sync } : ScheduleArgs) => {
+    setSchedule: ({ scheduleNotes, setTempo, sync } : ScheduleArgs) => {
         if (activated) 
         {
             throw 'MasterClock already has a schedule.'

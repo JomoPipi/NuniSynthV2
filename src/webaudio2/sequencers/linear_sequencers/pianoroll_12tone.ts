@@ -13,6 +13,7 @@ export class PianoRoll12Tone {
     pianoRoll : any
     ctx
     csn
+    isPlaying = true
 
     constructor(ctx : AudioContext) {
         this.ctx = ctx
@@ -65,6 +66,7 @@ export class PianoRoll12Tone {
         this.pianoRoll.setTempo(tempo)
     }
     play() {
+        this.isPlaying = true
         this.pianoRoll.play(this.ctx, ({ t, g, n } : any) => {
             this.csn.offset.setValueAtTime(n * 100, t)
             this.csn.offset.setValueAtTime(0, g)

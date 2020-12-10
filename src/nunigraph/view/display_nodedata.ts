@@ -26,9 +26,8 @@ import { ProcessorNode } from '../../webaudio2/processor/processornode.js'
 import { ActiveControllers } from '../controller/graph_controller.js'
 
 
-
-
-
+const hasSubTypes = (node : NuniGraphNode) : node is NuniGraphNode<HasSubtypes> =>
+    node.type in HasSubtypes
 
 export function createValuesWindow(
     node : NuniGraphNode, 
@@ -39,7 +38,7 @@ export function createValuesWindow(
     const { audioNode } = node
     const controls = E('div')
     
-    if (AudioNodeSubTypes[node.type].length)
+    if (hasSubTypes(node))
     {
         controls.appendChild(showSubtypes(node, saveCallback))
     }
@@ -154,7 +153,7 @@ function createResizeableCanvasWindow(content : HTMLCanvasElement) {
     bottomRow.append(dragCornernesw, bottomMiddleEdge, dragCorner)
 
     const NONE = 0, VERTICAL = 1, HORIZONTAL = 2
-    let xy : number[], wh : number[]
+    let xy : number[] = [0,0], wh : number[]
     let resizeDirection = 0
     let doLeft = false
     let canvasMinWidth = Infinity
@@ -289,7 +288,8 @@ function activateKeyboardButton(an : NuniSourceNode) {
 
 
 
-function showSubtypes(node : NuniGraphNode, saveCallback: Function) : Node {
+function showSubtypes(node : NuniGraphNode<HasSubtypes>, saveCallback: Function) : HTMLElement {
+
     const box = E('span')
 
     // if (HasCustomSubtype[node.type]) //
@@ -337,7 +337,7 @@ function showSubtypes(node : NuniGraphNode, saveCallback: Function) : Node {
     }
 
     const subtypes = AudioNodeSubTypes[node.type]
-    const an = node.audioNode as { type : any }
+    const an = node.audioNode as { type : string }
 
     if (subtypes.length > 0) // Show subtypes selector
     { 
@@ -357,7 +357,7 @@ function showSubtypes(node : NuniGraphNode, saveCallback: Function) : Node {
 
 
 
-function insertOptions(select : HTMLSelectElement, options : string[]) {
+function insertOptions(select : HTMLSelectElement, options : readonly string[]) {
     select.innerHTML = 
         options.map(type => `<option>${type}</option>`).join('')
 }

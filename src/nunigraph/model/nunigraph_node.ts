@@ -31,7 +31,7 @@ type AudioNodeMap = {
 
     [NodeTypes.PIANOR]: PianoRoll12Tone
     [NodeTypes.ENV]:    Envelope
-    [NodeTypes.CUSTOM]: any
+    // [NodeTypes.CUSTOM]: never
     [NodeTypes.PROCESSOR]: AudioWorkletNode
     [NodeTypes.COMPRESSOR]: DynamicsCompressorNode
 }
@@ -39,25 +39,16 @@ type AudioNodeMap = {
 type AudioNode2<T extends NodeTypes> 
     = AudioNodeMap[T] 
     & { [key in AudioParams] : AudioParam }
-// export class NuniGraphNode { //<T extends NodeTypes = NodeTypes> {
 
-//     id : number
-//     type : NodeTypes
-//     audioNode : AudioNode2<NodeTypes>
-//     x : number
-//     y : number
-//     audioParamValues : Indexable<number>
-//     title? : string
-//     readonly INPUT_NODE_ID? : { id : number }
-
+const is
+    = <T extends NodeTypes>(node : NuniGraphNode, type : T)
+    : node is NuniGraphNode<T> => node.type === type
     
-//     constructor(id : number, type : NodeTypes, settings : NodeCreationSettings) {
-
 export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
-    id : number
-    type : T
-    audioNode : AudioNode2<T>
+    readonly id : number
+    readonly type : T
+    readonly audioNode : AudioNode2<T>
     x : number
     y : number
     audioParamValues : Indexable<number>
@@ -101,10 +92,10 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
             // Fixing bug: Sequencer channelVolume doesn't get copied over because it's a gain node.
             // requestAnimationFrame is needed because GateSequencer's input(s) need to be remmapped..
             // TODO: put this in a function: audioNode.doBadCode()
-            if (this.audioNode as any instanceof Sequencer)
-            {
-                requestAnimationFrame(() => {
-                    if (this.type === NodeTypes.B_SEQ) 
+            requestAnimationFrame(() => {
+                if (is(this, NodeTypes.B_SEQ) || is(this, NodeTypes.SGS))
+                {
+                    if (is(this, NodeTypes.B_SEQ)) 
                     { // This fixed a bug:
                         this.audioNode.channelVolumes = {}
                     }
@@ -113,15 +104,15 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
                     {
                         if (!channelVolumes[key])
                         {
-                            if (this.type === NodeTypes.SGS) throw 'Oh, okay. Do it for SGS as well.'
-                            this.audioNode.createChannelVolume(key)
+                            if (is(this, NodeTypes.SGS)) throw 'Oh, okay. Do it for SGS as well.'
+                            this.audioNode.createChannelVolume(+key)
                         }
                         channelVolumes[key].gain.value = channelData[key].volume
                     }
                     this.audioNode.refresh()
                     this.audioNode.hasDoneTheDirtyWork = true
-                })
-            }
+                }
+            })
         }
 
         this.audioParamValues = JSON.parse(JSON.stringify(audioParamValues))

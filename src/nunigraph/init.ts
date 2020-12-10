@@ -19,6 +19,9 @@ import { WaveformUtils } from '../waveform_utils/mutable_waveform.js'
 import { NuniGraphNode } from './model/nunigraph_node.js'
 
     
+const is
+    = <T extends NodeTypes>(node : NuniGraphNode, type : T)
+    : node is NuniGraphNode<T> => node.type === type
     
 class Nuni extends NuniGraphController {
 
@@ -62,29 +65,20 @@ if (DEBUG)
 }
 
 Graph_Attachments: {
-
     // break Graph_Attachments // <- comment this in for testing
 
     const g = GraphController.g
-
-    function* yieldNodes(g : NuniGraph) : Generator<NuniGraphNode> {
-        for (const node of g.nodes) 
-        {
-            if (node.type === NodeTypes.MODULE)
-            {
-                yield* yieldNodes(node.audioNode.controller.g)
-            } 
-            else 
-            {
-                yield node
-            }
-        }
-    }
+    
     if (DEBUG) 
     {
         (<any>window).getAudioNodes = () => [...yieldNodes(g)]
     }
-    
+
+    //? Useful //?
+    // const Keyboardable = { [NodeTypes.OSC]:1, [NodeTypes.SAMPLE]:1 } as const
+    // type Keyboardable = keyof typeof Keyboardable
+    // const isKeyboardable = (node : NuniGraphNode) : node is NuniGraphNode<Keyboardable> =>
+    //     node.type in Keyboardable
     KB.attachToGraph(function*() {
         for (const { audioNode: an } of yieldNodes(g)) 
         {
@@ -94,33 +88,30 @@ Graph_Attachments: {
             }
         }
     })
+
+    const isClockDependent = 
+        (node : NuniGraphNode) : node is NuniGraphNode<ClockDependent> => 
+            node.type in ClockDependent
     
-    MasterClock.setSchedule(() => {
-        for (const { audioNode: an, type } of yieldNodes(g))
-        {
-            if (IsClockDependent[type]) 
+    const yieldClockedNodes = yieldNodesFiltered(isClockDependent)
+    MasterClock.setSchedule(
+    {
+        scheduleNotes: () => {
+            for (const node of yieldClockedNodes(g))
             {
-                an.scheduleNotes()
+                node.audioNode.scheduleNotes()
             }
-        }
-    },
-    {  
+        },
         setTempo: (tempo : number) => {
-            for (const { audioNode: an, type } of yieldNodes(g))
+            for (const node of yieldClockedNodes(g))
             {
-                if (IsClockDependent[type]) 
-                {
-                    an.setTempo(tempo)
-                }
+                node.audioNode.setTempo(tempo)
             }
         },
         sync() {
-            for (const { audioNode: an, type } of yieldNodes(g))
+            for (const { audioNode: an } of yieldClockedNodes(g))
             {
-                if (IsClockDependent[type] && an.isPlaying) 
-                {
-                    an.sync()
-                }
+                if (an.isPlaying) an.sync()
             }
         }
     })
@@ -145,4 +136,37 @@ Graph_Attachments: {
             }
         }
     })
+
+    function* yieldNodes(g : NuniGraph) : Generator<NuniGraphNode> {
+        for (const node of g.nodes) 
+        {
+            if (is(node, NodeTypes.MODULE))
+            {
+                yield* yieldNodes(node.audioNode.controller.g)
+            } 
+            else 
+            {
+                yield node
+            }
+        }
+    }
+
+    function yieldNodesFiltered <T extends NodeTypes>
+        (isWhatever : (node : NuniGraphNode) => node is NuniGraphNode<T>) {
+             
+        return function* yieldThem(g : NuniGraph) : Generator<NuniGraphNode<T>> {
+
+            for (const node of g.nodes) 
+            {
+                if (is(node, NodeTypes.MODULE))
+                {
+                    yield* yieldThem(node.audioNode.controller.g)
+                } 
+                else if (isWhatever(node))
+                {
+                    yield node
+                }
+            }
+        }
+    }
 }
