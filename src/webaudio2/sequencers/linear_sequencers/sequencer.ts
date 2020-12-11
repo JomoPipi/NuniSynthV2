@@ -38,7 +38,6 @@ export class Sequencer extends VolumeNodeContainer {
     adsrIndex = 0
     soloChannel = -1
     mutedChannel : Indexable<boolean>
-    isInSync : boolean
     stepMatrix : Indexable<boolean[]>
     subdivisionSynced = false
     
@@ -65,7 +64,6 @@ export class Sequencer extends VolumeNodeContainer {
         this.ctx = ctx
         this.tick = (60*4 / MasterClock.getTempo()) / this._subdiv
         this.HTMLGrid = createBeatGrid()
-        this.isInSync = true
         this.isPlaying = true
         this.windowIsOpen = false
         this.stepMatrix = {}
@@ -110,13 +108,10 @@ export class Sequencer extends VolumeNodeContainer {
         this.noteTime = 0
         this.currentStep = 0
         this.startTime = this.ctx.currentTime + 0.005
-        if (this.isInSync)
-        {
-            const measureLength = this.tick * this.nSteps
-            const t = Math.max(0, this.ctx.currentTime - measureLength)
-            this.startTime = 0
-            this.noteTime = Math.floor(t / measureLength) * (measureLength-1)
-        }
+        const measureLength = this.tick * this.nSteps
+        const t = Math.max(0, this.ctx.currentTime - measureLength)
+        this.startTime = 0
+        this.noteTime = Math.floor(t / measureLength) * (measureLength-1)
     }
 
     stop() {

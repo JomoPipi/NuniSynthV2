@@ -17,7 +17,7 @@ import './tests/copy_graph_test.js'
 
 
 window.onload = () => {
-    log('Everything has been loaded')
+    log('[[((--##--)) Begin NuniSynth ((--##-))]]')
 
     D('loading-screen').style.opacity = '0'
     setTimeout(() => 

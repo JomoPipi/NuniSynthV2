@@ -8,14 +8,11 @@
 let [ctx, H, W] = [] as any[]
 
 onmessage = function({ data: { canvas, buffer }}) {
-    console.log('i got a message')
-
     if (canvas) 
     {
         ctx = canvas.getContext('2d')
         H = canvas.height, 
         W = canvas.width
-        console.log('hw =',H,W)
     }
     else if (buffer) 
     {
@@ -24,9 +21,6 @@ onmessage = function({ data: { canvas, buffer }}) {
 }
 
 export function reallyDrawBuffer(channel : Float32Array, ctx : CanvasRenderingContext2D, H : number, W : number) {
-
-    console.log('drawing a buffer. length =',channel.length)
-    
     ctx.save()
     ctx.fillStyle = '#222'
     ctx.fillRect(0, 0, W, H)

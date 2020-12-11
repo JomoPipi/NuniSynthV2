@@ -23,7 +23,7 @@ function getUserConfig() {
     } 
     catch (e)
     {
-        console.log('Creating the file for the first time:', e)
+        log('Creating the file for the first time:', e)
         const config = JSON.stringify({ 'Show Node Image': true })
         save(config)
         return config

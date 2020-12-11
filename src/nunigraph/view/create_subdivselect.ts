@@ -105,7 +105,6 @@ export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv :
         if (select.value === freeTempo)
         {
             an.subdivisionSynced = true
-            an.isInSync = false
             freeKnob.html.style.display = 'inline'
             freeKnob.update(an.subdiv)
             return

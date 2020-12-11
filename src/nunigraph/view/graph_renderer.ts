@@ -454,7 +454,6 @@ export class NuniGraphRenderer {
             if (node.title) 
             {
                 ctx.fillStyle = '#BAA'
-                console.log(nodeRadius)
                 // ctx.font = '15px Arial'
                 ctx.font = `${nodeRadius * 3 / 5}px Arial`
                 ctx.fillText(node.title, X - 30, Y - nodeRadius * 1.5)

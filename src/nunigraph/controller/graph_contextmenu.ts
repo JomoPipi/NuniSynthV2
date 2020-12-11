@@ -39,7 +39,6 @@ contextmenu.onclick = (e : any) => {
 }
 
 function createNode<T extends NodeTypes>(type : T, e : MouseEvent) : NuniGraphNode<T> {
-    log('in here', e)
     const controller 
         = DIRTYGLOBALS.lastControllerToOpenTheContextmenu 
         || GraphController

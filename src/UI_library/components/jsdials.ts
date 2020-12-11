@@ -76,8 +76,9 @@ export class JsDial {
         }
 
         const _mouseup = (e : MouseEvent) => {
-            setTimeout(() => // Avoid interrupting double click
-            document.exitPointerLock(), 100)
+            // setTimeout(() => // Avoid interrupting double click
+            document.exitPointerLock()
+            // , 100)
             mouseup && mouseup(e)
         }
 

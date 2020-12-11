@@ -15,7 +15,7 @@ import { createSelectionPrompt } from "../UI_library/components/selection_prompt
 const { desktopCapturer } = require('electron')
 
 export function desktopCapture(handleStreamCallback : Function) {
-    log('executing desktop capture')
+    log('Executing desktop capture..')
 
     desktopCapturer
         .getSources({ types: ['window', 'screen'] })

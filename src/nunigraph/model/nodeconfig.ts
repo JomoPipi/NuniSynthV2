@@ -604,7 +604,6 @@ interface CustomAudioNodeProperties
     kbMode?      : boolean
     type?        : string
     subdiv?      : number
-    isInSync?    : boolean
     bufferKey?   : number
     nSteps?      : number
     adsrIndex?   : number
@@ -632,7 +631,6 @@ const Transferable_AudioNodeProperties = Object.assign(
     , kbMode      : true
     , subdiv      : true
     , subdivisionSynced : true
-    , isInSync    : true
     , bufferKey   : true
     , nSteps      : true
     , adsrIndex   : true

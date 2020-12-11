@@ -74,12 +74,7 @@ function createTopRowControls(an : Sequencer) {
                 text.innerText = v.toString()
                 an.updateSteps(v)
                 an.setupGrid()
-
-                if (an.isPlaying && an.isInSync) 
-                {
-                    an.stop()
-                    an.play()
-                }
+                an.sync()
             }
             box.appendChild(btn)
         })
@@ -203,20 +198,6 @@ function createTopRowControls(an : Sequencer) {
 
         controls.appendChild(container)
     }
-
-    toggleSyncPlay: {
-        controls.appendChild(createToggleButton(
-            an,
-            'isInSync',
-            { text: 'sync'
-            , update: (on : boolean) =>
-                an.noteTime = on
-                    ? (an.startTime = an.currentStep = 0)
-                    : an.ctx.currentTime
-            }
-        ))
-    }
-
 
     return controls
 }
