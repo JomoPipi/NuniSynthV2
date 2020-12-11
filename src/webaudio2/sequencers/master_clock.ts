@@ -37,7 +37,7 @@ const tempoComponent = createNumberDialComponent3(
         _setTempo(value)
         return (_tempo = clamp(1, value, 69420))
     }, 
-        { amount: 1
+        { amount: 2 ** -3
         , min: 20
         , max: 999
         , isLinear: true

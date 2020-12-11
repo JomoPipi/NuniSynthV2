@@ -73,7 +73,7 @@ export class Sequencer extends VolumeNodeContainer {
         this.HTMLBoxes = {}
         this.channelData = {}
         this.channelVolumes = {}
-        // this.controls = new SequencerControls(this)
+        this.setTempo(MasterClock.getTempo())
     }
 
     setTempo(tempo : number) {

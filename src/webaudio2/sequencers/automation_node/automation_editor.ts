@@ -52,14 +52,16 @@ const TRANSFORMS : [s : string, f : (points : Point[], args : TransformArgs) => 
         (ps, { dx, dy }) => {
             const minX = ps[0].x
             const maxX = ps[ps.length-1].x
+            const midX = (minX + maxX) / 2
             return ps.map(({ x, y }) => ({ x: x + dx * ((x - minX) / (maxX - minX)), y }))
         }]
     , ['red', // y-axis stretch
         (ps, { dx, dy }) => {
             const minY = ps.reduce((a, { y }) => Math.min(a, y), 1)
             const maxY = ps.reduce((a, { y }) => Math.max(a, y), 0)
+            const midY = (minY + maxY) / 2
             if (minY === maxY) return ps.map(({ x, y }) => ({ x, y: y + dy })) // Avoid division by 0
-            return ps.map(({ x, y }) => ({ x, y: y + dy * ((y - minY) / (maxY - minY)) }))
+            return ps.map(({ x, y }) => ({ x, y: y + dy * ((y - midY - minY) / (maxY - minY)) }))
         }]
     ]
 
@@ -426,7 +428,7 @@ export class AutomationPointsEditor {
 
     private getTransformHandlebars() : [number, number, string][] {
         const dy = 0.1
-        const xgap = 0.02
+        const xgap = 0.025
         let max = 0
         const [start, end] = this.rangeOfSelectedPoints!
         const { x } = this.points[start]

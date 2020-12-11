@@ -9,6 +9,7 @@ import { createSubdivSelect3 } from "../../../nunigraph/view/create_subdivselect
 import { AutomationPointsEditor } from "./automation_editor.js"
 import { createRadioButtonGroup } from "../../../UI_library/internal.js"
 import { VolumeNodeContainer } from "../../volumenode_container.js"
+import { MasterClock } from "../master_clock.js"
 
 export class AutomationNode extends VolumeNodeContainer {
     ctx : AudioContext
@@ -26,6 +27,7 @@ export class AutomationNode extends VolumeNodeContainer {
     constructor(ctx : AudioContext) {
         super(ctx)
         this.ctx = ctx
+        this.setTempo(MasterClock.getTempo())
         this.play()
     }
 

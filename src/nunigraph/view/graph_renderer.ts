@@ -454,13 +454,16 @@ export class NuniGraphRenderer {
             if (node.title) 
             {
                 ctx.fillStyle = '#BAA'
-                ctx.font = '15px Arial'
+                console.log(nodeRadius)
+                // ctx.font = '15px Arial'
+                ctx.font = `${nodeRadius * 3 / 5}px Arial`
                 ctx.fillText(node.title, X - 30, Y - nodeRadius * 1.5)
             }
             if (UserOptions.config["Show Node Image"])
             {
                 ctx.fillStyle = '#FFF'
-                ctx.font = '30px Arial'
+                // ctx.font = '30px Arial'
+                ctx.font = `${nodeRadius * 6 / 5}px Arial`
                 const icon = NodeTypeGraphIcon[node.type]
                 if (is(node, NodeTypes.OSC))
                 {
