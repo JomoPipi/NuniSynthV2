@@ -63,7 +63,7 @@ const TRANSFORMS : [s : string, f : (points : Point[], args : TransformArgs) => 
         }]
     ]
 
-const MARGIN = 25
+const MARGIN = 15
 const POINT_RADIUS = 2
 const LINE_WIDTH = 1
 
@@ -144,11 +144,15 @@ export class AutomationPointsEditor {
 
 
     private render() {
-        this.ctx.strokeStyle =
-        this.ctx.fillStyle = 'pink'
         const H = this.canvas.offsetHeight
         const W = this.canvas.offsetWidth
         this.ctx.clearRect(0, 0, W, H)
+        this.ctx.strokeStyle = 'gray'
+        this.ctx.lineWidth = 1
+        this.ctx.strokeRect(MARGIN, MARGIN, W - MARGIN * 2, H - MARGIN * 2)
+        this.ctx.strokeStyle =
+        this.ctx.fillStyle = 'pink'
+        this.ctx.lineWidth = LINE_WIDTH
         this.drawLines()
         this.drawPoints()
         this.drawStats(W, H)
@@ -421,8 +425,8 @@ export class AutomationPointsEditor {
     }
 
     private getTransformHandlebars() : [number, number, string][] {
-        const dy = 0.2
-        const xgap = 0.04
+        const dy = 0.1
+        const xgap = 0.02
         let max = 0
         const [start, end] = this.rangeOfSelectedPoints!
         const { x } = this.points[start]
@@ -433,7 +437,7 @@ export class AutomationPointsEditor {
         }
         for (let i = 0; i < TRANSFORMS.length; i++)
         {
-            points.push([x - xgap * i, dy + max, TRANSFORMS[i][0]] as [number,number,string])
+            points.push([x + xgap * i, dy + max, TRANSFORMS[i][0]] as [number,number,string])
         }
         return points
     }
