@@ -65,6 +65,11 @@
 .draggable-window-bar {
     $sizePx: 25px;
 
+    background: 
+        linear-gradient(
+            var(--color1),
+            var(--color0));
+
     height: $sizePx;
     width: 100%;
     cursor: move;
@@ -73,7 +78,7 @@
 
     .exit-button {
         cursor: pointer;
-        border: 0.2px solid #444;
+        border: none;
         box-sizing: border-box;
         background-color: inherit;
         color: inherit;
@@ -84,7 +89,7 @@
         line-height: $sizePx;
 
         &:hover {
-            background-color: rgba(255,0,0,0.5);
+            background-color: rgba(255,0,0,0.05);
         }
     }
 }

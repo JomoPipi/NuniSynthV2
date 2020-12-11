@@ -60,11 +60,13 @@ function createNode<T extends NodeTypes>(type : T, e : MouseEvent) : NuniGraphNo
                 .parentNode // TODO: clean this line up...
         //* This can be fixed by creating the container in the controller and holding a reference to it
 
-        // In the top right corner of the contextmenu?
-        // node.x = clamp(0, (contextmenu.offsetLeft - offsetLeft) / offsetWidth, 1)
-        // node.y = clamp(0, (contextmenu.offsetTop - offsetTop) / offsetHeight, 1)
-        node.x = clamp(0, (e.pageX - offsetLeft) / offsetWidth, 1)
-        node.y = clamp(0, (e.pageY - offsetTop) / offsetHeight, 1)
+        // Where the user clicked to spawn the contextmenu:
+        const [x, y] = DIRTYGLOBALS.contextmenuRequestPosition
+        node.x = clamp(0, (x - offsetLeft) / offsetWidth, 1)
+        node.y = clamp(0, (y - offsetTop) / offsetHeight, 1)
+        // Where the mouse clicks:
+        // node.x = clamp(0, (e.pageX - offsetLeft) / offsetWidth, 1)
+        // node.y = clamp(0, (e.pageY - offsetTop) / offsetHeight, 1)
         controller.hideContextMenu()
     }
     

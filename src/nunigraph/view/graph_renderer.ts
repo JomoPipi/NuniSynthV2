@@ -468,7 +468,8 @@ export class NuniGraphRenderer {
                 if (is(node, NodeTypes.OSC))
                 {
                     const img = GraphIconImageObjects[node.audioNode.type]
-                    ctx.drawImage(img, X - 20, Y - 16);
+                    // TODO: resize SVG
+                    ctx.drawImage(img, X - 20, Y - 16) // , nodeRadius, nodeRadius);
                 }
                 else
                 {

@@ -47,12 +47,14 @@ export class AutomationNode extends VolumeNodeContainer {
         drawProgressLine: {
             const ctx = progressLine.getContext('2d')!
             const h = 2
+            // const margin = 15
             progressLine.style.display = 'block'
             progressLine.height = h
             
             this.updateProgressLine = v => {
                 ctx.fillStyle = '#AB6'
                 ctx.clearRect(0, 0, progressLine.width, h)
+                // ctx.fillRect(margin, 0, (progressLine.width - margin * 2) * v, h)
                 ctx.fillRect(0, 0, progressLine.width * v, h)
             }
         }

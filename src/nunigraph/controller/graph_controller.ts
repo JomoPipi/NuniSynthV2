@@ -173,7 +173,7 @@ export class NuniGraphController {
     selectNode (node : NuniGraphNode) {
         this.unselectNodes()
         this.selectedNodes = [node]
-        this.getOpenWindow[node.id]?.classList.add('selected2')
+        this.getOpenWindow[node.id]?.classList.add('selected3')
     }
 
 
@@ -183,7 +183,7 @@ export class NuniGraphController {
         this.selectedNodes = []
         for (const key in this.getOpenWindow) 
         {
-            this.getOpenWindow[key].classList.remove('selected2')
+            this.getOpenWindow[key].classList.remove('selected3')
         }
     }
 
@@ -271,7 +271,7 @@ export class NuniGraphController {
         if (!this.getOpenWindow[node.id]) 
         {
             this.openWindow(node)
-            this.getOpenWindow[node.id].classList.add('selected2')
+            this.getOpenWindow[node.id].classList.add('selected3')
         }
         else 
         {
@@ -279,10 +279,7 @@ export class NuniGraphController {
         }
     }
     
-
-    
     openWindow(node : NuniGraphNode) {
-
         if (!SelectWhenDialogBoxIsClicked[node.type])
         {
             this.unselectNodes()
@@ -345,19 +342,20 @@ export class NuniGraphController {
 
         // Create dialogBox:
         const contentContainer = E('div', { className: 'full' })
-        const dialogBox = HasResizeableNodeWindow[node.type]
-            ? 
-            createModalWindow(
-            { text: `${NodeTypeEmojiLabel[node.type]} ᴵᴰ ${node.id}`
-            , clickCallback
-            , closeCallback
-            , contentContainer
-            , color: node.id === 0 
-                ? MasterGainColor 
-                : NodeTypeColors[node.type]
-            , barContent
-            })
-            : 
+        const dialogBox = 
+        // HasResizeableNodeWindow[node.type]
+        //     ? 
+        //     createModalWindow(
+        //     { text: `${NodeTypeEmojiLabel[node.type]} ᴵᴰ ${node.id}`
+        //     , clickCallback
+        //     , closeCallback
+        //     , contentContainer
+        //     , color: node.id === 0 
+        //         ? MasterGainColor 
+        //         : NodeTypeColors[node.type]
+        //     , barContent
+        //     })
+        //     : 
             createDraggableWindow(
             { text: `${NodeTypeEmojiLabel[node.type]} ᴵᴰ ${node.id}`
             , clickCallback
@@ -508,6 +506,7 @@ export class NuniGraphController {
     showContextMenu(x : number, y : number) {
 
         DIRTYGLOBALS.lastControllerToOpenTheContextmenu = this
+        DIRTYGLOBALS.contextmenuRequestPosition = [x, y]
 
         contextmenu.style.zIndex = (DIRTYGLOBALS.RISING_GLOBAL_Z_INDEX + 1).toString()
         contextmenu.style.display = 'grid'

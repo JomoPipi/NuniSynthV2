@@ -32,8 +32,13 @@ export function createDraggableWindow(
     box.style.left = '50vw'
     box.style.top = '50vh'
 
-    bar.style.backgroundColor = color || '#555'
-    bar.style.color = rgbaColorContrast(color || '#555')
+    // box.style.border = `2px solid ${color}`
+    // box.style.borderLeft =
+    // box.style.borderRight =
+    box.style.borderBottom =
+        `2px solid ${color}`
+    // bar.style.backgroundColor = color || '#555'
+    // bar.style.color = rgbaColorContrast(color || '#555')
 
 
     if (barContent) bar.append(barContent)

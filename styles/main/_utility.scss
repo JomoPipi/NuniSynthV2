@@ -18,6 +18,11 @@
     box-sizing: border-box;
 }
 
+.selected3 {
+    border: 2px solid var(--color2);
+    box-shadow: 0px 0px 10px rgba(150, 150, 150, .2);
+}
+
 .highlighted {
     border-color: cyan;
 }

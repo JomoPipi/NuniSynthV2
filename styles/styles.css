@@ -332,7 +332,7 @@ button {
   position: absolute;
   background: var(--color0);
   color: var(--color5);
-  border: 1px solid var(--color3);
+  border: 2px solid transparent;
   z-index: 2;
   -webkit-box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.4);
           box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.4);
@@ -609,6 +609,8 @@ code {
 }
 
 .draggable-window-bar {
+  background: -webkit-gradient(linear, left top, left bottom, from(var(--color1)), to(var(--color0)));
+  background: linear-gradient(var(--color1), var(--color0));
   height: 25px;
   width: 100%;
   cursor: move;
@@ -619,7 +621,7 @@ code {
 
 .draggable-window-bar .exit-button {
   cursor: pointer;
-  border: 0.2px solid #444;
+  border: none;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   background-color: inherit;
@@ -632,7 +634,7 @@ code {
 }
 
 .draggable-window-bar .exit-button:hover {
-  background-color: rgba(255, 0, 0, 0.5);
+  background-color: rgba(255, 0, 0, 0.05);
 }
 
 .number-dial-input::-webkit-outer-spin-button,
@@ -1599,6 +1601,12 @@ a {
   border: 2px solid #f72d70;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+}
+
+.selected3 {
+  border: 2px solid var(--color2);
+  -webkit-box-shadow: 0px 0px 10px rgba(150, 150, 150, 0.2);
+          box-shadow: 0px 0px 10px rgba(150, 150, 150, 0.2);
 }
 
 .highlighted {

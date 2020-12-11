@@ -77,7 +77,6 @@ pageGroupify(D('scale-kinds'), [
 
 
 
-
 // Insert the keyboard image:
 // The image that shows the user what keys are being pressed. 
 // It's here so that it doesn't clutter index.html.
