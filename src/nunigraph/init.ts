@@ -96,13 +96,13 @@ Graph_Attachments: {
     const yieldClockedNodes = yieldNodesFiltered(isClockDependent)
     MasterClock.setSchedule(
     {
-        scheduleNotes: () => {
+        scheduleNotes() {
             for (const node of yieldClockedNodes(g))
             {
                 node.audioNode.scheduleNotes()
             }
         },
-        setTempo: (tempo : number) => {
+        setTempo(tempo : number) {
             for (const node of yieldClockedNodes(g))
             {
                 node.audioNode.setTempo(tempo)

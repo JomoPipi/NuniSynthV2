@@ -464,7 +464,8 @@ export class NuniGraphRenderer {
                 // ctx.font = '30px Arial'
                 ctx.font = `${nodeRadius * 6 / 5}px Arial`
                 const icon = NodeTypeGraphIcon[node.type]
-                if (is(node, NodeTypes.OSC))
+                // if (node.type in HasSVGIcon)
+                if (is(node,NodeTypes.OSC))
                 {
                     const img = GraphIconImageObjects[node.audioNode.type]
                     // TODO: resize SVG

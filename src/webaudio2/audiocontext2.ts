@@ -18,6 +18,27 @@ import { ProcessorNode } from './processor/processornode.js'
 import { AutomationNode } from './sequencers/automation_node/automation_node.js'
 
 
+
+export type AudioNodeMap = typeof AudioNodeMap
+const AudioNodeMap = 
+    { [NodeTypes.GAIN]:       GainNode
+    , [NodeTypes.OSC]:        OscillatorNode2
+    , [NodeTypes.FILTER]:     BiquadFilterNode
+    , [NodeTypes.PANNER]:     StereoPannerNode
+    , [NodeTypes.DELAY]:      DelayNode
+    , [NodeTypes.SAMPLE]:     BufferNode2
+    , [NodeTypes.SGS]:        GateSequencer
+    , [NodeTypes.B_SEQ]:      SampleSequencer
+    , [NodeTypes.CSN]:        ConstantSourceNode
+    , [NodeTypes.RECORD]:     AudioBufferCaptureNode
+    , [NodeTypes.MODULE]:     NuniGraphAudioNode
+    , [NodeTypes.ENV]:        Envelope
+    , [NodeTypes.COMPRESSOR]: DynamicsCompressorNode
+    , [NodeTypes.PIANOR]:     PianoRoll12Tone
+    , [NodeTypes.PROCESSOR]:  ProcessorNode
+    , [NodeTypes.AUTO]:       AutomationNode
+    } as const
+
 class AudioContext2 extends AudioContext {
     /** con·text    /ˈkäntekst/ 
      *  noun
@@ -40,6 +61,9 @@ class AudioContext2 extends AudioContext {
         graphVisualEqualizer(this.analyser)
     }
 
+    createNode<T extends NodeTypes>(type : T) : AudioNodeMap[T] {
+        return AudioNodeMap[type]
+    }
 
     createBuffer2() {
         return new BufferNode2(this)

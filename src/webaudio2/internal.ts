@@ -5,7 +5,7 @@
 
 
 
-export { audioCtx } from './audiocontext2.js'
+export { audioCtx, AudioNodeMap } from './audiocontext2.js'
 export { BufferNode2 } from './note_in/buffer2.js'
 export { OscillatorNode2 } from './note_in/oscillator2.js'
 export { GateSequencer } from './sequencers/linear_sequencers/subgraph_sequencer.js'

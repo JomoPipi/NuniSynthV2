@@ -39,7 +39,6 @@ export class Sequencer extends VolumeNodeContainer {
     soloChannel = -1
     mutedChannel : Indexable<boolean>
     stepMatrix : Indexable<boolean[]>
-    subdivisionSynced = false
     
     readonly ctx : AudioContext
     protected tick : number

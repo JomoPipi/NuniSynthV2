@@ -88,8 +88,6 @@ const wrap = (min : number, value : number, max : number) =>
         ? value - max
         : value
 
-
-    
 const PHI = (Math.sqrt(5) + 1) / 2.0
 const TR2 = 2 ** (1.0 / 12.0)
 const TAU = 2 * Math.PI
@@ -101,14 +99,13 @@ const dBToVolume = (dB : number) =>
 const volumeTodB = (volume : number) =>
     20 * Math.log10(volume)
 
+const ISMAC = navigator.platform.toUpperCase().indexOf('MAC') >= 0
 
 interface DIRTYGLOBALS {
     contextmenuRequestPosition: [number, number];
     lastControllerToOpenTheContextmenu : Indexed // unknown
     RISING_GLOBAL_Z_INDEX : number
 }
-
-const ISMAC = navigator.platform.toUpperCase().indexOf('MAC') >= 0
 
 const DIRTYGLOBALS : DIRTYGLOBALS = 
     { lastControllerToOpenTheContextmenu: {}

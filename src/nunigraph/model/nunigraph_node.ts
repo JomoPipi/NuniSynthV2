@@ -12,9 +12,6 @@ import
     , PianoRoll12Tone, Sequencer, AutomationNode
     } from '../../webaudio2/internal.js'
 
-
-
-
 type AudioNodeMap = {
     [NodeTypes.GAIN]:   GainNode
     [NodeTypes.OSC]:    OscillatorNode2
@@ -48,7 +45,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
     readonly id : number
     readonly type : T
-    readonly audioNode : AudioNode2<T>
+    readonly audioNode : AudioNode2<T> // & RequiredAudionodeProperties<T>
     x : number
     y : number
     audioParamValues : Indexable<number>
@@ -77,7 +74,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.title = title
         this.INPUT_NODE_ID = INPUT_NODE_ID
 
-        this.audioNode = (audioCtx as Indexed)[createAudioNode[type]]()
+        this.audioNode = new (audioCtx.createNode(type))(audioCtx) as AudioNode2<T>
         this.graphLabel = NodeTypeGraphIcon[type]
         
         // TODO: Maybe start it on tempo tick?

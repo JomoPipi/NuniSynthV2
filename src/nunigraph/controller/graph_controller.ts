@@ -664,8 +664,10 @@ export class NuniGraphController {
             const _y = node.y 
             const _dx = e.offsetX / W - _x
             const _dy = e.offsetY / H - _y
-            node.x = clamp(L, _x + _dx, 1-R)
-            node.y = clamp(D, _y + _dy, 1-U)
+            const marginX = 0.04
+            const marginY = marginX * W / H
+            node.x = clamp(L + marginX, _x + _dx, 1-R-marginX)
+            node.y = clamp(D + marginY, _y + _dy, 1-U-marginY)
             const dx = node.x - _x
             const dy = node.y - _y
 

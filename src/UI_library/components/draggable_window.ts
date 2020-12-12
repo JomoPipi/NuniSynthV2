@@ -36,7 +36,7 @@ export function createDraggableWindow(
     // box.style.borderLeft =
     // box.style.borderRight =
     box.style.borderBottom =
-        `2px solid ${color}`
+        `1px solid ${color}`
     // bar.style.backgroundColor = color || '#555'
     // bar.style.color = rgbaColorContrast(color || '#555')
 

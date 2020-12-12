@@ -26,7 +26,7 @@ import { ProcessorNode } from '../../webaudio2/processor/processornode.js'
 import { ActiveControllers } from '../controller/graph_controller.js'
 
 
-const hasSubTypes = (node : NuniGraphNode) : node is NuniGraphNode<HasSubtypes> =>
+const hasSubtypes = (node : NuniGraphNode) : node is NuniGraphNode<HasSubtypes> =>
     node.type in HasSubtypes
 
 export function createValuesWindow(
@@ -38,7 +38,7 @@ export function createValuesWindow(
     const { audioNode } = node
     const controls = E('div')
     
-    if (hasSubTypes(node))
+    if (hasSubtypes(node))
     {
         controls.appendChild(showSubtypes(node, saveCallback))
     }

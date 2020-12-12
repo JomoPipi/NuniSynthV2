@@ -92,7 +92,7 @@ const NodeTypeEmojiLabel : { readonly [key in NodeTypes] : string } =
     // , [NodeTypes.CUSTOM]: 'Custom Module (should be hidden)'
     , [NodeTypes.PROCESSOR]: '💻'
     , [NodeTypes.COMPRESSOR]: '💢'
-    }
+    } as const
 
 type GraphIcon = string // The possible URLs will be Enumed'
 
@@ -102,7 +102,7 @@ const GraphIconUrls =
     , 'square'
     , 'sawtooth'
     , 'custom'
-    ]
+    ] as const
 
 const GraphIconImageObjects =
     GraphIconUrls.reduce((acc, name) => {
@@ -111,8 +111,13 @@ const GraphIconImageObjects =
         img.src = url
         acc[name] = img
         return acc
-    }, {} as Indexed)
-    
+    }, {} as Record<string, HTMLImageElement>)
+
+const HasSVGGraphIcon = {
+    [NodeTypes.OSC]: true
+} as const
+
+type HasSVGGraphIcon = keyof typeof HasSVGGraphIcon
 
 const NodeTypeGraphIcon : { readonly [key in NodeTypes] : GraphIcon } =
     { [NodeTypes.GAIN]:   '🔊'
@@ -135,26 +140,26 @@ const NodeTypeGraphIcon : { readonly [key in NodeTypes] : GraphIcon } =
     , [NodeTypes.COMPRESSOR]: '💢'
     }
 
-const createAudioNode : { readonly [key in NodeTypes] : string } =
-    { [NodeTypes.GAIN]:   'createGain'
-    , [NodeTypes.OSC]:    'createOscillator2'
-    , [NodeTypes.FILTER]: 'createBiquadFilter'
-    , [NodeTypes.PANNER]: 'createStereoPanner'
-    , [NodeTypes.DELAY]:  'createDelay'
-    , [NodeTypes.SAMPLE]: 'createBuffer2'
-    , [NodeTypes.SGS]:    'createGateSequencer'
-    , [NodeTypes.B_SEQ]:  'createSampleSequencer'
-    , [NodeTypes.CSN]:    'createConstantSource'
-    , [NodeTypes.RECORD]: 'createAudioBufferCaptureNode'
-    , [NodeTypes.MODULE]: 'createNuniGraphAudioNode'
-    , [NodeTypes.AUTO]:   'createAutomationNode'
+// const createAudioNode =
+//     { [NodeTypes.GAIN]:   'createGain'
+//     , [NodeTypes.OSC]:    'createOscillator2'
+//     , [NodeTypes.FILTER]: 'createBiquadFilter'
+//     , [NodeTypes.PANNER]: 'createStereoPanner'
+//     , [NodeTypes.DELAY]:  'createDelay'
+//     , [NodeTypes.SAMPLE]: 'createBuffer2'
+//     , [NodeTypes.SGS]:    'createGateSequencer'
+//     , [NodeTypes.B_SEQ]:  'createSampleSequencer'
+//     , [NodeTypes.CSN]:    'createConstantSource'
+//     , [NodeTypes.RECORD]: 'createAudioBufferCaptureNode'
+//     , [NodeTypes.MODULE]: 'createNuniGraphAudioNode'
+//     , [NodeTypes.AUTO]:   'createAutomationNode'
     
-    , [NodeTypes.PIANOR]: 'create12TonePianoRoll'
-    , [NodeTypes.ENV]:    'createEnvelopeNode'
-    // , [NodeTypes.CUSTOM]: 'createCustomNode'
-    , [NodeTypes.PROCESSOR]: 'createProcessorNode'
-    , [NodeTypes.COMPRESSOR]: 'createDynamicsCompressor'
-    }
+//     , [NodeTypes.PIANOR]: 'create12TonePianoRoll'
+//     , [NodeTypes.ENV]:    'createEnvelopeNode'
+//     // , [NodeTypes.CUSTOM]: 'createCustomNode'
+//     , [NodeTypes.PROCESSOR]: 'createProcessorNode'
+//     , [NodeTypes.COMPRESSOR]: 'createDynamicsCompressor'
+//     } as const
 
 const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.GAIN]:   true
@@ -624,13 +629,12 @@ const Transferable_Pianoroll_properties =
     , yruler      : true
     , markstart   : true
     , markend     : true
-    }
+    } as const
 
-const Transferable_AudioNodeProperties = Object.assign(
+const Transferable_AudioNodeProperties =
     { type        : true
     , kbMode      : true
     , subdiv      : true
-    , subdivisionSynced : true
     , bufferKey   : true
     , nSteps      : true
     , adsrIndex   : true
@@ -651,14 +655,12 @@ const Transferable_AudioNodeProperties = Object.assign(
     , ratio: true
     , attack: true
     , release: true
-    },
-    Transferable_Pianoroll_properties)
+    , ...Transferable_Pianoroll_properties
+    } as const
 
-const PostConnection_Transferable_InputRemappable_AudioNodeProperties 
-: Immutable<{ [key in NodeTypes]? : (keyof typeof Transferable_AudioNodeProperties)[] }> = 
-
-    { [NodeTypes.SGS] : ['stepMatrix', 'channelData'] 
-    }
+const PostConnection_Transferable_InputRemappable_AudioNodeProperties = 
+    { [NodeTypes.SGS]: ['stepMatrix', 'channelData']
+    } as const
     
 type NodeCreationSettings = { 
     x : number
@@ -675,3 +677,15 @@ const TransferableNodeProperties =
     .reduce((acc,prop) => 
         ({ ...acc, [prop]: true })
     , {} as Indexed)
+
+
+interface RequiredAudionodeProperties<T extends NodeTypes> {
+    SVGIconName : T extends HasSVGGraphIcon ? typeof GraphIconUrls[number] : undefined
+
+    scheduleNotes : T extends ClockDependent ? () => void : undefined
+    setTempo : T extends ClockDependent ? (tempo : number) => void : undefined
+    sync : T extends ClockDependent ? () => void : undefined
+
+    type : T extends HasSubtypes ? typeof AudioNodeSubTypes[T] : undefined
+    poop : T extends HasSubtypes ? typeof AudioNodeSubTypes[T] : undefined
+}

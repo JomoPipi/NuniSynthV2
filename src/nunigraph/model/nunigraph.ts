@@ -15,6 +15,12 @@ import { ProcessorNode } from '../../webaudio2/processor/processornode.js'
 
 type Destination = AudioNode | AudioParam | NuniAudioParam
 
+const hasWeirdCopyProtocol = (node : NuniGraphNode)
+    : node is NuniGraphNode<keyof typeof
+        PostConnection_Transferable_InputRemappable_AudioNodeProperties> =>
+    node.type in PostConnection_Transferable_InputRemappable_AudioNodeProperties
+
+const weirdArray = PostConnection_Transferable_InputRemappable_AudioNodeProperties
 
 const defaultNodeSettings = () => (
     { x: 0.5
@@ -372,22 +378,26 @@ export class NuniGraph {
         
         for (const i in _nodeDataArray) 
         {
-            const an = nodeCopies[i].audioNode
-            const _an = _nodeDataArray[i].audioNodeProperties
-            for (const propName of PostConnection_Transferable_InputRemappable_AudioNodeProperties[nodeCopies[i].type] || []) 
+            const node = nodeCopies[i]
+            if (hasWeirdCopyProtocol(node))
             {
-                const targetObj : Indexed = (<Indexed>an)[propName] = {}
-                const sourceObj = _an[propName as keyof typeof _an]
-
-                // We look through they keys of the source object
-                for (const id in sourceObj) 
+                const an = node.audioNode
+                const _an = _nodeDataArray[i].audioNodeProperties
+                for (const propName of weirdArray[node.type]) 
                 {
-                    // If the node with id ${id} got copied over
-                    const copiedInputNode = mapToNewNode[id]
-                    if (copiedInputNode) 
+                    const targetObj : Indexed = (<Indexed>an)[propName] = {}
+                    const sourceObj = _an[propName as keyof typeof _an]
+    
+                    // We look through they keys of the source object
+                    for (const id in sourceObj) 
                     {
-                        // We pass the property over and update the id
-                        targetObj[copiedInputNode.id] = JSON.parse(JSON.stringify(sourceObj[id]))
+                        // If the node with id ${id} got copied over
+                        const copiedInputNode = mapToNewNode[id]
+                        if (copiedInputNode) 
+                        {
+                            // We pass the property over and update the id
+                            targetObj[copiedInputNode.id] = JSON.parse(JSON.stringify(sourceObj[id]))
+                        }
                     }
                 }
             }
@@ -514,23 +524,27 @@ export class NuniGraph {
         //* Here, we remap the inputs of the properties use them as keys
         for (const node of nodes) 
         {
-            for (const propName of PostConnection_Transferable_InputRemappable_AudioNodeProperties[node.type] || []) 
+            if (hasWeirdCopyProtocol(node))
             {
-                const an = mapToNewNode[node.id].audioNode
-                const targetObj = an[propName as keyof typeof an] as Indexed
-                const sourceObj = node.audioNode[propName as keyof typeof node.audioNode]
-
-                for (const id in sourceObj) 
+                for (const propName of weirdArray[node.type]) 
                 {
-                    const newId = mapToNewNode[id]?.id ?? +id
-                    
-                    targetObj[newId] = JSON.parse(JSON.stringify(sourceObj[id as keyof typeof sourceObj]))
-
-                    // If there isn't some node, with the old id, connected to the new node
-                    if (newId !== +id && !this.oneWayConnections[id].some(data => +data.id === +id))
+                    const an = mapToNewNode[node.id].audioNode
+                    const targetObj = an[propName as keyof typeof an] as Indexed
+                    const sourceObj = node.audioNode[propName]
+    
+                    for (const key in sourceObj) 
                     {
-                        // Then we delete this entry that refers to it
-                        delete targetObj[id]
+                        const newId = mapToNewNode[key]?.id ?? +key
+                        
+                        targetObj[newId] = 
+                            JSON.parse(JSON.stringify(sourceObj[key]))
+    
+                        // If there isn't some node, with the old id, connected to the new node
+                        if (newId !== +key && !this.oneWayConnections[key].some(data => +data.id === +key))
+                        {
+                            // Then we delete this entry that refers to it
+                            delete targetObj[key]
+                        }
                     }
                 }
             }
@@ -674,17 +688,19 @@ export class NuniGraph {
         // ! Transfer the post-connection properties
         for (const node of nodes) 
         {
-            const thisNode = this.nodes.find(n => n.id === node.id)!
-            const maybeArr = 
-            PostConnection_Transferable_InputRemappable_AudioNodeProperties[node.type as NodeTypes]
-
-            for (const prop of maybeArr || []) 
+            if (hasWeirdCopyProtocol(node))
             {
-                if (node.audioNodeProperties[prop] || node.audioNode[prop])
+                const thisNode = this.nodes.find(n => n.id === node.id)!
+                for (const prop of weirdArray[node.type]) 
                 {
-                    ;(thisNode.audioNode as Indexed)[prop] = 
-                        node.audioNodeProperties[prop]
-                        || node.audioNode[prop] // <- legacy. TODO: remove, when graphs are transfererred.
+                    // TODO: remove the ignores and give the serialized data a proper type
+                    // @ts-ignore
+                    if (node.audioNodeProperties[prop] || node.audioNode[prop])
+                    {
+                        ;(thisNode.audioNode as Indexed)[prop] = // @ts-ignore
+                            node.audioNodeProperties[prop]
+                            || node.audioNode[prop] // <- legacy. TODO: remove, when graphs are transfererred.
+                    }
                 }
             }
         }
