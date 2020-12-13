@@ -375,7 +375,8 @@ export class NuniGraphRenderer {
                 
             return gradient
         }
-        const prop = AudioNodeParams[node.type][0]
+        // TODO: remove the ! on the next line and enforce type safety
+        const prop = AudioNodeParams[node.type][0]!
         const p = node.audioParamValues[prop]
         const pValue = Math.abs(p)
         const [min,max] = AudioParamRanges[prop]

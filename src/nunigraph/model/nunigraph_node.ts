@@ -9,43 +9,66 @@ import { Envelope } from '../../webaudio2/envelope/envelope.js'
 import 
     { audioCtx, OscillatorNode2 , BufferNode2, GateSequencer
     , SampleSequencer, AudioBufferCaptureNode, NuniGraphAudioNode
-    , PianoRoll12Tone, Sequencer, AutomationNode
+    , PianoRoll12Tone, Sequencer, AutomationNode, AudioNodeMap
     } from '../../webaudio2/internal.js'
 
-type AudioNodeMap = {
-    [NodeTypes.GAIN]:   GainNode
-    [NodeTypes.OSC]:    OscillatorNode2
-    [NodeTypes.FILTER]: BiquadFilterNode
-    [NodeTypes.PANNER]: StereoPannerNode
-    [NodeTypes.DELAY]:  DelayNode
-    [NodeTypes.SAMPLE]: BufferNode2
-    [NodeTypes.SGS]:    GateSequencer
-    [NodeTypes.B_SEQ]:  SampleSequencer
-    [NodeTypes.CSN]:    ConstantSourceNode
-    [NodeTypes.RECORD]: AudioBufferCaptureNode
-    [NodeTypes.MODULE]: NuniGraphAudioNode
-    [NodeTypes.AUTO]:   AutomationNode
+// const AudioNodeMap =
+//     { [NodeTypes.GAIN]:   GainNode
+//     , [NodeTypes.OSC]:    OscillatorNode2
+//     , [NodeTypes.FILTER]: BiquadFilterNode
+//     , [NodeTypes.PANNER]: StereoPannerNode
+//     , [NodeTypes.DELAY]:  DelayNode
+//     , [NodeTypes.SAMPLE]: BufferNode2
+//     , [NodeTypes.SGS]:    GateSequencer
+//     , [NodeTypes.B_SEQ]:  SampleSequencer
+//     , [NodeTypes.CSN]:    ConstantSourceNode
+//     , [NodeTypes.RECORD]: AudioBufferCaptureNode
+//     , [NodeTypes.MODULE]: NuniGraphAudioNode
+//     , [NodeTypes.AUTO]:   AutomationNode
 
-    [NodeTypes.PIANOR]: PianoRoll12Tone
-    [NodeTypes.ENV]:    Envelope
-    // [NodeTypes.CUSTOM]: never
-    [NodeTypes.PROCESSOR]: AudioWorkletNode
-    [NodeTypes.COMPRESSOR]: DynamicsCompressorNode
-}
+//     , [NodeTypes.PIANOR]: PianoRoll12Tone
+//     , [NodeTypes.ENV]:    Envelope
+//     // , [NodeTypes.CUSTOM]: never
+//     , [NodeTypes.PROCESSOR]: AudioWorkletNode
+//     , [NodeTypes.COMPRESSOR]: DynamicsCompressorNode
+//     } as const
+
+type AudioNodeParams = typeof AudioNodeParams
+type A = AudioNodeParams[NodeTypes.OSC][number]
+type B<T extends NodeTypes> = T extends NodeTypes
+    ? { [key in A] : AudioParam }
+    : unknown
+
+// type C = AudioNodeMap[NodeTypes.OSC]
+type ParamsOf<nodeType extends NodeTypes> = AudioNodeParams[nodeType][number]
+type OscParams = ParamsOf<NodeTypes.OSC>
+type T = ParamsOf<NodeTypes>
+// type InstanceType<T extends new (...args: any) => any> = 
+//     T extends new (...args: any) => infer R ? R : never;
 
 type AudioNode2<T extends NodeTypes> 
-    = AudioNodeMap[T] 
-    & { [key in AudioParams] : AudioParam }
+    = InstanceType<typeof AudioNodeMap[T]>
+    // & { [key in ParamsOf<T>] : AudioParam }
+    // & { [key in AudioParams] : AudioParam }
 
 const is
     = <T extends NodeTypes>(node : NuniGraphNode, type : T)
     : node is NuniGraphNode<T> => node.type === type
+
+type NuniAudioNode<T extends NodeTypes> =
+    AudioNode2<T> // & BaseRequiredProperties // RequiredAudionodeProperties<T>
     
 export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
     readonly id : number
-    readonly type : T
-    readonly audioNode : AudioNode2<T> // & RequiredAudionodeProperties<T>
+    readonly type : T // TODO
+    readonly audioNode : 
+        ReturnType<typeof audioCtx[typeof createAudioNode[T]]>
+        // & { [key in ParamsOf<T>] : AudioParam }
+        // & { [key in AudioParams] : AudioParam }
+        & BaseRequiredProperties
+        
+        // NuniAudioNode<T>
     x : number
     y : number
     audioParamValues : Indexable<number>
@@ -74,7 +97,9 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.title = title
         this.INPUT_NODE_ID = INPUT_NODE_ID
 
-        this.audioNode = new (audioCtx.createNode(type))(audioCtx) as AudioNode2<T>
+        const an = audioCtx.createNode<T>(type)
+        this.audioNode = an// as InstanceType<(typeof AudioNodeMap)[T]>
+        // InstanceType<typeof AudioNodeMap[T]>
         this.graphLabel = NodeTypeGraphIcon[type]
         
         // TODO: Maybe start it on tempo tick?
@@ -123,7 +148,9 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         }
     }
 
-    setValueOfParam(param : AudioParams, value: number) {
+    setValueOfParam(param : ParamsOf<T>, value: number) {
+        type W = typeof AudioNodeParams[T][number]
+        type O = typeof AudioNodeParams[NodeTypes.OSC][number]
         this.audioParamValues[param] = value
         this.audioNode[param].value = value
     }

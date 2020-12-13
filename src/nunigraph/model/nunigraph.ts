@@ -13,7 +13,7 @@ import
     } from '../../webaudio2/internal.js'
 import { ProcessorNode } from '../../webaudio2/processor/processornode.js'
 
-type Destination = AudioNode | AudioParam | NuniAudioParam
+// type Destination = AudioNode | AudioParam | NuniAudioParam
 
 const hasWeirdCopyProtocol = (node : NuniGraphNode)
     : node is NuniGraphNode<keyof typeof

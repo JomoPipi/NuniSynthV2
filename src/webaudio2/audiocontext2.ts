@@ -19,8 +19,8 @@ import { AutomationNode } from './sequencers/automation_node/automation_node.js'
 
 
 
-export type AudioNodeMap = typeof AudioNodeMap
-const AudioNodeMap = 
+// export type AudioNodeMap = typeof AudioNodeMap
+export const AudioNodeMap = 
     { [NodeTypes.GAIN]:       GainNode
     , [NodeTypes.OSC]:        OscillatorNode2
     , [NodeTypes.FILTER]:     BiquadFilterNode
@@ -38,6 +38,16 @@ const AudioNodeMap =
     , [NodeTypes.PROCESSOR]:  ProcessorNode
     , [NodeTypes.AUTO]:       AutomationNode
     } as const
+
+type AudioNodeType<T extends NodeTypes> = 
+    typeof AudioNodeMap[T]
+    
+type Osc = AudioNodeType<NodeTypes.OSC>
+
+type InstanceType<T extends new (...args: any) => any> = 
+    T extends new (...args: any) => infer R ? R : never;
+
+type OscInstance = InstanceType<Osc>
 
 class AudioContext2 extends AudioContext {
     /** con·text    /ˈkäntekst/ 
@@ -61,8 +71,10 @@ class AudioContext2 extends AudioContext {
         graphVisualEqualizer(this.analyser)
     }
 
-    createNode<T extends NodeTypes>(type : T) : AudioNodeMap[T] {
-        return AudioNodeMap[type]
+    createNode<T extends NodeTypes>(type : T) {
+        const createdNode = this[createAudioNode[type]]() as
+            ReturnType<this[typeof createAudioNode[T]]>
+        return createdNode
     }
 
     createBuffer2() {

@@ -24,7 +24,7 @@ type ADSRData =
     }
 
 
-export class Sequencer extends VolumeNodeContainer {
+export abstract class Sequencer extends VolumeNodeContainer {
     /**
      * This creates an N-step sequencer out of
      * whatever inputs are connected to it.
@@ -184,9 +184,7 @@ export class Sequencer extends VolumeNodeContainer {
         }
     }
 
-    playStepAtTime(key : number, time : number) { // , duration : number) {
-        throw 'Implement this in a concrete class.'
-    }
+    abstract playStepAtTime(key : number, time : number) : void
 
     refresh() {
         this.setupGrid()

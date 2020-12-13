@@ -140,26 +140,26 @@ const NodeTypeGraphIcon : { readonly [key in NodeTypes] : GraphIcon } =
     , [NodeTypes.COMPRESSOR]: '💢'
     }
 
-// const createAudioNode =
-//     { [NodeTypes.GAIN]:   'createGain'
-//     , [NodeTypes.OSC]:    'createOscillator2'
-//     , [NodeTypes.FILTER]: 'createBiquadFilter'
-//     , [NodeTypes.PANNER]: 'createStereoPanner'
-//     , [NodeTypes.DELAY]:  'createDelay'
-//     , [NodeTypes.SAMPLE]: 'createBuffer2'
-//     , [NodeTypes.SGS]:    'createGateSequencer'
-//     , [NodeTypes.B_SEQ]:  'createSampleSequencer'
-//     , [NodeTypes.CSN]:    'createConstantSource'
-//     , [NodeTypes.RECORD]: 'createAudioBufferCaptureNode'
-//     , [NodeTypes.MODULE]: 'createNuniGraphAudioNode'
-//     , [NodeTypes.AUTO]:   'createAutomationNode'
+const createAudioNode =
+    { [NodeTypes.GAIN]:   'createGain'
+    , [NodeTypes.OSC]:    'createOscillator2'
+    , [NodeTypes.FILTER]: 'createBiquadFilter'
+    , [NodeTypes.PANNER]: 'createStereoPanner'
+    , [NodeTypes.DELAY]:  'createDelay'
+    , [NodeTypes.SAMPLE]: 'createBuffer2'
+    , [NodeTypes.SGS]:    'createGateSequencer'
+    , [NodeTypes.B_SEQ]:  'createSampleSequencer'
+    , [NodeTypes.CSN]:    'createConstantSource'
+    , [NodeTypes.RECORD]: 'createAudioBufferCaptureNode'
+    , [NodeTypes.MODULE]: 'createNuniGraphAudioNode'
+    , [NodeTypes.AUTO]:   'createAutomationNode'
     
-//     , [NodeTypes.PIANOR]: 'create12TonePianoRoll'
-//     , [NodeTypes.ENV]:    'createEnvelopeNode'
-//     // , [NodeTypes.CUSTOM]: 'createCustomNode'
-//     , [NodeTypes.PROCESSOR]: 'createProcessorNode'
-//     , [NodeTypes.COMPRESSOR]: 'createDynamicsCompressor'
-//     } as const
+    , [NodeTypes.PIANOR]: 'create12TonePianoRoll'
+    , [NodeTypes.ENV]:    'createEnvelopeNode'
+    // , [NodeTypes.CUSTOM]: 'createCustomNode'
+    , [NodeTypes.PROCESSOR]: 'createProcessorNode'
+    , [NodeTypes.COMPRESSOR]: 'createDynamicsCompressor'
+    } as const
 
 const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.GAIN]:   true
@@ -224,7 +224,7 @@ const MustBeStarted : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.COMPRESSOR]:false
     }
 
-const HasAudioParams : { readonly [key in NodeTypes] : boolean } =
+const HasAudioParams =
     { [NodeTypes.GAIN]:   true
     , [NodeTypes.OSC]:    true
     , [NodeTypes.FILTER]: true
@@ -243,7 +243,7 @@ const HasAudioParams : { readonly [key in NodeTypes] : boolean } =
     // , [NodeTypes.CUSTOM]: true
     , [NodeTypes.PROCESSOR]:false
     , [NodeTypes.COMPRESSOR]:true
-    }
+    } as const
 
 const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.GAIN]:   false
@@ -301,7 +301,7 @@ const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.CSN]:    true
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: false
-    , [NodeTypes.AUTO]:   false
+    , [NodeTypes.AUTO]:   true
 
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    true
@@ -364,7 +364,7 @@ const HasResizeableNodeWindow  : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.COMPRESSOR]:false
     }
 
-const AudioNodeParams : Record<NodeTypes,AudioParams[]> =
+const AudioNodeParams =
     { [NodeTypes.GAIN]:   ['gain']
     , [NodeTypes.OSC]:    ['frequency','detune']
     , [NodeTypes.FILTER]: ['frequency','Q','gain','detune']
@@ -384,7 +384,7 @@ const AudioNodeParams : Record<NodeTypes,AudioParams[]> =
     // , set [NodeTypes.CUSTOM](params : []) { }
     , [NodeTypes.PROCESSOR]:[]
     , [NodeTypes.COMPRESSOR]: ['threshold', 'knee', 'ratio', 'attack', 'release']
-    }
+    } as const
 
 const AudioNodeSubTypes : Record<NodeTypes,readonly string[]> =
     { [NodeTypes.GAIN]:   []
@@ -678,14 +678,33 @@ const TransferableNodeProperties =
         ({ ...acc, [prop]: true })
     , {} as Indexed)
 
+type BaseRequiredProperties = {
+    connect(input : AudioNode | AudioParam) : void
+    disconnect(input? : AudioNode | AudioParam) : void
 
-interface RequiredAudionodeProperties<T extends NodeTypes> {
-    SVGIconName : T extends HasSVGGraphIcon ? typeof GraphIconUrls[number] : undefined
-
-    scheduleNotes : T extends ClockDependent ? () => void : undefined
-    setTempo : T extends ClockDependent ? (tempo : number) => void : undefined
-    sync : T extends ClockDependent ? () => void : undefined
-
-    type : T extends HasSubtypes ? typeof AudioNodeSubTypes[T] : undefined
-    poop : T extends HasSubtypes ? typeof AudioNodeSubTypes[T] : undefined
+    [others : string]: any
 }
+
+type RequiredAudionodeProperties<T extends NodeTypes> = 
+    & BaseRequiredProperties
+    // & (T extends ClockDependent
+    //     ? { scheduleNotes : () => void }
+    //     : unknown)
+    // & (T extends HasSVGGraphIcon
+    //     ? { SVGIconName: typeof GraphIconUrls[number] }
+    //     : unknown)
+
+
+// = {
+    // connect : typeof AudioNode.prototype.connect
+    // poop : any
+    // sync : T extends NodeTypes.B_SEQ ? () => void : any
+    // SVGIconName : T extends HasSVGGraphIcon ? typeof GraphIconUrls[number] : undefined
+
+    // scheduleNotes : T extends ClockDependent ? () => void : undefined
+    // setTempo : T extends ClockDependent ? (tempo : number) => void : undefined
+    // sync : T extends ClockDependent ? () => void : undefined
+
+    // type : T extends HasSubtypes ? typeof AudioNodeSubTypes[T] : undefined
+    // poop : T extends HasSubtypes ? typeof AudioNodeSubTypes[T] : undefined
+// }
