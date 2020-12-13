@@ -6,7 +6,6 @@
 
 
 import { NuniSourceNode } from '../../note_in/nuni_source_node.js'
-import { NuniAudioParam } from '../../nuni_audioparam.js'
 import { BufferStorage } from '../../../storage/buffer_storage.js'
 import { BufferCanvasFrame } from './sample_canvas.js'
 

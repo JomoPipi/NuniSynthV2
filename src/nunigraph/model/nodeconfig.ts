@@ -370,7 +370,7 @@ const AudioNodeParams =
     , [NodeTypes.PANNER]: ['pan']
     , [NodeTypes.DELAY]:  ['delayTime']
     , [NodeTypes.SAMPLE]: ['playbackRate','detune']
-    , [NodeTypes.G_SEQ]:    []
+    , [NodeTypes.G_SEQ]:  []
     , [NodeTypes.S_SEQ]:  ['playbackRate','detune']
     , [NodeTypes.NUM]:    ['offset']
     , [NodeTypes.RECORD]: []
@@ -678,16 +678,45 @@ const TransferableNodeProperties =
     , {} as Indexed)
 
 
+type ParamsOf<T extends NodeTypes> = typeof AudioNodeParams[T][number]
 
-
-interface BaseRequiredProperties {
+interface BaseRequiredProperties<T extends NodeTypes> {
     connect(input : AudioNode | AudioParam) : void
     disconnect(input? : AudioNode | AudioParam) : void
 }
 
+class NuniAudioParam extends ConstantSourceNode {
+    constructor(ctx : AudioContext) {
+        super(ctx)
+        this.offset.value = 0
+        this.start(ctx.currentTime)
+    }
+    
+    set value(value : number) {
+        this.offset.value = value
+    }
+}
+
+const CanBeAutomated =
+    { [NodeTypes.GAIN]:   ['gain']
+    , [NodeTypes.OSC]:    ['frequency','detune']
+    , [NodeTypes.FILTER]: ['frequency','Q','gain','detune']
+    , [NodeTypes.PANNER]: ['pan']
+    , [NodeTypes.DELAY]:  ['delayTime']
+    , [NodeTypes.SAMPLE]: ['playbackRate','detune']
+    , [NodeTypes.S_SEQ]:  ['playbackRate','detune']
+    , [NodeTypes.NUM]:    ['offset']
+    , [NodeTypes.COMPRESSOR]: ['threshold', 'knee', 'ratio', 'attack', 'release']
+    } as const
+type CanBeAutomated = keyof typeof CanBeAutomated
+
+type ICanBeAutomated<T extends NodeTypes> = { 
+    [key in ParamsOf<T>]? : AudioParam | NuniAudioParam
+}
+
 type ClockDependent = keyof typeof ClockDependent
 type IClockDependent<T> = (T extends ClockDependent
-    ? { 
+    ? {
         scheduleNotes() : void
         setTempo(tempo : number) : void
         sync() : void
@@ -695,8 +724,9 @@ type IClockDependent<T> = (T extends ClockDependent
     : {})
 
 type AudioNodeInterfaces<T extends NodeTypes> =
-    & BaseRequiredProperties
+    & BaseRequiredProperties<T>
     & IClockDependent<T>
+    & ICanBeAutomated<T>
         // , IClockDependent
     // & BaseRequiredProperties
     // & (T extends ClockDependent

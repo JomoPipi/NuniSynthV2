@@ -36,14 +36,14 @@ import
 type A = AudioNodeParams[NodeTypes.OSC][number]
 
 type AudioNodeParams = typeof AudioNodeParams
-type ParamsOf<T extends NodeTypes> = AudioNodeParams[T][number]
+// type ParamsOf<T extends NodeTypes> = AudioNodeParams[T][number]
 type OscParams = ParamsOf<NodeTypes.OSC>
 type T = ParamsOf<NodeTypes>
 // type InstanceType<T extends new (...args: any) => any> = 
 //     T extends new (...args: any) => infer R ? R : never;
 
-type AudioNode2<T extends NodeTypes> 
-    = InstanceType<typeof AudioNodeMap[T]>
+// type AudioNode2<T extends NodeTypes> 
+//     = InstanceType<typeof AudioNodeMap[T]>
     // & { [key in ParamsOf<T>] : AudioParam }
     // & { [key in AudioParams] : AudioParam }
 
@@ -51,8 +51,8 @@ const is
     = <T extends NodeTypes>(node : NuniGraphNode, type : T)
     : node is NuniGraphNode<T> => node.type === type
 
-type NuniAudioNode<T extends NodeTypes> =
-    AudioNode2<T> // & BaseRequiredProperties // RequiredAudionodeProperties<T>
+// type NuniAudioNode<T extends NodeTypes> =
+//     AudioNode2<T> // & BaseRequiredProperties // RequiredAudionodeProperties<T>
 
 
 
@@ -65,7 +65,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         // & ReturnType<typeof audioCtx[typeof createAudioNode[T]]>
         // & { [key in ParamsOf<T>] : AudioParam }
         // & { [key in AudioParams] : AudioParam }
-        // & AudioNodeInterfaces<T>
+        & AudioNodeInterfaces<T>
         
         // NuniAudioNode<T>
     x : number
@@ -99,13 +99,13 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         const an 
             // : ReturnType<typeof audioCtx[typeof createAudioNode[T]]>
             // & RequiredAudionodeProperties<T>
-        = audioCtx.createNode(type) as 
-            InstanceType<typeof AudioNodeMap[T]>
-        // ReturnType<typeof audioCtx[typeof createAudioNode[T]]>
-        // & RequiredAudionodeProperties<T>
+        = audioCtx.createNode<T>(type) as 
+            & InstanceType<typeof AudioNodeMap[T]>
+            // & ReturnType<typeof audioCtx[typeof createAudioNode[T]]>
+            & AudioNodeInterfaces<T>
 
         this.audioNode = an
-        // InstanceType<typeof AudioNodeMap[T]>
+
         this.graphLabel = NodeTypeGraphIcon[type]
         
         // TODO: Maybe start it on tempo tick?
