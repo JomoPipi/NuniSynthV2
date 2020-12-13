@@ -9,9 +9,11 @@ import { createSubdivSelect3 } from "../../../nunigraph/view/create_subdivselect
 import { AutomationPointsEditor } from "./automation_editor.js"
 import { createRadioButtonGroup } from "../../../UI_library/internal.js"
 import { VolumeNodeContainer } from "../../volumenode_container.js"
-import { MasterClock } from "../master_clock.js"
+import { MasterClock } from "../../sequencers/master_clock.js"
 
-export class AutomationNode extends VolumeNodeContainer {
+export class AutomationNode extends VolumeNodeContainer
+    implements AudioNodeInterfaces<NodeTypes.AUTO> {
+        
     ctx : AudioContext
     phaseShift = 0
     isPlaying = true

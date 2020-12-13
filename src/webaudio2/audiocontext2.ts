@@ -5,17 +5,17 @@
 
 
 
-import { BufferNode2 } from './note_in/buffer2.js'
-import { OscillatorNode2 } from './note_in/oscillator2.js'
-import { GateSequencer } from './sequencers/linear_sequencers/subgraph_sequencer.js'
-import { SampleSequencer } from './sequencers/linear_sequencers/buffer_sequencer.js'
+import { NuniSampleNode } from './nodes/sample/sample_node.js'
+import { OscillatorNode2 } from './nodes/oscillator/oscillator_node.js'
+import { GateSequencer } from './nodes/gate_sequencer/subgraph_sequencer.js'
+import { SampleSequencer } from './nodes/sample_sequencer/sample_sequencer_node.js'
 import { graphVisualEqualizer } from '../visualizer/global_visualizer.js'
-import { AudioBufferCaptureNode } from './record/sample_creator_node.js'
-import { NuniGraphAudioNode } from './nunigraph_audionode.js'
+import { NuniRecordingNode } from './nodes/record/record_node.js'
+import { NuniGraphAudioNode } from './nodes/module/module_node.js'
 import { Envelope } from './envelope/envelope.js'
-import { PianoRoll12Tone } from './sequencers/linear_sequencers/pianoroll_12tone.js'
-import { ProcessorNode } from './processor/processornode.js'
-import { AutomationNode } from './sequencers/automation_node/automation_node.js'
+import { PianoRoll12Tone } from './nodes/pianoroll/pianoroll_12tone_node.js'
+import { ProcessorNode } from './nodes/processor/processor_node.js'
+import { AutomationNode } from './nodes/automation_node/automation_node.js'
 
 
 
@@ -26,11 +26,11 @@ export const AudioNodeMap =
     , [NodeTypes.FILTER]:     BiquadFilterNode
     , [NodeTypes.PANNER]:     StereoPannerNode
     , [NodeTypes.DELAY]:      DelayNode
-    , [NodeTypes.SAMPLE]:     BufferNode2
-    , [NodeTypes.SGS]:        GateSequencer
-    , [NodeTypes.B_SEQ]:      SampleSequencer
-    , [NodeTypes.CSN]:        ConstantSourceNode
-    , [NodeTypes.RECORD]:     AudioBufferCaptureNode
+    , [NodeTypes.SAMPLE]:     NuniSampleNode
+    , [NodeTypes.G_SEQ]:        GateSequencer
+    , [NodeTypes.S_SEQ]:      SampleSequencer
+    , [NodeTypes.NUM]:        ConstantSourceNode
+    , [NodeTypes.RECORD]:     NuniRecordingNode
     , [NodeTypes.MODULE]:     NuniGraphAudioNode
     , [NodeTypes.ENV]:        Envelope
     , [NodeTypes.COMPRESSOR]: DynamicsCompressorNode
@@ -38,14 +38,12 @@ export const AudioNodeMap =
     , [NodeTypes.PROCESSOR]:  ProcessorNode
     , [NodeTypes.AUTO]:       AutomationNode
     } as const
+export type AudioNodeMap = typeof AudioNodeMap
 
 type AudioNodeType<T extends NodeTypes> = 
     typeof AudioNodeMap[T]
     
 type Osc = AudioNodeType<NodeTypes.OSC>
-
-type InstanceType<T extends new (...args: any) => any> = 
-    T extends new (...args: any) => infer R ? R : never;
 
 type OscInstance = InstanceType<Osc>
 
@@ -71,14 +69,20 @@ class AudioContext2 extends AudioContext {
         graphVisualEqualizer(this.analyser)
     }
 
+    // private reallyCreateNode<T extends NodeTypes>(type : T) 
+    //     : RequiredAudionodeProperties<T> {
+    //     return this[createAudioNode[type]]()
+    // }
+
     createNode<T extends NodeTypes>(type : T) {
-        const createdNode = this[createAudioNode[type]]() as
-            ReturnType<this[typeof createAudioNode[T]]>
-        return createdNode
+        // return this[createAudioNode[type]]()
+        const node = new (AudioNodeMap[type])(this)
+
+        return node
     }
 
     createBuffer2() {
-        return new BufferNode2(this)
+        return new NuniSampleNode(this)
     }
 
     createOscillator2() {
@@ -94,7 +98,7 @@ class AudioContext2 extends AudioContext {
     }
 
     createAudioBufferCaptureNode() {
-        return new AudioBufferCaptureNode(this)
+        return new NuniRecordingNode(this)
     }
     
     createNuniGraphAudioNode() {

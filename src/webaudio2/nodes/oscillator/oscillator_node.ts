@@ -5,10 +5,11 @@
 
 
 
-import { NuniSourceNode } from './nuni_source_node.js'
-import { NuniAudioParam } from '../nuni_audioparam.js'
+import { NuniSourceNode } from '../../note_in/nuni_source_node.js'
+import { NuniAudioParam } from '../../nuni_audioparam.js'
 
-export class OscillatorNode2 extends NuniSourceNode {
+export class OscillatorNode2 extends NuniSourceNode
+    implements AudioNodeInterfaces<NodeTypes.OSC>  {
     /**
      * A wrapper around OscillatorNode that allows
      * it to be played by the keyboard.

@@ -6,16 +6,16 @@
 
 
 const enum NodeTypes
-{
+{ //! DON'T CHANGE STRING VALUES //!
     GAIN = 'gain',
     OSC = 'oscillator',
     FILTER = 'filter',
     PANNER = 'panner',
     DELAY = 'delay',
     SAMPLE = 'buffer',
-    SGS = 'subgraph-sequencer',
-    B_SEQ = 'buffer-sequencer',
-    CSN = 'constant-source',
+    G_SEQ = 'subgraph-sequencer',
+    S_SEQ = 'buffer-sequencer',
+    NUM = 'constant-source',
     RECORD = 'audio-capture',
     MODULE = 'module',
     AUTO = 'automation',
@@ -59,9 +59,9 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PANNER]: 'Panner'
     , [NodeTypes.DELAY]:  'Delay'
     , [NodeTypes.SAMPLE]: 'Sample'
-    , [NodeTypes.SGS]:    'Gate Sequencer'
-    , [NodeTypes.B_SEQ]:  'Sample Sequencer'
-    , [NodeTypes.CSN]:    'Number Value'
+    , [NodeTypes.G_SEQ]:    'Gate Sequencer'
+    , [NodeTypes.S_SEQ]:  'Sample Sequencer'
+    , [NodeTypes.NUM]:    'Number Value'
     , [NodeTypes.RECORD]: 'Recorder'
     , [NodeTypes.MODULE]: 'Module'
     , [NodeTypes.AUTO]:   'Automation'
@@ -80,9 +80,9 @@ const NodeTypeEmojiLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PANNER]: '⧟'
     , [NodeTypes.DELAY]:  '🕖'
     , [NodeTypes.SAMPLE]: '📀'
-    , [NodeTypes.SGS]:    '⛩️'
-    , [NodeTypes.B_SEQ]:  '📼'
-    , [NodeTypes.CSN]:    '🎚️'
+    , [NodeTypes.G_SEQ]:    '⛩️'
+    , [NodeTypes.S_SEQ]:  '📼'
+    , [NodeTypes.NUM]:    '🎚️'
     , [NodeTypes.RECORD]: '🎙️'
     , [NodeTypes.MODULE]: '🎛️'
     , [NodeTypes.AUTO]:   '🤖'
@@ -126,9 +126,9 @@ const NodeTypeGraphIcon : { readonly [key in NodeTypes] : GraphIcon } =
     , [NodeTypes.PANNER]: '⧟'
     , [NodeTypes.DELAY]:  '🕖'
     , [NodeTypes.SAMPLE]: '📀'
-    , [NodeTypes.SGS]:    '⛩️'
-    , [NodeTypes.B_SEQ]:  '📼'
-    , [NodeTypes.CSN]:    '🎚️'
+    , [NodeTypes.G_SEQ]:    '⛩️'
+    , [NodeTypes.S_SEQ]:  '📼'
+    , [NodeTypes.NUM]:    '🎚️'
     , [NodeTypes.RECORD]: '🎙️'
     , [NodeTypes.MODULE]: '🎛️'
     , [NodeTypes.AUTO]:   '🤖'
@@ -147,9 +147,9 @@ const createAudioNode =
     , [NodeTypes.PANNER]: 'createStereoPanner'
     , [NodeTypes.DELAY]:  'createDelay'
     , [NodeTypes.SAMPLE]: 'createBuffer2'
-    , [NodeTypes.SGS]:    'createGateSequencer'
-    , [NodeTypes.B_SEQ]:  'createSampleSequencer'
-    , [NodeTypes.CSN]:    'createConstantSource'
+    , [NodeTypes.G_SEQ]:    'createGateSequencer'
+    , [NodeTypes.S_SEQ]:  'createSampleSequencer'
+    , [NodeTypes.NUM]:    'createConstantSource'
     , [NodeTypes.RECORD]: 'createAudioBufferCaptureNode'
     , [NodeTypes.MODULE]: 'createNuniGraphAudioNode'
     , [NodeTypes.AUTO]:   'createAutomationNode'
@@ -168,9 +168,9 @@ const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PANNER]: true
     , [NodeTypes.DELAY]:  true
     , [NodeTypes.SAMPLE]: false
-    , [NodeTypes.SGS]:    true
-    , [NodeTypes.B_SEQ]:  false
-    , [NodeTypes.CSN]:    false
+    , [NodeTypes.G_SEQ]:    true
+    , [NodeTypes.S_SEQ]:  false
+    , [NodeTypes.NUM]:    false
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: true
     , [NodeTypes.AUTO]:   true
@@ -189,9 +189,9 @@ const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
     , [NodeTypes.SAMPLE]: false
-    , [NodeTypes.SGS]:    true
-    , [NodeTypes.B_SEQ]:  false
-    , [NodeTypes.CSN]:    false
+    , [NodeTypes.G_SEQ]:    true
+    , [NodeTypes.S_SEQ]:  false
+    , [NodeTypes.NUM]:    false
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: true
     , [NodeTypes.AUTO]:   false
@@ -210,9 +210,9 @@ const MustBeStarted : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
     , [NodeTypes.SAMPLE]: false
-    , [NodeTypes.SGS]:    false
-    , [NodeTypes.B_SEQ]:  false
-    , [NodeTypes.CSN]:    true
+    , [NodeTypes.G_SEQ]:    false
+    , [NodeTypes.S_SEQ]:  false
+    , [NodeTypes.NUM]:    true
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: false
     , [NodeTypes.AUTO]:   false
@@ -231,9 +231,9 @@ const HasAudioParams =
     , [NodeTypes.PANNER]: true
     , [NodeTypes.DELAY]:  true
     , [NodeTypes.SAMPLE]: true
-    , [NodeTypes.SGS]:    false
-    , [NodeTypes.B_SEQ]:  false
-    , [NodeTypes.CSN]:    true
+    , [NodeTypes.G_SEQ]:    false
+    , [NodeTypes.S_SEQ]:  false
+    , [NodeTypes.NUM]:    true
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: false
     , [NodeTypes.AUTO]:   false
@@ -252,9 +252,9 @@ const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
     , [NodeTypes.SAMPLE]: false
-    , [NodeTypes.SGS]:    false
-    , [NodeTypes.B_SEQ]:  false
-    , [NodeTypes.CSN]:    false
+    , [NodeTypes.G_SEQ]:    false
+    , [NodeTypes.S_SEQ]:  false
+    , [NodeTypes.NUM]:    false
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: false
     , [NodeTypes.AUTO]:   false
@@ -273,9 +273,9 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
     , [NodeTypes.SAMPLE]: false
-    , [NodeTypes.SGS]:    true
-    , [NodeTypes.B_SEQ]:  false
-    , [NodeTypes.CSN]:    false
+    , [NodeTypes.G_SEQ]:    true
+    , [NodeTypes.S_SEQ]:  false
+    , [NodeTypes.NUM]:    false
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: true
     , [NodeTypes.AUTO]:   false
@@ -296,9 +296,9 @@ const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.PANNER]: true
     , [NodeTypes.DELAY]:  true
     , [NodeTypes.SAMPLE]: true
-    , [NodeTypes.SGS]:    true
-    , [NodeTypes.B_SEQ]:  true
-    , [NodeTypes.CSN]:    true
+    , [NodeTypes.G_SEQ]:    true
+    , [NodeTypes.S_SEQ]:  true
+    , [NodeTypes.NUM]:    true
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: false
     , [NodeTypes.AUTO]:   true
@@ -318,9 +318,9 @@ const UsesConnectionProtocol2  : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
     , [NodeTypes.SAMPLE]: false
-    , [NodeTypes.SGS]:    false
-    , [NodeTypes.B_SEQ]:  false
-    , [NodeTypes.CSN]:    false
+    , [NodeTypes.G_SEQ]:    false
+    , [NodeTypes.S_SEQ]:  false
+    , [NodeTypes.NUM]:    false
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: false
     , [NodeTypes.AUTO]:   true
@@ -333,13 +333,12 @@ const UsesConnectionProtocol2  : { readonly [key in NodeTypes] : boolean } =
     }
     
 const ClockDependent =
-    { [NodeTypes.SGS]:    true
-    , [NodeTypes.B_SEQ]:  true
+    { [NodeTypes.G_SEQ]:    true
+    , [NodeTypes.S_SEQ]:  true
     , [NodeTypes.AUTO]:   true
 
     , [NodeTypes.PIANOR]: true
     } as const
-type ClockDependent = keyof typeof ClockDependent
 
 
 
@@ -350,9 +349,9 @@ const HasResizeableNodeWindow  : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
     , [NodeTypes.SAMPLE]: false // true
-    , [NodeTypes.SGS]:    false
-    , [NodeTypes.B_SEQ]:  false
-    , [NodeTypes.CSN]:    false
+    , [NodeTypes.G_SEQ]:    false
+    , [NodeTypes.S_SEQ]:  false
+    , [NodeTypes.NUM]:    false
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: false // true
     , [NodeTypes.AUTO]:   false // true
@@ -371,9 +370,9 @@ const AudioNodeParams =
     , [NodeTypes.PANNER]: ['pan']
     , [NodeTypes.DELAY]:  ['delayTime']
     , [NodeTypes.SAMPLE]: ['playbackRate','detune']
-    , [NodeTypes.SGS]:    []
-    , [NodeTypes.B_SEQ]:  ['playbackRate','detune']
-    , [NodeTypes.CSN]:    ['offset']
+    , [NodeTypes.G_SEQ]:    []
+    , [NodeTypes.S_SEQ]:  ['playbackRate','detune']
+    , [NodeTypes.NUM]:    ['offset']
     , [NodeTypes.RECORD]: []
     , [NodeTypes.MODULE]: []
     , [NodeTypes.AUTO]:   []
@@ -395,9 +394,9 @@ const AudioNodeSubTypes : Record<NodeTypes,readonly string[]> =
     , [NodeTypes.PANNER]: []
     , [NodeTypes.DELAY]:  []
     , [NodeTypes.SAMPLE]: []
-    , [NodeTypes.SGS]:    []
-    , [NodeTypes.B_SEQ]:  []
-    , [NodeTypes.CSN]:    []
+    , [NodeTypes.G_SEQ]:    []
+    , [NodeTypes.S_SEQ]:  []
+    , [NodeTypes.NUM]:    []
     , [NodeTypes.RECORD]: []
     , [NodeTypes.MODULE]: []
     , [NodeTypes.AUTO]:   []
@@ -424,9 +423,9 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PANNER]: 'rgba(255,128,0,0.5)'
     , [NodeTypes.DELAY]:  'rgba(255,255,0,0.5)'
     , [NodeTypes.SAMPLE]: 'rgba(0,255,255,0.5)'
-    , [NodeTypes.SGS]:    'rgba(255,0,255,0.5)'
-    , [NodeTypes.B_SEQ]:  'rgba(0,255,195,0.5)'
-    , [NodeTypes.CSN]:    'rgba(255,200,200,0.5)'
+    , [NodeTypes.G_SEQ]:    'rgba(255,0,255,0.5)'
+    , [NodeTypes.S_SEQ]:  'rgba(0,255,195,0.5)'
+    , [NodeTypes.NUM]:    'rgba(255,200,200,0.5)'
     , [NodeTypes.RECORD]: 'rgba(220,150,220,1)'
     , [NodeTypes.MODULE]: 'rgba(255,240,255,0.5)'
     , [NodeTypes.AUTO]:   'rgba(150,255,0,0.5)'
@@ -445,9 +444,9 @@ const NodeTypeColors2 : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PANNER]: 'rgb(255,128,0)'
     , [NodeTypes.DELAY]:  'rgb(255,255,0)'
     , [NodeTypes.SAMPLE]: 'rgb(0,255,255)'
-    , [NodeTypes.SGS]:    'rgb(255,0,255)'
-    , [NodeTypes.B_SEQ]:  'rgb(0,255,195)'
-    , [NodeTypes.CSN]:    'rgb(255,200,200)'
+    , [NodeTypes.G_SEQ]:    'rgb(255,0,255)'
+    , [NodeTypes.S_SEQ]:  'rgb(0,255,195)'
+    , [NodeTypes.NUM]:    'rgb(255,200,200)'
     , [NodeTypes.RECORD]: 'rgb(220,150,220)'
     , [NodeTypes.MODULE]: 'rgb(255,240,255)'
     , [NodeTypes.AUTO]:   'rgb(150,255,0)'
@@ -659,7 +658,7 @@ const Transferable_AudioNodeProperties =
     } as const
 
 const PostConnection_Transferable_InputRemappable_AudioNodeProperties = 
-    { [NodeTypes.SGS]: ['stepMatrix', 'channelData']
+    { [NodeTypes.G_SEQ]: ['stepMatrix', 'channelData']
     } as const
     
 type NodeCreationSettings = { 
@@ -678,27 +677,40 @@ const TransferableNodeProperties =
         ({ ...acc, [prop]: true })
     , {} as Indexed)
 
-type BaseRequiredProperties = {
+
+
+
+interface BaseRequiredProperties {
     connect(input : AudioNode | AudioParam) : void
     disconnect(input? : AudioNode | AudioParam) : void
-
-    [others : string]: any
 }
 
-type RequiredAudionodeProperties<T extends NodeTypes> = 
+type ClockDependent = keyof typeof ClockDependent
+type IClockDependent<T> = (T extends ClockDependent
+    ? { 
+        scheduleNotes() : void
+        setTempo(tempo : number) : void
+        sync() : void
+    }
+    : {})
+
+type AudioNodeInterfaces<T extends NodeTypes> =
     & BaseRequiredProperties
+    & IClockDependent<T>
+        // , IClockDependent
+    // & BaseRequiredProperties
     // & (T extends ClockDependent
-    //     ? { scheduleNotes : () => void }
-    //     : unknown)
+        // ? IClockDependent
+        // : Interface)
     // & (T extends HasSVGGraphIcon
-    //     ? { SVGIconName: typeof GraphIconUrls[number] }
-    //     : unknown)
+        // ? { SVGIconName: typeof GraphIconUrls[number] }
+        // : unknown)
 
 
 // = {
     // connect : typeof AudioNode.prototype.connect
     // poop : any
-    // sync : T extends NodeTypes.B_SEQ ? () => void : any
+    // sync : T extends NodeTypes.S_SEQ ? () => void : any
     // SVGIconName : T extends HasSVGGraphIcon ? typeof GraphIconUrls[number] : undefined
 
     // scheduleNotes : T extends ClockDependent ? () => void : undefined

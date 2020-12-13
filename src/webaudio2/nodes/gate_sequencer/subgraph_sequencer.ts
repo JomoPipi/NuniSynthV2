@@ -6,12 +6,13 @@
 
 
 import { ADSR_Controller } from '../../adsr.js'
-import { Sequencer } from './sequencer.js'
+import { Sequencer } from '../../sequencers/linear_sequencers/sequencer.js'
 
 
 interface NuniNode { id : number, audioNode : Indexed }
 
-export class GateSequencer extends Sequencer {
+export class GateSequencer extends Sequencer
+    implements AudioNodeInterfaces<NodeTypes.G_SEQ> {
 
     /**
      * This creates an N-step sequencer out of

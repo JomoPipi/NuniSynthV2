@@ -5,8 +5,8 @@
 
 
 
-import { NuniGraphController } from "../nunigraph/controller/graph_controller.js" // <- A CIRCULAR REFERENCE POINT
-import { VolumeNodeContainer } from "./volumenode_container.js"
+import { NuniGraphController } from "../../../nunigraph/controller/graph_controller.js" // <- A CIRCULAR REFERENCE POINT
+import { VolumeNodeContainer } from "../../volumenode_container.js"
 // TODO create interface for NuniGraphController to remove the circularity?
 // type NuniGraphController = any // <- turn this one on when using npx madge --circular --extensions ts ./
 

@@ -5,14 +5,13 @@
 
 
 
-import { NuniSourceNode } from './nuni_source_node.js'
-import { NuniAudioParam } from '../nuni_audioparam.js'
-import { BufferStorage } from '../../storage/buffer_storage.js'
-import { BufferCanvasFrame } from './buffercanvas.js'
+import { NuniSourceNode } from '../../note_in/nuni_source_node.js'
+import { NuniAudioParam } from '../../nuni_audioparam.js'
+import { BufferStorage } from '../../../storage/buffer_storage.js'
+import { BufferCanvasFrame } from './sample_canvas.js'
 
-type Source = AudioBufferSourceNode
-
-export class BufferNode2 extends NuniSourceNode {
+export class NuniSampleNode extends NuniSourceNode 
+    implements AudioNodeInterfaces<NodeTypes.SAMPLE> {
     /**
      * A wrapper around AudioBufferSourceNode that allows
      * it to be played by the keyboard.

@@ -5,11 +5,13 @@
 
 
 
-import { BufferUtils } from '../../buffer_utils/init_buffers.js'
-import { BufferStorage } from '../../storage/buffer_storage.js'
-import { MasterClock } from '../sequencers/master_clock.js'
+import { BufferUtils } from '../../../buffer_utils/init_buffers.js'
+import { BufferStorage } from '../../../storage/buffer_storage.js'
+import { MasterClock } from '../../sequencers/master_clock.js'
 
-export class AudioBufferCaptureNode extends MediaStreamAudioDestinationNode {
+export class NuniRecordingNode 
+    extends MediaStreamAudioDestinationNode
+    implements AudioNodeInterfaces<NodeTypes.RECORD> {
 
     ctx : AudioContext
     bufferKey : number

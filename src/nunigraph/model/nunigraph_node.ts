@@ -7,8 +7,8 @@
 
 import { Envelope } from '../../webaudio2/envelope/envelope.js'
 import 
-    { audioCtx, OscillatorNode2 , BufferNode2, GateSequencer
-    , SampleSequencer, AudioBufferCaptureNode, NuniGraphAudioNode
+    { audioCtx, OscillatorNode2 , NuniSampleNode, GateSequencer
+    , SampleSequencer, NuniRecordingNode, NuniGraphAudioNode
     , PianoRoll12Tone, Sequencer, AutomationNode, AudioNodeMap
     } from '../../webaudio2/internal.js'
 
@@ -18,11 +18,11 @@ import
 //     , [NodeTypes.FILTER]: BiquadFilterNode
 //     , [NodeTypes.PANNER]: StereoPannerNode
 //     , [NodeTypes.DELAY]:  DelayNode
-//     , [NodeTypes.SAMPLE]: BufferNode2
-//     , [NodeTypes.SGS]:    GateSequencer
-//     , [NodeTypes.B_SEQ]:  SampleSequencer
-//     , [NodeTypes.CSN]:    ConstantSourceNode
-//     , [NodeTypes.RECORD]: AudioBufferCaptureNode
+//     , [NodeTypes.SAMPLE]: NuniSampleNode
+//     , [NodeTypes.G_SEQ]:    GateSequencer
+//     , [NodeTypes.S_SEQ]:  SampleSequencer
+//     , [NodeTypes.NUM]:    ConstantSourceNode
+//     , [NodeTypes.RECORD]: NuniRecordingNode
 //     , [NodeTypes.MODULE]: NuniGraphAudioNode
 //     , [NodeTypes.AUTO]:   AutomationNode
 
@@ -33,14 +33,10 @@ import
 //     , [NodeTypes.COMPRESSOR]: DynamicsCompressorNode
 //     } as const
 
-type AudioNodeParams = typeof AudioNodeParams
 type A = AudioNodeParams[NodeTypes.OSC][number]
-type B<T extends NodeTypes> = T extends NodeTypes
-    ? { [key in A] : AudioParam }
-    : unknown
 
-// type C = AudioNodeMap[NodeTypes.OSC]
-type ParamsOf<nodeType extends NodeTypes> = AudioNodeParams[nodeType][number]
+type AudioNodeParams = typeof AudioNodeParams
+type ParamsOf<T extends NodeTypes> = AudioNodeParams[T][number]
 type OscParams = ParamsOf<NodeTypes.OSC>
 type T = ParamsOf<NodeTypes>
 // type InstanceType<T extends new (...args: any) => any> = 
@@ -57,16 +53,19 @@ const is
 
 type NuniAudioNode<T extends NodeTypes> =
     AudioNode2<T> // & BaseRequiredProperties // RequiredAudionodeProperties<T>
-    
+
+
+
 export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
     readonly id : number
     readonly type : T // TODO
     readonly audioNode : 
-        ReturnType<typeof audioCtx[typeof createAudioNode[T]]>
+        & InstanceType<AudioNodeMap[T]>
+        // & ReturnType<typeof audioCtx[typeof createAudioNode[T]]>
         // & { [key in ParamsOf<T>] : AudioParam }
         // & { [key in AudioParams] : AudioParam }
-        & BaseRequiredProperties
+        // & AudioNodeInterfaces<T>
         
         // NuniAudioNode<T>
     x : number
@@ -75,7 +74,6 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
     title? : string
     graphLabel : string | number
     readonly INPUT_NODE_ID? : { id : number }
-
     
     constructor(id : number, type : T, settings : NodeCreationSettings) {
 
@@ -97,8 +95,16 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.title = title
         this.INPUT_NODE_ID = INPUT_NODE_ID
 
-        const an = audioCtx.createNode<T>(type)
-        this.audioNode = an// as InstanceType<(typeof AudioNodeMap)[T]>
+        type F = InstanceType<typeof AudioNodeMap[NodeTypes.OSC]>
+        const an 
+            // : ReturnType<typeof audioCtx[typeof createAudioNode[T]]>
+            // & RequiredAudionodeProperties<T>
+        = audioCtx.createNode(type) as 
+            InstanceType<typeof AudioNodeMap[T]>
+        // ReturnType<typeof audioCtx[typeof createAudioNode[T]]>
+        // & RequiredAudionodeProperties<T>
+
+        this.audioNode = an
         // InstanceType<typeof AudioNodeMap[T]>
         this.graphLabel = NodeTypeGraphIcon[type]
         
@@ -115,9 +121,9 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
             // requestAnimationFrame is needed because GateSequencer's input(s) need to be remmapped..
             // TODO: put this in a function: audioNode.doBadCode()
             requestAnimationFrame(() => {
-                if (is(this, NodeTypes.B_SEQ) || is(this, NodeTypes.SGS))
+                if (is(this, NodeTypes.S_SEQ) || is(this, NodeTypes.G_SEQ))
                 {
-                    if (is(this, NodeTypes.B_SEQ)) 
+                    if (is(this, NodeTypes.S_SEQ))
                     { // This fixed a bug:
                         this.audioNode.channelVolumes = {}
                     }
@@ -126,7 +132,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
                     {
                         if (!channelVolumes[key])
                         {
-                            if (is(this, NodeTypes.SGS)) throw 'Oh, okay. Do it for SGS as well.'
+                            if (is(this, NodeTypes.G_SEQ)) throw 'Oh, okay. Do it for SGS as well.'
                             this.audioNode.createChannelVolume(+key)
                         }
                         channelVolumes[key].gain.value = channelData[key].volume
@@ -149,8 +155,6 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
     }
 
     setValueOfParam(param : ParamsOf<T>, value: number) {
-        type W = typeof AudioNodeParams[T][number]
-        type O = typeof AudioNodeParams[NodeTypes.OSC][number]
         this.audioParamValues[param] = value
         this.audioNode[param].value = value
     }

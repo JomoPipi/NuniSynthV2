@@ -11,7 +11,7 @@ import
     { GateSequencer, NuniAudioParam
     , Sequencer, NuniGraphAudioNode
     } from '../../webaudio2/internal.js'
-import { ProcessorNode } from '../../webaudio2/processor/processornode.js'
+import { ProcessorNode } from '../../webaudio2/nodes/processor/processor_node.js'
 
 // type Destination = AudioNode | AudioParam | NuniAudioParam
 

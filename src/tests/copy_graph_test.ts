@@ -62,7 +62,7 @@ const g = GraphController.g // new NuniGraph()
     g.clear()
     let passed = 0, failed = 0
     
-    const sgs = g.createNewNode(NodeTypes.SGS, 
+    const sgs = g.createNewNode(NodeTypes.G_SEQ, 
         { x: .1
         , y: .5
         , audioParamValues:{}
@@ -82,7 +82,7 @@ const g = GraphController.g // new NuniGraph()
     const row = sgs.audioNode.stepMatrix[osc.id] = [0,1,0,1,0,0,1,0].map(Boolean)
 
     const [sgs2, osc2] = g.reproduceNodesAndConnections([sgs, osc]) as 
-        [NuniGraphNode<NodeTypes.SGS>, NuniGraphNode<NodeTypes.OSC>]
+        [NuniGraphNode<NodeTypes.G_SEQ>, NuniGraphNode<NodeTypes.OSC>]
 
     const tests = 
         { 'id remapped correctly': JSON.stringify(sgs2.audioNode.stepMatrix[osc2.id]) === JSON.stringify(row)

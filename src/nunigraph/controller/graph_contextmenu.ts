@@ -83,9 +83,9 @@ const nodesSortedByRecurrence : NodeTypes[] =
     , NodeTypes.OSC
     , NodeTypes.SAMPLE
     , NodeTypes.AUTO
-    , NodeTypes.B_SEQ
-    , NodeTypes.SGS
-    , NodeTypes.CSN
+    , NodeTypes.S_SEQ
+    , NodeTypes.G_SEQ
+    , NodeTypes.NUM
     , NodeTypes.FILTER
     , NodeTypes.DELAY
     , NodeTypes.PANNER

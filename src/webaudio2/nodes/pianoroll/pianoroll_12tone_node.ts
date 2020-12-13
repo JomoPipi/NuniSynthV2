@@ -7,7 +7,8 @@
 
 import { Theme } from '../../../UI_setup/theme_setup.js'
 
-export class PianoRoll12Tone {
+export class PianoRoll12Tone
+    implements AudioNodeInterfaces<NodeTypes.PIANOR> {
 
     html : HTMLElement
     pianoRoll : any

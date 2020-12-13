@@ -11,8 +11,8 @@ import { BufferUtils  } from '../../buffer_utils/internal.js'
 import { audioCaptureNodeControls } from './audio_capture_controls.js'
 // import { createResizeableGraphEditor } from './resizeable_graph_editor.js'
 import 
-    { NuniSourceNode, BufferNode2, Sequencer
-    , AudioBufferCaptureNode, NuniGraphAudioNode
+    { NuniSourceNode, NuniSampleNode, Sequencer
+    , NuniRecordingNode, NuniGraphAudioNode
     , MasterClock, PianoRoll12Tone, OscillatorNode2, AutomationNode 
     } from '../../webaudio2/internal.js'
 import 
@@ -22,7 +22,7 @@ import
 import { createSubdivSelect } from './create_subdivselect.js'
 import { GraphController } from '../init.js'
 import { doUntilMouseUp } from '../../UI_library/events/until_mouseup.js'
-import { ProcessorNode } from '../../webaudio2/processor/processornode.js'
+import { ProcessorNode } from '../../webaudio2/nodes/processor/processor_node.js'
 import { ActiveControllers } from '../controller/graph_controller.js'
 
 
@@ -73,7 +73,7 @@ export function createValuesWindow(
         // controls.appendChild(createResizeableGraphEditor(audioNode))
     }
 
-    if (audioNode instanceof AudioBufferCaptureNode) 
+    if (audioNode instanceof NuniRecordingNode) 
     {
         controls.appendChild(audioCaptureNodeControls(audioNode))
     }
@@ -83,7 +83,7 @@ export function createValuesWindow(
         controls.appendChild(sequencerControls(audioNode))
     }
 
-    if (audioNode instanceof BufferNode2) 
+    if (audioNode instanceof NuniSampleNode) 
     {
         controls.appendChild(samplerControls(audioNode))
     }
@@ -95,9 +95,10 @@ export function createValuesWindow(
 
     if (node.id === 0) // || node.type === NodeTypes.GAIN) 
     {
-        controls.appendChild(gainControls(node))
+        controls.appendChild(gainControls(
+            node as NuniGraphNode<NodeTypes.GAIN>))
     }
-    else if (HasAudioParams[node.type] && node.type !== NodeTypes.B_SEQ) 
+    else if (HasAudioParams[node.type] && node.type !== NodeTypes.S_SEQ) 
     {
         controls.appendChild(exposeAudioParams(node, saveCallback))
     }
@@ -245,7 +246,7 @@ function warningButton(type : NodeTypes) {
 }
 
 
-function gainControls(node : NuniGraphNode) {
+function gainControls(node : NuniGraphNode<NodeTypes.GAIN>) {
     const value = node.audioNode.gain.value
     const dial = new JsDial(1)
     dial.min = 0.1
@@ -365,7 +366,7 @@ function insertOptions(select : HTMLSelectElement, options : readonly string[]) 
 
 
 
-function samplerControls(audioNode : BufferNode2) {
+function samplerControls(audioNode : NuniSampleNode) {
     const box = E('span', { className: 'buffer-stuff-row' })
 
     box.appendChild(E('span', { text: 'buffer' }))

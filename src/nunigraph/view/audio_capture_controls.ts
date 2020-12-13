@@ -5,7 +5,7 @@
 
 
 
-import { AudioBufferCaptureNode, MasterClock } from "../../webaudio2/internal.js";
+import { NuniRecordingNode, MasterClock } from "../../webaudio2/internal.js";
 import { BufferUtils } from "../../buffer_utils/internal.js";
 import { createSubdivSelect } from "./create_subdivselect.js";
 
@@ -15,7 +15,7 @@ import { createSubdivSelect } from "./create_subdivselect.js";
 
 
 
-export function audioCaptureNodeControls(audioNode : AudioBufferCaptureNode) {
+export function audioCaptureNodeControls(audioNode : NuniRecordingNode) {
     const controls = E('div')
 
     choose_buffer_index: {

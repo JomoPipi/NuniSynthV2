@@ -11,8 +11,8 @@ import { BufferUtils } from '../buffer_utils/internal.js'
 import { NuniGraphController, ActiveControllers } from './controller/graph_controller.js'
 
 import 
-    { KB, audioCtx, Sequencer, BufferNode2
-    , MasterClock, NuniSourceNode, NuniGraphAudioNode, PianoRoll12Tone, OscillatorNode2, AutomationNode
+    { KB, audioCtx, Sequencer, NuniSampleNode
+    , MasterClock, NuniSourceNode, NuniGraphAudioNode, PianoRoll12Tone, OscillatorNode2, AutomationNode, SampleSequencer
     } from '../webaudio2/internal.js'
 import { snapToGrid } from './view/snap_to_grid.js'
 import { WaveformUtils } from '../waveform_utils/mutable_waveform.js'
@@ -120,7 +120,7 @@ Graph_Attachments: {
     BufferUtils.setRefreshBufferFunc((index : number) => {
         for (const { audioNode: an } of yieldNodes(g)) 
         {
-            if (an instanceof BufferNode2 && an.bufferKey === index) 
+            if (an instanceof NuniSampleNode && an.bufferKey === index) 
             {
                 an.refresh()
             }

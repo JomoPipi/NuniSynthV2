@@ -1,4 +1,4 @@
-import { audioCtx } from "../audiocontext2";
+import { audioCtx } from "../../audiocontext2";
 
 
 
@@ -273,7 +273,9 @@ class CustomAudioNode extends AudioWorkletNode {
 //         console.log('wasm instance = ', WASM.instance)
 //     })
 
-export class ProcessorNode {
+export class ProcessorNode 
+    implements AudioNodeInterfaces<NodeTypes.PROCESSOR> {
+
     audioWorkletNode : AudioWorkletNode
     inputChannelNode : GainNode
     _processorCode = INITIAL_CODE
