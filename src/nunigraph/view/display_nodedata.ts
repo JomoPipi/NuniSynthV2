@@ -29,6 +29,9 @@ import { ActiveControllers } from '../controller/graph_controller.js'
 const hasSubtypes = (node : NuniGraphNode) : node is NuniGraphNode<HasSubtypes> =>
     node.type in HasSubtypes
 
+const exposesAudioParams = (node : NuniGraphNode) : node is NuniGraphNode<keyof typeof ExposesAudioparamsInDialogBox> =>
+    node.type in ExposesAudioparamsInDialogBox
+
 export function createValuesWindow(
     node : NuniGraphNode, 
     saveCallback : Function,
@@ -98,7 +101,7 @@ export function createValuesWindow(
         controls.appendChild(gainControls(
             node as NuniGraphNode<NodeTypes.GAIN>))
     }
-    else if (HasAudioParams[node.type] && node.type !== NodeTypes.S_SEQ) 
+    else if (exposesAudioParams(node)) 
     {
         controls.appendChild(exposeAudioParams(node, saveCallback))
     }
@@ -410,7 +413,7 @@ function samplerControls(audioNode : NuniSampleNode) {
 
 
 
-function exposeAudioParams(node : NuniGraphNode, saveCallback : Function) : Node {
+function exposeAudioParams(node : NuniGraphNode<CanBeAutomated>, saveCallback : Function) : Node {
     const params = AudioNodeParams[node.type]
     const className = params.length > 1 ? 'audioparams-container' : 'audioparam-container'
     const allParams = E('div', { className })

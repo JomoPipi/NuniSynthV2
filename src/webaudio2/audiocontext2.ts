@@ -17,9 +17,6 @@ import { PianoRoll12Tone } from './nodes/pianoroll/pianoroll_12tone_node.js'
 import { ProcessorNode } from './nodes/processor/processor_node.js'
 import { AutomationNode } from './nodes/automation_node/automation_node.js'
 
-
-
-// export type AudioNodeMap = typeof AudioNodeMap
 export const AudioNodeMap = 
     { [NodeTypes.GAIN]:       GainNode
     , [NodeTypes.OSC]:        OscillatorNode2
@@ -27,7 +24,7 @@ export const AudioNodeMap =
     , [NodeTypes.PANNER]:     StereoPannerNode
     , [NodeTypes.DELAY]:      DelayNode
     , [NodeTypes.SAMPLE]:     NuniSampleNode
-    , [NodeTypes.G_SEQ]:        GateSequencer
+    , [NodeTypes.G_SEQ]:      GateSequencer
     , [NodeTypes.S_SEQ]:      SampleSequencer
     , [NodeTypes.NUM]:        ConstantSourceNode
     , [NodeTypes.RECORD]:     NuniRecordingNode
@@ -38,14 +35,6 @@ export const AudioNodeMap =
     , [NodeTypes.PROCESSOR]:  ProcessorNode
     , [NodeTypes.AUTO]:       AutomationNode
     } as const
-export type AudioNodeMap = typeof AudioNodeMap
-
-type AudioNodeType<T extends NodeTypes> = 
-    typeof AudioNodeMap[T]
-    
-type Osc = AudioNodeType<NodeTypes.OSC>
-
-type OscInstance = InstanceType<Osc>
 
 class AudioContext2 extends AudioContext {
     /** con·text    /ˈkäntekst/ 
@@ -69,56 +58,8 @@ class AudioContext2 extends AudioContext {
         graphVisualEqualizer(this.analyser)
     }
 
-    // private reallyCreateNode<T extends NodeTypes>(type : T) 
-    //     : RequiredAudionodeProperties<T> {
-    //     return this[createAudioNode[type]]()
-    // }
-
-    createNode<T extends NodeTypes>(type : T) {
-        // return this[createAudioNode[type]]()
-        const node = new (AudioNodeMap[type])(this)
-
-        return node
-    }
-
-    createBuffer2() {
-        return new NuniSampleNode(this)
-    }
-
-    createOscillator2() {
-        return new OscillatorNode2(this) 
-    }
-
-    createGateSequencer() {
-        return new GateSequencer(this)
-    }
-
-    createSampleSequencer() {
-        return new SampleSequencer(this)
-    }
-
-    createAudioBufferCaptureNode() {
-        return new NuniRecordingNode(this)
-    }
-    
-    createNuniGraphAudioNode() {
-        return new NuniGraphAudioNode(this)
-    }
-
-    createEnvelopeNode() {
-        return new Envelope(this)
-    }
-
-    create12TonePianoRoll() {
-        return new PianoRoll12Tone(this)
-    }
-
-    createProcessorNode() {
-        return new ProcessorNode(this)
-    }
-
-    createAutomationNode() {
-        return new AutomationNode(this)
+    createNode<T extends NodeTypes>(type : T) : InstanceType<typeof AudioNodeMap[T]> {
+        return new AudioNodeMap[type](this) as InstanceType<typeof AudioNodeMap[T]>
     }
 }
 

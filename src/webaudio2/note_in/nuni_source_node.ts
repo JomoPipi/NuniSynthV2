@@ -56,7 +56,7 @@ export class NuniSourceNode extends VolumeNodeContainer {
         this.playingKeys = {}
         this.stopLastNSources = []
 
-        if (!this.kbMode) 
+        if (!this.kbMode)
         {
             const src = this.createSource()
             const adsr = this.ctx.createGain()

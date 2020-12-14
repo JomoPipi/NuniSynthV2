@@ -364,9 +364,8 @@ export class NuniGraphRenderer {
 
     private getNodeColor(node : NuniGraphNode, H : number, W : number, highlight : boolean) {
         const { nodeRadius, ctx } = this
-        if (!HasAudioParams[node.type]) 
+        if (!(node.type in ExposesAudioparamsInDialogBox))
         {
-
             const c2 = highlight ? 'pink' : 'transparent' // NodeTypeColors2[node.type] // 'black'
             const { x, y } = node, r = nodeRadius
             const gradient = ctx.createRadialGradient(x*W, y*H, r/27.0, x*W, y*H, r)

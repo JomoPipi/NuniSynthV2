@@ -10,7 +10,7 @@ import
     , saveProjectAs 
     , saveProject
     } from '../storage/dialog.js'
-import { modularizeGraph } from '../nunigraph/controller/graph_handlers.js'
+import { modularizeGraph } from '../nunigraph/controller/modularize_graph.js'
 import { setTheme } from './theme_setup.js'
 import { UserOptions } from '../storage/user_options.js'
 import { ActiveControllers } from '../nunigraph/controller/graph_controller.js'

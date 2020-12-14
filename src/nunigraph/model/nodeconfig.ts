@@ -140,27 +140,6 @@ const NodeTypeGraphIcon : { readonly [key in NodeTypes] : GraphIcon } =
     , [NodeTypes.COMPRESSOR]: '💢'
     }
 
-const createAudioNode =
-    { [NodeTypes.GAIN]:   'createGain'
-    , [NodeTypes.OSC]:    'createOscillator2'
-    , [NodeTypes.FILTER]: 'createBiquadFilter'
-    , [NodeTypes.PANNER]: 'createStereoPanner'
-    , [NodeTypes.DELAY]:  'createDelay'
-    , [NodeTypes.SAMPLE]: 'createBuffer2'
-    , [NodeTypes.G_SEQ]:    'createGateSequencer'
-    , [NodeTypes.S_SEQ]:  'createSampleSequencer'
-    , [NodeTypes.NUM]:    'createConstantSource'
-    , [NodeTypes.RECORD]: 'createAudioBufferCaptureNode'
-    , [NodeTypes.MODULE]: 'createNuniGraphAudioNode'
-    , [NodeTypes.AUTO]:   'createAutomationNode'
-    
-    , [NodeTypes.PIANOR]: 'create12TonePianoRoll'
-    , [NodeTypes.ENV]:    'createEnvelopeNode'
-    // , [NodeTypes.CUSTOM]: 'createCustomNode'
-    , [NodeTypes.PROCESSOR]: 'createProcessorNode'
-    , [NodeTypes.COMPRESSOR]: 'createDynamicsCompressor'
-    } as const
-
 const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.GAIN]:   true
     , [NodeTypes.OSC]:    false
@@ -204,45 +183,18 @@ const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
     }
 
 const MustBeStarted =
-    { [NodeTypes.GAIN]:   false
-    , [NodeTypes.OSC]:    false
-    , [NodeTypes.FILTER]: false
-    , [NodeTypes.PANNER]: false
-    , [NodeTypes.DELAY]:  false
-    , [NodeTypes.SAMPLE]: false
-    , [NodeTypes.G_SEQ]:    false
-    , [NodeTypes.S_SEQ]:  false
-    , [NodeTypes.NUM]:    true
-    , [NodeTypes.RECORD]: false
-    , [NodeTypes.MODULE]: false
-    , [NodeTypes.AUTO]:   false
-    
-    , [NodeTypes.PIANOR]: false
-    , [NodeTypes.ENV]:    false
-    // , [NodeTypes.CUSTOM]: false
-    , [NodeTypes.PROCESSOR]:false
-    , [NodeTypes.COMPRESSOR]:false
+    { [NodeTypes.NUM]: true
     } as const
 
-const HasAudioParams =
-    { [NodeTypes.GAIN]:   true
-    , [NodeTypes.OSC]:    true
-    , [NodeTypes.FILTER]: true
-    , [NodeTypes.PANNER]: true
-    , [NodeTypes.DELAY]:  true
-    , [NodeTypes.SAMPLE]: true
-    , [NodeTypes.G_SEQ]:    false
-    , [NodeTypes.S_SEQ]:  false
-    , [NodeTypes.NUM]:    true
-    , [NodeTypes.RECORD]: false
-    , [NodeTypes.MODULE]: false
-    , [NodeTypes.AUTO]:   false
-    
-    , [NodeTypes.PIANOR]: false
-    , [NodeTypes.ENV]:    false
-    // , [NodeTypes.CUSTOM]: true
-    , [NodeTypes.PROCESSOR]:false
-    , [NodeTypes.COMPRESSOR]:true
+const ExposesAudioparamsInDialogBox =
+    { [NodeTypes.GAIN]:       true
+    , [NodeTypes.OSC]:        true
+    , [NodeTypes.FILTER]:     true
+    , [NodeTypes.PANNER]:     true
+    , [NodeTypes.DELAY]:      true
+    , [NodeTypes.SAMPLE]:     true
+    , [NodeTypes.NUM]:        true
+    , [NodeTypes.COMPRESSOR]: true
     } as const
 
 const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
@@ -676,8 +628,8 @@ const TransferableNodeProperties =
     , {} as Indexed)
 
 
-type ParamsOf<T extends NodeTypes> = T extends keyof typeof CanBeAutomated
-    ? typeof CanBeAutomated[T][number]
+type ParamsOf<T extends NodeTypes> = T extends CanBeAutomated
+    ? typeof AudioNodeParams[T][number]
     : any
 
 interface BaseRequiredProperties<T extends NodeTypes> {
@@ -698,17 +650,17 @@ class NuniAudioParam extends ConstantSourceNode {
 }
 
 const CanBeAutomated =
-    { [NodeTypes.GAIN]:   ['gain']
-    , [NodeTypes.OSC]:    ['frequency','detune']
-    , [NodeTypes.FILTER]: ['frequency','Q','gain','detune']
-    , [NodeTypes.PANNER]: ['pan']
-    , [NodeTypes.DELAY]:  ['delayTime']
-    , [NodeTypes.SAMPLE]: ['playbackRate','detune']
-    , [NodeTypes.S_SEQ]:  ['playbackRate','detune']
-    , [NodeTypes.NUM]:    ['offset']
-    , [NodeTypes.COMPRESSOR]: ['threshold', 'knee', 'ratio', 'attack', 'release']
-    } as const
-type CanBeAutomated = keyof typeof CanBeAutomated
+    [ NodeTypes.GAIN
+    , NodeTypes.OSC
+    , NodeTypes.FILTER
+    , NodeTypes.PANNER
+    , NodeTypes.DELAY
+    , NodeTypes.SAMPLE
+    , NodeTypes.S_SEQ
+    , NodeTypes.NUM
+    , NodeTypes.COMPRESSOR
+    ] as const
+type CanBeAutomated = typeof CanBeAutomated[number]
 
 type ICanBeAutomated<T extends NodeTypes> = { 
     [key in ParamsOf<T>]? : AudioParam | NuniAudioParam
@@ -726,7 +678,7 @@ type IClockDependent<T> = (T extends ClockDependent
 type AudioNodeInterfaces<T extends NodeTypes> =
     & BaseRequiredProperties<T>
     & IClockDependent<T>
-    & ICanBeAutomated<T>
+    // & ICanBeAutomated<T>
         // , IClockDependent
     // & BaseRequiredProperties
     // & (T extends ClockDependent
