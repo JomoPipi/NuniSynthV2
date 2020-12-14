@@ -54,12 +54,10 @@ const is
 // type NuniAudioNode<T extends NodeTypes> =
 //     AudioNode2<T> // & BaseRequiredProperties // RequiredAudionodeProperties<T>
 
-
-
 export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
     readonly id : number
-    readonly type : T // TODO
+    readonly type : T
     readonly audioNode : 
         & InstanceType<AudioNodeMap[T]>
         // & ReturnType<typeof audioCtx[typeof createAudioNode[T]]>
@@ -96,10 +94,10 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.INPUT_NODE_ID = INPUT_NODE_ID
 
         type F = InstanceType<typeof AudioNodeMap[NodeTypes.OSC]>
-        const an 
+        const an =
             // : ReturnType<typeof audioCtx[typeof createAudioNode[T]]>
             // & RequiredAudionodeProperties<T>
-        = audioCtx.createNode<T>(type) as 
+            audioCtx.createNode<T>(type) as 
             & InstanceType<typeof AudioNodeMap[T]>
             // & ReturnType<typeof audioCtx[typeof createAudioNode[T]]>
             & AudioNodeInterfaces<T>
@@ -145,12 +143,10 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
         this.audioParamValues = JSON.parse(JSON.stringify(audioParamValues))
 
-        for (const param of AudioNodeParams[type]) 
+        for (const param of AudioNodeParams[this.type]) 
         {
-            const value
-                =  audioParamValues[param] 
-                ?? DefaultParamValues[param]
-            this.setValueOfParam(param, value)
+            const value = audioParamValues[param] ?? DefaultParamValues[param]
+            this.setValueOfParam(param as ParamsOf<T>, value)
         }
     }
 

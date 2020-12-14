@@ -203,7 +203,7 @@ const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.COMPRESSOR]:false
     }
 
-const MustBeStarted : { readonly [key in NodeTypes] : boolean } =
+const MustBeStarted =
     { [NodeTypes.GAIN]:   false
     , [NodeTypes.OSC]:    false
     , [NodeTypes.FILTER]: false
@@ -222,7 +222,7 @@ const MustBeStarted : { readonly [key in NodeTypes] : boolean } =
     // , [NodeTypes.CUSTOM]: false
     , [NodeTypes.PROCESSOR]:false
     , [NodeTypes.COMPRESSOR]:false
-    }
+    } as const
 
 const HasAudioParams =
     { [NodeTypes.GAIN]:   true
@@ -377,11 +377,9 @@ const AudioNodeParams =
     , [NodeTypes.MODULE]: []
     , [NodeTypes.AUTO]:   []
     
-    , [NodeTypes.PIANOR]: [] // TODO: add offset
+    , [NodeTypes.PIANOR]: []
     , [NodeTypes.ENV]:    []
-    // , get [NodeTypes.CUSTOM]() { return [] }
-    // , set [NodeTypes.CUSTOM](params : []) { }
-    , [NodeTypes.PROCESSOR]:[]
+    , [NodeTypes.PROCESSOR]: []
     , [NodeTypes.COMPRESSOR]: ['threshold', 'knee', 'ratio', 'attack', 'release']
     } as const
 
@@ -678,7 +676,9 @@ const TransferableNodeProperties =
     , {} as Indexed)
 
 
-type ParamsOf<T extends NodeTypes> = typeof AudioNodeParams[T][number]
+type ParamsOf<T extends NodeTypes> = T extends keyof typeof CanBeAutomated
+    ? typeof CanBeAutomated[T][number]
+    : any
 
 interface BaseRequiredProperties<T extends NodeTypes> {
     connect(input : AudioNode | AudioParam) : void
