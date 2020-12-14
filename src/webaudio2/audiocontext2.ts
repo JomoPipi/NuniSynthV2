@@ -5,11 +5,13 @@
 
 
 
+import { graphVisualEqualizer } from '../visualizer/global_visualizer.js'
+
 import { NuniSampleNode } from './nodes/sample/sample_node.js'
 import { OscillatorNode2 } from './nodes/oscillator/oscillator_node.js'
+import { NuniPannerNode } from './nodes/panner/panner_node.js'
 import { GateSequencer } from './nodes/gate_sequencer/subgraph_sequencer.js'
 import { SampleSequencer } from './nodes/sample_sequencer/sample_sequencer_node.js'
-import { graphVisualEqualizer } from '../visualizer/global_visualizer.js'
 import { NuniRecordingNode } from './nodes/record/record_node.js'
 import { NuniGraphAudioNode } from './nodes/module/module_node.js'
 import { Envelope } from './envelope/envelope.js'

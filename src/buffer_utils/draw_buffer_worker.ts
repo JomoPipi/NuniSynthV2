@@ -37,7 +37,7 @@ export function reallyDrawBuffer(channel : Float32Array, ctx : CanvasRenderingCo
     {
         const x = MARGIN + (W - MARGIN * 2) * i / channel.length | 0
         const y = channel[i] * (H - MARGIN * 2) / 2
-        ctx.moveTo(x, MARGIN)
+        ctx.moveTo(x, 0)
         ctx.lineTo(x + 1, y)
         max = Math.max(max, channel[i])
         min = Math.min(min, channel[i])

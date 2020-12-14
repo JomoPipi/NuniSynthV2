@@ -298,7 +298,7 @@ function showSubtypes(node : NuniGraphNode<HasSubtypes>, saveCallback: Function)
 
     // if (HasCustomSubtype[node.type]) //
     // if (node.type === NodeTypes.OSC)
-    if (GraphIconImageObjects[node.audioNode.type])
+    if (node.audioNode.type in GraphIconImageObjects)
     {
         const types = AudioNodeSubTypes[node.type]
 

@@ -102,6 +102,7 @@ const GraphIconUrls =
     , 'square'
     , 'sawtooth'
     , 'custom'
+    , 'frying-pan'
     ] as const
 
 const GraphIconImageObjects =
@@ -111,12 +112,12 @@ const GraphIconImageObjects =
         img.src = url
         acc[name] = img
         return acc
-    }, {} as Record<string, HTMLImageElement>)
+    }, {} as Record<typeof GraphIconUrls[number], HTMLImageElement>)
 
-const HasSVGGraphIcon = {
-    [NodeTypes.OSC]: true
-} as const
-
+const HasSVGGraphIcon = 
+    { [NodeTypes.OSC]:    true
+    , [NodeTypes.PANNER]: true 
+    } as const
 type HasSVGGraphIcon = keyof typeof HasSVGGraphIcon
 
 const NodeTypeGraphIcon : { readonly [key in NodeTypes] : GraphIcon } =
@@ -600,6 +601,8 @@ const TransferableNodeProperties =
     } as const
 
 
+
+
 const CanBeAutomated =
     [ NodeTypes.GAIN
     , NodeTypes.OSC
@@ -616,7 +619,7 @@ type ParamsOf<T extends NodeTypes> = T extends CanBeAutomated
     ? typeof AudioNodeParams[T][number]
     : any
 
-interface BaseRequiredProperties<T extends NodeTypes> {
+interface BaseAudioNodeProperties<T extends NodeTypes> {
     connect(input : AudioNode | AudioParam) : void
     disconnect(input? : AudioNode | AudioParam) : void
 }
@@ -643,7 +646,7 @@ type IClockDependent<T> = (T extends ClockDependent
     : {})
 
 type AudioNodeInterfaces<T extends NodeTypes> =
-    & BaseRequiredProperties<T>
+    & BaseAudioNodeProperties<T>
     & IClockDependent<T>
     // & ICanBeAutomated<T>
         // , IClockDependent
@@ -651,10 +654,11 @@ type AudioNodeInterfaces<T extends NodeTypes> =
     // & (T extends ClockDependent
         // ? IClockDependent
         // : Interface)
-    // & (T extends HasSVGGraphIcon
-        // ? { SVGIconName: typeof GraphIconUrls[number] }
-        // : unknown)
 
+type GraphNodeInterFaces<T extends NodeTypes> =
+    & (T extends HasSVGGraphIcon
+        ? { SVGIconKey: typeof GraphIconUrls[number] }
+        : {})
 
 // = {
     // connect : typeof AudioNode.prototype.connect

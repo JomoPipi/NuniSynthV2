@@ -36,7 +36,7 @@ class BufferUtily {
     lastRecorderRequestId : number
     stopLastRecorder : Function
     nextBufferDuration : number
-    readonly nBuffers : number
+    readonly nBuffers = 26
     private refreshFunc : Function
     private imageDataCenter : Record<number,ImageData>
     
@@ -45,7 +45,6 @@ class BufferUtily {
         this.lastRecorderRequestId = 0
         this.stopLastRecorder = () => void 0
         this.nextBufferDuration = +(D('new-buffer-length') as HTMLSelectElement).value
-        this.nBuffers = 26
         this.refreshFunc = (x : never) => x
         this.imageDataCenter = {}
     }

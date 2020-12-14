@@ -464,11 +464,21 @@ export class NuniGraphRenderer {
                 // ctx.font = '30px Arial'
                 ctx.font = `${nodeRadius * 6 / 5}px Arial`
                 const icon = NodeTypeGraphIcon[node.type]
-                // if (node.type in HasSVGIcon)
-                if (is(node,NodeTypes.OSC))
+
+                const hasSVGIcon = (node : NuniGraphNode) 
+                    : node is NuniGraphNode<HasSVGGraphIcon> =>
+                        node.type in HasSVGGraphIcon
+
+                if (hasSVGIcon(node))
                 {
-                    const img = GraphIconImageObjects[node.audioNode.type]
-                    // TODO: resize SVG
+                    const key = is(node, NodeTypes.OSC)
+                        ? node.audioNode.type
+                        : is(node, NodeTypes.PANNER)
+                        ? 'frying-pan'
+                        : 'sine'
+
+                    const img = GraphIconImageObjects[key]
+                    // const img = GraphIconImageObjects[node.audioNode.SVGIconKey]
                     ctx.drawImage(img, X - 20, Y - 16) // , nodeRadius, nodeRadius);
                 }
                 else
