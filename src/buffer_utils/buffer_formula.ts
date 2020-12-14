@@ -18,10 +18,7 @@ export function formulateBuffer(index : number) {
     const seconds = BufferUtils.nextBufferDuration
 
     const buffer = audioCtx
-        .createBuffer(
-            1, 
-            audioCtx.sampleRate * seconds, 
-            audioCtx.sampleRate)
+        .createBuffer(1, audioCtx.sampleRate * seconds, audioCtx.sampleRate)
     
     const isError = validateExp(formulaInput.value)
 
@@ -39,6 +36,7 @@ export function formulateBuffer(index : number) {
     }
 
     function validateExp(expression : string) {
+        // For the eval
         const 
             { sin, cos, tan, log, log2, exp, sqrt, random, atan
             , atan2, atanh, abs, acos, acosh, asin, asinh, cbrt
@@ -131,6 +129,8 @@ function clickBufferTemplateOrNot(e : MouseEvent) {
     {
         formulaInput.value = bufferPresets[text as keyof typeof bufferPresets]
     }
-    bufferPresetsContainer.innerHTML = ''
-    window.removeEventListener('click', clickBufferTemplateOrNot)
+    requestAnimationFrame(_ => {
+        bufferPresetsContainer.innerHTML = ''
+        window.removeEventListener('click', clickBufferTemplateOrNot)
+    })
 }

@@ -388,7 +388,7 @@ code {
 }
 
 .code2 {
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: var(--color0);
 }
 
 .some-margin {

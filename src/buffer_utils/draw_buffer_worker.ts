@@ -6,6 +6,7 @@
 
 
 let [ctx, H, W] = [] as any[]
+const MARGIN = 10
 
 onmessage = function({ data: { canvas, buffer }}) {
     if (canvas) 
@@ -29,15 +30,26 @@ export function reallyDrawBuffer(channel : Float32Array, ctx : CanvasRenderingCo
     ctx.translate(0, H / 2)
     ctx.globalAlpha = 0.06
     ctx.beginPath()
-
+    ctx.lineWidth = 1
+    
+    let max = -Infinity, min = Infinity
     for (let i = 0; i < channel.length; i++) 
     {
-        const x = W * i / channel.length | 0
-        const y = channel[i] * H / 2
-        ctx.moveTo(x, 0)
+        const x = MARGIN + (W - MARGIN * 2) * i / channel.length | 0
+        const y = channel[i] * (H - MARGIN * 2) / 2
+        ctx.moveTo(x, MARGIN)
         ctx.lineTo(x + 1, y)
+        max = Math.max(max, channel[i])
+        min = Math.min(min, channel[i])
     }
     
     ctx.stroke()
     ctx.restore()
+
+    ctx.strokeStyle = min <= -1 || max >= 1
+        ? 'red'
+        : 'gray'
+
+    ctx.lineWidth = 2
+    ctx.strokeRect(MARGIN / 2, MARGIN / 2, W - MARGIN, H - MARGIN)
 }

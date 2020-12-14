@@ -59,7 +59,7 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PANNER]: 'Panner'
     , [NodeTypes.DELAY]:  'Delay'
     , [NodeTypes.SAMPLE]: 'Sample'
-    , [NodeTypes.G_SEQ]:    'Gate Sequencer'
+    , [NodeTypes.G_SEQ]:  'Gate Sequencer'
     , [NodeTypes.S_SEQ]:  'Sample Sequencer'
     , [NodeTypes.NUM]:    'Number Value'
     , [NodeTypes.RECORD]: 'Recorder'
@@ -69,7 +69,7 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PIANOR]: '12-Tone Piano Roll'
     , [NodeTypes.ENV]:    'Envelope (doesn\'t do anything)'
     // , [NodeTypes.CUSTOM]: 'Custom Module (should be hidden)'
-    , [NodeTypes.PROCESSOR]: 'Processor'
+    , [NodeTypes.PROCESSOR]:  'Processor'
     , [NodeTypes.COMPRESSOR]: 'Compression'
     }
 
@@ -80,7 +80,7 @@ const NodeTypeEmojiLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PANNER]: '⧟'
     , [NodeTypes.DELAY]:  '🕖'
     , [NodeTypes.SAMPLE]: '📀'
-    , [NodeTypes.G_SEQ]:    '⛩️'
+    , [NodeTypes.G_SEQ]:  '⛩️'
     , [NodeTypes.S_SEQ]:  '📼'
     , [NodeTypes.NUM]:    '🎚️'
     , [NodeTypes.RECORD]: '🎙️'
@@ -126,14 +126,13 @@ const NodeTypeGraphIcon : { readonly [key in NodeTypes] : GraphIcon } =
     , [NodeTypes.PANNER]: '⧟'
     , [NodeTypes.DELAY]:  '🕖'
     , [NodeTypes.SAMPLE]: '📀'
-    , [NodeTypes.G_SEQ]:    '⛩️'
+    , [NodeTypes.G_SEQ]:  '⛩️'
     , [NodeTypes.S_SEQ]:  '📼'
     , [NodeTypes.NUM]:    '🎚️'
     , [NodeTypes.RECORD]: '🎙️'
     , [NodeTypes.MODULE]: '🎛️'
     , [NodeTypes.AUTO]:   '🤖'
-    
-    , [NodeTypes.PIANOR]: '🎼 '
+    , [NodeTypes.PIANOR]: '🎼'
     , [NodeTypes.ENV]:    'Envelope (doesn\'t do anything)'
     // , [NodeTypes.CUSTOM]: 'Custom Module (should be hidden)'
     , [NodeTypes.PROCESSOR]: '💻'
@@ -147,13 +146,12 @@ const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PANNER]: true
     , [NodeTypes.DELAY]:  true
     , [NodeTypes.SAMPLE]: false
-    , [NodeTypes.G_SEQ]:    true
+    , [NodeTypes.G_SEQ]:  true
     , [NodeTypes.S_SEQ]:  false
     , [NodeTypes.NUM]:    false
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: true
     , [NodeTypes.AUTO]:   true
-    
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    true
     // , [NodeTypes.CUSTOM]: true
@@ -168,23 +166,18 @@ const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
     , [NodeTypes.SAMPLE]: false
-    , [NodeTypes.G_SEQ]:    true
+    , [NodeTypes.G_SEQ]:  true
     , [NodeTypes.S_SEQ]:  false
     , [NodeTypes.NUM]:    false
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: true
     , [NodeTypes.AUTO]:   false
-    
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
     // , [NodeTypes.CUSTOM]: false
     , [NodeTypes.PROCESSOR]:false
     , [NodeTypes.COMPRESSOR]:false
     }
-
-const MustBeStarted =
-    { [NodeTypes.NUM]: true
-    } as const
 
 const ExposesAudioparamsInDialogBox =
     { [NodeTypes.GAIN]:       true
@@ -204,17 +197,16 @@ const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
     , [NodeTypes.SAMPLE]: false
-    , [NodeTypes.G_SEQ]:    false
+    , [NodeTypes.G_SEQ]:  false
     , [NodeTypes.S_SEQ]:  false
     , [NodeTypes.NUM]:    false
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: false
     , [NodeTypes.AUTO]:   false
-    
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
     // , [NodeTypes.CUSTOM]: false
-    , [NodeTypes.PROCESSOR]:false
+    , [NodeTypes.PROCESSOR]: false
     , [NodeTypes.COMPRESSOR]:false
     }
 
@@ -231,7 +223,6 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: true
     , [NodeTypes.AUTO]:   false
-
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
     // , [NodeTypes.CUSTOM]: false
@@ -254,7 +245,6 @@ const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.RECORD]: true
     , [NodeTypes.MODULE]: false
     , [NodeTypes.AUTO]:   true
-
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    true
     // , [NodeTypes.CUSTOM]: true
@@ -270,13 +260,12 @@ const UsesConnectionProtocol2  : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
     , [NodeTypes.SAMPLE]: false
-    , [NodeTypes.G_SEQ]:    false
+    , [NodeTypes.G_SEQ]:  false
     , [NodeTypes.S_SEQ]:  false
     , [NodeTypes.NUM]:    false
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: false
     , [NodeTypes.AUTO]:   true
-
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.ENV]:    false
     // , [NodeTypes.CUSTOM]: false
@@ -285,10 +274,9 @@ const UsesConnectionProtocol2  : { readonly [key in NodeTypes] : boolean } =
     }
     
 const ClockDependent =
-    { [NodeTypes.G_SEQ]:    true
+    { [NodeTypes.G_SEQ]:  true
     , [NodeTypes.S_SEQ]:  true
     , [NodeTypes.AUTO]:   true
-
     , [NodeTypes.PIANOR]: true
     } as const
 
@@ -301,17 +289,16 @@ const HasResizeableNodeWindow  : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
     , [NodeTypes.SAMPLE]: false // true
-    , [NodeTypes.G_SEQ]:    false
+    , [NodeTypes.G_SEQ]:  false
     , [NodeTypes.S_SEQ]:  false
     , [NodeTypes.NUM]:    false
     , [NodeTypes.RECORD]: false
     , [NodeTypes.MODULE]: false // true
     , [NodeTypes.AUTO]:   false // true
-
     , [NodeTypes.PIANOR]: false // true
     , [NodeTypes.ENV]:    false
     // , [NodeTypes.CUSTOM]: true
-    , [NodeTypes.PROCESSOR]:false //true
+    , [NodeTypes.PROCESSOR]: false //true
     , [NodeTypes.COMPRESSOR]:false
     }
 
@@ -344,7 +331,7 @@ const AudioNodeSubTypes : Record<NodeTypes,readonly string[]> =
     , [NodeTypes.PANNER]: []
     , [NodeTypes.DELAY]:  []
     , [NodeTypes.SAMPLE]: []
-    , [NodeTypes.G_SEQ]:    []
+    , [NodeTypes.G_SEQ]:  []
     , [NodeTypes.S_SEQ]:  []
     , [NodeTypes.NUM]:    []
     , [NodeTypes.RECORD]: []
@@ -354,7 +341,7 @@ const AudioNodeSubTypes : Record<NodeTypes,readonly string[]> =
     , [NodeTypes.PIANOR]: []
     , [NodeTypes.ENV]:    []
     // , [NodeTypes.CUSTOM]: []
-    , [NodeTypes.PROCESSOR]:[]
+    , [NodeTypes.PROCESSOR]: []
     , [NodeTypes.COMPRESSOR]:[]
     } as const
 
@@ -373,7 +360,7 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PANNER]: 'rgba(255,128,0,0.5)'
     , [NodeTypes.DELAY]:  'rgba(255,255,0,0.5)'
     , [NodeTypes.SAMPLE]: 'rgba(0,255,255,0.5)'
-    , [NodeTypes.G_SEQ]:    'rgba(255,0,255,0.5)'
+    , [NodeTypes.G_SEQ]:  'rgba(255,0,255,0.5)'
     , [NodeTypes.S_SEQ]:  'rgba(0,255,195,0.5)'
     , [NodeTypes.NUM]:    'rgba(255,200,200,0.5)'
     , [NodeTypes.RECORD]: 'rgba(220,150,220,1)'
@@ -383,7 +370,7 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PIANOR]: 'rgba(105,100,255,0.5)'
     , [NodeTypes.ENV]:    'rgba(105,255,255,0.5)'
     // , [NodeTypes.CUSTOM]: 'rgba(105,255,255,0.5)'
-    , [NodeTypes.PROCESSOR]:'rgba(200,150,255,0.5)'
+    , [NodeTypes.PROCESSOR]: 'rgba(200,150,255,0.5)'
     , [NodeTypes.COMPRESSOR]:'rgba(200,180,220,0.5)'
     }
 
@@ -394,7 +381,7 @@ const NodeTypeColors2 : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PANNER]: 'rgb(255,128,0)'
     , [NodeTypes.DELAY]:  'rgb(255,255,0)'
     , [NodeTypes.SAMPLE]: 'rgb(0,255,255)'
-    , [NodeTypes.G_SEQ]:    'rgb(255,0,255)'
+    , [NodeTypes.G_SEQ]:  'rgb(255,0,255)'
     , [NodeTypes.S_SEQ]:  'rgb(0,255,195)'
     , [NodeTypes.NUM]:    'rgb(255,200,200)'
     , [NodeTypes.RECORD]: 'rgb(220,150,220)'
@@ -404,7 +391,7 @@ const NodeTypeColors2 : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PIANOR]: 'rgb(105,100,255)'
     , [NodeTypes.ENV]:    'rgb(105,100,255)'
     // , [NodeTypes.CUSTOM]: 'rgb(105,255,255)'
-    , [NodeTypes.PROCESSOR]:'rgb(200,150,255)'
+    , [NodeTypes.PROCESSOR]: 'rgb(200,150,255)'
     , [NodeTypes.COMPRESSOR]:'rgb(200,180,220)'
     }
 
@@ -481,24 +468,6 @@ const hasLinearSlider : { readonly [key in AudioParams] : boolean } =
     , release: false
     }
 
-type SliderType = 'linear' | 'exponential' 
-// const AudioParamSliderType : { readonly [key in AudioParams] : SliderType } = 
-//     { gain:         false
-//     , frequency:    false
-//     , detune:       true
-//     , Q:            true
-//     , pan:          true
-//     , delayTime:    false
-//     , playbackRate: false
-//     , offset:       false
-
-//     , threshold: true
-//     , knee: true
-//     , ratio: true
-//     , attack: false
-//     , release: false
-//     }
-
 const isSubdividable : { readonly [key in AudioParams] : boolean } = 
     { gain:         false
     , frequency:    true
@@ -562,7 +531,7 @@ interface CustomAudioNodeProperties
     nSteps?      : number
     adsrIndex?   : number
     graphCode?   : string
-    stepMatrix?  : Indexable<boolean>
+    stepMatrix?  : Record<string, boolean>
     phaseShift?  : number
     MMLString?   : string
 }
@@ -614,20 +583,35 @@ const PostConnection_Transferable_InputRemappable_AudioNodeProperties =
 type NodeCreationSettings = { 
     x : number
     y : number
-    audioParamValues : Indexable<number>   // Uses draggable number inputs
+    audioParamValues : Record<string, number>
     audioNodeProperties : CustomAudioNodeProperties
     title? : string
     INPUT_NODE_ID? : { id : number }
 }
 
 const TransferableNodeProperties = 
-    'id,type,x,y,audioParamValues,audioNodeProperties,title,INPUT_NODE_ID'
-    .split(',')
-    .reduce((acc,prop) => 
-        ({ ...acc, [prop]: true })
-    , {} as Indexed)
+    { id: true
+    , type: true
+    , x: true
+    , y: true
+    , audioParamValues: true
+    , title: true
+    , INPUT_NODE_ID: true
+    } as const
 
 
+const CanBeAutomated =
+    [ NodeTypes.GAIN
+    , NodeTypes.OSC
+    , NodeTypes.FILTER
+    , NodeTypes.PANNER
+    , NodeTypes.DELAY
+    , NodeTypes.SAMPLE
+    , NodeTypes.S_SEQ
+    , NodeTypes.NUM
+    , NodeTypes.COMPRESSOR
+    ] as const
+type CanBeAutomated = typeof CanBeAutomated[number]
 type ParamsOf<T extends NodeTypes> = T extends CanBeAutomated
     ? typeof AudioNodeParams[T][number]
     : any
@@ -647,23 +631,6 @@ class NuniAudioParam extends ConstantSourceNode {
     set value(value : number) {
         this.offset.value = value
     }
-}
-
-const CanBeAutomated =
-    [ NodeTypes.GAIN
-    , NodeTypes.OSC
-    , NodeTypes.FILTER
-    , NodeTypes.PANNER
-    , NodeTypes.DELAY
-    , NodeTypes.SAMPLE
-    , NodeTypes.S_SEQ
-    , NodeTypes.NUM
-    , NodeTypes.COMPRESSOR
-    ] as const
-type CanBeAutomated = typeof CanBeAutomated[number]
-
-type ICanBeAutomated<T extends NodeTypes> = { 
-    [key in ParamsOf<T>]? : AudioParam | NuniAudioParam
 }
 
 type ClockDependent = keyof typeof ClockDependent
@@ -695,10 +662,5 @@ type AudioNodeInterfaces<T extends NodeTypes> =
     // sync : T extends NodeTypes.S_SEQ ? () => void : any
     // SVGIconName : T extends HasSVGGraphIcon ? typeof GraphIconUrls[number] : undefined
 
-    // scheduleNotes : T extends ClockDependent ? () => void : undefined
-    // setTempo : T extends ClockDependent ? (tempo : number) => void : undefined
-    // sync : T extends ClockDependent ? () => void : undefined
-
     // type : T extends HasSubtypes ? typeof AudioNodeSubTypes[T] : undefined
-    // poop : T extends HasSubtypes ? typeof AudioNodeSubTypes[T] : undefined
 // }

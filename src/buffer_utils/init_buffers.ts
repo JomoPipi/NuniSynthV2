@@ -11,20 +11,20 @@ import { BufferStorage } from '../storage/buffer_storage.js'
 
 
 
-const presets = (i:number, channel : number) => ([
-    Math.sin(i / 32.0) + Math.sin(i / 512.0),
-    Math.sin(i / Math.sqrt(i/3.0)) - Math.cos(i ** 0.3), 
-    Math.sin(i / 32.0) * 0.75 + Math.sin(i / 128.0 * channel) * 0.5 + Math.cos(i / (1000/(i**0.9*9+1))) * 0.3,
-    Math.sin(i / 32.0 + Math.sin(i / (channel+1))),
-    Math.sin(i / Math.tan(i/3.0)),
+const presets = (i:number, channel : number) => 
+    [ Math.sin(i / 32.0) + Math.sin(i / 512.0)
+    , Math.sin(i / Math.sqrt(i/3.0)) - Math.cos(i ** 0.3)
+    , Math.sin(i / 32.0) * 0.75 + Math.sin(i / 128.0 * channel) * 0.5 + Math.cos(i / (1000/(i**0.9*9+1))) * 0.3
+    , Math.sin(i / 32.0 + Math.sin(i / (channel+1)))
+    , Math.sin(i / Math.tan(i/3.0))
 
-    Math.sin(i / Math.tan(i/3.0)) - Math.cos(i / 32.0),
-    Math.sin(i / Math.sqrt(i/3.0)) * Math.cos(i ** 0.3),
-    Math.sin(i / 32.0) + Math.sin(i / 81.0),
-    Math.sin(i / 32.0) + Math.sin(i / 25.0),
-    Math.sin(i / 32.0) + Math.cos(i / 27.0),
-    [...Array(90)].reduce((a,_,n) => a + Math.abs(Math.sin(i/(n * 10))) / 90, 0)
-])
+    , Math.sin(i / Math.tan(i/3.0)) - Math.cos(i / 32.0)
+    , Math.sin(i / Math.sqrt(i/3.0)) * Math.cos(i ** 0.3)
+    , Math.sin(i / 32.0) + Math.sin(i / 81.0)
+    , Math.sin(i / 32.0) + Math.sin(i / 25.0)
+    , Math.sin(i / 32.0) + Math.cos(i / 27.0)
+    , [...Array(90)].reduce((a,_,n) => a + Math.abs(Math.sin(i/(n * 10))) / 90, 0)
+    ].map(x => clamp(-1, x, 1))
 
 const bufferDrawCanvas = 
     (D('buffer-canvas') as HTMLCanvasElement)

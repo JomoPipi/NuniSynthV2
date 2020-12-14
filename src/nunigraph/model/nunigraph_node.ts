@@ -15,10 +15,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
     readonly id : number
     readonly type : T
-    readonly audioNode : & InstanceType<typeof AudioNodeMap[T]>
-        // & AudioNodeInterfaces<T>
-        
-        // NuniAudioNode<T>
+    readonly audioNode : InstanceType<typeof AudioNodeMap[T]>
     x : number
     y : number
     audioParamValues : Indexable<number>
@@ -42,21 +39,17 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.y = y
         this.title = title
         this.INPUT_NODE_ID = INPUT_NODE_ID
-
-        const an = audioCtx.createNode(type)
-             //as 
-                // & InstanceType<typeof AudioNodeMap[T]>
-                // & AudioNodeInterfaces<T>
-
-        this.audioNode = an
-
+        this.audioNode = audioCtx.createNode(type)
         this.graphLabel = NodeTypeGraphIcon[type]
 
         // TODO: make an AudioNode class for it.
-        if (is(this, NodeTypes.NUM)) (this.audioNode).start(0)
+        if (is(this, NodeTypes.NUM)) this.audioNode.start(0)
+
+
+
 
         if (this.type !== NodeTypes.COMPRESSOR)
-        {
+        shit: {
         // CompressorNode throws error
             Object.assign(this.audioNode, JSON.parse(JSON.stringify(audioNodeProperties)))
             
@@ -101,5 +94,3 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.audioNode[param].value = value
     }
 }
-
-// const n = new NuniGraphNode(-1, NodeTypes.GAIN, {} as any)

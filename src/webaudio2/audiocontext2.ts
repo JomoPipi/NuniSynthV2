@@ -59,7 +59,7 @@ class AudioContext2 extends AudioContext {
     }
 
     createNode<T extends NodeTypes>(type : T) : InstanceType<typeof AudioNodeMap[T]> {
-        return new AudioNodeMap[type](this) as InstanceType<typeof AudioNodeMap[T]>
+        return new AudioNodeMap[type](this)  as InstanceType<typeof AudioNodeMap[T]>
     }
 }
 

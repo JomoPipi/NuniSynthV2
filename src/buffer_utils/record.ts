@@ -27,8 +27,13 @@ export function recordTo(index : number) {
 
     const errStuff = (err : string) => {
         recordButton.innerText = err
-        recordButton.style.backgroundColor = 'orange'
+        recordButton.classList.add('error')
     }
+
+    ;(function goAwayError() {
+        recordButton.innerText = 'rec'
+        recordButton.classList.remove('error')
+    })()
 
     const isRecording = recordButton.classList.toggle('recording')
     if (!isRecording) 
@@ -42,7 +47,7 @@ export function recordTo(index : number) {
     const selected = recordButtonGroup.dataset.selected! || MIC
 
     // @ts-ignore - Unleash the power of the double equal. Muahahaha!
-    if (selected == MIC) 
+    if (selected == MIC)
     {
         navigator
             .mediaDevices
@@ -53,13 +58,11 @@ export function recordTo(index : number) {
     // @ts-ignore - Unleash the power of the double equal. Muahahaha!
     else if (selected == GRAPH)
     {
-        const mediaStreamDestination = 
-            audioCtx.createMediaStreamDestination()
+        const mediaStreamDestination = audioCtx.createMediaStreamDestination()
 
         audioCtx.volume.connect(mediaStreamDestination)
 
-        handleStream(
-            mediaStreamDestination.stream,
+        handleStream(mediaStreamDestination.stream,
             () => audioCtx.volume.disconnect(mediaStreamDestination))
     }
     // @ts-ignore - Unleash the power of the double equal. Muahahaha!
@@ -68,8 +71,7 @@ export function recordTo(index : number) {
         // Delay the active recording color until they've actually chosen what to record
         recordButton.classList.toggle('recording')
 
-        const mediaStreamDestination = 
-            audioCtx.createMediaStreamDestination()
+        const mediaStreamDestination = audioCtx.createMediaStreamDestination()
 
         audioCtx.volume.connect(mediaStreamDestination)
 
