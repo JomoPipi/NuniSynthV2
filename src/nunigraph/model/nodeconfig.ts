@@ -306,7 +306,7 @@ const HasResizeableNodeWindow  : { readonly [key in NodeTypes] : boolean } =
 const AudioNodeParams =
     { [NodeTypes.GAIN]:   ['gain']
     , [NodeTypes.OSC]:    ['frequency','detune']
-    , [NodeTypes.FILTER]: ['frequency','Q','gain','detune']
+    , [NodeTypes.FILTER]: ['frequency','Q',/*'gain',*/'detune']
     , [NodeTypes.PANNER]: ['pan']
     , [NodeTypes.DELAY]:  ['delayTime']
     , [NodeTypes.SAMPLE]: ['playbackRate','detune']

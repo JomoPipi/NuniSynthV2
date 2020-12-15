@@ -430,10 +430,11 @@ function exposeAudioParams(node : NuniGraphNode<CanBeAutomated>, saveCallback : 
                 : param 
             })
 
-        const textBox = E('span', { children: [text] })
+        const textBox = E('div', { children: [text] })
 
         // const box = E('div', { className: 'flat-grid some-margin' })
         const box = E('div')//, { className: 'params-box-2' })
+            // box.style.backgroundColor = 'red'
 
         const updateFunc = isGain
             ? (newValue : number) => {
@@ -443,10 +444,6 @@ function exposeAudioParams(node : NuniGraphNode<CanBeAutomated>, saveCallback : 
             : (newValue : number) =>
                 node.setValueOfParam(param, newValue)
 
-        const mousedownFunc = () => {
-            return node.audioParamValues[param]
-        }
-        
         const settings = 
             { amount: AudioParamSliderFactor[param]
             , min: AudioParamRanges[param][0]
@@ -464,8 +461,9 @@ function exposeAudioParams(node : NuniGraphNode<CanBeAutomated>, saveCallback : 
             //     settings)
             createNumberDialComponent3(initialValue, updateFunc, settings, rounds)
 
+        // numberInput.container.classList.add('full','flex-center')
         // box.append(textBox, numberInput)
-        box.append(numberInput.container, E('br'), textBox)
+        box.append(numberInput.container, textBox)
 
         allParams.appendChild(box)
 

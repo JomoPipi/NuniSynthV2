@@ -35,12 +35,15 @@ type AllElements = {
     select : HTMLSelectElement
     canvas : HTMLCanvasElement
     button : HTMLButtonElement
-}
+    ul     : HTMLUListElement
+    li     : HTMLLIElement
+    span   : HTMLSpanElement
+    img    : HTMLImageElement
 
-type CreatedElement<T extends string> = 
-    T extends keyof AllElements 
-        ? AllElements[T] 
-        : HTMLElement
+    // TODO: Remove these:
+    br     : HTMLBRElement
+    option : HTMLOptionElement
+}
 
 type ElementSettings = {
     text? : string
@@ -50,10 +53,11 @@ type ElementSettings = {
     is? : string
 }
 
-const E = <T extends string>(x : T, settings : ElementSettings = {}) => {
+const E = <T extends keyof AllElements>
+    (x : T, settings : ElementSettings = {}) : AllElements[T] => {
 
     const { text, className, children, props, is } = settings
-    const element = document.createElement(x, { is }) as CreatedElement<T>
+    const element = document.createElement(x, { is }) as AllElements[T]
     
     element.innerText = text || ''
 

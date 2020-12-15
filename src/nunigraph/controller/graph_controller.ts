@@ -16,6 +16,7 @@ import { createSelectionPrompt } from '../../UI_library/components/selection_pro
 import { startCustomNodeWizard } from './customnodewizard.js'
 import { contextmenu, addModuleToList } from './graph_contextmenu.js'
 import { createModalWindow } from '../../UI_library/components/modal_window.js'
+import { createSVGIcon } from '../../UI_library/components/svg_icon.js'
 // import { openWindow, closeWindow, showContextMenu } from './window_toggler.js'
 
 export const ActiveControllers = [] as NuniGraphController[]
@@ -295,7 +296,7 @@ export class NuniGraphController {
         const barContent = E('span', 
             { children: node.INPUT_NODE_ID || node.id === 0
                 ? undefined
-                : [titleEditor()] 
+                : [titleEditor()]//, createSVGIcon()] 
             })
         
         if (is(node, NodeTypes.MODULE))

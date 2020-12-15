@@ -460,11 +460,6 @@ export class NuniGraphRenderer {
             }
             if (UserOptions.config["Show Node Image"])
             {
-                ctx.fillStyle = '#FFF'
-                // ctx.font = '30px Arial'
-                ctx.font = `${nodeRadius * 6 / 5}px Arial`
-                const icon = NodeTypeGraphIcon[node.type]
-
                 const hasSVGIcon = (node : NuniGraphNode) 
                     : node is NuniGraphNode<HasSVGGraphIcon> =>
                         node.type in HasSVGGraphIcon
@@ -483,6 +478,9 @@ export class NuniGraphRenderer {
                 }
                 else
                 {
+                    ctx.fillStyle = '#FFF'
+                    ctx.font = `${nodeRadius * 6 / 5}px Arial`
+                    const icon = NodeTypeGraphIcon[node.type]
                     ctx.fillText(icon, X - 20, Y + 11)
                 }
             }
