@@ -39,6 +39,7 @@ type AllElements = {
     li     : HTMLLIElement
     span   : HTMLSpanElement
     img    : HTMLImageElement
+    object : HTMLObjectElement
 
     // TODO: Remove these:
     br     : HTMLBRElement
@@ -48,7 +49,7 @@ type AllElements = {
 type ElementSettings = {
     text? : string
     className? : string
-    children? : HTMLElement[]
+    children? : Element[]
     props? : Indexed
     is? : string
 }

@@ -287,16 +287,19 @@ export class NuniGraphController {
         }
 
         // If window is already open, move it to the top
-        if (this.getOpenWindow[node.id]) 
+        if (this.getOpenWindow[node.id])
         {
             moveTheWindowToTheTop(this.getOpenWindow[node.id], node)
             return;
         }
 
+        const nodeIdentifier = 
+            E('span', { text: node.id.toString() })
+
         const barContent = E('span', 
             { children: node.INPUT_NODE_ID || node.id === 0
                 ? undefined
-                : [titleEditor()]//, createSVGIcon()] 
+                : [createSVGIcon(), nodeIdentifier, titleEditor()] 
             })
         
         if (is(node, NodeTypes.MODULE))
@@ -358,8 +361,7 @@ export class NuniGraphController {
         //     })
         //     : 
             createDraggableWindow(
-            { text: `${NodeTypeEmojiLabel[node.type]} ᴵᴰ ${node.id}`
-            , clickCallback
+            { clickCallback
             , closeCallback
             , contentContainer
             , color: node.id === 0 

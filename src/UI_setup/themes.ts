@@ -5,9 +5,12 @@
 
 
 
-export const themeHasADarkColor0 = [false,true,false,false]
+type Color = readonly [number, number, number]
+type ThemeData = readonly [c0 : Color, c1 : Color, c2 : Color, c3 : Color, c4: Color, c5 : Color, c6 : Color]
 
-export const themes = 
+export const ThemeHasADarkColor0 : readonly boolean[] = [true, false, false, true] as const
+
+const themeData : ReadonlyArray<ThemeData> = (
     [   [ [32, 30, 32]
         , [48, 47, 48]
         , [58, 57, 58]
@@ -27,29 +30,8 @@ export const themes =
         , [80,80,80]
         , [30,30,30]
         ]
-    // Reverserd version:
+    // Reversed version:
     , [[30,30,30],[80,80,80],[240,166,202],[239,195,230],[184,190,221],[156,137,184],[240,230,239]]
-    
-    // Remove
-    ,   [ [203, 153, 126]
-        , [237, 220, 210]
-        , [255, 241, 230]
-        , [240, 239, 235]
-        , [221, 190, 169]
-        , [165, 165, 141]
-        , [183, 183, 164]
-        ]
-    ,   [ [121, 125, 98]
-        , [155, 155, 122]
-        , [217, 174, 148]
-        , [241, 220, 167]
-        , [255, 203, 105]
-        
-        , [80,80,80]
-        , [30,30,30]
-        // , [208, 140, 96]
-        // , [153, 123, 102]
-        ]    
-    ]
-    .map(theme => 
-        theme.map(([r,g,b]) => `rgb(${r},${g},${b})`))
+    ] as const)
+
+export const ThemeColors = themeData.map(theme => theme.map(([r,g,b]) => `rgb(${r},${g},${b})`))

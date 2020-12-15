@@ -14,7 +14,6 @@ import { UI_clamp } from "../functions/ui_clamp.js"
 
 
 type DraggableWindowOptions = {
-    text : string
     clickCallback : (box : HTMLElement) => void
     closeCallback : (box : HTMLElement) => void
     color : string
@@ -23,14 +22,11 @@ type DraggableWindowOptions = {
     }
 
 export function createDraggableWindow(
-    { text, clickCallback, closeCallback, contentContainer, color, barContent } : DraggableWindowOptions) {
+    { clickCallback, closeCallback, contentContainer, color, barContent } : DraggableWindowOptions) {
 
-    const bar = E('div', { text: text + ' ', className: 'draggable-window-bar' })
+    const bar = E('div', { className: 'draggable-window-bar' })
     const exitBtn = E('button', { text: 'x', className: 'exit-button' })
     const box = E('div', { className: 'window show', children: [bar, contentContainer] })
-
-    box.style.left = '50vw'
-    box.style.top = '50vh'
 
     // box.style.border = `2px solid ${color}`
     // box.style.borderLeft =

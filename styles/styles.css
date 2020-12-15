@@ -8,6 +8,7 @@
   --color4: rgb(93, 91, 94);
   --color5: rgb(154, 151, 163);
   --color6: rgb(255, 255, 255);
+  --dark-mode: invert(100%);
 }
 
 * {
@@ -1587,6 +1588,15 @@ a {
     -webkit-transform: translate(-40px, 0px) rotate(-90deg);
     transform: translate(-40px, 0px) rotate(-90deg);
   }
+}
+
+.svg-image {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  -webkit-filter: var(--dark-mode);
+          filter: var(--dark-mode);
 }
 
 .hide {
