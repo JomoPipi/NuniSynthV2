@@ -451,38 +451,19 @@ export class NuniGraphRenderer {
             
             this.circle(X, Y, nodeRadius, !HasNoOutput[node.type])
 
+            const fontSize = nodeRadius * 3 / 5
             if (node.title) 
             {
                 ctx.fillStyle = '#BAA'
                 // ctx.font = '15px Arial'
-                ctx.font = `${nodeRadius * 3 / 5}px Arial`
+                ctx.font = fontSize + 'px Arial'
                 ctx.fillText(node.title, X - 30, Y - nodeRadius * 1.5)
             }
             if (UserOptions.config["Show Node Image"])
             {
-                const hasSVGIcon = (node : NuniGraphNode) 
-                    : node is NuniGraphNode<HasSVGGraphIcon> =>
-                        node.type in HasSVGGraphIcon
-
-                if (hasSVGIcon(node))
-                {
-                    const key = is(node, NodeTypes.OSC)
-                        ? node.audioNode.type
-                        : is(node, NodeTypes.PANNER)
-                        ? 'frying-pan'
-                        : 'sine'
-
-                    const img = GraphIconImageObjects[key]
-                    // const img = GraphIconImageObjects[node.audioNode.SVGIconKey]
-                    ctx.drawImage(img, X - 20, Y - 16) // , nodeRadius, nodeRadius);
-                }
-                else
-                {
-                    ctx.fillStyle = '#FFF'
-                    ctx.font = `${nodeRadius * 6 / 5}px Arial`
-                    const icon = NodeTypeGraphIcon[node.type]
-                    ctx.fillText(icon, X - 20, Y + 11)
-                }
+                const key = DefaultNodeIcon[node.type]
+                const img = GraphIconImageObjects[key]
+                ctx.drawImage(img, X - fontSize, Y - fontSize, fontSize * 2, fontSize * 2)
             }
         }
     }

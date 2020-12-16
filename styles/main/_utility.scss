@@ -7,9 +7,11 @@
 
 .svg-image {
     user-select: none;
-    filter: var(--dark-mode);
+    // filter: var(--dark-mode);
+}
 
-    // background-color: red;
+.svg-svg {
+    fill: var(--color5);
 }
 
 .hide {

@@ -6,6 +6,7 @@
 
 
 import { ModuleStorage } from "../../storage/module_storage.js"
+import { createSVGIcon } from "../../UI_library/components/svg_icon.js"
 import { GraphController } from "../init.js"
 import { NuniGraphNode } from "../model/nunigraph_node.js"
 
@@ -156,13 +157,10 @@ const modulesBtn = E('li',
 btnList.appendChild(modulesBtn)
 for (const type of nodesSortedByRecurrence)
 {
-    const emoji = E('span', { text: NodeTypeEmojiLabel[type] })
-        emoji.style.width = '25px'
-        emoji.style.display = 'inline-block'
-        emoji.style.textAlign = 'center'
+    const icon = createSVGIcon(DefaultNodeIcon[type], 10)
     const label = E('span', { text: NodeLabel[type] })
     const surface = E('a',
-        { children: [emoji, label]
+        { children: [icon, label]
         , props: { href: '#' }
         })
     const btn = E('li',
@@ -171,7 +169,7 @@ for (const type of nodesSortedByRecurrence)
         })
 
     surface.dataset.createNodeType = 
-    emoji.dataset.createNodeType =
+    icon.dataset.createNodeType =
     label.dataset.createNodeType = type
     btn.style.borderColor = NodeTypeColors[type]
 

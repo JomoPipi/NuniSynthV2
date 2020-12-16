@@ -73,7 +73,8 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.COMPRESSOR]: 'Compression'
     }
 
-const NodeTypeEmojiLabel : { readonly [key in NodeTypes] : string } =  
+// TODO: delete
+const NodeTypeEmojiLabel : { readonly [key in NodeTypes] : string } =
     { [NodeTypes.GAIN]:   '🔊'
     , [NodeTypes.OSC]:    '∿'
     , [NodeTypes.FILTER]: '🌫️'
@@ -104,8 +105,40 @@ const GraphIconKeys =
     , 'frying-pan'
     , 'volume'
     , 'knob'
+    , 'filter'
+    , 'flask'
+    , 'automation'
+    , 'stereo'
+    , 'fence'
+    , 'clock'
+    , 'keyboard'
+    , 'processor'
+    , 'lunar-module'
+    , 'compress'
+    , 'microphone'
     ] as const
 type GraphIconKey = typeof GraphIconKeys[number]
+
+const DefaultNodeIcon : ReadonlyRecord<NodeTypes, GraphIconKey> =
+    { [NodeTypes.GAIN]:   'volume'
+    , [NodeTypes.OSC]:    'sine'
+    , [NodeTypes.FILTER]: 'filter'
+    , [NodeTypes.PANNER]: 'frying-pan'
+    , [NodeTypes.DELAY]:  'clock'
+    , [NodeTypes.SAMPLE]: 'flask'
+    , [NodeTypes.G_SEQ]:  'fence'
+    , [NodeTypes.S_SEQ]:  'stereo'
+    , [NodeTypes.NUM]:    'knob'
+    , [NodeTypes.RECORD]: 'microphone'
+    , [NodeTypes.MODULE]: 'lunar-module'
+    , [NodeTypes.AUTO]:   'automation'
+    
+    , [NodeTypes.PIANOR]: 'keyboard'
+    , [NodeTypes.ENV]:    'knob'
+    // , [NodeTypes.CUSTOM]: 'Custom Module (should be hidden)'
+    , [NodeTypes.PROCESSOR]: 'processor'
+    , [NodeTypes.COMPRESSOR]: 'compress'
+    } as const
 
 const GraphIconImageObjects =
     GraphIconKeys.reduce((acc, name) => {
@@ -121,26 +154,6 @@ const HasSVGGraphIcon =
     , [NodeTypes.PANNER]: true 
     } as const
 type HasSVGGraphIcon = keyof typeof HasSVGGraphIcon
-
-const NodeTypeGraphIcon : { readonly [key in NodeTypes] : GraphIcon } =
-    { [NodeTypes.GAIN]:   '🔊'
-    , [NodeTypes.OSC]:    '∿'
-    , [NodeTypes.FILTER]: '🌫️'
-    , [NodeTypes.PANNER]: '⧟'
-    , [NodeTypes.DELAY]:  '🕖'
-    , [NodeTypes.SAMPLE]: '📀'
-    , [NodeTypes.G_SEQ]:  '⛩️'
-    , [NodeTypes.S_SEQ]:  '📼'
-    , [NodeTypes.NUM]:    '🎚️'
-    , [NodeTypes.RECORD]: '🎙️'
-    , [NodeTypes.MODULE]: '🎛️'
-    , [NodeTypes.AUTO]:   '🤖'
-    , [NodeTypes.PIANOR]: '🎼'
-    , [NodeTypes.ENV]:    'Envelope (doesn\'t do anything)'
-    // , [NodeTypes.CUSTOM]: 'Custom Module (should be hidden)'
-    , [NodeTypes.PROCESSOR]: '💻'
-    , [NodeTypes.COMPRESSOR]: '💢'
-    }
 
 const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.GAIN]:   true
@@ -220,7 +233,7 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
     , [NodeTypes.SAMPLE]: false
-    , [NodeTypes.G_SEQ]:    true
+    , [NodeTypes.G_SEQ]:  true
     , [NodeTypes.S_SEQ]:  false
     , [NodeTypes.NUM]:    false
     , [NodeTypes.RECORD]: true
@@ -242,7 +255,7 @@ const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.PANNER]: true
     , [NodeTypes.DELAY]:  true
     , [NodeTypes.SAMPLE]: true
-    , [NodeTypes.G_SEQ]:    true
+    , [NodeTypes.G_SEQ]:  true
     , [NodeTypes.S_SEQ]:  true
     , [NodeTypes.NUM]:    true
     , [NodeTypes.RECORD]: true

@@ -67,6 +67,10 @@ button {
   margin: 0% 4%;
 }
 
+.side-margin-4 {
+  margin: 0% 4px;
+}
+
 .side-padding {
   padding: 0% 4%;
 }
@@ -1605,8 +1609,10 @@ a {
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
-  -webkit-filter: var(--dark-mode);
-          filter: var(--dark-mode);
+}
+
+.svg-svg {
+  fill: var(--color5);
 }
 
 .hide {

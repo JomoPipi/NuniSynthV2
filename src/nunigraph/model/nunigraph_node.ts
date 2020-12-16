@@ -20,7 +20,6 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
     y : number
     audioParamValues : Indexable<number>
     title? : string
-    graphLabel : string | number
     readonly INPUT_NODE_ID? : { id : number }
     
     constructor(id : number, type : T, settings : NodeCreationSettings) {
@@ -40,8 +39,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.title = title
         this.INPUT_NODE_ID = INPUT_NODE_ID
         this.audioNode = audioCtx.createNode(type)
-        this.graphLabel = NodeTypeGraphIcon[type]
-
+        
         // TODO: make an AudioNode class for it.
         if (is(this, NodeTypes.NUM)) this.audioNode.start(0)
 

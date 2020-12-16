@@ -301,9 +301,14 @@ export class NuniGraphController {
             { className: 'bar-content'
             , children: node.INPUT_NODE_ID || node.id === 0
                 ? undefined
-            : [ createSVGIcon('knob'), nodeIdentifier, titleEditor() ] 
+            : 
+                [ createSVGIcon(DefaultNodeIcon[node.type])
+                , nodeIdentifier
+                , titleEditor()
+                ] 
             })
-        
+
+
         if (is(node, NodeTypes.MODULE))
         {
             // Mark the controller as 'active'
@@ -349,19 +354,6 @@ export class NuniGraphController {
         // Create dialogBox:
         const contentContainer = E('div', { className: 'full' })
         const dialogBox = 
-        // HasResizeableNodeWindow[node.type]
-        //     ? 
-        //     createModalWindow(
-        //     { text: `${NodeTypeEmojiLabel[node.type]} ᴵᴰ ${node.id}`
-        //     , clickCallback
-        //     , closeCallback
-        //     , contentContainer
-        //     , color: node.id === 0 
-        //         ? MasterGainColor 
-        //         : NodeTypeColors[node.type]
-        //     , barContent
-        //     })
-        //     : 
             createDraggableWindow(
             { clickCallback
             , closeCallback

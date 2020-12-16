@@ -9,6 +9,8 @@ type Endofunction<T> = (arg : T) => T;
 
 type Indexed = { [param : string] : any }
 
+type ReadonlyRecord<K extends number | string, V> = { readonly [key in K] : V }
+
 interface Indexable<T> { [param : string] : T }
 
 type Immutable<Type> = {
