@@ -18,27 +18,23 @@ type DraggableWindowOptions = {
     closeCallback : (box : HTMLElement) => void
     color : string
     contentContainer : HTMLElement
-    barContent? : HTMLElement
+    barContent : HTMLElement
     }
 
 export function createDraggableWindow(
     { clickCallback, closeCallback, contentContainer, color, barContent } : DraggableWindowOptions) {
 
-    const bar = E('div', { className: 'draggable-window-bar' })
     const exitBtn = E('button', { text: 'x', className: 'exit-button' })
+    const bar = E('div', { className: 'draggable-window-bar', children: [barContent, exitBtn] })
+        // bar.style.border = '1px solid gold'
     const box = E('div', { className: 'window show', children: [bar, contentContainer] })
 
     // box.style.border = `2px solid ${color}`
     // box.style.borderLeft =
     // box.style.borderRight =
-    box.style.borderBottom =
-        `1px solid ${color}`
+    box.style.borderBottom = `1px solid ${color}`
     // bar.style.backgroundColor = color || '#555'
     // bar.style.color = rgbaColorContrast(color || '#555')
-
-
-    if (barContent) bar.append(barContent)
-    bar.appendChild(exitBtn)
 
     exitBtn.onclick = closeCallback.bind(null, box)
 

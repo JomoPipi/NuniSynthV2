@@ -15,7 +15,6 @@ import { createValuesWindow } from '../view/display_nodedata.js'
 import { createSelectionPrompt } from '../../UI_library/components/selection_prompt.js'
 import { startCustomNodeWizard } from './customnodewizard.js'
 import { contextmenu, addModuleToList } from './graph_contextmenu.js'
-import { createModalWindow } from '../../UI_library/components/modal_window.js'
 import { createSVGIcon } from '../../UI_library/components/svg_icon.js'
 // import { openWindow, closeWindow, showContextMenu } from './window_toggler.js'
 
@@ -293,13 +292,16 @@ export class NuniGraphController {
             return;
         }
 
-        const nodeIdentifier = 
-            E('span', { text: node.id.toString() })
+        const nodeIdentifier = E('span', 
+            { className: 'margin-4'
+            , text: 'ᴵᴰ' + node.id.toString() 
+            })
 
-        const barContent = E('span', 
-            { children: node.INPUT_NODE_ID || node.id === 0
+        const barContent = E('span',
+            { className: 'bar-content'
+            , children: node.INPUT_NODE_ID || node.id === 0
                 ? undefined
-                : [createSVGIcon(), nodeIdentifier, titleEditor()] 
+            : [ createSVGIcon('knob'), nodeIdentifier, titleEditor() ] 
             })
         
         if (is(node, NodeTypes.MODULE))
@@ -453,7 +455,7 @@ export class NuniGraphController {
 
         function titleEditor() {
             const input = E('input', 
-                { className: 'title-editor'
+                { className: 'title-editor margin-4'
                 , props: 
                     { value: node.title || ''
                     , size: 5// 10

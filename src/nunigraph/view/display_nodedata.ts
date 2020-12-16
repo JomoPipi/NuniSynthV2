@@ -304,7 +304,7 @@ function showSubtypes(node : NuniGraphNode<HasSubtypes>, saveCallback: Function)
 
         const typeImages = types.map(name => {
             
-            const img = E('img', { className: 'dim' }) as HTMLImageElement
+            const img = E('img', { className: 'dim' })
             img.src = `images/${name}.svg`
             img.dataset.name = name
             return img
@@ -341,7 +341,7 @@ function showSubtypes(node : NuniGraphNode<HasSubtypes>, saveCallback: Function)
     }
 
     const subtypes = AudioNodeSubTypes[node.type]
-    const an = node.audioNode as { type : string }
+    const an = node.audioNode
 
     if (subtypes.length > 0) // Show subtypes selector
     { 
@@ -351,7 +351,7 @@ function showSubtypes(node : NuniGraphNode<HasSubtypes>, saveCallback: Function)
         select.value = an.type
         select.oninput = function() {
             saveCallback()
-            an.type = select.value
+            an.type = select.value as any//typeof AudioNodeSubTypes[typeof node.type]
         } 
         box.appendChild(select)
     }

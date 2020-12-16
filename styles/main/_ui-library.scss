@@ -65,33 +65,39 @@
 .draggable-window-bar {
     $sizePx: 25px;
 
-    background: 
+    background:
         linear-gradient(
             var(--color1),
             var(--color0));
 
     height: $sizePx;
-    width: 100%;
+    // width: 100%;
     cursor: move;
-    padding-left: 5px;
     box-sizing: border-box;
+    display: grid;
+    grid-template-columns: auto $sizePx;
+    // border: 2px solid burlywood;
 
     .exit-button {
         cursor: pointer;
-        border: none;
-        box-sizing: border-box;
         background-color: inherit;
         color: inherit;
-        height: $sizePx;
-        width: $sizePx;
-        float: right;
+        border: none;
+        // height: $sizePx;
+        // width: $sizePx;
+        // float: right;
         text-Align: center;
         line-height: $sizePx;
 
         &:hover {
-            background-color: rgba(255,0,0,0.05);
+            background-color: rgba(255,0,0,0.1);
         }
     }
+}
+
+.bar-content {
+    display: flex;
+    align-items: center;
 }
 
 

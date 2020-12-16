@@ -94,25 +94,27 @@ const NodeTypeEmojiLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.COMPRESSOR]: '💢'
     } as const
 
-type GraphIcon = string // The possible URLs will be Enumed'
-
-const GraphIconUrls = 
+type GraphIcon = string // typeof GraphIconUrls[number]
+const GraphIconKeys = 
     [ 'sine'
     , 'triangle'
     , 'square'
     , 'sawtooth'
     , 'custom'
     , 'frying-pan'
+    , 'volume'
+    , 'knob'
     ] as const
+type GraphIconKey = typeof GraphIconKeys[number]
 
 const GraphIconImageObjects =
-    GraphIconUrls.reduce((acc, name) => {
+    GraphIconKeys.reduce((acc, name) => {
         const url = `images/${name}.svg`
         const img = new Image()
         img.src = url
         acc[name] = img
         return acc
-    }, {} as Record<typeof GraphIconUrls[number], HTMLImageElement>)
+    }, {} as Record<GraphIconKey, HTMLImageElement>)
 
 const HasSVGGraphIcon = 
     { [NodeTypes.OSC]:    true
@@ -323,7 +325,7 @@ const AudioNodeParams =
     , [NodeTypes.COMPRESSOR]: ['threshold', 'knee', 'ratio', 'attack', 'release']
     } as const
 
-const AudioNodeSubTypes : Record<NodeTypes,readonly string[]> =
+const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
     { [NodeTypes.GAIN]:   []
     , [NodeTypes.OSC]:    ['sine','triangle','square','sawtooth','custom']
     , [NodeTypes.FILTER]: 
@@ -344,7 +346,7 @@ const AudioNodeSubTypes : Record<NodeTypes,readonly string[]> =
     // , [NodeTypes.CUSTOM]: []
     , [NodeTypes.PROCESSOR]: []
     , [NodeTypes.COMPRESSOR]:[]
-    } as const
+    }
 
 const HasSubtypes =
     { [NodeTypes.OSC]:    true
@@ -654,11 +656,6 @@ type AudioNodeInterfaces<T extends NodeTypes> =
     // & (T extends ClockDependent
         // ? IClockDependent
         // : Interface)
-
-type GraphNodeInterFaces<T extends NodeTypes> =
-    & (T extends HasSVGGraphIcon
-        ? { SVGIconKey: typeof GraphIconUrls[number] }
-        : {})
 
 // = {
     // connect : typeof AudioNode.prototype.connect

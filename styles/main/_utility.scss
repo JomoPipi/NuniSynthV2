@@ -6,11 +6,10 @@
 
 
 .svg-image {
-    $p: calc(100% * var(--dark-mode));
     user-select: none;
-    // sass-lint:disable-all
     filter: var(--dark-mode);
-    // sass-lint:enable-all
+
+    // background-color: red;
 }
 
 .hide {

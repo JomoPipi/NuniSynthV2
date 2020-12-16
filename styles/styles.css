@@ -392,6 +392,10 @@ code {
   background-color: var(--color0);
 }
 
+.margin-4 {
+  margin: 4px;
+}
+
 .some-margin {
   margin: 10px;
 }
@@ -613,29 +617,35 @@ code {
   background: -webkit-gradient(linear, left top, left bottom, from(var(--color1)), to(var(--color0)));
   background: linear-gradient(var(--color1), var(--color0));
   height: 25px;
-  width: 100%;
   cursor: move;
-  padding-left: 5px;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: auto 25px;
+      grid-template-columns: auto 25px;
 }
 
 .draggable-window-bar .exit-button {
   cursor: pointer;
-  border: none;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
   background-color: inherit;
   color: inherit;
-  height: 25px;
-  width: 25px;
-  float: right;
+  border: none;
   text-Align: center;
   line-height: 25px;
 }
 
 .draggable-window-bar .exit-button:hover {
-  background-color: rgba(255, 0, 0, 0.05);
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
+.bar-content {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .number-dial-input::-webkit-outer-spin-button,
