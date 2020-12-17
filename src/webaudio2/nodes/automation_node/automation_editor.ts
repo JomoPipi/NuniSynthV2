@@ -52,8 +52,9 @@ const TRANSFORMS : [s : string, f : (points : Point[], args : TransformArgs) => 
         (ps, { dx, dy }) => {
             const minX = ps[0].x
             const maxX = ps[ps.length-1].x
-            const midX = (minX + maxX) / 2
-            return ps.map(({ x, y }) => ({ x: x + dx * ((x - minX) / (maxX - minX)), y }))
+            return ps.map(({ x, y }) => ({ x: x + dx * ((x - minX) / (maxX - minX)), y })) // from the left
+            // const midX = (minX + maxX) / 2
+            // return ps.map(({ x, y }) => ({ x: x + dx * ((x - midX - minX) / (maxX - minX)), y }))
         }]
     , ['red', // y-axis stretch
         (ps, { dx, dy }) => {

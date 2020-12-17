@@ -302,8 +302,8 @@ export class NuniGraph {
                     ? undefined 
                     : title
                 }
-
-            return this.createNewNode(type, settings)
+            const t = oldId === 0 ? NodeTypes.GAIN : type
+            return this.createNewNode(t, settings)
         }) as NuniGraphNode[]
 
         const retainedInputs = new Set()
@@ -433,7 +433,8 @@ export class NuniGraph {
 
         if (!INPUT_NODE_ID && node.id !== 0) settings.title = title
         
-        const _node = this.createNewNode(type, settings)
+        const t = node.id === 0 ? NodeTypes.GAIN : type
+        const _node = this.createNewNode(t, settings)
         return _node
     }
 

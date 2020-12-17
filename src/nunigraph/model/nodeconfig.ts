@@ -376,7 +376,6 @@ const HasSubtypes =
 type HasSubtypes = keyof typeof HasSubtypes
 
 
-// const MasterGainColor = '#555'
 const NodeTypeColors : { readonly [key in NodeTypes] : string } = 
     { [NodeTypes.OUTPUT]: 'rgba(128,128,128,0.5)'
     , [NodeTypes.GAIN]:   'rgba(255,0,0,0.5)'
