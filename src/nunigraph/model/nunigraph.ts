@@ -58,13 +58,13 @@ export class NuniGraph {
 
     private initializeMasterGain() {
         const masterGainSettings = Object.assign(defaultNodeSettings(), 
-            { audioParamValues: { [NodeTypes.GAIN]: 1 }
+            { audioParamValues: { gain: 1 }
             , x: 0.5
             , y: 0.125
             , title: 'OUTPUT'
             })
 
-        this.createNewNode(NodeTypes.GAIN, masterGainSettings)
+        this.createNewNode(NodeTypes.OUTPUT, masterGainSettings)
     }
 
 
@@ -265,7 +265,7 @@ export class NuniGraph {
     clear() {
         for (const node of [...this.nodes]) 
         {
-            if (node.id === 0) continue
+            if (node.type === NodeTypes.OUTPUT) continue
             this.deleteNode(node)
         }
     }

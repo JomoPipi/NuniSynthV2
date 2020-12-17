@@ -294,18 +294,17 @@ export class NuniGraphController {
 
         const nodeIdentifier = E('span', 
             { className: 'margin-4'
-            , text: 'ᴵᴰ' + node.id.toString() 
+            , text: 'ᴵᴰ ' + node.id.toString() 
             })
 
         const barContent = E('span',
             { className: 'bar-content'
-            , children: node.INPUT_NODE_ID || node.id === 0
-                ? undefined
-            : 
+            , children: 
                 [ createSVGIcon(DefaultNodeIcon[node.type])
                 , nodeIdentifier
-                , titleEditor()
-                ] 
+                ].concat(node.INPUT_NODE_ID || node.type === NodeTypes.OUTPUT
+                    ? []
+                    : [titleEditor()])
             })
 
 
@@ -358,9 +357,7 @@ export class NuniGraphController {
             { clickCallback
             , closeCallback
             , contentContainer
-            , color: node.id === 0 
-                ? MasterGainColor 
-                : NodeTypeColors[node.type]
+            , color: NodeTypeColors[node.type]
             , barContent
             })
         this.getOpenWindow[node.id] = dialogBox
@@ -915,7 +912,7 @@ export class NuniGraphController {
             : []
             ).concat(AudioNodeParams[node2.type]) as ConnectionType[]
 
-        if (node2.id === 0 || types.length === 1) 
+        if (types.length === 1) 
         {
             // No prompt needed in this case. 
             // Only allow channel connections to the master gain node.

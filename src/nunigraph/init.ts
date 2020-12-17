@@ -35,9 +35,8 @@ class Nuni extends NuniGraphController {
             , D('connection-type-prompt')
             , new NuniGraphRenderer(G, canvas))
         
-        
         G.nodes
-            .find(({ id }) => id === 0)!
+            .find(({ type }) => type === NodeTypes.OUTPUT)!
             .audioNode
             .connect(volumeNode)
 

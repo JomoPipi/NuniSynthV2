@@ -96,10 +96,10 @@ export function createValuesWindow(
         controls.appendChild(activateKeyboardButton(audioNode))
     }
 
-    if (node.id === 0) // || node.type === NodeTypes.GAIN) 
+    if (node.type === NodeTypes.OUTPUT)
     {
         controls.appendChild(gainControls(
-            node as NuniGraphNode<NodeTypes.GAIN>))
+            node as NuniGraphNode<NodeTypes.OUTPUT>))
     }
     else if (exposesAudioParams(node)) 
     {
@@ -249,7 +249,7 @@ function warningButton(type : NodeTypes) {
 }
 
 
-function gainControls(node : NuniGraphNode<NodeTypes.GAIN>) {
+function gainControls(node : NuniGraphNode<NodeTypes.OUTPUT>) {
     const value = node.audioNode.gain.value
     const dial = new JsDial(1)
     dial.min = 0.1

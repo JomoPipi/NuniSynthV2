@@ -20,7 +20,8 @@ import { ProcessorNode } from './nodes/processor/processor_node.js'
 import { AutomationNode } from './nodes/automation_node/automation_node.js'
 
 export const AudioNodeMap = 
-    { [NodeTypes.GAIN]:       GainNode
+    { [NodeTypes.OUTPUT]:     GainNode
+    , [NodeTypes.GAIN]:       GainNode
     , [NodeTypes.OSC]:        OscillatorNode2
     , [NodeTypes.FILTER]:     BiquadFilterNode
     , [NodeTypes.PANNER]:     StereoPannerNode

@@ -9,6 +9,7 @@ import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { NuniGraph } from '../model/nunigraph.js'
 import { snapToGrid } from './snap_to_grid.js'
 import { UserOptions } from '../../storage/user_options.js'
+import { Theme } from '../../UI_setup/theme_setup.js'
 
 export enum HOVER { EDGE, SELECT, CONNECTION, EMPTY }
 
@@ -437,8 +438,10 @@ export class NuniGraphRenderer {
 
 
             ctx.strokeStyle = highlightEdge 
-                ? 'rgba(255,255,255,0.75)' 
-                : node.id === 0 ? MasterGainColor : NodeTypeColors[node.type]
+                ? Theme.isDark
+                    ? 'rgba(255, 255, 255, 0.75)'
+                    : 'rgba(0, 0, 0, 0.75)'
+                : NodeTypeColors[node.type]
 
             ctx.lineWidth = nodeLineWidth
             ctx.shadowColor = ''

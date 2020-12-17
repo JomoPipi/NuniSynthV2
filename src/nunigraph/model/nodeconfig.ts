@@ -7,6 +7,7 @@
 
 const enum NodeTypes
 { //! DON'T CHANGE STRING VALUES //!
+    OUTPUT = 'output',
     GAIN = 'gain',
     OSC = 'oscillator',
     FILTER = 'filter',
@@ -53,7 +54,8 @@ type ConnecteeDatum =
 type ConnecteeData = ConnecteeDatum[]
 
 const NodeLabel : { readonly [key in NodeTypes] : string } =  
-    { [NodeTypes.GAIN]:   'Gain'
+    { [NodeTypes.OUTPUT]: 'not used'
+    , [NodeTypes.GAIN]:   'Gain'
     , [NodeTypes.OSC]:    'Oscillator'
     , [NodeTypes.FILTER]: 'Filter'
     , [NodeTypes.PANNER]: 'Panner'
@@ -74,26 +76,27 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     }
 
 // TODO: delete
-const NodeTypeEmojiLabel : { readonly [key in NodeTypes] : string } =
-    { [NodeTypes.GAIN]:   '🔊'
-    , [NodeTypes.OSC]:    '∿'
-    , [NodeTypes.FILTER]: '🌫️'
-    , [NodeTypes.PANNER]: '⧟'
-    , [NodeTypes.DELAY]:  '🕖'
-    , [NodeTypes.SAMPLE]: '📀'
-    , [NodeTypes.G_SEQ]:  '⛩️'
-    , [NodeTypes.S_SEQ]:  '📼'
-    , [NodeTypes.NUM]:    '🎚️'
-    , [NodeTypes.RECORD]: '🎙️'
-    , [NodeTypes.MODULE]: '🎛️'
-    , [NodeTypes.AUTO]:   '🤖'
+// const NodeTypeEmojiLabel : { readonly [key in NodeTypes] : string } =
+//     { [NodeTypes.OUTPUT]: 'not used'
+//     , [NodeTypes.GAIN]:   '🔊'
+//     , [NodeTypes.OSC]:    '∿'
+//     , [NodeTypes.FILTER]: '🌫️'
+//     , [NodeTypes.PANNER]: '⧟'
+//     , [NodeTypes.DELAY]:  '🕖'
+//     , [NodeTypes.SAMPLE]: '📀'
+//     , [NodeTypes.G_SEQ]:  '⛩️'
+//     , [NodeTypes.S_SEQ]:  '📼'
+//     , [NodeTypes.NUM]:    '🎚️'
+//     , [NodeTypes.RECORD]: '🎙️'
+//     , [NodeTypes.MODULE]: '🎛️'
+//     , [NodeTypes.AUTO]:   '🤖'
     
-    , [NodeTypes.PIANOR]: '🎼 '
-    , [NodeTypes.ENV]:    'Envelope (doesn\'t do anything)'
-    // , [NodeTypes.CUSTOM]: 'Custom Module (should be hidden)'
-    , [NodeTypes.PROCESSOR]: '💻'
-    , [NodeTypes.COMPRESSOR]: '💢'
-    } as const
+//     , [NodeTypes.PIANOR]: '🎼 '
+//     , [NodeTypes.ENV]:    'Envelope (doesn\'t do anything)'
+//     // , [NodeTypes.CUSTOM]: 'Custom Module (should be hidden)'
+//     , [NodeTypes.PROCESSOR]: '💻'
+//     , [NodeTypes.COMPRESSOR]: '💢'
+//     } as const
 
 type GraphIcon = string // typeof GraphIconUrls[number]
 const GraphIconKeys = 
@@ -116,11 +119,13 @@ const GraphIconKeys =
     , 'lunar-module'
     , 'compress'
     , 'microphone'
+    , 'loud-speaker'
     ] as const
 type GraphIconKey = typeof GraphIconKeys[number]
 
 const DefaultNodeIcon : ReadonlyRecord<NodeTypes, GraphIconKey> =
-    { [NodeTypes.GAIN]:   'volume'
+    { [NodeTypes.OUTPUT]: 'loud-speaker'
+    , [NodeTypes.GAIN]:   'volume'
     , [NodeTypes.OSC]:    'sine'
     , [NodeTypes.FILTER]: 'filter'
     , [NodeTypes.PANNER]: 'frying-pan'
@@ -149,14 +154,9 @@ const GraphIconImageObjects =
         return acc
     }, {} as Record<GraphIconKey, HTMLImageElement>)
 
-const HasSVGGraphIcon = 
-    { [NodeTypes.OSC]:    true
-    , [NodeTypes.PANNER]: true 
-    } as const
-type HasSVGGraphIcon = keyof typeof HasSVGGraphIcon
-
 const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
-    { [NodeTypes.GAIN]:   true
+    { [NodeTypes.OUTPUT]: true
+    , [NodeTypes.GAIN]:   true
     , [NodeTypes.OSC]:    false
     , [NodeTypes.FILTER]: true
     , [NodeTypes.PANNER]: true
@@ -176,7 +176,8 @@ const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     }
 
 const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
-    { [NodeTypes.GAIN]:   false
+    { [NodeTypes.OUTPUT]: false
+    , [NodeTypes.GAIN]:   false
     , [NodeTypes.OSC]:    false
     , [NodeTypes.FILTER]: false
     , [NodeTypes.PANNER]: false
@@ -207,7 +208,8 @@ const ExposesAudioparamsInDialogBox =
     } as const
 
 const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
-    { [NodeTypes.GAIN]:   false
+    { [NodeTypes.OUTPUT]: true
+    , [NodeTypes.GAIN]:   false
     , [NodeTypes.OSC]:    false
     , [NodeTypes.FILTER]: false
     , [NodeTypes.PANNER]: false
@@ -227,7 +229,8 @@ const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
     }
 
 const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } =
-    { [NodeTypes.GAIN]:   false
+    { [NodeTypes.OUTPUT]: false
+    , [NodeTypes.GAIN]:   false
     , [NodeTypes.OSC]:    false
     , [NodeTypes.FILTER]: false
     , [NodeTypes.PANNER]: false
@@ -249,7 +252,8 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
 // The ones that are `false` let you delete stuff inside the node. 
 // We don't want the node itself to get deleted.
 const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } =
-    { [NodeTypes.GAIN]:   true
+    { [NodeTypes.OUTPUT]: true
+    , [NodeTypes.GAIN]:   true
     , [NodeTypes.OSC]:    true
     , [NodeTypes.FILTER]: true
     , [NodeTypes.PANNER]: true
@@ -270,7 +274,8 @@ const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } 
 
 // Goal: convert this to IsNativeAudioNode
 const UsesConnectionProtocol2  : { readonly [key in NodeTypes] : boolean } =
-    { [NodeTypes.GAIN]:   false
+    { [NodeTypes.OUTPUT]: false
+    , [NodeTypes.GAIN]:   false
     , [NodeTypes.OSC]:    false
     , [NodeTypes.FILTER]: false
     , [NodeTypes.PANNER]: false
@@ -299,7 +304,8 @@ const ClockDependent =
 
 
 const HasResizeableNodeWindow  : { readonly [key in NodeTypes] : boolean } =
-    { [NodeTypes.GAIN]:   false
+    { [NodeTypes.OUTPUT]: false
+    , [NodeTypes.GAIN]:   false
     , [NodeTypes.OSC]:    false
     , [NodeTypes.FILTER]: false
     , [NodeTypes.PANNER]: false
@@ -319,7 +325,8 @@ const HasResizeableNodeWindow  : { readonly [key in NodeTypes] : boolean } =
     }
 
 const AudioNodeParams =
-    { [NodeTypes.GAIN]:   ['gain']
+    { [NodeTypes.OUTPUT]: []
+    , [NodeTypes.GAIN]:   ['gain']
     , [NodeTypes.OSC]:    ['frequency','detune']
     , [NodeTypes.FILTER]: ['frequency','Q',/*'gain',*/'detune']
     , [NodeTypes.PANNER]: ['pan']
@@ -339,7 +346,8 @@ const AudioNodeParams =
     } as const
 
 const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
-    { [NodeTypes.GAIN]:   []
+    { [NodeTypes.OUTPUT]: []
+    , [NodeTypes.GAIN]:   []
     , [NodeTypes.OSC]:    ['sine','triangle','square','sawtooth','custom']
     , [NodeTypes.FILTER]: 
         ["lowpass", "highpass", "bandpass", "lowshelf"
@@ -368,9 +376,10 @@ const HasSubtypes =
 type HasSubtypes = keyof typeof HasSubtypes
 
 
-const MasterGainColor = '#555'
+// const MasterGainColor = '#555'
 const NodeTypeColors : { readonly [key in NodeTypes] : string } = 
-    { [NodeTypes.GAIN]:   'rgba(255,0,0,0.5)'
+    { [NodeTypes.OUTPUT]: 'rgba(128,128,128,0.5)'
+    , [NodeTypes.GAIN]:   'rgba(255,0,0,0.5)'
     , [NodeTypes.OSC]:    'rgba(0,0,255,0.55)'
     , [NodeTypes.FILTER]: 'rgba(0,255,0,0.5)'
     , [NodeTypes.PANNER]: 'rgba(255,128,0,0.5)'
@@ -391,7 +400,8 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     }
 
 const NodeTypeColors2 : { readonly [key in NodeTypes] : string } = 
-    { [NodeTypes.GAIN]:   'rgb(255,0,0)'
+    { [NodeTypes.OUTPUT]: 'rgb(128,128,128)'
+    , [NodeTypes.GAIN]:   'rgb(255,0,0)'
     , [NodeTypes.OSC]:    'rgb(0,0,255)'
     , [NodeTypes.FILTER]: 'rgb(0,255,0)'
     , [NodeTypes.PANNER]: 'rgb(255,128,0)'
@@ -599,7 +609,7 @@ const PostConnection_Transferable_InputRemappable_AudioNodeProperties =
 type NodeCreationSettings = { 
     x : number
     y : number
-    audioParamValues : Record<string, number>
+    audioParamValues : Record<string, number> // Record<typeof AudioNodeParams[NodeTypes][number], number>
     audioNodeProperties : CustomAudioNodeProperties
     title? : string
     INPUT_NODE_ID? : { id : number }
@@ -674,7 +684,6 @@ type AudioNodeInterfaces<T extends NodeTypes> =
     // connect : typeof AudioNode.prototype.connect
     // poop : any
     // sync : T extends NodeTypes.S_SEQ ? () => void : any
-    // SVGIconName : T extends HasSVGGraphIcon ? typeof GraphIconUrls[number] : undefined
 
     // type : T extends HasSubtypes ? typeof AudioNodeSubTypes[T] : undefined
 // }
