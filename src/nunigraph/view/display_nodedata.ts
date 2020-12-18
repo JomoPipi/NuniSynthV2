@@ -372,7 +372,7 @@ function insertOptions(select : HTMLSelectElement, options : readonly string[]) 
 function samplerControls(audioNode : NuniSampleNode) {
     const box = E('span', { className: 'buffer-stuff-row' })
 
-    box.appendChild(E('span', { text: 'buffer' }))
+    box.appendChild(E('span', { text: 'Sample' }))
 
     const text = String.fromCharCode(65 + audioNode.bufferKey)
     const value = E('span', { text })

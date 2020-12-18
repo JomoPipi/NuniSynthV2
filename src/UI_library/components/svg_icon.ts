@@ -5,7 +5,7 @@
 
 
 
-export function createSVGIcon(key : GraphIconKey, size? : number) {
+export function createSVGIcon(key : SVGIconKey, size? : number) {
     const img = E('img', { className: 'svg-image side-margin-4' })
         img.draggable = false
         img.src = `images/${key}.svg`

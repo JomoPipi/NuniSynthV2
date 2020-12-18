@@ -121,9 +121,9 @@ const GraphIconKeys =
     , 'microphone'
     , 'loud-speaker'
     ] as const
-type GraphIconKey = typeof GraphIconKeys[number]
+type SVGIconKey = typeof GraphIconKeys[number]
 
-const DefaultNodeIcon : ReadonlyRecord<NodeTypes, GraphIconKey> =
+const DefaultNodeIcon : ReadonlyRecord<NodeTypes, SVGIconKey> =
     { [NodeTypes.OUTPUT]: 'loud-speaker'
     , [NodeTypes.GAIN]:   'volume'
     , [NodeTypes.OSC]:    'sine'
@@ -145,6 +145,12 @@ const DefaultNodeIcon : ReadonlyRecord<NodeTypes, GraphIconKey> =
     , [NodeTypes.COMPRESSOR]: 'compress'
     } as const
 
+const HasDynamicNodeIcon = 
+    { [NodeTypes.OSC]: true
+    // [NodeTypes.FILTER]: true -- TODO: for highpass/lowpass/etc
+    }
+type HasDynamicNodeIcon = keyof typeof HasDynamicNodeIcon
+
 const GraphIconImageObjects =
     GraphIconKeys.reduce((acc, name) => {
         const url = `images/${name}.svg`
@@ -152,7 +158,7 @@ const GraphIconImageObjects =
         img.src = url
         acc[name] = img
         return acc
-    }, {} as Record<GraphIconKey, HTMLImageElement>)
+    }, {} as Record<SVGIconKey, HTMLImageElement>)
 
 const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.OUTPUT]: true
@@ -627,6 +633,21 @@ const TransferableNodeProperties =
 
 
 
+
+
+
+
+class NuniAudioParam extends ConstantSourceNode {
+    constructor(ctx : AudioContext) {
+        super(ctx)
+        this.offset.value = 0
+        this.start(ctx.currentTime)
+    }
+    set value(value : number) {
+        this.offset.value = value
+    }
+}
+
 const CanBeAutomated =
     [ NodeTypes.GAIN
     , NodeTypes.OSC
@@ -639,6 +660,7 @@ const CanBeAutomated =
     , NodeTypes.COMPRESSOR
     ] as const
 type CanBeAutomated = typeof CanBeAutomated[number]
+
 type ParamsOf<T extends NodeTypes> = T extends CanBeAutomated
     ? typeof AudioNodeParams[T][number]
     : any
@@ -646,18 +668,6 @@ type ParamsOf<T extends NodeTypes> = T extends CanBeAutomated
 interface BaseAudioNodeProperties<T extends NodeTypes> {
     connect(input : AudioNode | AudioParam) : void
     disconnect(input? : AudioNode | AudioParam) : void
-}
-
-class NuniAudioParam extends ConstantSourceNode {
-    constructor(ctx : AudioContext) {
-        super(ctx)
-        this.offset.value = 0
-        this.start(ctx.currentTime)
-    }
-    
-    set value(value : number) {
-        this.offset.value = value
-    }
 }
 
 type ClockDependent = keyof typeof ClockDependent
@@ -669,20 +679,13 @@ type IClockDependent<T> = (T extends ClockDependent
     }
     : {})
 
+type IHasDynamicNodeIcon<T> = (T extends HasDynamicNodeIcon
+    ? {
+        getNodeIcon() : SVGIconKey
+    }
+    : {})
+
 type AudioNodeInterfaces<T extends NodeTypes> =
     & BaseAudioNodeProperties<T>
     & IClockDependent<T>
-    // & ICanBeAutomated<T>
-        // , IClockDependent
-    // & BaseRequiredProperties
-    // & (T extends ClockDependent
-        // ? IClockDependent
-        // : Interface)
-
-// = {
-    // connect : typeof AudioNode.prototype.connect
-    // poop : any
-    // sync : T extends NodeTypes.S_SEQ ? () => void : any
-
-    // type : T extends HasSubtypes ? typeof AudioNodeSubTypes[T] : undefined
-// }
+    & IHasDynamicNodeIcon<T>

@@ -54,6 +54,8 @@ export class OscillatorNode2 extends NuniSourceNode
     }
     get type() { return this._type }
 
+    getNodeIcon() { return this._type }
+
     createSource() {
         const src = this.ctx.createOscillator()
 

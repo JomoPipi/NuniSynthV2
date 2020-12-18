@@ -371,7 +371,7 @@ export class NuniGraphRenderer {
             const { x, y } = node, r = nodeRadius
             const gradient = ctx.createRadialGradient(x*W, y*H, r/27.0, x*W, y*H, r)
                 gradient.addColorStop(0, c2)
-                gradient.addColorStop(0.9, 'gray')
+                gradient.addColorStop(0.9, 'rgba(128,128,128,0.25)')
                 
             return gradient
         }
@@ -464,7 +464,13 @@ export class NuniGraphRenderer {
             }
             if (UserOptions.config["Show Node Image"])
             {
-                const key = DefaultNodeIcon[node.type]
+                const hasDynamicNodeIcon = (node : NuniGraphNode)
+                    : node is NuniGraphNode<HasDynamicNodeIcon> => 
+                    node.type in HasDynamicNodeIcon
+
+                const key = hasDynamicNodeIcon(node)
+                    ? node.audioNode.getNodeIcon()
+                    : DefaultNodeIcon[node.type]
                 const img = GraphIconImageObjects[key]
                 ctx.drawImage(img, X - fontSize, Y - fontSize, fontSize * 2, fontSize * 2)
             }
