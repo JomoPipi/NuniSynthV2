@@ -22,7 +22,7 @@ import
 import { createSubdivSelect } from './create_subdivselect.js'
 import { GraphController } from '../init.js'
 import { doUntilMouseUp } from '../../UI_library/events/until_mouseup.js'
-import { ProcessorNode } from '../../webaudio2/nodes/processor/processor_node.js'
+import { ProcessorNode } from '../../webaudio2/nodes/processor/processor.js'
 import { ActiveControllers } from '../controller/graph_controller.js'
 
 

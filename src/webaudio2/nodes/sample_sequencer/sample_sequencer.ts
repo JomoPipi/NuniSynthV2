@@ -56,12 +56,13 @@ export class SampleSequencer extends Sequencer
         this.createChannelVolume(this.nextId)
         this.nextId++
         this.refresh()
+        return this.nextId - 1
     }
 
     removeInput(key : number) {
         delete this.channelData[key]
         delete this.stepMatrix[key]
-        delete this.channelData[key]
+        delete this.channelVolumes[key]
         this.refresh()
     }
 
@@ -117,7 +118,7 @@ export class SampleSequencer extends Sequencer
     additionalRowItems(key : number) { 
         
         const box = E('span')
-        const valueText = E('span', 
+        const valueText = E('span', // poop
             { text: String.fromCharCode(65 + this.channelData[key].bufferKey!) })
 
         add_buffer_select: {

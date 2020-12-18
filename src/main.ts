@@ -12,9 +12,10 @@ import './scale_utils/internal.js'
 import './buffer_utils/internal.js'
 import './nunigraph/controller/modularize_graph.js'
 
-// Turn off for production
-import './tests/copy_graph_test.js'
-
+if (DEV_MODE_EQUALS_TRUE)
+{
+    import('./tests/all_tests.js')
+}
 
 window.onload = () => {
     log('[[((--##--)) Begin NuniSynth ((--##-))]]')

@@ -689,3 +689,12 @@ type AudioNodeInterfaces<T extends NodeTypes> =
     & BaseAudioNodeProperties<T>
     & IClockDependent<T>
     & IHasDynamicNodeIcon<T>
+
+
+
+    
+abstract const PRODUCTION_MODE_EQUALS_TRUE 
+    = false
+    
+const DEV_MODE_EQUALS_TRUE : typeof PRODUCTION_MODE_EQUALS_TRUE extends true ? false : true 
+    = !PRODUCTION_MODE_EQUALS_TRUE

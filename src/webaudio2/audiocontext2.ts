@@ -7,17 +7,16 @@
 
 import { graphVisualEqualizer } from '../visualizer/global_visualizer.js'
 
-import { NuniSampleNode } from './nodes/sample/sample_node.js'
-import { OscillatorNode2 } from './nodes/oscillator/oscillator_node.js'
-import { NuniPannerNode } from './nodes/panner/panner_node.js'
+import { NuniSampleNode } from './nodes/sample/sample.js'
+import { OscillatorNode2 } from './nodes/oscillator/oscillator.js'
 import { GateSequencer } from './nodes/gate_sequencer/subgraph_sequencer.js'
-import { SampleSequencer } from './nodes/sample_sequencer/sample_sequencer_node.js'
-import { NuniRecordingNode } from './nodes/record/record_node.js'
-import { NuniGraphAudioNode } from './nodes/module/module_node.js'
+import { SampleSequencer } from './nodes/sample_sequencer/sample_sequencer.js'
+import { NuniRecordingNode } from './nodes/record/record.js'
+import { NuniGraphAudioNode } from './nodes/module/module.js'
 import { Envelope } from './envelope/envelope.js'
-import { PianoRoll12Tone } from './nodes/pianoroll/pianoroll_12tone_node.js'
-import { ProcessorNode } from './nodes/processor/processor_node.js'
-import { AutomationNode } from './nodes/automation_node/automation_node.js'
+import { PianoRoll12Tone } from './nodes/pianoroll/pianoroll_12tone.js'
+import { ProcessorNode } from './nodes/processor/processor.js'
+import { AutomationNode } from './nodes/automation/automation.js'
 
 export const AudioNodeMap = 
     { [NodeTypes.OUTPUT]:     GainNode

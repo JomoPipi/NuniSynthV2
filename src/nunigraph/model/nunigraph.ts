@@ -8,7 +8,7 @@
 import { NuniGraphNode } from './nunigraph_node.js'
 import { LZW_compress, LZW_decompress } from '../../helpers/lzw_compression.js'
 import { GateSequencer, Sequencer, NuniGraphAudioNode } from '../../webaudio2/internal.js'
-import { ProcessorNode } from '../../webaudio2/nodes/processor/processor_node.js'
+import { ProcessorNode } from '../../webaudio2/nodes/processor/processor.js'
 
 // type Destination = AudioNode | AudioParam | NuniAudioParam
 

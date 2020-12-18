@@ -11,10 +11,10 @@ import { NuniGraphNode } from "../nunigraph/model/nunigraph_node.js"
 
 
 
-
-
-
 export {}
+
+
+
 
 function cycleGraph(input : string) {
     GraphController.fromString(input)
@@ -116,4 +116,27 @@ const g = GraphController.g // new NuniGraph()
 
     g.clear()
     log(`${passed}/${passed + failed} tests passed`)
+})()
+
+
+
+
+
+
+
+;(function runSampleSequencerTests() {
+    const node = g.createNewNode(NodeTypes.S_SEQ)
+    const id = node.audioNode.addInput()
+    let passed = 0, failed = 0
+    try
+    {
+        node.audioNode.removeInput(id)
+        passed++
+    } 
+    catch(e)
+    {
+        console.warn('Failed SampleSequencer channel-removal test: \n\n', e)
+        failed++
+    }
+    console.log(`${passed}/${(passed + failed)} tests passed`)
 })()
