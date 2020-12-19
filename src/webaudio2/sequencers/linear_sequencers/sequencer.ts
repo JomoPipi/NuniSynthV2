@@ -116,7 +116,6 @@ export abstract class Sequencer extends VolumeNodeContainer {
         const measureLength = this.tick * this.nSteps
         const t = Math.max(0, this.ctx.currentTime - measureLength)
         this.noteTime = Math.floor(t / measureLength) * measureLength
-        log('we here')
     }
 
     stop() {

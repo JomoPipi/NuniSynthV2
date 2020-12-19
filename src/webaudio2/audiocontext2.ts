@@ -17,12 +17,13 @@ import { Envelope } from './envelope/envelope.js'
 import { PianoRoll12Tone } from './nodes/pianoroll/pianoroll_12tone.js'
 import { ProcessorNode } from './nodes/processor/processor.js'
 import { AutomationNode } from './nodes/automation/automation.js'
+import { NuniFilterNode } from './nodes/filter/filter.js'
 
 export const AudioNodeMap = 
     { [NodeTypes.OUTPUT]:     GainNode
     , [NodeTypes.GAIN]:       GainNode
     , [NodeTypes.OSC]:        OscillatorNode2
-    , [NodeTypes.FILTER]:     BiquadFilterNode
+    , [NodeTypes.FILTER]:     NuniFilterNode
     , [NodeTypes.PANNER]:     StereoPannerNode
     , [NodeTypes.DELAY]:      DelayNode
     , [NodeTypes.SAMPLE]:     NuniSampleNode

@@ -78,7 +78,7 @@ export class NuniGraphRenderer {
         this.g = g
         this.canvas = canvas
         this.ctx = canvas.getContext('2d')!
-        this.nodeRadius = 25
+        this.nodeRadius = 20 // 25
         this.nodeLineWidth = this.nodeRadius/5 + 3
         this.connectionLineWidth = PHI
         this.innerEdgeBoundary = this.nodeRadius / 1.5
@@ -217,7 +217,7 @@ export class NuniGraphRenderer {
         const { ctx, g } = this
         ctx.lineWidth = 0.4
         ctx.strokeStyle = 'rgba(255,255,255,0.5)'
-        const gridGrap = W / 30
+        const gridGrap = W / 40 // 30
 
         for (let i = 0; i < Math.max(W, H); i += gridGrap) 
         {

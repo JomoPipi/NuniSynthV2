@@ -118,23 +118,6 @@ export function createValuesWindow(
         controls.appendChild(createResizeableWindow(
             audioNode.getUIComponent(), ancestor, audioNode.resizeUI.bind(audioNode)))
     }
-
-
-
-
-    // // Add delete button, but not if id is 0, because that's the master gain.
-    // if (node.id !== 0) 
-    // {
-    //     const deleteNodeBtn = E('button', { text: '🗑️' })
-    //     applyStyle(deleteNodeBtn, 
-    //         { textAlign: 'center'
-    //         , backgroundColor: 'transparent'
-    //         , border: 'none'
-    //         , fontSize: '1.25em'
-    //         })
-    //     deleteNodeBtn.onclick = () => deleteCallback()
-    //     controls.append(deleteNodeBtn)
-    // }
     
     return controls
 }

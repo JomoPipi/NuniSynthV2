@@ -108,7 +108,11 @@ const GraphIconKeys =
     , 'frying-pan'
     , 'volume'
     , 'knob'
-    , 'filter'
+    , 'lowpass'
+    , 'highpass'
+    , 'bandpass'
+    , 'notch'
+    , 'allpass'
     , 'flask'
     , 'automation'
     , 'stereo'
@@ -127,7 +131,7 @@ const DefaultNodeIcon : ReadonlyRecord<NodeTypes, SVGIconKey> =
     { [NodeTypes.OUTPUT]: 'loud-speaker'
     , [NodeTypes.GAIN]:   'volume'
     , [NodeTypes.OSC]:    'sine'
-    , [NodeTypes.FILTER]: 'filter'
+    , [NodeTypes.FILTER]: 'lowpass'
     , [NodeTypes.PANNER]: 'frying-pan'
     , [NodeTypes.DELAY]:  'clock'
     , [NodeTypes.SAMPLE]: 'flask'
@@ -147,7 +151,7 @@ const DefaultNodeIcon : ReadonlyRecord<NodeTypes, SVGIconKey> =
 
 const HasDynamicNodeIcon = 
     { [NodeTypes.OSC]: true
-    // [NodeTypes.FILTER]: true -- TODO: for highpass/lowpass/etc
+    , [NodeTypes.FILTER]: true
     }
 type HasDynamicNodeIcon = keyof typeof HasDynamicNodeIcon
 
@@ -355,9 +359,9 @@ const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
     { [NodeTypes.OUTPUT]: []
     , [NodeTypes.GAIN]:   []
     , [NodeTypes.OSC]:    ['sine','triangle','square','sawtooth','custom']
-    , [NodeTypes.FILTER]: 
-        ["lowpass", "highpass", "bandpass", "lowshelf"
-        ,"highshelf", "peaking", "notch", "allpass"]
+    , [NodeTypes.FILTER]:
+        ["lowpass", "highpass", "bandpass", /*"lowshelf"
+        ,"highshelf", "peaking",*/ "notch", "allpass"]
     , [NodeTypes.PANNER]: []
     , [NodeTypes.DELAY]:  []
     , [NodeTypes.SAMPLE]: []

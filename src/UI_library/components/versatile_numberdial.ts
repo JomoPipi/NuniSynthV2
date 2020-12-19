@@ -79,14 +79,13 @@ export function createVersatileNumberDialComponent(
     function setContinuousMode(itsTrue : boolean) {
         if (itsTrue) 
         {
-            continunousModeComponent.setValue(options.mapStringToNumber[optionList[discreteModeComponent.getIndex()]])
+            const value = options.mapStringToNumber[optionList[discreteModeComponent.getIndex()]]
+            continunousModeComponent.setValue(value)
         }
         else
         {
-            const option = options.mapNumberToString(continunousModeComponent.getValue())
-            discreteModeComponent.setIndex(optionList.indexOf(option))
-            // Do this because we round to the nearest discrete value
-            // options.fn(options.mapStringToNumber[option])
+            const index = optionList.indexOf(options.mapNumberToString(continunousModeComponent.getValue()))
+            discreteModeComponent.setIndex(index)
 
             // Do this because we want to sync the sequencers:
             options.mouseup && options.mouseup(0 as any)
