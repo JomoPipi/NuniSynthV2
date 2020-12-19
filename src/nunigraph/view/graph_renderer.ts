@@ -462,7 +462,7 @@ export class NuniGraphRenderer {
                 ctx.font = fontSize + 'px Arial'
                 ctx.fillText(node.title, X - 30, Y - nodeRadius * 1.5)
             }
-            if (UserOptions.config["Show Node Image"])
+            if (UserOptions.config["Show Node Images"])
             {
                 const hasDynamicNodeIcon = (node : NuniGraphNode)
                     : node is NuniGraphNode<HasDynamicNodeIcon> => 

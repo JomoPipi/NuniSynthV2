@@ -9,7 +9,7 @@ type Handler = MouseHandler
 
 export function doUntilMouseUp(
     mousemove : Handler, 
-    { mousedown, mouseup } : Partial<Indexable<Handler>> = {}) {
+    { mousedown, mouseup } : Partial<Record<'mouseup' | 'mousedown', Handler>> = {}) {
     
     function _mousedown(e : MouseEvent) {
         mousedown && mousedown(e)

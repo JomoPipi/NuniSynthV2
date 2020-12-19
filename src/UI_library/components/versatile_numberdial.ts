@@ -76,17 +76,23 @@ export function createVersatileNumberDialComponent(
         setContinuousMode(toggle.checked)
     }
 
-    function setContinuousMode(yes : boolean) {
-        if (yes) 
+    function setContinuousMode(itsTrue : boolean) {
+        if (itsTrue) 
         {
             continunousModeComponent.setValue(options.mapStringToNumber[optionList[discreteModeComponent.getIndex()]])
         }
         else
         {
-            discreteModeComponent.setIndex(optionList.indexOf(options.mapNumberToString(continunousModeComponent.getValue())))
+            const option = options.mapNumberToString(continunousModeComponent.getValue())
+            discreteModeComponent.setIndex(optionList.indexOf(option))
+            // Do this because we round to the nearest discrete value
+            // options.fn(options.mapStringToNumber[option])
+
+            // Do this because we want to sync the sequencers:
+            options.mouseup && options.mouseup(0 as any)
         }
-        discreteModeComponent.container.classList.toggle('hide', toggle.checked = yes)
-        continunousModeComponent.container.classList.toggle('hide', !yes)
+        discreteModeComponent.container.classList.toggle('hide', toggle.checked = itsTrue)
+        continunousModeComponent.container.classList.toggle('hide', !itsTrue)
     }
 
     return box

@@ -75,10 +75,10 @@ class DiscreteDial {
         this.update(0)
     }
 
-    onrotation(fn : (index : number ) => void, { mousedown, mouseup } : Options = {}) {
+    onrotation(fn : (index : number ) => void, { mousedown: md, mouseup: mu } : Options = {}) {
 
         const _mousedown = (e : MouseEvent) => {
-            mousedown && mousedown(e)
+            md && md(e)
             this.html.requestPointerLock()
             this.render()
         }
@@ -90,7 +90,7 @@ class DiscreteDial {
             fn(this.value)
         }
         const _mouseup = (e : MouseEvent) => {
-            mouseup && mouseup(e)
+            mu && mu(e)
             requestAnimationFrame(() => // Avoid interrupting double click
             document.exitPointerLock())
         }

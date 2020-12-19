@@ -14,6 +14,7 @@ import { modularizeGraph } from '../nunigraph/controller/modularize_graph.js'
 import { setTheme } from './theme_setup.js'
 import { UserOptions } from '../storage/user_options.js'
 import { ActiveControllers } from '../nunigraph/controller/graph_controller.js'
+import { createRadioButtonGroup, createToggleButton } from '../UI_library/internal.js'
 
 const tabs = 
     [ 'graph-tab'
@@ -43,10 +44,6 @@ function getNavMenuClickTarget(e : MouseEvent) {
     {
         menuItemMap[text]()
     }
-    else if (text.length && !isNaN(+text))
-    {
-        setTheme(+text)
-    }
 }
 
 D('main-nav-menu').onclick = getNavMenuClickTarget
@@ -65,22 +62,39 @@ function showTab(name : string) {
 
 function showConfigWindow() {
     const configWindow = E('div', { className: 'window show' })
-    for (const key in UserOptions.config)
+
     {
+        const key = 'Show Node Images'
         const checkBox = E('input')
             checkBox.type = 'checkbox'
-            checkBox.checked = (UserOptions.config as any)[key]
+            checkBox.checked = UserOptions.config[key]
         const box = E('span', 
-            { text: key
+            { text: key + ' '
             , children: [checkBox] 
             })
-        configWindow.appendChild(box)
         checkBox.oninput = () => {
-            (UserOptions.config as any)[key] = checkBox.checked
+            UserOptions.config[key] = checkBox.checked
             ActiveControllers.forEach(controller =>
                 controller.renderer.render())
         }
+
+        configWindow.appendChild(box)
     }
+
+    {
+        const key = 'theme'
+        const btns = createRadioButtonGroup(
+            { buttons: ['A','B','C','D']
+            , selected: UserOptions.config[key]
+            , onclick(_,i) { setTheme(i) } 
+            , text: '\nTheme'
+            })
+            
+        configWindow.appendChild(btns)
+    }
+
+
+
 
     configWindow.style.zIndex = 
         (++DIRTYGLOBALS.RISING_GLOBAL_Z_INDEX).toString()
@@ -99,10 +113,11 @@ function showConfigWindow() {
     window.addEventListener('click', onclick))
 
     function onclick(e : Event) {
-        if (!configWindow.contains(e.target as any))
+        if (!configWindow.contains(e.target as HTMLElement))
         {
             window.removeEventListener('click', onclick)
             document.body.removeChild(configWindow)
+            log('saving!')
             UserOptions.save() // Save config when we click out
         }
     }

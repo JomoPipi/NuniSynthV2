@@ -139,4 +139,5 @@ const g = GraphController.g // new NuniGraph()
         failed++
     }
     console.log(`${passed}/${(passed + failed)} tests passed`)
+    g.clear()
 })()

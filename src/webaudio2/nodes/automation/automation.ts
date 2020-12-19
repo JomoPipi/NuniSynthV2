@@ -25,6 +25,7 @@ export class AutomationNode extends VolumeNodeContainer
     private durationOfLoop = -1
     private pointEditor = new AutomationPointsEditor()
     private dialogBoxIsOpen = false
+    private controller? : HTMLElement
 
     constructor(ctx : AudioContext) {
         super(ctx)
@@ -43,60 +44,7 @@ export class AutomationNode extends VolumeNodeContainer
 
     getController() {
         this.dialogBoxIsOpen = true
-        const nodeCanvas = this.pointEditor.getController()
-
-        const progressLine = E('canvas')
-        drawProgressLine: {
-            const ctx = progressLine.getContext('2d')!
-            const h = 2
-            // const margin = 15
-            progressLine.style.display = 'block'
-            progressLine.height = h
-            
-            this.updateProgressLine = v => {
-                ctx.fillStyle = '#AB6'
-                ctx.clearRect(0, 0, progressLine.width, h)
-                // ctx.fillRect(margin, 0, (progressLine.width - margin * 2) * v, h)
-                ctx.fillRect(0, 0, progressLine.width * v, h)
-            }
-        }
-
-        const subdivSelect = createSubdivSelect3(
-            1 / this._nMeasures, 
-            value => this.nMeasures = 1 / clamp(1e-9, value, 1e9),
-            { mouseup: () => this.sync() }
-            ).container
-
-        const phaseShifter = E('div', { text: 'phase' })
-            {
-            const percent = E('div', { text: '0.0%' }); percent.style.width = '50px'
-            const control = E('input', { className: 'fader-0' })
-            control.style.display = 'block'
-            control.type = 'range'
-            control.min = '0'
-            control.max = '1'
-            control.step = (2**-8).toString()
-            control.value = this.phaseShift.toString()
-            ;(control.oninput = () => 
-                percent.innerText = (100 * (this.phaseShift = +control.value)).toFixed(0) + '%'
-            )()
-            phaseShifter.append(percent, control)
-            }
-
-        const modeSelect = createRadioButtonGroup(
-            { buttons: ['👌', '✏️']
-            , selected: 0
-            , className: 'top-bar-btn'
-            , onclick: (_, index) => this.pointEditor.setMode(index)
-            })
-
-        const hardwareControls = E('div', 
-            { className: 'space-evenly some-padding'
-            , children: [subdivSelect, phaseShifter, modeSelect] 
-            })
-
-        const controller = E('div', { children: [nodeCanvas, progressLine, hardwareControls] })
-        return controller
+        return this.controller || (this.controller = this.reallyGetController())
     }
 
     deactivateWindow() {
@@ -161,5 +109,68 @@ export class AutomationNode extends VolumeNodeContainer
             }
             this.nextMeasure()
         }
+    }
+
+    private reallyGetController() {
+        if (this.controller) 
+        {
+            throw 'You shouldn\'t have called this function where ever or when ever you did.'
+        }
+
+        const nodeCanvas = this.pointEditor.getController()
+
+        const progressLine = E('canvas')
+        drawProgressLine: {
+            const ctx = progressLine.getContext('2d')!
+            const h = 2
+            // const margin = 15
+            progressLine.style.display = 'block'
+            progressLine.height = h
+            
+            this.updateProgressLine = v => {
+                if (!this.dialogBoxIsOpen) return;
+                ctx.fillStyle = '#AB6'
+                ctx.clearRect(0, 0, progressLine.width, h)
+                // ctx.fillRect(margin, 0, (progressLine.width - margin * 2) * v, h)
+                ctx.fillRect(0, 0, progressLine.width * v, h)
+            }
+        }
+
+        const subdivSelect = createSubdivSelect3(
+            1 / this._nMeasures, 
+            value => this.nMeasures = 1 / clamp(1e-9, value, 1e9),
+            { mouseup: () => this.sync() }
+            ).container
+
+        const phaseShifter = E('div', { text: 'phase' })
+            {
+            const percent = E('div', { text: '0.0%' }); percent.style.width = '50px'
+            const control = E('input', { className: 'fader-0' })
+            control.style.display = 'block'
+            control.type = 'range'
+            control.min = '0'
+            control.max = '1'
+            control.step = (2**-8).toString()
+            control.value = this.phaseShift.toString()
+            ;(control.oninput = () => 
+                percent.innerText = (100 * (this.phaseShift = +control.value)).toFixed(0) + '%'
+            )()
+            phaseShifter.append(percent, control)
+            }
+
+        const modeSelect = createRadioButtonGroup(
+            { buttons: ['👌', '✏️']
+            , selected: 0
+            , className: 'top-bar-btn'
+            , onclick: (_, index) => this.pointEditor.setMode(index)
+            })
+
+        const hardwareControls = E('div', 
+            { className: 'space-evenly some-padding'
+            , children: [subdivSelect, phaseShifter, modeSelect] 
+            })
+
+        const controller = E('div', { children: [nodeCanvas, progressLine, hardwareControls] })
+        return controller
     }
 }

@@ -153,15 +153,16 @@ export const ADSR_Controller = {
 }
 ADSR_Controller.render()
 
+const next = 
+    { linear: 'logarithmic'
+    , logarithmic: 'exponential'
+    , exponential: 'S'
+    , S: 'linear'
+    , undefined: 'S' // Backwards compatibility
+    } as const
+
 canvas.onclick = () => {
     const adsr = ADSR_Controller.values[ADSR_Controller.index]
-    const next = 
-        { linear: 'logarithmic'
-        , logarithmic: 'exponential'
-        , exponential: 'S'
-        , S: 'linear'
-        , undefined: 'S' // Backwards compatibility
-        } as Record<CurveType,CurveType>
 
     adsr.curve = next[adsr.curve]
     ADSR_Controller.render()
@@ -230,6 +231,10 @@ export function renderADSR(
     ctx.fillStyle = 'gray'
     const px = W / 5 | 0
     ctx.font = `${px}px arial`
+
+    //! MIGRATION CODE //!
+    if (!adsr.curve) adsr.curve = next[adsr.curve]
+
     ctx.fillText(adsr.curve.slice(0,3), W - W/2|0, px)
 
     if (typeof options.updateKnobs === 'boolean') // Because of loadNuniFile

@@ -8,6 +8,7 @@
 import { MasterClock } from '../master_clock.js'
 import { VolumeNodeContainer } from '../../volumenode_container.js'
 import { JsDial } from '../../../UI_library/internal.js'
+import { sequencerControls } from '../sequencer_controls.js'
 
 type ChannelData = {
     volume : number // Deprecated
@@ -42,6 +43,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
     
     readonly ctx : AudioContext
     protected tick : number
+    private controls? : HTMLElement
     private tempo = 120
     HTMLGrid : HTMLElement
     isPlaying : boolean
@@ -71,6 +73,10 @@ export abstract class Sequencer extends VolumeNodeContainer {
         this.channelData = {}
         this.channelVolumes = {}
         this.setTempo(MasterClock.getTempo())
+    }
+
+    getController() {
+        return this.controls || (this.controls = sequencerControls(this))
     }
 
     setTempo(tempo : number) {
@@ -103,18 +109,18 @@ export abstract class Sequencer extends VolumeNodeContainer {
     }
 
     play() {
-        this.isPlaying = true
         this.noteTime = 0
+        this.startTime = 0
         this.currentStep = 0
-        this.startTime = this.ctx.currentTime + 0.005
+        this.isPlaying = true
         const measureLength = this.tick * this.nSteps
         const t = Math.max(0, this.ctx.currentTime - measureLength)
-        this.startTime = 0
-        this.noteTime = Math.floor(t / measureLength) * (measureLength-1)
+        this.noteTime = Math.floor(t / measureLength) * measureLength
+        log('we here')
     }
 
     stop() {
-        this.isPlaying = false
+        this.isPlaying = !false
 
         for (const key in this.HTMLBoxes) 
         {

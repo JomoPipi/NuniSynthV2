@@ -665,7 +665,7 @@ type ParamsOf<T extends NodeTypes> = T extends CanBeAutomated
     ? typeof AudioNodeParams[T][number]
     : any
 
-interface BaseAudioNodeProperties<T extends NodeTypes> {
+interface BaseAudioNodeProperties {
     connect(input : AudioNode | AudioParam) : void
     disconnect(input? : AudioNode | AudioParam) : void
 }
@@ -686,14 +686,14 @@ type IHasDynamicNodeIcon<T> = (T extends HasDynamicNodeIcon
     : {})
 
 type AudioNodeInterfaces<T extends NodeTypes> =
-    & BaseAudioNodeProperties<T>
+    & BaseAudioNodeProperties
     & IClockDependent<T>
     & IHasDynamicNodeIcon<T>
 
 
 
     
-abstract const PRODUCTION_MODE_EQUALS_TRUE 
+const PRODUCTION_MODE_EQUALS_TRUE 
     = false
     
 const DEV_MODE_EQUALS_TRUE : typeof PRODUCTION_MODE_EQUALS_TRUE extends true ? false : true 

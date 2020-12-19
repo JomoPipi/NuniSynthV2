@@ -5,9 +5,7 @@
 
 
 
-// Get CSS variable:
-// getComputedStyle(document.documentElement)
-// .getPropertyValue('--my-variable-name'); // #999999
+import { UserOptions } from '../storage/user_options.js'
 
 type Color = readonly [number, number, number]
 type ThemeData = readonly [c0 : Color, c1 : Color, c2 : Color, c3 : Color, c4: Color, c5 : Color, c6 : Color]
@@ -40,19 +38,9 @@ const themeData : ReadonlyArray<ThemeData> = (
 
 const ThemeColors = themeData.map(theme => theme.map(([r,g,b]) => `rgb(${r},${g},${b})`))
 
-D('theme-container')
-    .append(...[...Array(ThemeColors.length)]
-    .map((_,i) => 
-        E('li', 
-            { children: 
-                [E('a', 
-                    { text: i.toString()
-                    , props: { href: '#' } })
-                ]
-            })))
-
 export const Theme = { colors: ThemeColors[0], isDark: ThemeHasADarkColor0[0] }
 
+setTheme(UserOptions.config.theme)
 export function setTheme(n : number) {
 
     // Theme.isDark = 
@@ -79,4 +67,6 @@ export function setTheme(n : number) {
             .style
             .setProperty('--color' + i, ThemeColors[n][i])
     }
+
+    UserOptions.config.theme = n as 0 | 1 | 2 | 3
 }
