@@ -98,7 +98,9 @@ class DiscreteDial {
         this.dial.onmousedown = doUntilMouseUp(mousemove, { mousedown: _mousedown, mouseup: _mouseup })
 
         this.update = (value : number) => {
+            const oldvalue = this.value
             this.value = value
+            this.realValue += (value - oldvalue)  * this.tickLength
             fn(value)
             this.render()
         }

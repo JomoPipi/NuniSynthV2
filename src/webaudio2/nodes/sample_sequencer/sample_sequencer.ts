@@ -47,11 +47,7 @@ export class SampleSequencer extends Sequencer
 
     addInput() {
         const id = Math.max(0, ...Object.keys(this.channelData).map(Number)) + 1
-        log('id = ', id)
-        this.channelData[id] = 
-            { volume: 1
-            , bufferKey: 0
-            }
+        this.channelData[id] = { volume: 1, bufferKey: 0 }
         this.stepMatrix[id] = this.createStepRow()
         this.createChannelVolume(id)
         this.refresh()

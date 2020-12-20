@@ -5,6 +5,7 @@
 
 
 
+import { sendNotificationBox } from '../../UI_library/components/notification_box.js';
 import { GraphController } from '../init.js'
 
 // Modularize button
@@ -12,8 +13,7 @@ export function modularizeGraph() {
     const { g } = GraphController
     if (g.nodes.length < 3) 
     {
-        // TODO: Notification Box
-        alert/*sendNotificationBox*/('You need at least 3 nodes in your graph to do this.')
+        sendNotificationBox('You need 3 or more nodes in the graph to do this.')
         return;
     }
     const graphCode = g.toString()
