@@ -80,6 +80,8 @@ const MODES = [0, 1]
 export class AutomationPointsEditor {
     points : Point[]
     // private modeEngine : ModeEngine
+    private H = 0
+    private W = 0
     private mode : number = SELECT_MODE
     private canvas : HTMLCanvasElement
     private ctx : CanvasRenderingContext2D
@@ -147,24 +149,24 @@ export class AutomationPointsEditor {
 
 
     private render() {
-        const H = this.canvas.offsetHeight
-        const W = this.canvas.offsetWidth
-        this.ctx.clearRect(0, 0, W, H)
+        this.H = this.canvas.offsetHeight
+        this.W = this.canvas.offsetWidth
+        this.ctx.clearRect(0, 0, this.W, this.H)
         this.ctx.strokeStyle = 'gray'
         this.ctx.lineWidth = 1
-        this.ctx.strokeRect(MARGIN, MARGIN, W - MARGIN * 2, H - MARGIN * 2)
+        this.ctx.strokeRect(MARGIN, MARGIN, this.W - MARGIN * 2, this.H - MARGIN * 2)
         this.ctx.strokeStyle =
         this.ctx.fillStyle = 'pink'
         this.ctx.lineWidth = LINE_WIDTH
         this.drawLines()
         this.drawPoints()
-        this.drawStats(W, H)
+        this.drawStats()
 
         switch (this.mode) {
             case SELECT_MODE:
                 if (this.canvasSelectionRange)
                 {
-                    this.drawSelectionBox(H, ...this.canvasSelectionRange)
+                    this.drawSelectionBox(...this.canvasSelectionRange)
                 }
                 if (this.rangeOfSelectedPoints)
                 {
@@ -213,24 +215,24 @@ export class AutomationPointsEditor {
         this.ctx.fill()
     }
 
-    private drawStats(W : number, H : number) {
+    private drawStats() {
         const { ctx: c } = this
-        const x = W - MARGIN * 0.75 | 0
+        const x = this.W - MARGIN * 0.75 | 0
         c.fillText('1', x, MARGIN)
-        c.fillText('0', x, H - MARGIN)
+        c.fillText('0', x, this.H - MARGIN)
     }
 
     private mapPointToCanvasCoordinate(x : number, y : number) : [number, number] {
         return (
-            [ MARGIN + (this.canvas.offsetWidth - MARGIN * 2) * x
-            , MARGIN + (this.canvas.offsetHeight - MARGIN * 2) * (1 - y)
+            [ MARGIN + (this.W - MARGIN * 2) * x
+            , MARGIN + (this.H - MARGIN * 2) * (1 - y)
             ])
     }
 
     private mapCanvasCoordinateToPoint(x : number, y : number) : [number, number] {
         return (
-            [ (x - MARGIN) / (this.canvas.offsetWidth - MARGIN * 2)
-            , 1 - (y - MARGIN) / (this.canvas.offsetHeight - MARGIN * 2)
+            [ (x - MARGIN) / (this.W - MARGIN * 2)
+            , 1 - (y - MARGIN) / (this.H - MARGIN * 2)
             ])
     }
 
@@ -415,9 +417,9 @@ export class AutomationPointsEditor {
         }
     }
 
-    private drawSelectionBox(H : number, startMouseX : number, currentMouseX : number) {
+    private drawSelectionBox(startMouseX : number, currentMouseX : number) {
         this.ctx.fillStyle = 'rgba(255,255,0,0.1)'
-        this.ctx.fillRect(startMouseX, 0, currentMouseX - startMouseX, H)
+        this.ctx.fillRect(startMouseX, 0, currentMouseX - startMouseX, this.H)
     }
 
     private drawTransformHandlebars() {
@@ -575,7 +577,7 @@ export class AutomationPointsEditor {
     private FREEHAND_MODE_iterations = 0
     private FREEHAND_MODE_mousemove(mouseX : number, mouseY : number) {
         const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, mouseY)
-        const TICK = 1
+        const TICK = 10
         if (this.FREEHAND_MODE_iterations++ % TICK === 0)
         {
             const nextX = clamp(0, x, 1)

@@ -76,20 +76,6 @@ export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv :
         ? `${Math.round(1 / an.subdiv)} bars` 
         : '1/' + an.subdiv
 
-    // const freeKnob = createDraggableNumberInput(
-    //     an.subdiv, () => an.subdiv, 
-    //     (value : number) => {
-    //             an.subdiv = clamp(0.01,value,1e9)||0.01
-    //             fn && fn(value)
-    //         },
-    //     { amount: 2**(-7)
-    //     , min: 1
-    //     , max: 999
-    //     , isLinear: false
-    //     , width: 80
-    //     , height: 30 
-    //     })
-
     const freeKnob = new JsDial(1)
         freeKnob.min = -3
         freeKnob.max = 9
@@ -132,8 +118,6 @@ export function createSubdivSelect2(fn? : (value : number) => void) {
 
     const select = 
         E('select', { children: subdivisionList.map(makeSubdivisionOption) })
-
-    // select.style.width = select.offsetHeight + 'px'
 
     select.onchange = function() {
         const n = select.value.endsWith('bars') 
