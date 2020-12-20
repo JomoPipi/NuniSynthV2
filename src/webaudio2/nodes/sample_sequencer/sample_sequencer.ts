@@ -16,7 +16,6 @@ import { BufferUtils } from "../../../buffer_utils/init_buffers.js"
 export class SampleSequencer extends Sequencer
     implements AudioNodeInterfaces<NodeTypes.S_SEQ> {
 
-    nextId : number
     detune : NuniAudioParam
     playbackRate : NuniAudioParam
     ctx : AudioContext
@@ -24,7 +23,6 @@ export class SampleSequencer extends Sequencer
     constructor(ctx : AudioContext) {
         super(ctx)
         this.ctx = ctx
-        this.nextId = 0
         this.detune = new NuniAudioParam(ctx)
         this.playbackRate = new NuniAudioParam(ctx)
         this.addInput()
@@ -48,15 +46,16 @@ export class SampleSequencer extends Sequencer
     }
 
     addInput() {
-        this.channelData[this.nextId] = 
+        const id = Math.max(0, ...Object.keys(this.channelData).map(Number)) + 1
+        log('id = ', id)
+        this.channelData[id] = 
             { volume: 1
             , bufferKey: 0
             }
-        this.stepMatrix[this.nextId] = this.createStepRow()
-        this.createChannelVolume(this.nextId)
-        this.nextId++
+        this.stepMatrix[id] = this.createStepRow()
+        this.createChannelVolume(id)
         this.refresh()
-        return this.nextId - 1
+        return id
     }
 
     removeInput(key : number) {
