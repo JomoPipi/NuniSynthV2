@@ -55,14 +55,14 @@ $main-bg: url('images/texture.png'); //
 $canvas-bg: radial-gradient(circle, var(--color0) 34%, var(--color1) 100%); 
 
 :root {
-	--color0:rgb(32, 30, 32);
+	--color0: #100;//rgb(32, 30, 32);
 	--color1: rgb(48, 47, 48);
 	--color2: rgb(58, 57, 58);
 	--color3: rgb(68, 64, 68);
 	--color4: rgb(93, 91, 94);
 	--color5: rgb(154, 151, 163);
 	--color6: rgb(255, 255, 255);
-	--dark-mode: invert(100%);
+	// --dark-mode: invert(100%);
 }
     
 @import './main/setup';

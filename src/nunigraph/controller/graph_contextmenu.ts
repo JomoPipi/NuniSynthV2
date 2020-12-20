@@ -101,7 +101,7 @@ const nodesSortedByRecurrence : NodeTypes[] =
 
 
 
-const moduleContainer = E('ul')
+const moduleContainer = E('ul', { className: 'module-container' })
 refreshList()
 
 function refreshList() {

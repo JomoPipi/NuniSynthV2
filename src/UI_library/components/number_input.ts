@@ -22,6 +22,8 @@ type UpdateFuncSettings = {
     width? : number
     height? : number
     mouseup? : MouseHandler
+    shadowKnobClass? : 0 | 1 | 2
+    knobClass? : 0 | 1
     }
 
 const myToFixed = (value : number) => 
@@ -172,7 +174,7 @@ export function createNumberDialComponent3(
         // : (x : number) => Math.log2(x)
 
     
-    const dial = new JsDial(1)
+    const dial = new JsDial(settings.shadowKnobClass ?? 1, settings.knobClass || 0)
     dial.min = unmapValue(settings.min)
     dial.max = unmapValue(settings.max)
     dial.value = unmapValue(initialValue)

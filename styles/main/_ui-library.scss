@@ -23,23 +23,28 @@
     pointer-events: none;
 }
 .shadow-knob2 {
-    display: inline-block;
-
-    width: 40px;
-    height: 40px;
-    margin: 2px;
-
-    border-radius: 100%;
+    @extend .shadow-knob;
     background: 
         linear-gradient(
             rgba(0, 0, 0, 0),
             rgba(0, 0, 0, 0.7)
         ),
-        // url('images/shadow-knob2.jfif');
         url('images/shadow-knob3.png');
     background-size: 100% 100%;
-    pointer-events: none;
 }
+
+.shadow-knob3 {
+    @extend .shadow-knob2;
+    background: 
+        linear-gradient(
+            rgba(0, 0, 0, 0),
+            rgba(0, 0, 0, 0.7)
+        ),
+        url('images/shadow-knob2.jfif');
+    background-size: 100% 100%;
+}
+
+
 .js-dial {
     cursor: pointer;
     position: absolute;
@@ -59,7 +64,11 @@
     pointer-events: auto;
 }
 
-
+.js-dial2 {
+    @extend .js-dial;
+    // filter: brightness(4);
+    background-image: url('images/knob1.png');
+}
 
 
 .draggable-window-bar {

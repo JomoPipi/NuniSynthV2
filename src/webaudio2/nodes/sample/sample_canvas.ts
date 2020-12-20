@@ -8,7 +8,7 @@
 import { BufferUtils } from "../../../buffer_utils/internal.js"
 import { doUntilMouseUp } from "../../../UI_library/events/until_mouseup.js"
 
-type Arguments = { update : Function }
+type Arguments = { update(grabbingLeft : boolean, percent : number) : void }
 
 export class BufferCanvasFrame {
     private nowShowing = 0

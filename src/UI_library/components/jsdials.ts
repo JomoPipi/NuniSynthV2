@@ -7,10 +7,16 @@
 
 import { doUntilMouseUp } from "../events/until_mouseup.js"
 
-const classes = 
+const shadowKnobclasses = 
     [ 'shadow-knob'
     , 'shadow-knob2'
-    ]
+    , 'shadow-knob3'
+    ] as const
+
+const knobClasses = 
+    [ 'js-dial'
+    , 'js-dial2'
+    ] as const
 
 type Options = {
     mousedown? : MouseHandler
@@ -31,12 +37,12 @@ export class JsDial {
     rounds : number
     update : (value : number) => void
 
-    constructor(CSS_classIndex? : number) {
+    constructor(CSS_classIndex? : number, knobClassIndex? : number) {
         
-        this.dial = E('div', { className: 'js-dial' })
+        this.dial = E('div', { className: knobClasses[knobClassIndex || 0] })
         
         this.html = E('div', 
-            { className: classes[CSS_classIndex || 0]
+            { className: shadowKnobclasses[CSS_classIndex || 0]
             , children: [this.dial]
             }) 
             

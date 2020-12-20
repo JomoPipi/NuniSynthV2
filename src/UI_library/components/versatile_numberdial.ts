@@ -53,7 +53,14 @@ export function createVersatileNumberDialComponent(
     const numvalue = typeof initialValue === 'number' ? initialValue : options.mapStringToNumber[initialValue]
     const strindex = optionList.indexOf(typeof initialValue === 'string' ? initialValue : options.mapNumberToString(initialValue))
     const continunousModeComponent = createNumberDialComponent3(numvalue, options.fn, 
-        { min, max, amount: 2**-8, isLinear: false, mouseup: options.mouseup }, 1)
+        { min
+        , max
+        , amount: 2**-8
+        , isLinear: false
+        , mouseup: options.mouseup
+        , shadowKnobClass: 2
+        , knobClass: 1
+        }, 1)
 
     const discreteModeComponent = createDiscreteDialComponent(strindex, optionList, options.fn, { mouseup: options.mouseup })
 

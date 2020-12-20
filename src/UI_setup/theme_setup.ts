@@ -13,7 +13,7 @@ type ThemeData = readonly [c0 : Color, c1 : Color, c2 : Color, c3 : Color, c4: C
 const ThemeHasADarkColor0 : readonly boolean[] = [true, false, false, true] as const
 
 const themeData : ReadonlyArray<ThemeData> = (
-    [   [ [32, 30, 32]
+    [   [ [16, 15, 16]
         , [48, 47, 48]
         , [58, 57, 58]
         , [68, 64, 68]
