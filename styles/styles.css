@@ -181,11 +181,9 @@ button {
 
 .graph-contextmenu ul ul ul li {
   position: relative;
-  top: -20px;
 }
 
 .module-container {
-  top: -20px;
   max-height: 320px;
   background-color: var(--color0);
   overflow-y: scroll;
