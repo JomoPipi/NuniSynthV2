@@ -356,8 +356,8 @@ button {
   display: -ms-inline-grid;
   display: inline-grid;
   width: 100%;
-  -ms-grid-columns: 0.5fr 0.25fr 0.25fr 0.25fr 0.5fr 0.5fr;
-      grid-template-columns: 0.5fr 0.25fr 0.25fr 0.25fr 0.5fr 0.5fr;
+  -ms-grid-columns: 0.25fr 0.25fr 0.25fr 0.5fr 0.5fr 0.25fr;
+      grid-template-columns: 0.25fr 0.25fr 0.25fr 0.5fr 0.5fr 0.25fr;
 }
 
 #buffer-canvas {

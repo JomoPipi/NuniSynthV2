@@ -6,7 +6,7 @@
 
 
 let [ctx, H, W] = [] as any[]
-const MARGIN = 10
+const MARGIN = 4
 
 onmessage = function({ data: { canvas, buffer }}) {
     if (canvas) 

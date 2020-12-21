@@ -87,7 +87,7 @@ export function createValuesWindow(
 
     if (audioNode instanceof NuniSampleNode) 
     {
-        controls.appendChild(samplerControls(audioNode))
+        controls.appendChild(audioNode.getController())
     }
 
     if (audioNode instanceof OscillatorNode2) 
@@ -346,50 +346,6 @@ function showSubtypes(node : NuniGraphNode<HasSubtypes>, saveCallback: Function)
 function insertOptions(select : HTMLSelectElement, options : readonly string[]) {
     select.innerHTML = 
         options.map(type => `<option>${type}</option>`).join('')
-}
-
-
-
-
-function samplerControls(audioNode : NuniSampleNode) {
-    const box = E('span', { className: 'buffer-stuff-row' })
-
-    box.appendChild(E('span', { text: 'Sample' }))
-
-    const text = String.fromCharCode(65 + audioNode.bufferKey)
-    const value = E('span', { text })
-    box.appendChild(value)
-
-
-    // TODO: change this to a select box, 
-    // and don't depend on BufferUtils, 
-    // depend on BufferStorage, instead.
-    ;['-','+'].forEach((op,i) => { // change the buffer index
-        const btn = E('button', { text: op })
-        btn.onclick = () => {
-            const key = clamp(0,
-                audioNode.bufferKey + Math.sign(i - .5), 
-                BufferUtils.nBuffers-1)
-
-            value.innerText = String.fromCharCode(65 + key)
-            audioNode.bufferKey = key
-        }
-        box.appendChild(btn)
-    })
- 
-    box.appendChild(createToggleButton(
-        audioNode, 
-        'loop', 
-        { update: (on : boolean) => audioNode.refresh() }
-        ))
-        
-    box.appendChild(activateKeyboardButton(audioNode))
-
-    const container = E('div', 
-        { className: 'some-border vert-split'
-        , children: [box, audioNode.bufferCanvas.frame] 
-        })
-    return container
 }
 
 

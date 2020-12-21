@@ -60,6 +60,10 @@ export class BufferCanvasFrame {
         }
         .left-panel {
             left: 0;
+            background: rgba(0, 0, 255, 0.25);
+        }
+        .right-panel {
+            background: rgba(255, 0, 0, 0.25);
         }
         </style>
         

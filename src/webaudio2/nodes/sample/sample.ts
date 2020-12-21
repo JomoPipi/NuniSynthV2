@@ -8,6 +8,8 @@
 import { NuniSourceNode } from '../../note_in/nuni_source_node.js'
 import { BufferStorage } from '../../../storage/buffer_storage.js'
 import { BufferCanvasFrame } from './sample_canvas.js'
+import { BufferUtils } from '../../../buffer_utils/internal.js'
+import { createToggleButton } from '../../../UI_library/internal.js'
 
 export class NuniSampleNode extends NuniSourceNode 
     implements AudioNodeInterfaces<NodeTypes.SAMPLE> {
@@ -86,9 +88,64 @@ export class NuniSampleNode extends NuniSourceNode
         const reversed = this._loopStart > this._loopEnd
         src.buffer = BufferStorage.get(this._bufferKey, reversed)
         src.loop = this.loop
-        src.loopStart = Math.min(this._loopStart, this._loopEnd) * src.buffer.duration
-        src.loopEnd = Math.max(this._loopStart, this._loopEnd) * src.buffer.duration
+        const start = reversed ? 1 - this.loopStart : this.loopStart
+        const end = reversed ? 1 - this.loopEnd : this.loopEnd
+        src.loopStart = start * src.buffer.duration
+        src.loopEnd = end * src.buffer.duration
 
         return src
+    }
+
+    getController() {
+        const box = E('span', { className: 'buffer-stuff-row' })
+    
+        const text = String.fromCharCode(65 + this.bufferKey)
+        const value = E('span', { className: 'flex-center', text })
+        box.appendChild(value)
+    
+    
+        // TODO: change this to a select box, 
+        // and don't depend on BufferUtils, 
+        // depend on BufferStorage, instead.
+        ;['←','→'].forEach((op,i) => { // change the buffer index
+            const btn = E('button', { text: op })
+            btn.onclick = () => {
+                const key = clamp(0,
+                    this.bufferKey + Math.sign(i - .5), 
+                    BufferUtils.nBuffers-1)
+    
+                value.innerText = String.fromCharCode(65 + key)
+                this.bufferKey = key
+            }
+            box.appendChild(btn)
+        })
+        
+        box.appendChild(createToggleButton(
+            this, 
+            'loop', 
+            { update : (on : boolean) => this.refresh() }
+            ))
+            
+        box.appendChild(createToggleButton(
+            this,
+            'kbMode',
+            { text: '🎹'
+            , className: 'kb-button' 
+            }))
+    
+        box.appendChild(createToggleButton({}, '⟳', 
+            { 
+                update : (on : boolean) => { 
+                    const [start, end] = [this._loopStart, this._loopEnd]
+                    this.loopStart = end
+                    this.loopEnd = start
+                }
+            }))
+    
+        const container = E('div', 
+            { className: 'some-border vert-split'
+            , children: [box, this.bufferCanvas.frame] 
+            })
+        return container
     }
 }
