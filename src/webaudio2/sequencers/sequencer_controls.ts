@@ -206,12 +206,12 @@ function createTopRowControls(an : Sequencer) {
 
 
 function createBottomRowControls(an : Sequencer) {
-    const row = E('div', { className: 'flex-center' })
+    const row = E('div', { className: 'space-evenly' })
 
     if (an instanceof SampleSequencer) 
     { // add new row
         const btn = E('button', 
-            { text: '+'
+            { text: '➕'
             , className: 'top-bar-btn'
             })
             
@@ -223,26 +223,26 @@ function createBottomRowControls(an : Sequencer) {
         row.appendChild(btn)
     }
 
-    const box = E('span', { text: 'phase shift' })
-    const phaseShift = createNumberDialComponent(
-        an.phaseShift || 0,
-        (value : number) => an.phaseShift = value, 
-        { dial: 
-            { sensitivity: 2**-10
-            , min: 0
-            , max: 1
-            , rounds: 1
-            , size: 25
-            }
-        , ondblclick: () => an.phaseShift = 0
-        })
-    box.appendChild(phaseShift)
-    row.appendChild(box)
+    const phaseShifter = E('div')//, { text: 'phase' })
+        {
+        const percent = E('span', { text: '0.0%' }); percent.style.width = '50px'
+        const control = E('input', { className: 'fader-0' })
+        control.style.display = 'block'
+        control.type = 'range'
+        control.min = '0'
+        control.max = '1'
+        control.step = (2**-8).toString()
+        control.value = an.phaseShift.toString()
+        ;(control.oninput = () => 
+            percent.innerText = (100 * (an.phaseShift = +control.value)).toFixed(0) + '%'
+        )()
+        phaseShifter.append(control, percent)
+        }
+    row.appendChild(phaseShifter)
 
     stepShift: {
         const box = E('span', 
-            { text: 'step shift' 
-            , children: [
+            { children: [
                 E('button', 
                 { text: '<'
                 , className: 'top-bar-btn'

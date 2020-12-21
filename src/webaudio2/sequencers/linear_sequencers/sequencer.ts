@@ -139,7 +139,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
         let updateBox = true && this.noteTime > 0
         while (this.noteTime < currentTime + 0.200) 
         {
-            const patternTime = this.noteTime + this.startTime
+            const patternTime = this.noteTime + this.startTime + this.phaseShift * this.tick
             if (patternTime > time) 
             { 
                 this.playStepsAtTime(patternTime, updateBox)
@@ -172,7 +172,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
                 }
                 if (this.stepMatrix[key][this.currentStep]) 
                 {
-                    this.playStepAtTime(key, time + this.phaseShift)
+                    this.playStepAtTime(key, time)
                 }
             }
         }
