@@ -141,20 +141,37 @@ code {
     display: grid;
     grid-template-columns: 1fr;
 }
-
+// display: inline-block;
+//       margin: 1px;
+//       width: 15px;
+//       height: 30px;
+//       background: #181818 linear-gradient(#282828, transparent);
+//       border: 2px solid #222;
+//       border-radius: 5px;
+//       box-shadow: 0 2px 10px $c-shadow;
+//       cursor: pointer;
 .note-box {
+    margin: 1px;
     background: 
-        linear-gradient(var(--color4), var(--color1));
-    border: 2px solid var(--color0);
+        linear-gradient(var(--color3), transparent);
+    border: 2px solid var(--color1);
     box-sizing: border-box;
-    // border-radius: 20%;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px black;
+    cursor: pointer;
+
+    &.selected {
+        background:var(--color3) linear-gradient(#5c8, transparent);
+        &.highlighted {
+            border-color: #cbf;
+            transform: translateY(2px);
+        }
+    }
 }
 
 .note-box-halfway {
-    background: 
-        linear-gradient(var(--color4), var(--color0));
-    border: 2px solid var(--color0);
-    box-sizing: border-box;
+    @extend .note-box;
+    filter: brightness(120%);
 }
 
 .smaller-text {

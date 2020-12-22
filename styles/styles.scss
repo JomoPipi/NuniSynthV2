@@ -30,32 +30,12 @@ $pink-lavender: rgba(239, 195, 230, 1);
 $lavender-blush: rgba(240, 230, 239, 1);
 $periwinkle-crayola: rgba(184, 190, 221, 1);
 
-// color theme 1:
-// var(--color0): rgb(156, 137, 184);
-// var(--color1): rgb(184, 190, 221);
-// var(--color2): rgb(240, 230, 239);
-// var(--color3): rgb(239, 195, 230);
-// var(--color4): rgb(240, 166, 202);
-// var(--color5): rgb(154, 151, 163);
-// var(--color6): rgb(255, 255, 255);
-//
-
-
-
-// var(--color0):rgb(45, 42, 45);
-// var(--color1): rgb(48, 47, 48);
-// var(--color2): rgb(58, 57, 58);
-// var(--color3): rgb(68, 64, 68);
-// var(--color4): rgb(93, 91, 94);
-// var(--color5): rgb(154, 151, 163);
-// var(--color6): rgb(255, 255, 255);
-
 $main-bg: url('images/texture.png'); // 
 
 $canvas-bg: radial-gradient(circle, var(--color0) 34%, var(--color1) 100%); 
 
 :root {
-	--color0: #100;//rgb(32, 30, 32);
+	--color0:rgb(40,40,40);
 	--color1: rgb(48, 47, 48);
 	--color2: rgb(58, 57, 58);
 	--color3: rgb(68, 64, 68);

@@ -163,7 +163,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
             
             if (!this.mutedChannel[key]) 
             {
-                if (boxIsVisible && updateBox) 
+                if (boxIsVisible)// && updateBox) 
                 {
                     // Highlight box+
                     this.HTMLBoxes[key][this.currentStep]?.classList.add('highlighted')
@@ -215,6 +215,8 @@ export abstract class Sequencer extends VolumeNodeContainer {
             row.appendChild(rowOptions(this.additionalRowItems(+key), key))
 
             this.HTMLBoxes[key] = {}
+            const height = clamp(25, 140 / nSteps**0.5, 35)
+            const width = height / 2 // (1 + (PHI - 1)/2)
             for (let i = 0; i < nSteps; i++) 
             {
                 const box = E('span')
@@ -226,13 +228,12 @@ export abstract class Sequencer extends VolumeNodeContainer {
                     || i === nSteps * 3 / 4 
                     ? '-halfway' 
                     : ''))
-                const boxSize = clamp(10, 100 / nSteps**0.5, 35)
-                box.style.width = `${boxSize/PHI}px`
-                box.style.height = '35px'
+                box.style.width = `${width}px`
+                box.style.height = `${height}px`
                 
                 box.classList.toggle('selected', this.stepMatrix[key][i])
                 box.dataset.sequencerKey = `${key}:${i}`
-                row.style.height = '35px' // 50 + 'px'
+                row.style.height = '40px'
                 row.appendChild(box)
             }
             grid.appendChild(row)
