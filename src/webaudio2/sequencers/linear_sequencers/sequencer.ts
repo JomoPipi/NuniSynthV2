@@ -39,7 +39,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
     adsrIndex = 0
     soloChannel = -1
     mutedChannel : Indexable<boolean>
-    stepMatrix : Indexable<boolean[]>
+    stepMatrix : Record<number|string,boolean[]>
     
     readonly ctx : AudioContext
     protected tick : number
@@ -93,11 +93,11 @@ export abstract class Sequencer extends VolumeNodeContainer {
     }
 
     updateSteps(nSteps : number) {
-        const m = this.stepMatrix 
-        for (const key in m) 
+        const m = this.stepMatrix
+        for (const key in this.stepMatrix) 
         {
             m[key] = m[key]
-                .concat(Array(Math.max(0, nSteps - m[key].length)).fill(0))
+                .concat(Array<boolean>(Math.max(0, nSteps - m[key].length)).fill(false))
                 .slice(0, nSteps)
         }
         this.nSteps = nSteps
@@ -196,8 +196,8 @@ export abstract class Sequencer extends VolumeNodeContainer {
     }
 
     createStepRow() {
-        const row = Array(this.nSteps).fill(0)
-        row[0] = 1
+        const row  = Array<boolean>(this.nSteps).fill(false)
+        row[0] = true
         return row
     }
 
@@ -210,7 +210,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
 
         for (const key in channelVolumes) 
         {
-            const row = E('div', { className: 'flex-center' })
+            const row = E('div', { className: 'sequencer-step-row' })
 
             row.appendChild(rowOptions(this.additionalRowItems(+key), key))
 
@@ -249,8 +249,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
             if (box.dataset.sequencerKey) // Grid buttons
             {
                 const turnOn = box.classList.toggle('selected')
-                const [key,i] = box.dataset.sequencerKey.split(':').map(Number)
-
+                const [key, i] = box.dataset.sequencerKey.split(':').map(Number)
                 const rowState = this.stepMatrix[key].slice()
 
                 this.stepMatrix[key][i] = turnOn

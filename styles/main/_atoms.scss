@@ -150,6 +150,8 @@ code {
 //       border-radius: 5px;
 //       box-shadow: 0 2px 10px $c-shadow;
 //       cursor: pointer;
+$shadow: rgba(0, 0, 0, 0.4);
+
 .note-box {
     margin: 1px;
     background: 
@@ -157,7 +159,7 @@ code {
     border: 2px solid var(--color1);
     box-sizing: border-box;
     border-radius: 5px;
-    box-shadow: 0 2px 10px black;
+    box-shadow: 0 2px 10px $shadow;
     cursor: pointer;
 
     &.selected {
@@ -171,7 +173,12 @@ code {
 
 .note-box-halfway {
     @extend .note-box;
-    filter: brightness(120%);
+    filter: brightness(125%);
+}
+
+.sequencer-step-row {
+    @extend .flex-center;
+    border: 2px solid var(--color2);
 }
 
 .smaller-text {
