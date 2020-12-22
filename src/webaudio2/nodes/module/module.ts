@@ -5,7 +5,7 @@
 
 
 
-import { NuniGraphController } from "../../../nunigraph/controller/graph_controller.js" // <- A CIRCULAR REFERENCE POINT
+import { ActiveControllers, NuniGraphController } from "../../../nunigraph/controller/graph_controller.js" // <- A CIRCULAR REFERENCE POINT
 import { VolumeNodeContainer } from "../../volumenode_container.js"
 // TODO create interface for NuniGraphController to remove the circularity?
 // type NuniGraphController = any // <- turn this one on when using npx madge --circular --extensions ts ./
@@ -43,9 +43,14 @@ export class NuniGraphAudioNode extends VolumeNodeContainer {
     }
 
     deactivateWindow() {
-        this.controller.deactivateEventHandlers()
-        this.controller.closeAllWindows()
-        this.dialogBoxIsOpen = false
+        const index = ActiveControllers.indexOf(this.controller)
+        if (index >= 0) 
+        {
+            ActiveControllers.splice(index, 1)
+            this.controller.deactivateEventHandlers()
+            this.controller.closeAllWindows()
+            this.dialogBoxIsOpen = false
+        }
     }
 
     get graphCode() {

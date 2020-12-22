@@ -47,11 +47,11 @@ export abstract class Sequencer extends VolumeNodeContainer {
     private tempo = 120
     HTMLGrid : HTMLElement
     isPlaying : boolean
-    windowIsOpen : boolean
     protected HTMLBoxes : Indexable<Indexable<HTMLElement>>
     channelData : Indexable<ChannelData>
     channelVolumes : Indexable<GainNode>
     hasDoneTheDirtyWork = false // See painful bugfix in NuniGraphNode.ts
+    private dialogBoxIsOpen = false
     localADSR : ADSRData =
         { attack: 0.010416984558105469
         , decay: 0.17708349227905273
@@ -66,7 +66,6 @@ export abstract class Sequencer extends VolumeNodeContainer {
         this.tick = (60*4 / MasterClock.getTempo()) / this._subdiv
         this.HTMLGrid = createBeatGrid()
         this.isPlaying = true
-        this.windowIsOpen = false
         this.stepMatrix = {}
         this.mutedChannel = {}
         this.HTMLBoxes = {}
@@ -76,7 +75,12 @@ export abstract class Sequencer extends VolumeNodeContainer {
     }
 
     getController() {
+        this.dialogBoxIsOpen = true
         return this.controls || (this.controls = sequencerControls(this))
+    }
+
+    deactivateWindow() {
+        this.dialogBoxIsOpen = false
     }
 
     setTempo(tempo : number) {
@@ -136,44 +140,36 @@ export abstract class Sequencer extends VolumeNodeContainer {
         const time = this.ctx.currentTime
         const currentTime = time - this.startTime
         
-        let updateBox = true && this.noteTime > 0
         while (this.noteTime < currentTime + 0.200) 
         {
             const patternTime = this.noteTime + this.startTime + this.phaseShift * this.tick
             if (patternTime > time) 
             { 
-                this.playStepsAtTime(patternTime, updateBox)
+                this.playStepsAtTime(patternTime)//, updateBox)
             }
-
-            updateBox = false
             this.nextNote()
         }
     }
 
-    nextNote() {
+    private nextNote() {
         this.currentStep++
         if (this.currentStep >= this.nSteps) this.currentStep = 0
         this.noteTime += this.tick
     }
 
-    playStepsAtTime(time : number, updateBox : boolean) {
+    private playStepsAtTime(time : number) {
         const boxIsVisible = this.HTMLGrid.offsetParent != null
 
         const playRow = (key : number) => {
-            
-            if (!this.mutedChannel[key]) 
+            if (this.dialogBoxIsOpen) // Highlight steps if user can see them:
             {
-                if (boxIsVisible)// && updateBox) 
-                {
-                    // Highlight box+
-                    this.HTMLBoxes[key][this.currentStep]?.classList.add('highlighted')
-                    const lastStep = (this.currentStep + this.nSteps - 1) % this.nSteps
-                    this.HTMLBoxes[key][lastStep]?.classList.remove('highlighted')
-                }
-                if (this.stepMatrix[key][this.currentStep]) 
-                {
-                    this.playStepAtTime(key, time)
-                }
+                this.HTMLBoxes[key][this.currentStep]?.classList.add('highlighted')
+                const lastStep = (this.currentStep + this.nSteps - 1) % this.nSteps
+                this.HTMLBoxes[key][lastStep]?.classList.remove('highlighted')
+            }
+            if (this.stepMatrix[key][this.currentStep] && !this.mutedChannel[key]) 
+            {
+                this.playStepAtTime(key, time)
             }
         }
 
@@ -195,7 +191,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
         this.setupGrid()
     }
 
-    createStepRow() {
+    protected createStepRow() {
         const row  = Array<boolean>(this.nSteps).fill(false)
         row[0] = true
         return row
@@ -222,18 +218,17 @@ export abstract class Sequencer extends VolumeNodeContainer {
                 const box = E('span')
                 this.HTMLBoxes[key][i] = box
                 box.classList.add('note-box'
-                    + (i === 0 
+                    , ...(i === 0 
                     || i === nSteps / 2 
                     || i === nSteps / 4
                     || i === nSteps * 3 / 4 
-                    ? '-halfway' 
-                    : ''))
+                    ? ['halfway']
+                    : []))
                 box.style.width = `${width}px`
                 box.style.height = `${height}px`
                 
                 box.classList.toggle('selected', this.stepMatrix[key][i])
                 box.dataset.sequencerKey = `${key}:${i}`
-                row.style.height = '40px'
                 row.appendChild(box)
             }
             grid.appendChild(row)
@@ -303,8 +298,8 @@ export abstract class Sequencer extends VolumeNodeContainer {
             }
         }
 
-        function rowOptions(items : HTMLElement, key : string) {
-            const box = E('span')
+        function rowOptions(items : HTMLElement[], key : string) {
+            const box = E('span', { className: 'flex-center' })
 
             mute_solo_box: {
                 const muteSoloBox = E('span')
@@ -321,7 +316,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
                 mute.dataset.sequencerRowKey =
                 solo.dataset.sequencerRowKey = key
                 mute.classList.toggle('selected', mutedChannel[key] === true)
-                muteSoloBox.append(items, mute, solo)
+                muteSoloBox.append(...items, mute, solo)
                 soloButtons.push(solo)
 
                 box.appendChild(muteSoloBox)
@@ -342,11 +337,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
 
                 const valueText = E('span', { text: volumeTodB(value).toFixed(1) + 'dB' })
                     valueText.style.display = 'inline-block'
-                    valueText.style.width = '52px' // The rows need to being moved by the text
-                    // applyStyle(valueText, 
-                    //     { display: 'inline-block'
-                    //     , width: '70px'
-                    //     })
+                    valueText.style.width = '54px' // The rows need to stop being moved by the text
                     
                 dial.attach((value : number) => {
                     const v = value ** 4.0
@@ -371,9 +362,9 @@ export abstract class Sequencer extends VolumeNodeContainer {
         }
     }
 
-    additionalRowItems(key : number) {
+    additionalRowItems(key : number) : HTMLElement[] {
         // Override this function in a child class.
-        return E('span')
+        return []
     }
 }
 

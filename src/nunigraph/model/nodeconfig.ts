@@ -164,6 +164,17 @@ const GraphIconImageObjects =
         return acc
     }, {} as Record<SVGIconKey, HTMLImageElement>)
 
+const KnowsWhenDialogBoxCloses =
+    { [NodeTypes.G_SEQ]: true
+    , [NodeTypes.S_SEQ]: true
+    , [NodeTypes.AUTO]: true
+    , [NodeTypes.MODULE]: true
+    // TODO: make these true
+    // , [NodeTypes.PIANOR]: true
+    // , [NodeTypes.PROCESSOR]: true
+    }
+type KnowsWhenDialogBoxCloses = keyof typeof KnowsWhenDialogBoxCloses
+
 const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.OUTPUT]: true
     , [NodeTypes.GAIN]:   true
@@ -689,10 +700,17 @@ type IHasDynamicNodeIcon<T> = (T extends HasDynamicNodeIcon
     }
     : {})
 
+type IKnowsWhenDialogBoxCloses<T> = (T extends KnowsWhenDialogBoxCloses
+    ? { 
+        deactivateWindow() : void
+    }
+    : {})
+
 type AudioNodeInterfaces<T extends NodeTypes> =
     & BaseAudioNodeProperties
     & IClockDependent<T>
     & IHasDynamicNodeIcon<T>
+    & IKnowsWhenDialogBoxCloses<T>
 
 
 

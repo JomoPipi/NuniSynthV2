@@ -465,22 +465,16 @@ export class NuniGraphController {
 
 
     closeWindow(id : number) {
+        // Closes a node's window if it's open.
 
         const node = this.g.nodes.find(({ id: _id }) => _id === id)!
-        if (!node) throw 'Figure out what to do from here'
+        if (!node) throw 'Not supposed to happen - figure out what to do from here'
 
-        // TODO: add HasADialogBoxCloseFunction config object for these cases:
-        if (node.audioNode instanceof NuniGraphAudioNode) 
-        {
-            const controller = node.audioNode.controller
-            const index = ActiveControllers.indexOf(controller)
-            if (index >= 0) 
-            {
-                ActiveControllers.splice(index, 1)
-                node.audioNode.deactivateWindow()
-            }
-        }
-        else if (node.audioNode instanceof AutomationNode)
+        const knowsWhenDialogBoxCloses = (node : NuniGraphNode)
+            : node is NuniGraphNode<KnowsWhenDialogBoxCloses> =>
+            node.type in KnowsWhenDialogBoxCloses
+
+        if (knowsWhenDialogBoxCloses(node)) 
         {
             node.audioNode.deactivateWindow()
         }

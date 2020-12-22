@@ -562,37 +562,38 @@ code {
       grid-template-columns: 1fr;
 }
 
-.note-box, .note-box-halfway {
+.note-box {
   margin: 1px;
   background: -webkit-gradient(linear, left top, left bottom, from(var(--color3)), to(transparent));
   background: linear-gradient(var(--color3), transparent);
   border: 2px solid var(--color1);
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  border-radius: 5px;
+  border-radius: 4px;
   -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
   cursor: pointer;
 }
 
-.note-box.selected, .selected.note-box-halfway {
-  background: var(--color3) -webkit-gradient(linear, left top, left bottom, from(#5c8), to(transparent));
-  background: var(--color3) linear-gradient(#5c8, transparent);
+.note-box.selected {
+  background: var(--color3) -webkit-gradient(linear, left top, left bottom, from(#5c8), to(var(--color0)));
+  background: var(--color3) linear-gradient(#5c8, var(--color0));
 }
 
-.note-box.selected.highlighted, .selected.highlighted.note-box-halfway {
+.note-box.selected.highlighted {
   border-color: #cbf;
   -webkit-transform: translateY(2px);
           transform: translateY(2px);
 }
 
-.note-box-halfway {
-  -webkit-filter: brightness(125%);
-          filter: brightness(125%);
+.note-box.halfway {
+  background: -webkit-gradient(linear, left top, left bottom, from(var(--color4)), to(var(--color0)));
+  background: linear-gradient(var(--color4), var(--color0));
 }
 
-.sequencer-step-row {
-  border: 2px solid var(--color2);
+.note-box.halfway.selected {
+  background: var(--color3) -webkit-gradient(linear, left top, left bottom, from(#5ca), to(var(--color0)));
+  background: var(--color3) linear-gradient(#5ca, var(--color0));
 }
 
 .smaller-text {

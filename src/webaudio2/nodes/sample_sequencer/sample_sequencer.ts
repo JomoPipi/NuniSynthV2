@@ -110,45 +110,42 @@ export class SampleSequencer extends Sequencer
         src.stop(stopTime)
     }
 
-    additionalRowItems(key : number) { 
-        
-        const box = E('span')
-        const valueText = E('span', // poop
+    additionalRowItems(key : number) : HTMLElement[] { 
+        const items : HTMLElement[] = []
+
+        const valueText = E('span',
             { text: String.fromCharCode(65 + this.channelData[key].bufferKey!) })
-
-        add_buffer_select: {
-            ;['-','+'].forEach((op,i) => { // change the buffer index
-                const btn = E('button', 
-                    { text: op
-                    , className: 'top-bar-btn'
-                    })
-
-                btn.onclick = () => {
-                    const v = clamp(0, 
-                        this.channelData[key].bufferKey! + Math.sign(i - .5), 
-                        BufferUtils.nBuffers-1)
-
-                    valueText.innerText = String.fromCharCode(65 + v)
-                    this.channelData[key].bufferKey = v
-                }
-
-                box.appendChild(btn)
-            })
-            
-            box.appendChild(valueText)
-        }
-
-        delete_row_select: {
-            
-            const deleteNodeBtn = E('button',
-                { text: '🗑️'
+            valueText.style.display = 'inline-block'
+            valueText.style.width = '25px' // The rows need to stop being moved by the text
+        
+        ;['-','+'].forEach((op,i) => { // change the buffer index
+            const btn = E('button', 
+                { text: op
                 , className: 'top-bar-btn'
                 })
-                
-            deleteNodeBtn.onclick = () => this.removeInput(key)
-            box.append(deleteNodeBtn)
-        }
 
-        return box
+            btn.onclick = () => {
+                const v = clamp(0, 
+                    this.channelData[key].bufferKey! + Math.sign(i - .5), 
+                    BufferUtils.nBuffers-1)
+
+                valueText.innerText = String.fromCharCode(65 + v)
+                this.channelData[key].bufferKey = v
+            }
+            items.push(btn)
+        })
+            
+
+        const deleteNodeBtn = E('button',
+            { text: '🗑️'
+            , className: 'top-bar-btn'
+            })
+            
+        deleteNodeBtn.onclick = () => this.removeInput(key)
+        
+        items.push(valueText)
+        items.push(deleteNodeBtn)
+
+        return items
     }
 }
