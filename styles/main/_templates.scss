@@ -19,3 +19,45 @@
 .main-tab {
     margin: 20px;
 }
+
+.sample-canvas-frame {
+    position: relative;
+    background-color: red;
+
+    
+    // canvas {
+    //     width: 100%;
+    // }
+    .slice {
+        position: absolute;
+        cursor: grab;
+        bottom: 0%;
+    }
+    .slice:active {
+        cursor: grabbing;
+    }
+    .left { 
+        right: 100%;
+    }
+    .right { 
+        left: 100%;
+        transform: scale(-1, 1);
+    }
+    .panel {
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        position: absolute;
+        top: 0;
+        pointer-events: none;
+    }
+    .left-panel {
+        left: 0;
+        width: 0;
+        background: rgba(0, 0, 255, 0.25);
+    }
+    .right-panel {
+        right: 0;
+        width: 0;
+        background: rgba(255, 0, 0, 0.25);
+    }
+}

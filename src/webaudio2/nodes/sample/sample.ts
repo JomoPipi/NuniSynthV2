@@ -7,7 +7,7 @@
 
 import { NuniSourceNode } from '../../note_in/nuni_source_node.js'
 import { BufferStorage } from '../../../storage/buffer_storage.js'
-import { BufferCanvasFrame } from './sample_canvas.js'
+import { BufferCanvasFrame } from './sample_canvas2.js'
 import { BufferUtils } from '../../../buffer_utils/internal.js'
 import { createToggleButton } from '../../../UI_library/internal.js'
 

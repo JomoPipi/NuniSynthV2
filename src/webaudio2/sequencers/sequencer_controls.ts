@@ -93,7 +93,7 @@ function createTopRowControls(an : Sequencer) {
             }
             box.appendChild(column)
         })
-        
+
         box.appendChild(text)
         controls.appendChild(box)
         // controls.style.backgroundColor = 'cyan'
@@ -224,6 +224,24 @@ function createTopRowControls(an : Sequencer) {
 
 function createBottomRowControls(an : Sequencer) {
     const row = E('div', { className: 'space-evenly' })
+    
+    const phaseShifter = E('div')//, { text: 'phase' })
+        {
+        const percent = E('span', { text: '0.0%' })
+            percent.style.display = 'inline-block'
+            percent.style.width = '50px'
+        const control = E('input', { className: 'fader-0' })
+        control.type = 'range'
+        control.min = '0'
+        control.max = '1'
+        control.step = (2**-8).toString()
+        control.value = an.phaseShift.toString()
+        ;(control.oninput = () => 
+            percent.innerText = (100 * (an.phaseShift = +control.value)).toFixed(0) + '%'
+        )()
+        phaseShifter.append(control, percent)
+        }
+    row.appendChild(phaseShifter)
 
     if (an instanceof SampleSequencer) 
     { // add new row
@@ -239,23 +257,6 @@ function createBottomRowControls(an : Sequencer) {
         
         row.appendChild(btn)
     }
-
-    const phaseShifter = E('div')//, { text: 'phase' })
-        {
-        const percent = E('span', { text: '0.0%' }); percent.style.width = '50px'
-        const control = E('input', { className: 'fader-0' })
-        control.style.display = 'block'
-        control.type = 'range'
-        control.min = '0'
-        control.max = '1'
-        control.step = (2**-8).toString()
-        control.value = an.phaseShift.toString()
-        ;(control.oninput = () => 
-            percent.innerText = (100 * (an.phaseShift = +control.value)).toFixed(0) + '%'
-        )()
-        phaseShifter.append(control, percent)
-        }
-    row.appendChild(phaseShifter)
 
     stepShift: {
         const btnLeft = '«'
