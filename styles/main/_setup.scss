@@ -26,6 +26,7 @@ input[type=range] {
 
 input[type=range]::-webkit-slider-runnable-track {
     background: var(--color1);
+    border: none;
 }
 
 

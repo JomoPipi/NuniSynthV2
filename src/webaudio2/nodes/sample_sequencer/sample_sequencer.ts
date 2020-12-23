@@ -121,7 +121,7 @@ export class SampleSequencer extends Sequencer
         ;['🡄','🡆'].forEach((op,i) => { // change the buffer index
             const btn = E('button',
                 { text: op
-                , className: 'top-bar-btn push-button'
+                , className: 'nice-btn push-button'
                 })
 
             btn.onclick = () => {
@@ -137,8 +137,8 @@ export class SampleSequencer extends Sequencer
             
 
         const deleteRowBtn = E('button',
-            { text: '🗑️'
-            , className: 'top-bar-btn push-button'
+            { text: '🗑️ '
+            , className: 'nice-btn push-button'
             })
             
         deleteRowBtn.onclick = () => this.removeInput(key)

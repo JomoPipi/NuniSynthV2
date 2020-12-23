@@ -31,6 +31,7 @@ input[type=range] {
 
 input[type=range]::-webkit-slider-runnable-track {
   background: var(--color1);
+  border: none;
 }
 
 input[type=range]::-webkit-slider-thumb {
@@ -436,7 +437,7 @@ code {
   margin: 10px;
 }
 
-.some-padding {
+.some-padding, .sequencer-controls {
   padding: 10px;
 }
 
@@ -556,7 +557,7 @@ code {
   text-shadow: blue;
 }
 
-.flat-grid {
+.flat-grid, .sequencer-step-row-container {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -649,6 +650,24 @@ code {
 .note-box.halfway.selected {
   background: var(--color3) -webkit-gradient(linear, left top, left bottom, from(#5ca), to(var(--color0)));
   background: var(--color3) linear-gradient(#5ca, var(--color0));
+}
+
+.sequencer-step-row-container {
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.sequencer-bottom-row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .smaller-text {
@@ -954,9 +973,9 @@ code {
   color: inherit;
   text-overflow: ellipsis;
   border-width: 1px;
-  border-color: var(--color4);
-  border-top-color: var(--color2);
-  border-left-color: var(--color2);
+  border-color: var(--color2);
+  border-top-color: var(--color0);
+  border-left-color: var(--color0);
   border-radius: 4px;
 }
 
@@ -1075,7 +1094,6 @@ code {
   border: none;
   color: green;
   font-size: 3em;
-  margin-left: 4px;
   vertical-align: middle;
 }
 
@@ -1312,7 +1330,7 @@ a {
   vertical-align: middle;
 }
 
-.nice-button {
+.nice-btn {
   width: 20px;
   height: 20px;
   cursor: pointer;
@@ -1320,6 +1338,8 @@ a {
   color: var(--color5);
   margin: 2px 2px;
   border: none;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .menu-nav {

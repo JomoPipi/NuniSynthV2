@@ -215,9 +215,8 @@ export abstract class Sequencer extends VolumeNodeContainer {
 
         for (const key in channelVolumes) 
         {
-            const row = E('div', { className: 'sequencer-step-row' })
-
-            row.appendChild(rowOptions(this.additionalRowItems(+key), key))
+            const row = E('div', { className: 'sequencer-step-row-container' })
+            const stepRow = E('div', { className: 'sequencer-step-row' })
 
             this.HTMLBoxes[key] = {}
             const height = clamp(25, 140 / nSteps**0.5, 35)
@@ -238,8 +237,14 @@ export abstract class Sequencer extends VolumeNodeContainer {
                 
                 box.classList.toggle('selected', this.stepMatrix[key][i])
                 box.dataset.sequencerKey = `${key}:${i}`
-                row.appendChild(box)
+                stepRow.appendChild(box)
             }
+            
+            row.append(
+                rowOptions(this.additionalRowItems(+key), key), 
+                stepRow,
+                E('span')) // <- Centers the stepRow
+                
             grid.appendChild(row)
         }
 
@@ -313,11 +318,11 @@ export abstract class Sequencer extends VolumeNodeContainer {
             mute_solo_box: {
                 const muteSoloBox = E('span')
                 const mute = E('button', 
-                    { className: 'top-bar-btn'
+                    { className: 'nice-btn'
                     , text: 'M'
                     })
                 const solo = E('button', 
-                    { className: 'top-bar-btn'
+                    { className: 'nice-btn'
                     , text: 'S'
                     })
                     

@@ -12,7 +12,7 @@ import { renderADSR } from '../adsr.js'
 
 export function sequencerControls(an : Sequencer) {
 
-    const controls = E('div')
+    const controls = E('div', { className: 'sequencer-controls' })
         // This makes it so that the buttons on top don't wrap to the next line
         controls.style.minWidth = '400px'
 
@@ -67,7 +67,7 @@ function createTopRowControls(an : Sequencer) {
             {
                 const btn = E('button', 
                     { text: op
-                    , className: 'nice-button push-button'
+                    , className: 'nice-btn push-button'
                     })
                     btn.style.verticalAlign = 'middle'
                     
@@ -223,13 +223,13 @@ function createTopRowControls(an : Sequencer) {
 
 
 function createBottomRowControls(an : Sequencer) {
-    const row = E('div', { className: 'space-evenly' })
+    const row = E('div', { className: 'sequencer-bottom-row' })
     
-    const phaseShifter = E('div')//, { text: 'phase' })
+    const phaseShifter = E('span', { className: 'flex-center' })
         {
-        const percent = E('span', { text: '0.0%' })
+        const percent = E('span', { text: '0.0%', className: 'margin-4' })
             percent.style.display = 'inline-block'
-            percent.style.width = '50px'
+            percent.style.width = '10px'
         const control = E('input', { className: 'fader-0' })
         control.type = 'range'
         control.min = '0'

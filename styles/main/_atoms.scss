@@ -190,8 +190,19 @@ $shadow: rgba(0, 0, 0, 0.4);
     }
 }
 
+.sequencer-step-row-container {
+    @extend .flat-grid;
+    align-items: center;
+}
+
 .sequencer-step-row {
     @extend .flex-center;
+}
+
+.sequencer-bottom-row {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
 .smaller-text {

@@ -89,7 +89,6 @@ $number-grab-width: 120px;
     border: none;
     color: green;
     font-size: 3em;
-    margin-left: 4px;
     vertical-align: middle;
 }
 
@@ -179,4 +178,8 @@ visibility: visible;
 
 .buffer-formula {
     font-family: Lucida Console;
+}
+
+.sequencer-controls {
+    @extend .some-padding;
 }
