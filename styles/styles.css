@@ -10,6 +10,10 @@
   --color6: rgb(255, 255, 255);
 }
 
+*:focus {
+  outline: none;
+}
+
 * {
   margin: 0px;
   padding: 0px;
@@ -57,9 +61,17 @@ select {
 
 button {
   cursor: pointer;
-  background-color: transparent;
   color: var(--color5);
   font-weight: bolder;
+}
+
+.push-button:active {
+  -webkit-transform: translateY(1px);
+          transform: translateY(1px);
+  -webkit-filter: brightness(120%);
+          filter: brightness(120%);
+  -webkit-transition: .1s filter ease;
+  transition: .1s filter ease;
 }
 
 .side-margin {
@@ -496,6 +508,40 @@ code {
           justify-content: space-evenly;
 }
 
+.step-updater {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  text-align: center;
+}
+
+.step-updater-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.big-text {
+  font-size: 2em;
+  text-shadow: blue;
+}
+
 .flat-grid {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -503,11 +549,6 @@ code {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-}
-
-.flat-grid span {
-  width: 100%;
-  text-align: center;
 }
 
 .table {
@@ -828,10 +869,15 @@ code {
   text-align: left;
   font-size: 1em;
   border: none;
+  -webkit-transition: -webkit-filter 0.2s;
+  transition: -webkit-filter 0.2s;
+  transition: filter 0.2s;
+  transition: filter 0.2s, -webkit-filter 0.2s;
 }
 
 .list-btn:hover {
-  background: var(--color1);
+  -webkit-filter: brightness(150%);
+          filter: brightness(150%);
 }
 
 .list-btn:nth-child(odd) {
@@ -856,6 +902,8 @@ code {
 }
 
 .swapper span {
+  width: 100%;
+  text-align: center;
   cursor: pointer;
 }
 
@@ -1006,6 +1054,15 @@ code {
 .kb-button {
   min-width: 50px;
   font-size: 20px;
+}
+
+.play-button {
+  background: transparent;
+  border: none;
+  color: green;
+  font-size: 3em;
+  margin-left: 4px;
+  vertical-align: middle;
 }
 
 .lcd-display {
@@ -1196,6 +1253,16 @@ a {
   background-color: var(--color1);
   color: var(--color5);
   margin: 7px 2px;
+  border: none;
+}
+
+.nice-button {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  background-color: var(--color1);
+  color: var(--color5);
+  margin: 2px 2px;
   border: none;
 }
 

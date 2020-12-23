@@ -40,7 +40,7 @@ apply_scale_preset: {
     {
         const item = E('button', 
             { text: name
-            , className: 'list-btn'
+            , className: 'list-btn push-button'
             })
         div.appendChild(item)
     }

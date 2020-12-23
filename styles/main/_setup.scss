@@ -56,9 +56,15 @@ select {
 
 button {
     cursor: pointer;
-    background-color: transparent;
+    // background-color: transparent;
     color: var(--color5);
     font-weight: bolder;
+}
+
+.push-button:active {
+    transform: translateY(1px);
+    filter: brightness(120%);
+    transition: .1s filter ease;
 }
 
 .side-margin {

@@ -118,10 +118,10 @@ export class SampleSequencer extends Sequencer
             valueText.style.display = 'inline-block'
             valueText.style.width = '25px' // The rows need to stop being moved by the text
         
-        ;['-','+'].forEach((op,i) => { // change the buffer index
-            const btn = E('button', 
+        ;['🡄','🡆'].forEach((op,i) => { // change the buffer index
+            const btn = E('button',
                 { text: op
-                , className: 'top-bar-btn'
+                , className: 'top-bar-btn push-button'
                 })
 
             btn.onclick = () => {
@@ -136,15 +136,15 @@ export class SampleSequencer extends Sequencer
         })
             
 
-        const deleteNodeBtn = E('button',
+        const deleteRowBtn = E('button',
             { text: '🗑️'
-            , className: 'top-bar-btn'
+            , className: 'top-bar-btn push-button'
             })
             
-        deleteNodeBtn.onclick = () => this.removeInput(key)
+        deleteRowBtn.onclick = () => this.removeInput(key)
         
         items.push(valueText)
-        items.push(deleteNodeBtn)
+        items.push(deleteRowBtn)
 
         return items
     }

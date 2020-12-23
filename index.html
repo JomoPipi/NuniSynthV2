@@ -167,8 +167,8 @@
                   <div class="clock-settings flex-center">
 
                     <div>
-                      <button id="tempo-tapper" class="neumorph"> TAP </button> <br>
-                      <button id="beat-hold-button" class="neumorph"> HOLD </button>
+                      <button id="tempo-tapper" class="neumorph push-button"> TAP </button> <br>
+                      <button id="beat-hold-button" class="neumorph push-button"> HOLD </button>
                       <!-- <button id="tick-meter"> 
                         <span id="tick-meter-left" class="top-bar-btn"> </span>
                         <span id="tick-meter-right" class="top-bar-btn"> </span>
@@ -287,7 +287,7 @@
                     value=100>
                   <span> Cents per Step </span>
   
-                  <button class="apply-btn" id="apply-equal-temperament"> apply </button>
+                  <button class="apply-btn" id="apply-equal-temperament push-button"> apply </button>
   
                 </div>
   
@@ -307,7 +307,7 @@
                     ]
                   </code>
                     
-                  <button class="apply-btn" id="apply-scale-csv"> apply </button>
+                  <button class="apply-btn push-button" id="apply-scale-csv"> apply </button>
   
                 </div>
   
@@ -335,7 +335,7 @@
                     ]
                   </code>
   
-                  <button class="apply-btn" id="apply-cent-delta"> apply </button>
+                  <button class="apply-btn push-button" id="apply-cent-delta"> apply </button>
   
                 </div>
   
@@ -355,7 +355,7 @@
             <div class="lcd-display">
               <code> SAMPLE </code>
               <code id="buffer-info"> A -- 3 seconds </code>
-              <button id="open-buffer-edit-dialog-button" class="top-bar-btn"> ⚙️ </button>
+              <button id="open-buffer-edit-dialog-button" class="top-bar-btn push-button"> ⚙️ </button>
             </div>
     
             <div>
@@ -376,10 +376,10 @@
               
               <div id="buffer-edit" class="_tab_">
   
-                <button id="reverse-buffer" class="neumorph"> 
+                <button id="reverse-buffer" class="neumorph push-button"> 
                   reverse </button>
   
-                <button id="invert-buffer" class="neumorph">  
+                <button id="invert-buffer" class="neumorph push-button">  
                   invert </button>
   
               </div>
@@ -451,9 +451,9 @@
                       class="text-input-wide center buffer-formula"
                       value="sin(n/30) + sin(n/20)"> 
   
-                  <button id="apply-buffer-formula" class="apply-btn"> 
+                  <button id="apply-buffer-formula" class="apply-btn push-button"> 
                     📀 Write </button>
-                  <button id="buffer-formula-templates-button" class="apply-btn"> 
+                  <button id="buffer-formula-templates-button" class="apply-btn push-button"> 
                     💽 Presets </button>
   
                   <div id="buffer-formula-error-msg" class="error-msg"></div>

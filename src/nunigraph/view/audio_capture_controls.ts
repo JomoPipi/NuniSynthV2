@@ -24,11 +24,11 @@ export function audioCaptureNodeControls(audioNode : NuniRecordingNode) {
         const value = E('span', { text: 'A' })
         
         // Change the buffer index
-        ;['-','+'].forEach((op,i) => {
+        ;['🡄','🡆'].forEach((op,i) => {
 
             const btn = E('button', 
                 { text: op
-                , className: 'top-bar-btn'
+                , className: 'top-bar-btn push-button'
                 })
 
             value.innerText = String.fromCharCode(65 + audioNode.bufferKey)

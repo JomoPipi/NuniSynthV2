@@ -7,7 +7,7 @@
 
 export function sendNotificationBox(msg : string) {
     const ok = E('button', 
-        { className: 'top-bar-btn'
+        { className: 'top-bar-btn push-button'
         , text: 'ok' 
         })
     const box = E('div', 

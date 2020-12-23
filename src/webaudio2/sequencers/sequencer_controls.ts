@@ -33,18 +33,18 @@ export function sequencerControls(an : Sequencer) {
 
 function createTopRowControls(an : Sequencer) {
 
-    const controls = E('div', { className: 'flat-grid flex-center' })
+    const controls = E('div', { className: 'flat-grid' })
     // const syncCheckBox = E('input')
     
     addPlayButton: {
         const btn = E('button', 
-            { text: '▷'
-            , className: 'kb-button'
+            { text: '▶'
+            , className: 'play-button dim'
             })
         
-        btn.classList.toggle('selected', an.isPlaying)
+        btn.classList.toggle('opaque', an.isPlaying)
         btn.onclick = () => {
-            const play = btn.classList.toggle('selected')
+            const play = btn.classList.toggle('opaque')
             if (play) 
             {
                 an.play()
@@ -58,28 +58,62 @@ function createTopRowControls(an : Sequencer) {
     }
 
     changeStepLength: {
-        const box = E('span', { text: 'steps' })
-        const text = E('span', { text: an.nSteps.toString() })
+        const box = E('span', { className: 'step-updater-container' })
+        const text = E('span', { text: an.nSteps.toString(), className: 'big-text' })
         
-        ;['-','+'].forEach((op, i) => {
-            const btn = E('button', 
-                { text: op
-                , className: 'top-bar-btn'
-                })
-                
-            btn.onclick = () => {
-                const v = clamp(0, 
-                    an.nSteps + Math.sign(i - .5), 32)
-    
-                text.innerText = v.toString()
-                an.updateSteps(v)
-                an.setupGrid()
-                an.sync()
+        ;[['←','⇚'],['→','⇛']].forEach(([op1, op2],i) => {
+            const column = E('span', { className: 'step-updater' })
+            for (const op of [op2,op1])
+            {
+                const btn = E('button', 
+                    { text: op
+                    , className: 'nice-button push-button'
+                    })
+                    btn.style.verticalAlign = 'middle'
+                    
+                btn.onclick = () => {
+                    const x = op === op2
+                        ? an.nSteps * 2 ** Math.sign(i - .5) | 0
+                        : an.nSteps + Math.sign(i - .5)
+                    const v = clamp(0, x, 32)
+        
+                    text.innerText = v.toString()
+                    if (op === '⇛' && v === an.nSteps * 2)
+                    { // I just find this more convenient for the user:
+                        an.duplicateSteps()
+                    }
+                    else
+                    {
+                        an.updateSteps(v)
+                    }
+                    an.setupGrid()
+                    an.sync()
+                }
+                column.appendChild(btn)
             }
-            box.appendChild(btn)
+            box.appendChild(column)
         })
+            
+        // ;['-','+'].forEach((op, i) => {
+        //     const btn = E('button', 
+        //         { text: op
+        //         , className: 'top-bar-btn'
+        //         })
+                
+        //     btn.onclick = () => {
+        //         const v = clamp(0, 
+        //             an.nSteps + Math.sign(i - .5), 32)
+    
+        //         text.innerText = v.toString()
+        //         an.updateSteps(v)
+        //         an.setupGrid()
+        //         an.sync()
+        //     }
+        //     box.appendChild(btn)
+        // })
         box.appendChild(text)
         controls.appendChild(box)
+        // controls.style.backgroundColor = 'cyan'
     }
 
     changeSubdivision: {
@@ -212,7 +246,7 @@ function createBottomRowControls(an : Sequencer) {
     { // add new row
         const btn = E('button', 
             { text: '➕'
-            , className: 'top-bar-btn'
+            , className: 'top-bar-btn push-button'
             })
             
         btn.onclick = () => {
@@ -241,25 +275,26 @@ function createBottomRowControls(an : Sequencer) {
     row.appendChild(phaseShifter)
 
     stepShift: {
+        const btnLeft = '«'
+        const btnRight = '»'
         const box = E('span', 
             { children: [
                 E('button', 
-                { text: '<'
-                , className: 'top-bar-btn'
+                { text: btnLeft
+                , className: 'top-bar-btn push-button'
                 }),
                 E('button', 
-                { text: '>'
-                , className: 'top-bar-btn'
+                { text: btnRight
+                , className: 'top-bar-btn push-button'
                 })]
             })
-
         box.onclick = (e : MouseEvent) => {
             const op = (e.target as HTMLElement).textContent
-            if (!'<>'.includes(op!)) return;
+            if (btnLeft !== op && btnRight !== op) return;
             for (const id in an.stepMatrix)
             {
                 const row = an.stepMatrix[id]
-                if (op === '<')
+                if (op === btnLeft)
                 {
                     row.push(row.shift()!)
                 }

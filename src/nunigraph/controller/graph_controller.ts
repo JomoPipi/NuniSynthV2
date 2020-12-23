@@ -319,6 +319,7 @@ export class NuniGraphController {
             // Add a button for additional options
             const gearButton = E('button', 
             { text: '⚙️'
+            , className: 'push-button'
             , props:
                 { onclick: () => {
                     const prompt = createSelectionPrompt(

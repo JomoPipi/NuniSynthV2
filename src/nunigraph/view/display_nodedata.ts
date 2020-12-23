@@ -370,9 +370,7 @@ function exposeAudioParams(node : NuniGraphNode<CanBeAutomated>, saveCallback : 
 
         const textBox = E('div', { children: [text] })
 
-        // const box = E('div', { className: 'flat-grid some-margin' })
-        const box = E('div')//, { className: 'params-box-2' })
-            // box.style.backgroundColor = 'red'
+        const box = E('div')
 
         const updateFunc = isGain
             ? (newValue : number) => {

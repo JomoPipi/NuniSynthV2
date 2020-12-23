@@ -18,8 +18,9 @@
     font-size: 1em;
     border: none; 
 
+    transition: filter 0.2s;
     &:hover {
-        background: var(--color1);
+        filter: brightness(150%);
     }
 }
 
@@ -45,6 +46,8 @@
 
 .swapper {
     span {
+        width: 100%;
+        text-align: center;
         cursor: pointer;
     }
 }

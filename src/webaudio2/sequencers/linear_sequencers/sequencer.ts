@@ -107,6 +107,15 @@ export abstract class Sequencer extends VolumeNodeContainer {
         this.nSteps = nSteps
     }
 
+    duplicateSteps() {
+        const m = this.stepMatrix
+        for (const key in this.stepMatrix) 
+        {
+            m[key] = m[key].concat(m[key].slice())
+        }
+        this.nSteps *= 2
+    }
+
     sync() {
         this.stop()
         this.play()
@@ -123,7 +132,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
     }
 
     stop() {
-        this.isPlaying = !false
+        this.isPlaying = false
 
         for (const key in this.HTMLBoxes) 
         {
