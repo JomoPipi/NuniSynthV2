@@ -1185,11 +1185,6 @@ code {
   bottom: 0%;
 }
 
-.sample-canvas-frame .slice:active {
-  cursor: -webkit-grabbing;
-  cursor: grabbing;
-}
-
 .sample-canvas-frame .left {
   right: 100%;
 }
@@ -1202,10 +1197,8 @@ code {
 
 .sample-canvas-frame .panel {
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
   position: absolute;
   top: 0;
-  pointer-events: none;
 }
 
 .sample-canvas-frame .left-panel {

@@ -34,27 +34,37 @@ export class BufferCanvasFrame {
         this.right = E('div', { className: 'slice right', text: '🔪' })
         this.frame.append(canvas,this.lPanel,this.rPanel,this.left,this.right)
 
-        function mouseup(grabbingLeftSlicer : boolean) {
-            return (e : MouseEvent) => {
-                const x = e.x - canvas.getBoundingClientRect().left
-                const width = canvas.offsetWidth
-                const percent = clamp(0, x/width, 1)
-                update(grabbingLeftSlicer, percent)
-            }
+        let canvasLeft : number = 0
+        let canvasWidth : number = 0
+        function mousedown (e : MouseEvent) {
+            canvasLeft = canvas.getBoundingClientRect().left
+            canvasWidth = canvas.offsetWidth
         }
 
         const mousemove = (grabbingLeftSlicer : boolean) => {
             return (e : MouseEvent) => {
-                const x = e.x - canvas.getBoundingClientRect().left
-                const width = canvas.offsetWidth
-                const val = clamp(0, x, width)
-
-                this.updateSlicers(grabbingLeftSlicer, val, width - val)
+                const val = clamp(0, e.x - canvasLeft, canvasWidth)
+                this.updateSlicers(grabbingLeftSlicer, val, canvasWidth - val)
             }
         }
 
-        this.left.onmousedown = doUntilMouseUp(mousemove(true), { mouseup: mouseup(true) })
-        this.right.onmousedown = doUntilMouseUp(mousemove(false), { mouseup: mouseup(false) })
+        function mouseup(grabbingLeftSlicer : boolean) {
+            return (e : MouseEvent) => {
+                const x = e.x - canvasLeft
+                const percent = clamp(0, x / canvasWidth, 1)
+                update(grabbingLeftSlicer, percent)
+            }
+        }
+
+        this.left.onmousedown = doUntilMouseUp(mousemove(true), 
+            { mousedown
+            , mouseup: mouseup(true) 
+            })
+
+        this.right.onmousedown = doUntilMouseUp(mousemove(false), 
+            { mousedown
+            , mouseup: mouseup(false)
+            })
 
         const FC = 4.669201609102990671853203820466
         this.H = canvas.height = this.size

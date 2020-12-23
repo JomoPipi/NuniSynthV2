@@ -24,17 +24,10 @@
     position: relative;
     background-color: red;
 
-    
-    // canvas {
-    //     width: 100%;
-    // }
     .slice {
         position: absolute;
         cursor: grab;
         bottom: 0%;
-    }
-    .slice:active {
-        cursor: grabbing;
     }
     .left { 
         right: 100%;
@@ -45,10 +38,8 @@
     }
     .panel {
         height: 100%;
-        background: rgba(0, 0, 0, 0.5);
         position: absolute;
         top: 0;
-        pointer-events: none;
     }
     .left-panel {
         left: 0;

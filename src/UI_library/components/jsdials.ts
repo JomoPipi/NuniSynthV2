@@ -73,7 +73,7 @@ export class JsDial {
         }
 
         const _mousemove = ({ movementX: dx, movementY: dy } : MouseEvent) => {
-
+            if (Math.abs(dx) > 50 || Math.abs(dy) > 50) return; // <- Helps mitigate a Chrome bug.
             this.value += (-dy + dx * this.x_sensitivity) * this.sensitivity
             this.value = clamp(this.min, this.value, this.max)
 
