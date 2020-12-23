@@ -93,24 +93,7 @@ function createTopRowControls(an : Sequencer) {
             }
             box.appendChild(column)
         })
-            
-        // ;['-','+'].forEach((op, i) => {
-        //     const btn = E('button', 
-        //         { text: op
-        //         , className: 'top-bar-btn'
-        //         })
-                
-        //     btn.onclick = () => {
-        //         const v = clamp(0, 
-        //             an.nSteps + Math.sign(i - .5), 32)
-    
-        //         text.innerText = v.toString()
-        //         an.updateSteps(v)
-        //         an.setupGrid()
-        //         an.sync()
-        //     }
-        //     box.appendChild(btn)
-        // })
+        
         box.appendChild(text)
         controls.appendChild(box)
         // controls.style.backgroundColor = 'cyan'
