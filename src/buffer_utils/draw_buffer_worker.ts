@@ -6,7 +6,7 @@
 
 
 let [ctx, H, W] = [] as any[]
-const MARGIN = 4
+// const MARGIN = 4
 
 onmessage = function({ data: { canvas, buffer }}) {
     if (canvas) 
@@ -22,9 +22,11 @@ onmessage = function({ data: { canvas, buffer }}) {
 }
 
 export function reallyDrawBuffer(channel : Float32Array, ctx : CanvasRenderingContext2D, H : number, W : number) {
+    const MARGIN = H < 70 ? 2 : 4
     ctx.save()
-    ctx.fillStyle = '#222'
-    ctx.fillRect(0, 0, W, H)
+    ctx.clearRect(0, 0, W, H)
+    // ctx.fillStyle = 'rgba(0,0,0,0)'
+    // ctx.fillRect(0, 0, W, H)
     ctx.strokeStyle = '#121'
     ctx.globalCompositeOperation = 'lighter'
     ctx.translate(0, H / 2)
@@ -46,10 +48,18 @@ export function reallyDrawBuffer(channel : Float32Array, ctx : CanvasRenderingCo
     ctx.stroke()
     ctx.restore()
 
-    ctx.strokeStyle = min <= -1 || max >= 1
-        ? 'red'
-        : 'gray'
+    const isClipping = min <= -1 || max >= 1
+    ctx.strokeStyle = isClipping ? 'red' : 'gray'
+    ctx.lineWidth = H < 70 ? 1 : 2
 
-    ctx.lineWidth = 2
     ctx.strokeRect(MARGIN / 2, MARGIN / 2, W - MARGIN, H - MARGIN)
+
+    if (isClipping)
+    { 
+        // This is because of filter invert in dark mode and aiming towards consistency:
+        ctx.setLineDash([7,7])
+        ctx.strokeStyle = 'cyan'
+        ctx.strokeRect(MARGIN / 2, MARGIN / 2, W - MARGIN, H - MARGIN)
+        ctx.setLineDash([1,0])
+    }
 }

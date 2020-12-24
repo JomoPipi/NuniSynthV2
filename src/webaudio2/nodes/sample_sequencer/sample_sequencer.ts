@@ -118,23 +118,40 @@ export class SampleSequencer extends Sequencer
             valueText.style.display = 'inline-block'
             valueText.style.width = '25px' // The rows need to stop being moved by the text
         
-        ;['🡄','🡆'].forEach((op,i) => { // change the buffer index
-            const btn = E('button',
-                { text: op
-                , className: 'nice-btn push-button'
-                })
-
-            btn.onclick = () => {
-                const v = clamp(0, 
-                    this.channelData[key].bufferKey! + Math.sign(i - .5), 
-                    BufferUtils.nBuffers-1)
-
-                valueText.innerText = String.fromCharCode(65 + v)
-                this.channelData[key].bufferKey = v
+        {
+            const canvas = E('canvas', { className: 'sample-canvas' })
+            const ctx = canvas.getContext('2d')!
+            const nowShowing = this.channelData[key].bufferKey!
+            if (nowShowing == null) throw 'Not supposed to happen'
+            const H = canvas.height = 35
+            const W = canvas.width = H * PHI * PHI | 0
+            const setImage = (n : number) => {
+                const imageData = BufferUtils.getImage(n, ctx, H, W)
+                ctx.putImageData(imageData, 0, 0)
             }
-            items.push(btn)
-        })
-            
+            setImage(nowShowing)
+
+            items.push(canvas)
+
+            ;['🡄','🡆'].forEach((op,i) => { // change the buffer index
+                const btn = E('button',
+                    { text: op
+                    , className: 'nice-btn push-button'
+                    })
+    
+                btn.onclick = () => {
+                    const v = clamp(0, 
+                        this.channelData[key].bufferKey! + Math.sign(i - .5), 
+                        BufferUtils.nBuffers-1)
+    
+                    valueText.innerText = String.fromCharCode(65 + v)
+                    this.channelData[key].bufferKey = v
+    
+                    setImage(v)
+                }
+                items.push(btn)
+            })
+        }
 
         const deleteRowBtn = E('button',
             { text: '🗑️ '

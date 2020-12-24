@@ -169,6 +169,8 @@ export abstract class Sequencer extends VolumeNodeContainer {
     private playStepsAtTime(time : number) {
         const boxIsVisible = this.HTMLGrid.offsetParent != null
 
+        if (boxIsVisible !== this.dialogBoxIsOpen) throw 'yo???'
+
         const playRow = (key : number) => {
             if (this.dialogBoxIsOpen) // Highlight steps if user can see them:
             {
@@ -187,7 +189,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
             playRow(this.soloChannel)
         }
         else {
-            for (const key in this.channelData)
+            for (const key in this.channelVolumes)
             {
                 playRow(+key)
             }
@@ -216,6 +218,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
         for (const key in channelVolumes) 
         {
             const row = E('div', { className: 'sequencer-step-row-container' })
+            // row.style.border = '1px solid green'
             const stepRow = E('div', { className: 'sequencer-step-row' })
 
             this.HTMLBoxes[key] = {}
@@ -244,7 +247,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
                 rowOptions(this.additionalRowItems(+key), key), 
                 stepRow,
                 E('span')) // <- Centers the stepRow
-                
+
             grid.appendChild(row)
         }
 
@@ -314,9 +317,10 @@ export abstract class Sequencer extends VolumeNodeContainer {
 
         function rowOptions(items : HTMLElement[], key : string) {
             const box = E('span', { className: 'flex-center' })
+            box.append(...items)
 
             mute_solo_box: {
-                const muteSoloBox = E('span')
+                // const muteSoloBox = E('span')
                 const mute = E('button', 
                     { className: 'nice-btn'
                     , text: 'M'
@@ -330,10 +334,11 @@ export abstract class Sequencer extends VolumeNodeContainer {
                 mute.dataset.sequencerRowKey =
                 solo.dataset.sequencerRowKey = key
                 mute.classList.toggle('selected', mutedChannel[key] === true)
-                muteSoloBox.append(...items, mute, solo)
-                soloButtons.push(solo)
+                // muteSoloBox.append(...items, mute, solo)
+                box.append(mute,solo)
+                // soloButtons.push(solo)
 
-                box.appendChild(muteSoloBox)
+                // box.appendChild(muteSoloBox)
             }
             
             add_volume_knob: {

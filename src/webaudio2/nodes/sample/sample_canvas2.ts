@@ -26,7 +26,7 @@ export class BufferCanvasFrame {
     private rPanel : HTMLElement
 
     constructor({ update } : Arguments) {
-        const canvas = E('canvas')
+        const canvas = E('canvas', { className: 'sample-canvas' })
         this.frame = E('div', { className: 'center sample-canvas-frame' })
         this.lPanel = E('div', { className: 'panel left-panel' })
         this.rPanel = E('div', { className: 'panel right-panel' })
@@ -66,9 +66,8 @@ export class BufferCanvasFrame {
             , mouseup: mouseup(false)
             })
 
-        const FC = 4.669201609102990671853203820466
         this.H = canvas.height = this.size
-        this.W = canvas.width = this.size * FC | 0
+        this.W = canvas.width = this.size * SPECIAL_NUM | 0
         this.ctx = canvas.getContext('2d')!
         this.refresh()
     }

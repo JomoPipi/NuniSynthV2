@@ -38,7 +38,7 @@ class BufferUtily {
     nextBufferDuration : number
     readonly nBuffers = 26
     private refreshFunc : Function
-    private imageDataCenter : Record<number,ImageData>
+    private imageDataCenter : Record<string,ImageData>
     
     constructor() {
         this.currentIndex = 0
@@ -50,11 +50,12 @@ class BufferUtily {
     }
 
     getImage(key : number, ctx : CanvasRenderingContext2D, H : number, W : number) {
-        const data = this.imageDataCenter[key]
+        const dataCenterAccessKey = [key, H, W].join('') // Save images of different sizes
+        const data = this.imageDataCenter[dataCenterAccessKey]
         if (data && !BufferStorage.imageNeedsUpdate[key]) return data
         const buffer = BufferStorage.get(key).getChannelData(0)
-        const imageData 
-            = this.imageDataCenter[key] 
+        const imageData
+            = this.imageDataCenter[dataCenterAccessKey] 
             = drawBuffer2.call(null, buffer, ctx, H, W)
         BufferStorage.imageNeedsUpdate[key] = false
         return imageData
@@ -104,7 +105,7 @@ class BufferUtily {
                 const nowBuffering = buffer.getChannelData(channel)
                 for (let i = 1; i < buffer.length; i++) 
                 {
-                    nowBuffering[i] = presets(i,channel)[n] || (i % 2) / 2.0
+                    nowBuffering[i] = (presets(i,channel)[n] || 0) / 2.0
                 }
             }
             BufferStorage.set(n, buffer)

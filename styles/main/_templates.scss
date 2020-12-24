@@ -20,9 +20,13 @@
     margin: 20px;
 }
 
+.sample-canvas {
+    background-color: transparent;
+    filter: var(--dark-mode);
+}
+
 .sample-canvas-frame {
     position: relative;
-    background-color: red;
 
     .slice {
         position: absolute;
