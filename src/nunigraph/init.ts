@@ -122,6 +122,16 @@ Graph_Attachments: {
             {
                 an.refresh()
             }
+            if (an instanceof SampleSequencer)
+            {
+                for (const key in an.channelVolumes)
+                {
+                    if (an.channelData[key].bufferKey === index)
+                    {
+                        an.setBufferKey(+key, index)
+                    }
+                }
+            }
         }
     })
 

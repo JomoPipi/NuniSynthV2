@@ -21,6 +21,7 @@ onmessage = function({ data: { canvas, buffer }}) {
     }
 }
 
+const WIDTH_CONSTANT = 300
 export function reallyDrawBuffer(channel : Float32Array, ctx : CanvasRenderingContext2D, H : number, W : number) {
     const MARGIN = H < 70 ? 2 : 4
     ctx.save()
@@ -35,7 +36,14 @@ export function reallyDrawBuffer(channel : Float32Array, ctx : CanvasRenderingCo
     ctx.lineWidth = 1
     
     let max = -Infinity, min = Infinity
-    for (let i = 0; i < channel.length; i++) 
+
+    // This allows the stuff to actually be seen:
+    const increment 
+        = ((WIDTH_CONSTANT / W) || 1) ** 2
+        + channel.length / 44100 | 0
+
+    console.log('increment =',increment)
+    for (let i = 0; i < channel.length; i += increment) 
     {
         const x = MARGIN + (W - MARGIN * 2) * i / channel.length | 0
         const y = channel[i] * (H - MARGIN * 2) / 2

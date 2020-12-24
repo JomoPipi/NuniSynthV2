@@ -381,7 +381,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
         }
     }
 
-    additionalRowItems(key : number) : HTMLElement[] {
+    protected additionalRowItems(key : number) : HTMLElement[] {
         // Override this function in a child class.
         return []
     }
