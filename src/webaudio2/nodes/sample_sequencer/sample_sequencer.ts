@@ -139,7 +139,6 @@ export class SampleSequencer extends Sequencer
             }
             this.channelBufferKeyUpdate[key] = setImage
             setImage(nowShowing)
-
             items.push(canvas)
 
             ;['🡄','🡆'].forEach((op,i) => { // change the buffer index
