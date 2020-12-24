@@ -124,7 +124,7 @@ Graph_Attachments: {
             }
             if (an instanceof SampleSequencer)
             {
-                for (const key in an.channelVolumes)
+                for (const key in an.channelData)
                 {
                     if (an.channelData[key].bufferKey === index)
                     {

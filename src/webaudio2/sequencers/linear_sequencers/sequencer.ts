@@ -65,7 +65,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
         this.ctx = ctx
         this.tick = (60*4 / MasterClock.getTempo()) / this._subdiv
         this.HTMLGrid = createBeatGrid()
-        this.isPlaying = true
+        this.isPlaying = false // true // <- Wait for properties to arrive first
         this.stepMatrix = {}
         this.mutedChannel = {}
         this.HTMLBoxes = {}

@@ -141,26 +141,26 @@ export class SampleSequencer extends Sequencer
             setImage(nowShowing)
 
             items.push(canvas)
+
+            ;['🡄','🡆'].forEach((op,i) => { // change the buffer index
+                const btn = E('button',
+                    { text: op
+                    , className: 'nice-btn push-button'
+                    })
+    
+                btn.onclick = () => {
+                    const v = clamp(0, 
+                        this.channelData[key].bufferKey! + Math.sign(i - .5), 
+                        BufferUtils.nBuffers-1)
+    
+                    valueText.innerText = String.fromCharCode(65 + v)
+                    this.channelData[key].bufferKey = v
+    
+                    setImage(v)
+                }
+                items.push(btn)
+            })
         }
-
-        ;['🡄','🡆'].forEach((op,i) => { // change the buffer index
-            const btn = E('button',
-                { text: op
-                , className: 'nice-btn push-button'
-                })
-
-            btn.onclick = () => {
-                const v = clamp(0, 
-                    this.channelData[key].bufferKey! + Math.sign(i - .5), 
-                    BufferUtils.nBuffers-1)
-
-                valueText.innerText = String.fromCharCode(65 + v)
-                this.channelData[key].bufferKey = v
-
-                this.channelBufferKeyUpdate[key](v)
-            }
-            items.push(btn)
-        })
 
         const deleteRowBtn = E('button',
             { text: '🗑️ '

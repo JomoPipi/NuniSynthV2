@@ -73,6 +73,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
                         channelVolumes[key].gain.value = channelData[key].volume
                     }
                     this.audioNode.refresh()
+                    this.audioNode.play()
                     this.audioNode.hasDoneTheDirtyWork = true
                 }
             })
