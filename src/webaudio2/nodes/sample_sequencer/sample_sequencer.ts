@@ -121,46 +121,6 @@ export class SampleSequencer extends Sequencer
     protected additionalRowItems(key : number) : HTMLElement[] { 
         const items : HTMLElement[] = []
 
-        const valueText = E('span',
-            { text: String.fromCharCode(65 + this.channelData[key].bufferKey!) })
-            valueText.style.display = 'inline-block'
-            valueText.style.width = '25px' // The rows need to stop being moved by the text
-        
-        AddASampleCanvas: {
-            const canvas = E('canvas', { className: 'sample-canvas' })
-            const ctx = canvas.getContext('2d')!
-            const nowShowing = this.channelData[key].bufferKey!
-            if (nowShowing == null) throw 'Not supposed to happen'
-            const H = canvas.height = 35
-            const W = canvas.width = H * PHI * PHI | 0
-            const setImage = (n : number) => {
-                const imageData = BufferUtils.getImage(n, ctx, H, W)
-                ctx.putImageData(imageData, 0, 0)
-            }
-            this.channelBufferKeyUpdate[key] = setImage
-            setImage(nowShowing)
-            items.push(canvas)
-
-            ;['🡄','🡆'].forEach((op,i) => { // change the buffer index
-                const btn = E('button',
-                    { text: op
-                    , className: 'nice-btn push-button'
-                    })
-    
-                btn.onclick = () => {
-                    const v = clamp(0, 
-                        this.channelData[key].bufferKey! + Math.sign(i - .5), 
-                        BufferUtils.nBuffers-1)
-    
-                    valueText.innerText = String.fromCharCode(65 + v)
-                    this.channelData[key].bufferKey = v
-    
-                    setImage(v)
-                }
-                items.push(btn)
-            })
-        }
-
         const deleteRowBtn = E('button',
             { text: '🗑️ '
             , className: 'nice-btn push-button'
@@ -168,9 +128,59 @@ export class SampleSequencer extends Sequencer
             
         deleteRowBtn.onclick = () => this.removeInput(key)
         
-        items.push(valueText)
         items.push(deleteRowBtn)
+
+        const valueText = E('span',
+            { text: String.fromCharCode(65 + this.channelData[key].bufferKey!) 
+            , className: 'center'
+            })
+            valueText.style.display = 'inline-block'
+            valueText.style.width = '25px' // The rows need to stop being moved by the text
+        
+        items.push(valueText)
+
+        AddASampleCanvas: {
+            const canvas = E('canvas', { className: 'sample-canvas sample-sequencer-channel' })
+            const ctx = canvas.getContext('2d')!
+            const nowShowing = this.channelData[key].bufferKey!
+            if (nowShowing == null) throw 'Not supposed to happen'
+            const H = canvas.height = 35
+            const W = canvas.width = H * PHI | 0 // * PHI | 0
+            const setImage = (n : number) => {
+                const imageData = BufferUtils.getImage(n, ctx, H, W)
+                ctx.putImageData(imageData, 0, 0)
+            }
+            this.channelBufferKeyUpdate[key] = setImage
+            setImage(nowShowing)
+            // items.push(canvas)
+
+            const btnContainer = E('span', { className: 'vert-split' })
+            ;['🡅','🡇'].forEach((op,i) => { // change the buffer index
+                const btn = E('button',
+                    { text: op
+                    , className: `next-sample-btn`
+                    })
+                if (i === 1) btn.classList.add('bottom')
+    
+                btn.onclick = () => {
+                    const v = clamp(0, 
+                        this.channelData[key].bufferKey! + Math.sign(-i + .5), 
+                        BufferUtils.nBuffers-1)
+    
+                    valueText.innerText = String.fromCharCode(65 + v)
+                    this.channelData[key].bufferKey = v
+    
+                    setImage(v)
+                }
+                btnContainer.appendChild(btn)
+                // items.push(btn)
+                // if (i === 0) items.push(canvas)
+            })
+            items.push(btnContainer)
+            items.push(canvas)
+        }
 
         return items
     }
 }
+

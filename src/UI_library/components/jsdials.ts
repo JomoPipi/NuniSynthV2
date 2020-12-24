@@ -7,16 +7,17 @@
 
 import { doUntilMouseUp } from "../events/until_mouseup.js"
 
-const shadowKnobclasses = 
-    [ 'shadow-knob'
-    , 'shadow-knob2'
-    , 'shadow-knob3'
-    ] as const
+// const shadowKnobclasses = 
+//     [ 'shadow-knob'
+//     , 'shadow-knob2'
+//     , 'shadow-knob3'
+//     , 'shadow-knob4'
+//     ] as const
 
-const knobClasses = 
-    [ 'js-dial'
-    , 'js-dial2'
-    ] as const
+// const knobClasses = 
+//     [ 'js-dial'
+//     , 'js-dial2'
+//     ] as const
 
 type Options = {
     mousedown? : MouseHandler
@@ -39,10 +40,10 @@ export class JsDial {
 
     constructor(CSS_classIndex? : number, knobClassIndex? : number) {
         
-        this.dial = E('div', { className: knobClasses[knobClassIndex || 0] })
+        this.dial = E('div', { className: `js-dial _${knobClassIndex || 0}` })
         
         this.html = E('div', 
-            { className: shadowKnobclasses[CSS_classIndex || 0]
+            { className: `shadow-knob _${CSS_classIndex || 0}`
             , children: [this.dial]
             }) 
             
@@ -72,8 +73,10 @@ export class JsDial {
             this.html.requestPointerLock()
         }
 
+        const LIMIT = 100
         const _mousemove = ({ movementX: dx, movementY: dy } : MouseEvent) => {
-            if (Math.abs(dx) > 50 || Math.abs(dy) > 50) return; // <- Helps mitigate a Chrome bug.
+            if (Math.abs(dx) + Math.abs(dy) > LIMIT) return; // <- Helps mitigate a Chrome bug.
+
             this.value += (-dy + dx * this.x_sensitivity) * this.sensitivity
             this.value = clamp(this.min, this.value, this.max)
 

@@ -28,8 +28,8 @@ a {
     margin: 4%;
     border-radius: 9px;
     background: transparent;
-    box-shadow:  3px 3px 3px var(--color1), 
-                -2px -2px 2px var(--color3);
+    box-shadow:  3px 3px 3px rgba(0,0,0,0.5), 
+                -2px -2px 2px var(--color1);
     width: 50px;
     height: 30px;
 }

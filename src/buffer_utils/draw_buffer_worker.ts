@@ -38,7 +38,7 @@ export function reallyDrawBuffer(channel : Float32Array, ctx : CanvasRenderingCo
     let max = -Infinity, min = Infinity
 
     // This allows the stuff to actually be seen:
-    const increment 
+    const increment
         = ((WIDTH_CONSTANT / W) || 1) ** 2
         + channel.length / 44100 | 0
 
@@ -58,12 +58,12 @@ export function reallyDrawBuffer(channel : Float32Array, ctx : CanvasRenderingCo
 
     const isClipping = min <= -1 || max >= 1
     ctx.strokeStyle = isClipping ? 'red' : 'gray'
-    ctx.lineWidth = H < 70 ? 1 : 2
+    // ctx.lineWidth = H < 70 ? 1 : 2
 
-    ctx.strokeRect(MARGIN / 2, MARGIN / 2, W - MARGIN, H - MARGIN)
 
     if (isClipping)
     { 
+        ctx.strokeRect(MARGIN / 2, MARGIN / 2, W - MARGIN, H - MARGIN)
         // This is because of filter invert in dark mode and aiming towards consistency:
         ctx.setLineDash([7,7])
         ctx.strokeStyle = 'cyan'

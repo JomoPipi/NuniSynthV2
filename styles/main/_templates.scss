@@ -21,8 +21,32 @@
 }
 
 .sample-canvas {
-    background-color: transparent;
+    background-color: rgba(0,0,255,0.05);
     filter: var(--dark-mode);
+
+    &.sample-sequencer-channel {
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+}
+
+.next-sample-btn {
+    @extend .push-button;
+    display: inline-block;
+    height: 17.5px;
+    width: 17.5px;
+    cursor: pointer;
+    background-color: var(--color1); 
+    color: var(--color0);
+    border: none;
+    text-align: center;
+    vertical-align: middle;
+    border-top-left-radius: 5px;
+
+    &.bottom {
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 5px;
+    }
 }
 
 .sample-canvas-frame {

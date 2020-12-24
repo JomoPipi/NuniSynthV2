@@ -17,20 +17,6 @@ let activated = false, isPaused = false, _tempo = 69
 let _setTempo = (t : number) => {}
 let _sync = () => {}
 
-// const tempoComponent = createNumberDialComponent(
-//     120, 
-//     (value : number) => {
-//         _setTempo(value)
-//         return (_tempo = clamp(1, value, 69420))
-//     },
-//     { dial: 
-//         { sensitivity: 2**-2
-//         , min: 20
-//         , max: 999
-//         , rounds: 8
-//         }
-//     })
-
 const tempoComponent = createNumberDialComponent3(
     120, 
     (value : number) => {
@@ -42,6 +28,8 @@ const tempoComponent = createNumberDialComponent3(
         , max: 999
         , isLinear: true
         , mouseup() { _sync() }
+        , shadowKnobClass: 3
+        , knobClass: 2
         }
     , 8)
 
@@ -96,7 +84,6 @@ function count() {
     if(!start) 
     {
         start = new Date().getTime()
-        tempoComponent.container.classList.add('selected2')
     } 
     else 
     {
@@ -115,7 +102,6 @@ function count() {
         counter = 0
         delta = 0
         start = 0
-        tempoComponent.container.classList.remove('selected2')
     }, 2000)
 }
 tapBtn.addEventListener('click', count)

@@ -41,10 +41,10 @@ export function createDiscreteDialComponent(
         })
 }
 
-const classes = 
-    [ 'shadow-knob'
-    , 'shadow-knob2'
-    ]
+// const classes = 
+//     [ 'shadow-knob'
+//     , 'shadow-knob2'
+//     ]
     
 class DiscreteDial {
     readonly n : number
@@ -66,11 +66,13 @@ class DiscreteDial {
         this.options = options
         
         this.dial = E('div', { className: 'js-dial' })
-
-        this.html = E('div',
-            { className: classes[options.CSS_classIndex || 0]
+        // this.dial = E('div', { className: `js-dial _${knobClassIndex || 0}` })
+        
+        this.html = E('div', 
+            { className: `shadow-knob _${options.CSS_classIndex || 0}`
             , children: [this.dial]
-            })
+            }) 
+            
 
         this.update(0)
     }

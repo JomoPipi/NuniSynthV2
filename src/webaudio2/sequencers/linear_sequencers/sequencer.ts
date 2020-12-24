@@ -218,7 +218,6 @@ export abstract class Sequencer extends VolumeNodeContainer {
         for (const key in channelVolumes) 
         {
             const row = E('div', { className: 'sequencer-step-row-container' })
-            // row.style.border = '1px solid green'
             const stepRow = E('div', { className: 'sequencer-step-row' })
 
             this.HTMLBoxes[key] = {}

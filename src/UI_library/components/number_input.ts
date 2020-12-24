@@ -22,8 +22,8 @@ type UpdateFuncSettings = {
     width? : number
     height? : number
     mouseup? : MouseHandler
-    shadowKnobClass? : 0 | 1 | 2
-    knobClass? : 0 | 1
+    shadowKnobClass? : 0 | 1 | 2 | 3
+    knobClass? : 0 | 1 | 2
     }
 
 const myToFixed = (value : number) => 
