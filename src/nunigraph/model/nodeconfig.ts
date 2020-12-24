@@ -607,6 +607,7 @@ const Transferable_AudioNodeProperties =
     , stepMatrix  : true
     , phaseShift  : true
     , channelData : true
+    , mutedChannel : true
     , MMLString   : true
     , loopStart   : true
     , loopEnd     : true
@@ -623,7 +624,7 @@ const Transferable_AudioNodeProperties =
     } as const
 
 const PostConnection_Transferable_InputRemappable_AudioNodeProperties = 
-    { [NodeTypes.G_SEQ]: ['stepMatrix', 'channelData']
+    { [NodeTypes.G_SEQ]: ['stepMatrix', 'channelData', 'mutedChannel']
     } as const
     
 type NodeCreationSettings = { 

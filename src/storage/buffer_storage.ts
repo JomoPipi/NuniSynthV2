@@ -16,15 +16,17 @@ import { audioCtx } from "../webaudio2/internal.js"
 const buffers = {} as Indexable<AudioBuffer>
 const reversedBuffers = {} as Indexable<AudioBuffer>
 const imageNeedsUpdate = {} as Indexable<boolean> 
+const importData = {} as Record<number,string | undefined>
 
 function get(key : number, reversed? : boolean) {
     return (reversed ? reversedBuffers : buffers)[key]
 }
 
-function set(key : number, buffer : AudioBuffer) {
+function set(key : number, buffer : AudioBuffer, importedFileName? : string) {
     buffers[key] = buffer
     setReversed(key, buffer)
     imageNeedsUpdate[key] = true
+    importData[key] = importedFileName
 }
 
 function setReversed(key : number, buffer : AudioBuffer) {
@@ -45,4 +47,14 @@ function list() {
     return Object.keys(buffers)
 }
 
-export const BufferStorage = { set, get, list, imageNeedsUpdate }
+function getImportedFileName(key : number) : string | undefined {
+    return importData[key]
+}
+
+export const BufferStorage = 
+    { set
+    , get
+    , list
+    , imageNeedsUpdate
+    , getImportedFileName
+    }

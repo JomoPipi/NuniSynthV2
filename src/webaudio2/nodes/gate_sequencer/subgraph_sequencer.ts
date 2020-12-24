@@ -50,6 +50,7 @@ export class GateSequencer extends Sequencer
         delete this.channelData[id]
         delete this.channelVolumes[id]
         delete this.stepMatrix[id]
+        delete this.mutedChannel[id]
         this.refresh()
     }
 
@@ -70,6 +71,7 @@ export class GateSequencer extends Sequencer
 
         this.channelData[newNode.id] = this.channelData[id]
         this.stepMatrix[newNode.id] = this.stepMatrix[id]
+        this.mutedChannel[newNode.id] = this.mutedChannel[id]
 
         this.removeInput({ id, audioNode })
     }

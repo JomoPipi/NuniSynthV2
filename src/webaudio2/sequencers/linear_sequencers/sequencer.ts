@@ -32,11 +32,11 @@ export abstract class Sequencer extends VolumeNodeContainer {
      */
     nSteps = 8
     private _subdiv = 8
-    currentStep = 0
-    startTime = 0
-    noteTime = 0
+    private currentStep = 0
+    private startTime = 0
+    private noteTime = 0
     phaseShift = 0
-    adsrIndex = 0
+    protected adsrIndex = 0
     soloChannel = -1
     mutedChannel : Indexable<boolean>
     stepMatrix : Record<number|string,boolean[]>
@@ -47,7 +47,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
     private tempo = 120
     HTMLGrid : HTMLElement
     isPlaying : boolean
-    protected HTMLBoxes : Indexable<Indexable<HTMLElement>>
+    private HTMLBoxes : Indexable<Indexable<HTMLElement>>
     channelData : Indexable<ChannelData>
     channelVolumes : Indexable<GainNode>
     hasDoneTheDirtyWork = false // See painful bugfix in NuniGraphNode.ts

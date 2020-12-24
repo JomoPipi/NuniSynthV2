@@ -11,6 +11,7 @@ import { formulateBuffer } from "./buffer_formula.js"
 import { BufferStorage } from "../storage/buffer_storage.js"
 import { createSubdivSelect2, createSubdivSelect3 } from "../nunigraph/view/create_subdivselect.js"
 import { MasterClock } from "../webaudio2/internal.js"
+import { importAudioFile } from "../storage/dialog.js"
 
 
 
@@ -66,8 +67,9 @@ const subdivSelect2 = createSubdivSelect2(setLength)
 D('buffer-length-stuff').append(subdivSelect2)
 
 
-// D('open-buffer-edit-dialog-button').onclick = () =>
-//     toggleBufferEditDialog(BufferUtils.currentIndex)
+D('import-buffer-button').onclick = () =>
+    importAudioFile(BufferUtils.currentIndex)
+    // toggleBufferEditDialog(BufferUtils.currentIndex)
 
 
 // BUFFER EXPS
