@@ -67,8 +67,7 @@ const subdivSelect2 = createSubdivSelect2(setLength)
 D('buffer-length-stuff').append(subdivSelect2)
 
 
-D('import-buffer-button').onclick = () =>
-    importAudioFile(BufferUtils.currentIndex)
+D('import-buffer-button').onclick = () => importAudioFile()
     // toggleBufferEditDialog(BufferUtils.currentIndex)
 
 

@@ -26,10 +26,6 @@ if (!fs.existsSync(projectsFolderPath))
     fs.mkdirSync(projectsFolderPath)
 }
 
-// const store = new Store()
-// store.set('unicorn', '🦄')
-// console.log(store.get('unicorn'))
-
 export function saveProject() {
     D('wait-cursor').classList.add('show')
 
@@ -212,7 +208,7 @@ function loadBuffers(filePath : string) {
                         
             fetch(audioFilePath)
                 // Read it into memory as an arrayBuffer
-                .then(response => response.arrayBuffer())
+                .then(response => trace(response).arrayBuffer())
                 // Turn it from mp3/aac/whatever into raw audio data
                 .then(arrayBuffer => audioCtx.decodeAudioData(arrayBuffer))
                 .then(audioBuffer => BufferStorage.set(key, audioBuffer, metadata.fileName))
@@ -240,39 +236,39 @@ function loadBuffers(filePath : string) {
     }
 }
 
-export function importAudioFile(bufferStorageKey : number) {
+export function importAudioFile() {
     const options = 
         { title: 'Import an audio file'
         , filters: { name: 'nuni', extensions: ['wav','aac','mp3','ogg'] }
-        , defaultPath: userDataPath
+        , defaultPath: audioBuffersImportsPath
         }
-        log('we are here at least')
+
     dialog
         .showOpenDialog(options)
         .then(({ canceled, filePaths } : Indexed) => {
-            console.log('canceled =',canceled)
             if (!canceled) 
             {
                 const fileName = getBasename(filePaths[0])
                 const path = audioBuffersImportsPath + '\\' +  fileName
-                copy(filePaths[0], path)
 
-                fetch(filePaths[0])
+                // Copy the file to the imports folder:
+                fs.copyFileSync(filePaths[0], path)
+
+                // Make the file writable:
+                fs.chmodSync(path, 0o666);
+
+                fetch(path)
                     .then(response => response.arrayBuffer())
                     .then(arrayBuffer => audioCtx.decodeAudioData(arrayBuffer))
-                    .then(audioBuffer => BufferStorage.set(bufferStorageKey, audioBuffer, fileName))
+                    .then(audioBuffer => {
+                        BufferStorage.set(BufferUtils.currentIndex, audioBuffer, fileName)
+                        BufferUtils.updateBufferUI()
+                        BufferUtils.refreshAffectedBuffers()
+                    })
+                    .catch(e => log('look at this fucking error',e))
             }
         })
         .catch((e : Error) => console.warn('the error is:',e))
-
-    function copy(fromPath : string, toPath : string) {
-        const readStream = fs.createReadStream(fromPath)
-        const writeStream = fs.createWriteStream(toPath)
-        const callback = (e : Error) => console.warn('Got an error here:',e)
-        readStream.on('error', callback)
-        writeStream.on('error', callback)
-        readStream.pipe(writeStream)
-    }
 }
 
 

@@ -36,7 +36,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
     private startTime = 0
     private noteTime = 0
     phaseShift = 0
-    protected adsrIndex = 0
+    adsrIndex = 0
     soloChannel = -1
     mutedChannel : Indexable<boolean>
     stepMatrix : Record<number|string,boolean[]>
