@@ -133,12 +133,10 @@ Graph_Attachments: {
                     }
                 }
             }
-            // TODO : FIX
-            //!dfghdfghdfgs
-            // if (an instanceof NuniRecordingNode && an.bufferKey === index)
-            // {
-            //     an.refreshBufferImage()
-            // }
+            if (an instanceof NuniRecordingNode && an.bufferKey === index)
+            {
+                an.refreshBufferImage(an.bufferKey)
+            }
         }
     })
 

@@ -60,7 +60,7 @@ export class SampleSelectComponent {
 
         btnContainer.appendChild(this.valueText)
 
-        this.html = E('div', { className: 'flat-grid', children: 
+        this.html = E('div', { className: 'flex-center', children: 
             [ this.valueText
             , btnContainer
             , this.canvas
@@ -71,7 +71,6 @@ export class SampleSelectComponent {
 
     setImage(n : number) {
         this.valueText.innerText = String.fromCharCode(65 + n)
-
         const imageData = BufferUtils.getImage(n, this.ctx, this.canvas.height, this.canvas.width)
         this.ctx.putImageData(imageData, 0, 0)
     }

@@ -23,31 +23,6 @@ export function audioCaptureNodeControls(audioNode : NuniRecordingNode) {
     choose_buffer_index: {
         const box = E('span', { text: 'WRITE TO: ' })
         
-        // const value = E('span', { text: 'A' })
-        
-        // // Change the buffer index
-        // ;['🡄','🡆'].forEach((op,i) => {
-
-        //     const btn = E('button', 
-        //         { text: op
-        //         , className: 'top-bar-btn push-button'
-        //         })
-
-        //     value.innerText = String.fromCharCode(65 + audioNode.bufferKey)
-        //     btn.onclick = () => {
-        //         const v = clamp(0, 
-        //             audioNode.bufferKey + Math.sign(i - .5), 
-        //             BufferUtils.nBuffers-1)
-
-        //         value.innerText = String.fromCharCode(65 + v)
-        //         audioNode.bufferKey = v
-        //     }
-
-        //     box.appendChild(btn)
-        // })
-
-        // box.appendChild(value)
-////////////////////////////////
         const update = (bufferKey : number) => 
             audioNode.bufferKey = bufferKey
         const sampleCanvas = 

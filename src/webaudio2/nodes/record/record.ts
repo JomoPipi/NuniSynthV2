@@ -19,7 +19,7 @@ export class NuniRecordingNode
     recordingLength : number
     sync : boolean
     subdiv : number // if subdiv === 0 we use recording length
-    refreshBufferImage : Function = () => void 0
+    refreshBufferImage = (key : number) => {}
 
     constructor(ctx : AudioContext) {
         super(ctx)
