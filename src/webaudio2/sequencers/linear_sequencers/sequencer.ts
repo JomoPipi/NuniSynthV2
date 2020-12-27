@@ -217,7 +217,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
 
         for (const key in channelVolumes) 
         {
-            const row = E('div', { className: 'sequencer-step-row-container' })
+            const row = E('div', { className: 'flat-grid' })
             const stepRow = E('div', { className: 'sequencer-step-row' })
 
             this.HTMLBoxes[key] = {}

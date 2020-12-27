@@ -5,9 +5,10 @@
 
 
 
-import { NuniRecordingNode, MasterClock } from "../../webaudio2/internal.js";
-import { BufferUtils } from "../../buffer_utils/internal.js";
-import { createSubdivSelect } from "./create_subdivselect.js";
+import { NuniRecordingNode, MasterClock } from "../../internal.js";
+import { BufferUtils } from "../../../buffer_utils/internal.js";
+import { createSubdivSelect } from "../../../nunigraph/view/create_subdivselect.js";
+import { SampleSelectComponent } from "../../../UI_library/components/sample_select.js";
 
 
 
@@ -17,34 +18,44 @@ import { createSubdivSelect } from "./create_subdivselect.js";
 
 export function audioCaptureNodeControls(audioNode : NuniRecordingNode) {
     const controls = E('div')
+    let refreshBufferImage
 
     choose_buffer_index: {
-        const box = E('span', { text: 'WRITE TO BUFFER: ' })
+        const box = E('span', { text: 'WRITE TO: ' })
         
-        const value = E('span', { text: 'A' })
+        // const value = E('span', { text: 'A' })
         
-        // Change the buffer index
-        ;['🡄','🡆'].forEach((op,i) => {
+        // // Change the buffer index
+        // ;['🡄','🡆'].forEach((op,i) => {
 
-            const btn = E('button', 
-                { text: op
-                , className: 'top-bar-btn push-button'
-                })
+        //     const btn = E('button', 
+        //         { text: op
+        //         , className: 'top-bar-btn push-button'
+        //         })
 
-            value.innerText = String.fromCharCode(65 + audioNode.bufferKey)
-            btn.onclick = () => {
-                const v = clamp(0, 
-                    audioNode.bufferKey + Math.sign(i - .5), 
-                    BufferUtils.nBuffers-1)
+        //     value.innerText = String.fromCharCode(65 + audioNode.bufferKey)
+        //     btn.onclick = () => {
+        //         const v = clamp(0, 
+        //             audioNode.bufferKey + Math.sign(i - .5), 
+        //             BufferUtils.nBuffers-1)
 
-                value.innerText = String.fromCharCode(65 + v)
-                audioNode.bufferKey = v
-            }
+        //         value.innerText = String.fromCharCode(65 + v)
+        //         audioNode.bufferKey = v
+        //     }
 
-            box.appendChild(btn)
-        })
+        //     box.appendChild(btn)
+        // })
 
-        box.appendChild(value)
+        // box.appendChild(value)
+////////////////////////////////
+        const update = (bufferKey : number) => 
+            audioNode.bufferKey = bufferKey
+        const sampleCanvas = 
+            new SampleSelectComponent(update, audioNode.bufferKey)
+
+        refreshBufferImage = sampleCanvas.setImage.bind(sampleCanvas)
+        box.appendChild(sampleCanvas.html)
+
         controls.appendChild(box)
     }
     
@@ -108,5 +119,5 @@ export function audioCaptureNodeControls(audioNode : NuniRecordingNode) {
         controls.appendChild(recordButton)
     }
 
-    return controls
+    return { controls, refreshBufferImage }
 }

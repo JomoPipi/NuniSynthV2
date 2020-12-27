@@ -12,7 +12,7 @@ import { NuniGraphController, ActiveControllers } from './controller/graph_contr
 
 import 
     { KB, audioCtx, Sequencer, NuniSampleNode
-    , MasterClock, NuniSourceNode, NuniGraphAudioNode, PianoRoll12Tone, OscillatorNode2, AutomationNode, SampleSequencer
+    , MasterClock, NuniSourceNode, NuniGraphAudioNode, PianoRoll12Tone, OscillatorNode2, AutomationNode, SampleSequencer, NuniRecordingNode
     } from '../webaudio2/internal.js'
 import { snapToGrid } from './view/snap_to_grid.js'
 import { WaveformUtils } from '../waveform_utils/mutable_waveform.js'
@@ -116,6 +116,7 @@ Graph_Attachments: {
 
     BufferUtils.initBufferPresets(audioCtx)
     BufferUtils.setRefreshBufferFunc((index : number) => {
+        // CLEAN THIS UP WITH INTERFACES
         for (const { audioNode: an } of yieldNodes(g)) 
         {
             if (an instanceof NuniSampleNode && an.bufferKey === index) 
@@ -132,6 +133,12 @@ Graph_Attachments: {
                     }
                 }
             }
+            // TODO : FIX
+            //!dfghdfghdfgs
+            // if (an instanceof NuniRecordingNode && an.bufferKey === index)
+            // {
+            //     an.refreshBufferImage()
+            // }
         }
     })
 

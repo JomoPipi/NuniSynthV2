@@ -8,6 +8,7 @@
 import { BufferUtils } from '../../../buffer_utils/init_buffers.js'
 import { BufferStorage } from '../../../storage/buffer_storage.js'
 import { MasterClock } from '../../sequencers/master_clock.js'
+import { audioCaptureNodeControls } from './record_controls.js'
 
 export class NuniRecordingNode 
     extends MediaStreamAudioDestinationNode
@@ -18,6 +19,7 @@ export class NuniRecordingNode
     recordingLength : number
     sync : boolean
     subdiv : number // if subdiv === 0 we use recording length
+    refreshBufferImage : Function = () => void 0
 
     constructor(ctx : AudioContext) {
         super(ctx)
@@ -26,6 +28,12 @@ export class NuniRecordingNode
         this.recordingLength = 2
         this.sync = true
         this.subdiv = 0.5
+    }
+
+    getController() : HTMLElement {
+        const { controls, refreshBufferImage } = audioCaptureNodeControls(this)
+        this.refreshBufferImage = refreshBufferImage
+        return controls
     }
 
     captureAudioFromStream(recordButton : HTMLElement) {

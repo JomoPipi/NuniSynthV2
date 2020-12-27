@@ -557,13 +557,16 @@ code {
   text-shadow: blue;
 }
 
-.flat-grid, .sequencer-step-row-container {
+.flat-grid {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .table {
@@ -650,12 +653,6 @@ code {
 .note-box.halfway.selected {
   background: var(--color3) -webkit-gradient(linear, left top, left bottom, from(#5ca), to(var(--color0)));
   background: var(--color3) linear-gradient(#5ca, var(--color0));
-}
-
-.sequencer-step-row-container {
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
 }
 
 .sequencer-bottom-row {
@@ -1995,7 +1992,7 @@ a {
 }
 
 .clock-area-label {
-  margin-top: -27%;
+  margin-top: -24%;
   background-color: var(--color0);
   padding: 0px 17px;
 }

@@ -7,7 +7,7 @@
 
 import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { BufferUtils  } from '../../buffer_utils/internal.js'
-import { audioCaptureNodeControls } from './audio_capture_controls.js'
+import { audioCaptureNodeControls } from '../../webaudio2/nodes/record/record_controls.js'
 // import { createResizeableGraphEditor } from './resizeable_graph_editor.js'
 import 
     { NuniSourceNode, NuniSampleNode, Sequencer
@@ -77,7 +77,7 @@ export function createValuesWindow(
 
     if (audioNode instanceof NuniRecordingNode) 
     {
-        controls.appendChild(audioCaptureNodeControls(audioNode))
+        controls.appendChild(audioNode.getController())
     }
 
     if (audioNode instanceof Sequencer) 

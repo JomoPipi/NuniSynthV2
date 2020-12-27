@@ -116,6 +116,7 @@ code {
 .flat-grid {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .table { 
@@ -188,11 +189,6 @@ $shadow: rgba(0, 0, 0, 0.4);
             background:var(--color3) linear-gradient(#5ca, var(--color0));
         }
     }
-}
-
-.sequencer-step-row-container {
-    @extend .flat-grid;
-    align-items: center;
 }
 
 .sequencer-step-row {

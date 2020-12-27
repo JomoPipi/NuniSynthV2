@@ -9,6 +9,7 @@ import { ADSR_Controller } from "../../adsr.js"
 import { Sequencer } from "../../sequencers/linear_sequencers/sequencer.js"
 import { BufferStorage } from "../../../storage/buffer_storage.js"
 import { BufferUtils } from "../../../buffer_utils/init_buffers.js"
+import { SampleSelectComponent } from "../../../UI_library/components/sample_select.js"
 
 
 
@@ -20,7 +21,7 @@ export class SampleSequencer extends Sequencer
     playbackRate : NuniAudioParam
     ctx : AudioContext
     private channelBufferKeyUpdate 
-        : Record<number, (bk : number) => void> 
+        : Record<number, (bufferKey : number) => void> 
         = {}
 
     constructor(ctx : AudioContext) {
@@ -130,54 +131,14 @@ export class SampleSequencer extends Sequencer
         
         items.push(deleteRowBtn)
 
-        const valueText = E('span',
-            { text: String.fromCharCode(65 + this.channelData[key].bufferKey!) 
-            , className: 'center'
-            })
-            valueText.style.display = 'inline-block'
-            valueText.style.width = '25px' // The rows need to stop being moved by the text
-        
-        items.push(valueText)
-
         AddASampleCanvas: {
-            const canvas = E('canvas', { className: 'sample-canvas sample-sequencer-channel' })
-            const ctx = canvas.getContext('2d')!
-            const nowShowing = this.channelData[key].bufferKey!
-            if (nowShowing == null) throw 'Not supposed to happen'
-            const H = canvas.height = 35
-            const W = canvas.width = H * PHI | 0 // * PHI | 0
-            const setImage = (n : number) => {
-                const imageData = BufferUtils.getImage(n, ctx, H, W)
-                ctx.putImageData(imageData, 0, 0)
-            }
-            this.channelBufferKeyUpdate[key] = setImage
-            setImage(nowShowing)
-            // items.push(canvas)
+            const update = (bufferKey : number) => 
+                this.channelData[key].bufferKey = bufferKey
+            const sampleCanvas = 
+                new SampleSelectComponent(update, this.channelData[key].bufferKey!)
 
-            const btnContainer = E('span', { className: 'vert-split' })
-            ;['🡅','🡇'].forEach((op,i) => { // change the buffer index
-                const btn = E('button',
-                    { text: op
-                    , className: `next-sample-btn`
-                    })
-                if (i === 1) btn.classList.add('bottom')
-    
-                btn.onclick = () => {
-                    const v = clamp(0, 
-                        this.channelData[key].bufferKey! + Math.sign(-i + .5), 
-                        BufferUtils.nBuffers-1)
-    
-                    valueText.innerText = String.fromCharCode(65 + v)
-                    this.channelData[key].bufferKey = v
-    
-                    setImage(v)
-                }
-                btnContainer.appendChild(btn)
-                // items.push(btn)
-                // if (i === 0) items.push(canvas)
-            })
-            items.push(btnContainer)
-            items.push(canvas)
+            this.channelBufferKeyUpdate[key] = sampleCanvas.setImage.bind(sampleCanvas)
+            items.push(sampleCanvas.html)
         }
 
         return items
