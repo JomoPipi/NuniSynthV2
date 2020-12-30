@@ -48,7 +48,13 @@ export function formulateBuffer(index : number) {
 
         try 
         {
-            const L = buffer.length        
+            const length = buffer.length
+            const CURRENT_BUFFER = String.fromCharCode(BufferUtils.currentIndex + 65)
+            console.log('CURRENT_BUFFER =',CURRENT_BUFFER)
+            const alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+            const [A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z] = alpha
+                
+
 
             let SAMPLES : any
             if (expression.includes('SAMPLES'))
@@ -57,7 +63,7 @@ export function formulateBuffer(index : number) {
                 SAMPLES = (() => {
                     const accessed = {} as Indexed
                     let doThrow = false
-                    const SAMPLES = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].reduce((a, key) => {
+                    const SAMPLES = [...alpha].reduce((a, key) => {
                         Object.defineProperty(a, key, {
                             get() {
                                 accessed[key] = true
@@ -74,7 +80,7 @@ export function formulateBuffer(index : number) {
                     console.log('SAMPLES.A =',(SAMPLES as any).A)
                     
                     eval(`
-                        for (let n = 0; n < L; n++) 
+                        for (let n = 0; n < length; n++) 
                         {
                             ${expression}
                         }
@@ -97,7 +103,7 @@ export function formulateBuffer(index : number) {
                 for (let channel = 0; channel < buffer.numberOfChannels; channel++) 
                 {  
                     const nowBuffering = buffer.getChannelData(channel)
-                    for (let n = 1; n < L; n++) 
+                    for (let n = 1; n < length; n++) 
                     {
                         nowBuffering[n] = clamp(-1, ${expression}, 1)
                     }
@@ -108,7 +114,7 @@ export function formulateBuffer(index : number) {
                     {
                         const value = (n / amount) ** 0.75
                         nowBuffering[n] *= value
-                        nowBuffering[L-n] *= value
+                        nowBuffering[length-n] *= value
                     }
                 }
             `)
