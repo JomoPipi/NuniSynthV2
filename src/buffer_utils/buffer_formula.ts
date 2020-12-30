@@ -13,13 +13,22 @@ import { createSelectionPrompt } from '../UI_library/components/selection_prompt
 const formulaInput = D('buffer-formula') as HTMLInputElement
 const errorMsgText = D('buffer-formula-error-msg')
 
+// For the eval
+const 
+    { sin, cos, tan, log, log2, exp, sqrt, random, atan
+    , atan2, atanh, abs, acos, acosh, asin, asinh, cbrt
+    , ceil, cosh, expm1, floor, hypot, log10, LN2, LN10
+    , LOG2E, max, min, pow, round, sign, SQRT1_2, SQRT2
+    , tanh, trunc
+    } = Math
+
 export function formulateBuffer(index : number) {
     
     const seconds = BufferUtils.nextBufferDuration
 
     const buffer = audioCtx
         .createBuffer(1, audioCtx.sampleRate * seconds, audioCtx.sampleRate)
-    
+        
     const isError = validateExp(formulaInput.value)
 
     if (isError) 
@@ -36,22 +45,58 @@ export function formulateBuffer(index : number) {
     }
 
     function validateExp(expression : string) {
-        // For the eval
-        const 
-            { sin, cos, tan, log, log2, exp, sqrt, random, atan
-            , atan2, atanh, abs, acos, acosh, asin, asinh, cbrt
-            , ceil, cosh, expm1, floor, hypot, log10, LN2, LN10
-            , LOG2E, max, min, pow, round, sign, SQRT1_2, SQRT2
-            , tanh, trunc
-            } = Math
 
         try 
         {
+            const L = buffer.length        
+
+            let SAMPLES : any
+            if (expression.includes('SAMPLES'))
+            preliminaryExecution: {
+                // var SAMPLES = preliminaryExecution(expression)
+                SAMPLES = (() => {
+                    const accessed = {} as Indexed
+                    let doThrow = false
+                    const SAMPLES = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].reduce((a, key) => {
+                        Object.defineProperty(a, key, {
+                            get() {
+                                accessed[key] = true
+                                return () => void 0
+                            },
+                            set() {
+                                doThrow = true
+                            }
+                        })
+                        return a
+                    }, {})
+
+                    console.log('SAMPLES =',SAMPLES)
+                    console.log('SAMPLES.A =',(SAMPLES as any).A)
+                    
+                    eval(`
+                        for (let n = 0; n < L; n++) 
+                        {
+                            ${expression}
+                        }
+                    `)
+
+                    if (doThrow) throw 'Do not attempt to assign sample data.'
+
+                    return Object.keys(accessed).reduce((a,key) => {
+                        const bufferKey = key.charCodeAt(0) - 65
+                        const buffer = BufferStorage.get(bufferKey)
+                        const channelData = buffer.getChannelData(0).slice()
+                        const allowance = buffer.length * 99
+                        a[key] = (n : number) => channelData[(n + allowance) % buffer.length]
+                        return a
+                    }, {} as Indexed)
+                })()
+            }
+
             eval(`
                 for (let channel = 0; channel < buffer.numberOfChannels; channel++) 
                 {  
                     const nowBuffering = buffer.getChannelData(channel)
-                    const L = buffer.length
                     for (let n = 1; n < L; n++) 
                     {
                         nowBuffering[n] = clamp(-1, ${expression}, 1)
@@ -75,6 +120,15 @@ export function formulateBuffer(index : number) {
         
         return undefined
     }
+}
+
+function preliminaryExecution(exp : string) {
+    // TODO:
+
+    // const n = 1
+    // eval(exp)
+
+    // log('accessed =',JSON.stringify(accessed))
 }
 
 const bufferPresets = 

@@ -445,7 +445,7 @@ export class NuniGraphController {
 
         function titleEditor() {
             const input = E('input', 
-                { className: 'title-editor margin-4'
+                { className: 'title-editor margin-4 no-drag'
                 , props: 
                     { value: node.title || ''
                     , size: 5// 10

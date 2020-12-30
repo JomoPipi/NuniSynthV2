@@ -123,7 +123,7 @@ Graph_Attachments: {
             {
                 an.refresh()
             }
-            if (an instanceof SampleSequencer)
+            else if (an instanceof SampleSequencer)
             {
                 for (const key in an.channelData)
                 {
@@ -133,9 +133,9 @@ Graph_Attachments: {
                     }
                 }
             }
-            if (an instanceof NuniRecordingNode && an.bufferKey === index)
+            else if (an instanceof NuniRecordingNode && an.bufferKey === index)
             {
-                an.refreshBufferImage(an.bufferKey)
+                an.refreshBufferImage()
             }
         }
     })

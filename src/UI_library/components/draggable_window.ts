@@ -48,7 +48,7 @@ export function createDraggableWindow(
 
 function addDragFunction(bar : HTMLElement, box : HTMLElement, clickCallback : Function) {
     
-    const state = { coords: [0] }
+    const state = { coords: [0], nodrag: false }
 
     bar.onmousedown = doUntilMouseUp(mousemove, { mousedown })
 
@@ -60,10 +60,14 @@ function addDragFunction(bar : HTMLElement, box : HTMLElement, clickCallback : F
             , box.offsetTop + box.offsetHeight/2
             ]
 
+        state.nodrag = (e.target as HTMLElement)?.classList.contains('no-drag')
+
         clickCallback(box)
     }
 
     function mousemove(e : MouseEvent) {
+        if (state.nodrag) return;
+        
         const [x, y, bx, by] = state.coords
         UI_clamp(
             e.clientX + bx - x,

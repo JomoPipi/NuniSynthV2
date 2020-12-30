@@ -7,18 +7,6 @@
 
 import { doUntilMouseUp } from "../events/until_mouseup.js"
 
-// const shadowKnobclasses = 
-//     [ 'shadow-knob'
-//     , 'shadow-knob2'
-//     , 'shadow-knob3'
-//     , 'shadow-knob4'
-//     ] as const
-
-// const knobClasses = 
-//     [ 'js-dial'
-//     , 'js-dial2'
-//     ] as const
-
 type Options = {
     mousedown? : MouseHandler
     mouseup? : MouseHandler
@@ -75,7 +63,8 @@ export class JsDial {
 
         const LIMIT = 100
         const _mousemove = ({ movementX: dx, movementY: dy } : MouseEvent) => {
-            if (Math.abs(dx) + Math.abs(dy) > LIMIT) return; // <- Helps mitigate a Chrome bug.
+            const sum = Math.abs(dx) + Math.abs(dy)
+            if (sum > LIMIT) return; // <- Helps mitigate a Chrome bug.
 
             this.value += (-dy + dx * this.x_sensitivity) * this.sensitivity
             this.value = clamp(this.min, this.value, this.max)

@@ -6,7 +6,6 @@
 
 
 import { NuniRecordingNode, MasterClock } from "../../internal.js";
-import { BufferUtils } from "../../../buffer_utils/internal.js";
 import { createSubdivSelect } from "../../../nunigraph/view/create_subdivselect.js";
 import { SampleSelectComponent } from "../../../UI_library/components/sample_select.js";
 
@@ -21,7 +20,7 @@ export function audioCaptureNodeControls(audioNode : NuniRecordingNode) {
     let refreshBufferImage
 
     choose_buffer_index: {
-        const box = E('span', { text: 'WRITE TO: ' })
+        const box = E('span', { text: 'WRITE TO:' })
         
         const update = (bufferKey : number) => 
             audioNode.bufferKey = bufferKey
@@ -41,7 +40,7 @@ export function audioCaptureNodeControls(audioNode : NuniRecordingNode) {
         const subdivSelect = createSubdivSelect(audioNode, { fn: updateSlider })
         const lengthText = E('span', { text: value + secs })
         const lengthSlider = E('input',
-            { props: 
+            { props:
                 { type: 'range'
                 , min: 0.1
                 , max: 20
