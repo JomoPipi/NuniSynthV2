@@ -160,7 +160,7 @@ for (const type of nodesSortedByRecurrence)
     const icon = createSVGIcon(DefaultNodeIcon[type], 10)
     const label = E('span', { text: NodeLabel[type] })
     const surface = E('a',
-        { children: [icon, label]
+        { children: [icon, label, infoElement(type)]
         , props: { href: '#' }
         })
     const btn = E('li',
@@ -174,4 +174,17 @@ for (const type of nodesSortedByRecurrence)
     btn.style.borderColor = NodeTypeColors[type]
 
     btnList.appendChild(btn)
+}
+
+function infoElement(type : NodeTypes) {
+    
+    return E('span', 
+        { text: 'i'
+        , className: 'tooltip _2'
+        
+        , children: [E('span',
+            { text: NodeTypeDescriptions[type]
+            , className: 'tooltiptext'
+            })]
+        })
 }

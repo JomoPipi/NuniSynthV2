@@ -441,6 +441,27 @@ const NodeTypeColors2 : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.COMPRESSOR]:'rgb(200,180,220)'
     }
 
+const NodeTypeDescriptions =
+    { [NodeTypes.OUTPUT]: 'NOT USED'
+    , [NodeTypes.GAIN]:   'Gain nodes increase or decrease the intensity of signals. These should be used frequently.'
+    , [NodeTypes.OSC]:    'Oscillator nodes output a basic tone.'
+    , [NodeTypes.FILTER]: 'Filter nodes allow you to remove (or filter out) ranges of frequencies.'
+    , [NodeTypes.PANNER]: 'Panner nodes pan the sound output left or right.'
+    , [NodeTypes.DELAY]:  'Delay nodes cause a delay between the arrival of input data and its\' propagation to the output.'
+    , [NodeTypes.SAMPLE]: 'Sample nodes represent a short audio asset residing in memory.'
+    , [NodeTypes.G_SEQ]:  'Gate Sequencer nodes output simple rhythmic sequences from their inputs.'
+    , [NodeTypes.S_SEQ]:  'Sample Sequencer nodes output simple rhythmic sequences from samples.'
+    , [NodeTypes.NUM]:    'It\'s just a number. You can connect it to parameters of other nodes.'
+    , [NodeTypes.RECORD]: 'This node records it\'s input(s).'
+    , [NodeTypes.MODULE]: 'Module nodes have nodes inside of them.'
+    , [NodeTypes.AUTO]:   'Automation nodes automate the input signal.'
+
+    , [NodeTypes.PIANOR]: 'Pianoroll nodes are meant to be connected to the detune parameter of nodes that have a detune parameter (Oscillator, Sample, Sample Sequencer, Filter).'
+    , [NodeTypes.ENV]:    'NOT USED'
+    , [NodeTypes.PROCESSOR]: 'Processor nodes execute audio processing code.'
+    , [NodeTypes.COMPRESSOR]:'Compressor nodes provide a compression effect which lowers the volume of the loudest parts of the signal in order to help prevent clipping and distortion that can occur when multiple sounds are played and multiplexed together at once.'
+    } as const
+
 const NodeTypeWarnings : { readonly [key in NodeTypes]? : string } = 
     { [NodeTypes.FILTER]: `Filters may become unstable and we won't do anything about it. If this happens the program will cease to function properly and will need to be re-started.`
     }

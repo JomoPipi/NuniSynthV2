@@ -217,13 +217,6 @@ function warningButton(type : NodeTypes) {
             { text: NodeTypeWarnings[type]
             , className: 'tooltiptext'
             })]
-        
-        , props: { style: 
-            { width: '20px'
-            , height: '20px'
-            , float: 'right'
-            , backgroundColor:' orange'
-            }}
         })
 }
 
