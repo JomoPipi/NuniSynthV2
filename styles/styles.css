@@ -1160,6 +1160,7 @@ code {
   border-color: var(--color3);
   font-weight: bold;
   text-align: middle;
+  margin: auto auto;
 }
 
 .tooltip .tooltiptext {

@@ -211,7 +211,11 @@ function loadBuffers(filePath : string) {
                 .then(response => trace(response).arrayBuffer())
                 // Turn it from mp3/aac/whatever into raw audio data
                 .then(arrayBuffer => audioCtx.decodeAudioData(arrayBuffer))
-                .then(audioBuffer => BufferStorage.set(key, audioBuffer, metadata.fileName))
+                .then(audioBuffer => {
+                    BufferStorage.set(key, audioBuffer, metadata.fileName)
+                    BufferUtils.refreshAffectedBuffers(key)
+                    if (key === BufferUtils.currentIndex) BufferUtils.updateCurrentBufferImage()
+                })
                 .catch(e => console.warn('That file likely no longer exists', e))
         }
         else
@@ -262,7 +266,7 @@ export function importAudioFile() {
                     .then(arrayBuffer => audioCtx.decodeAudioData(arrayBuffer))
                     .then(audioBuffer => {
                         BufferStorage.set(BufferUtils.currentIndex, audioBuffer, fileName)
-                        BufferUtils.updateBufferUI()
+                        BufferUtils.updateCurrentBufferImage()
                         BufferUtils.refreshAffectedBuffers()
                     })
                     .catch(e => log('look at this fucking error',e))

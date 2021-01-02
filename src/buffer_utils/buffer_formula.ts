@@ -41,7 +41,7 @@ export function formulateBuffer(index : number) {
         errorMsgText.innerText = ''
         BufferStorage.set(index, buffer)
         BufferUtils.refreshAffectedBuffers()
-        BufferUtils.updateBufferUI()
+        BufferUtils.updateCurrentBufferImage()
     }
 
     function validateExp(expression : string) {

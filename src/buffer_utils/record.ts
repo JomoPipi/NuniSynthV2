@@ -118,7 +118,7 @@ export function recordTo(index : number) {
                 BufferStorage.set(index, buffer)
                 BufferUtils.refreshAffectedBuffers()
                 recordButton.classList.remove('recording')
-                BufferUtils.updateBufferUI()
+                BufferUtils.updateCurrentBufferImage()
                 f && f()
             } catch (e) {
                 errStuff(e)

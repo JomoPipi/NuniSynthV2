@@ -161,6 +161,7 @@ for (const type of nodesSortedByRecurrence)
     const label = E('span', { text: NodeLabel[type] })
     const surface = E('a',
         { children: [icon, label, infoElement(type)]
+        , className: 'contextmenu-btn-surface'
         , props: { href: '#' }
         })
     const btn = E('li',

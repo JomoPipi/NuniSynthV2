@@ -61,7 +61,7 @@ class BufferUtily {
         return imageData
     }
 
-    updateBufferUI() {
+    updateCurrentBufferImage() {
         const n = this.currentIndex
         const buff = BufferStorage.get(n)
 
@@ -110,7 +110,7 @@ class BufferUtily {
             }
             BufferStorage.set(n, buffer)
         }
-        this.updateBufferUI()
+        this.updateCurrentBufferImage()
         
         D('buff-0').classList.add('selected2')
 
@@ -129,7 +129,7 @@ class BufferUtily {
                 ?.classList.add('selected2')
 
             this.currentIndex = n
-            this.updateBufferUI()
+            this.updateCurrentBufferImage()
         }
     }
 }

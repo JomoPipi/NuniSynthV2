@@ -322,22 +322,15 @@ export class NuniGraphController {
             , className: 'push-button'
             , props:
                 { onclick: () => {
-                    const prompt = createSelectionPrompt(
-                        [ 'Create Custom Node..'
-                        , 'Save Module'
-                        ])
+                    const prompt = createSelectionPrompt([ 'Save Module', 'Cancel' ])
                     barContent.appendChild(prompt)
-                    prompt.style.margin = '30px -100px'
+                    // prompt.style.margin = '50px -20px'
 
                     // Delay this or it will register on the same click
                     requestAnimationFrame(_ =>
                         window.addEventListener('click', (e : MouseEvent) => {
-                            const [createCustomNode, saveModule] = prompt.children
-                            if (e.target === createCustomNode) 
-                            {
-                                startCustomNodeWizard(node)
-                            }
-                            else if (e.target === saveModule)
+                            const [ saveModule ] = prompt.children
+                            if (e.target === saveModule)
                             {
                                 addModuleToList(
                                     node.title || 'Untitled',

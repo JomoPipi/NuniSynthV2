@@ -95,7 +95,7 @@ export class NuniRecordingNode
                     BufferStorage.set(this.bufferKey, buffer)
                     BufferUtils.refreshAffectedBuffers(this.bufferKey)
                     recordButton.classList.remove('recording')
-                    BufferUtils.updateBufferUI()
+                    BufferUtils.updateCurrentBufferImage()
                 })
                 .catch(errStuff)
         })
