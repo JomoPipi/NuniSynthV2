@@ -260,44 +260,57 @@ button {
 }
 
 .info-menu-container {
-    display: none;
+    opacity: 0;
+    display: flex;
+    align-items: center;
+
     color: var(--color6);
     position: absolute;
-    background-color: rgba(0,0,0,0.5);
-    // pointer-events: none;
     top: 0px;
     bottom: 0px;
     left: 0px;
     right: 0px;
-    text-align: center;
-    z-index: 4;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(0px);
+    transition: opacity 1s ease, backdrop-filter 1s ease;
+    
+    &.show {
+        display: flex;
+        opacity: 1;
+        backdrop-filter: blur(4px);
+        pointer-events: all;
+    }
 }
 
 .info-menu {
-    border: 3px solid blue;
+    opacity: 1;
+    border: 3px solid var(--color1);
     background-color: var(--color0);
     width: 400px;
     height: 400px;
-    margin-top: 5%;
-    margin-left: calc(50% - 200px);
+    margin: auto auto;
+    padding-top: 5px;
+    text-align: center;
 }
 
 .info-menu-grid {
-    pointer-events: all;
+    opacity: 1;
     width: 100%;
     height: 100%;
-    display: grid;
-    grid-template-columns: 30% 70%;
 }
 
 #info-menu-buttons {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     
     ._info-menu-button_ {
         color: var(--color6);
         pointer-events: all;
-        border: 1px solid #333;
+        border: 1px solid var(--color3);
         background-color: var(--color2);
     }
 
@@ -317,6 +330,7 @@ button {
         margin: 5px 0px;
     }
 }
+
 
 .info-content {
     list-style-position: inside;
@@ -453,3 +467,6 @@ button {
 
 
 
+.project-title {
+    height: 40px;
+}

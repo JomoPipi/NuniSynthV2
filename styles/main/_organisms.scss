@@ -152,16 +152,12 @@ $number-grab-width: 120px;
         background: transparent;
         color: var(--color5);
         border-radius: 100px;
-        // font-style: italic;
         border: 1px solid rgba(255, 255, 255, 0.151);
         box-sizing: border-box;
         border-color: var(--color3);
         font-weight: bold;
-        text-align: middle;
-        margin: auto auto;
-        // width: 16px;
-        // height: 16px;
-        // font-size: 0.75em;
+        margin-top: 2px;
+        border-bottom-color: transparent;
     }
 }
 

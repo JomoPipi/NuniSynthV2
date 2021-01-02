@@ -39,7 +39,7 @@ pageGroupify(D('scale-kinds'), [
     const infoBtns = 
         [...document.querySelectorAll('._info-menu-button_')] as HTMLButtonElement[]
 
-    D('info-button').onclick = () => {
+    ;(D('info-button').onclick = () => {
         const showMenu = container.classList.toggle('show')
         if (showMenu)
         {
@@ -51,7 +51,7 @@ pageGroupify(D('scale-kinds'), [
         {
             container.onclick = null
         }
-    }
+    })()
 
     function clickInsideContainer(e : MouseEvent) {
         const clickedElement = e.target

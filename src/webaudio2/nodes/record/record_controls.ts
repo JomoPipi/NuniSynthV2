@@ -24,6 +24,7 @@ export function audioCaptureNodeControls(audioNode : NuniRecordingNode) {
         
         const update = (bufferKey : number) => 
             audioNode.bufferKey = bufferKey
+            
         const sampleCanvas = 
             new SampleSelectComponent(update, audioNode.bufferKey)
 
