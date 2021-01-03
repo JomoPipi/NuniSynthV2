@@ -257,12 +257,10 @@ button {
   height: 100vh;
   pointer-events: none;
   background-color: rgba(0, 0, 0, 0.5);
-  -webkit-backdrop-filter: blur(0px);
-          backdrop-filter: blur(0px);
-  -webkit-transition: opacity 1s ease, -webkit-backdrop-filter 1s ease;
-  transition: opacity 1s ease, -webkit-backdrop-filter 1s ease;
-  transition: opacity 1s ease, backdrop-filter 1s ease;
-  transition: opacity 1s ease, backdrop-filter 1s ease, -webkit-backdrop-filter 1s ease;
+  -webkit-backdrop-filter: blur(4px);
+          backdrop-filter: blur(4px);
+  -webkit-transition: opacity 1s linear;
+  transition: opacity 1s linear;
 }
 
 .info-menu-container.show {
@@ -270,8 +268,6 @@ button {
   display: -ms-flexbox;
   display: flex;
   opacity: 1;
-  -webkit-backdrop-filter: blur(4px);
-          backdrop-filter: blur(4px);
   pointer-events: all;
 }
 
@@ -444,6 +440,40 @@ button {
 
 .project-title {
   height: 40px;
+}
+
+.traffic-lights {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 4;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.traffic-lights div {
+  width: 28px;
+  height: 18px;
+  text-align: center;
+  color: var(--color5);
+  -webkit-transition: background-color 0.5s ease;
+  transition: background-color 0.5s ease;
+}
+
+#close-window:hover {
+  background: rgba(255, 0, 0, 0.25);
+}
+
+#minimize-window:hover {
+  background: rgba(255, 255, 0, 0.25);
+}
+
+#restore-window:hover {
+  background: rgba(0, 255, 0, 0.25);
 }
 
 code {
@@ -1708,7 +1738,7 @@ a {
   height: 36px;
   width: 36px;
   border-radius: 2px;
-  background-color: #FFFFFF;
+  background-color: var(--color5);
 }
 
 .l_square span:nth-child(1) {
@@ -2006,9 +2036,14 @@ a {
 }
 
 .main-box-container .top-edge {
-  -webkit-app-region: drag;
   background: -webkit-gradient(linear, left top, left bottom, from(var(--color4)), to(transparent));
   background: linear-gradient(180deg, var(--color4) 0%, transparent 100%);
+}
+
+.main-box-container .top-edge .draggable-part {
+  -webkit-app-region: drag;
+  height: 100%;
+  width: calc(100vw - 105px);
 }
 
 .main-box-container .bottom-edge {

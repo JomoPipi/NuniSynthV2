@@ -275,13 +275,12 @@ button {
     pointer-events: none;
 
     background-color: rgba(0,0,0,0.5);
-    backdrop-filter: blur(0px);
-    transition: opacity 1s ease, backdrop-filter 1s ease;
+    backdrop-filter: blur(4px);
+    transition: opacity 1s linear;
     
     &.show {
         display: flex;
         opacity: 1;
-        backdrop-filter: blur(4px);
         pointer-events: all;
     }
 }
@@ -469,4 +468,33 @@ button {
 
 .project-title {
     height: 40px;
+}
+
+.traffic-lights {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+
+    div {
+        width: 28px;
+        height: 18px;
+        text-align: center;
+        color: var(--color5);
+        transition: background-color 0.5s ease;
+    }
+}
+
+#close-window:hover {
+    background: rgba(255,0,0,0.25);
+}
+
+#minimize-window:hover {
+    background: rgba(255,255,0,0.25);
+}
+
+#restore-window:hover {
+    background: rgba(0,255,0,0.25);
 }

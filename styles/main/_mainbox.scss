@@ -75,8 +75,14 @@ $bottom-edge:linear-gradient(0deg, $dark $factor0, transparent $factor1);
         background: $right-edge;
     }
     .top-edge {
-        -webkit-app-region: drag;
         background: $top-edge;
+
+        .draggable-part {
+            -webkit-app-region: drag;
+            height: 100%;
+            width: calc(100vw - 105px);
+            // background-color: green;
+        }
     }
     .bottom-edge {
         background: $bottom-edge;

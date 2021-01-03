@@ -5,7 +5,7 @@
 
 
 
-const { app, BrowserWindow, contentTracing } = require('electron')
+const { app, BrowserWindow, contentTracing, dialog } = require('electron')
 const path = require('path')
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -16,9 +16,10 @@ if (require('electron-squirrel-startup'))
 
 const createWindow = () => {
   // Create the browser window.
+  const { width, height } = require('electron').screen.getPrimaryDisplay().size
   const mainWindow = new BrowserWindow(
-    { width: 500
-    , height: 500
+    { width//: 500
+    , height//: 500
     , webPreferences: 
       { nodeIntegration: true
       , preload: './preload.js'
@@ -36,9 +37,44 @@ const createWindow = () => {
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, '/../index.html'))
 
-  // Open the DevTools.
+  const toggleFullscreen = (() => {
+    let fullscreen = false
+    return () => {
+      mainWindow.setFullScreen(fullscreen ^= true)
+    }
+  })()
+
+  // Open the DevTools:
   // mainWindow.webContents.openDevTools()
 
+
+  // Receive Traffic Light Message:
+  const { ipcMain } = require('electron')
+  ipcMain.on('asynchronous-message', (event, arg) => {
+    console.log('arg =',arg)
+    if (arg === 'minimize-window')
+    {
+      mainWindow.setFullScreen(false)
+      mainWindow.minimize()
+    }
+    else if (arg === 'restore-window') 
+    {
+      toggleFullscreen()
+      mainWindow.restore()
+    }
+    else if (arg === 'close-window')
+    {
+      dialog.showMessageBox(mainWindow,
+        { type: 'question'
+        , buttons: ['Yes', 'No']
+        , title: 'Confirm'
+        , message: 'Are you sure you want to quit?'
+        })
+        .then(({ response, checkboxChecked }) => {
+          if (response === 0) app.quit()
+        })
+    }
+  })
 }
 
 app.on('ready', _ => { 

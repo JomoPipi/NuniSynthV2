@@ -577,7 +577,7 @@ export class AutomationPointsEditor {
     private FREEHAND_MODE_iterations = 0
     private FREEHAND_MODE_mousemove(mouseX : number, mouseY : number) {
         const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, mouseY)
-        const TICK = 10
+        const TICK = 3
         if (this.FREEHAND_MODE_iterations++ % TICK === 0)
         {
             const nextX = clamp(0, x, 1)
