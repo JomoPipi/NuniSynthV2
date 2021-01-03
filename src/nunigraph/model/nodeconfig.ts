@@ -369,7 +369,7 @@ const AudioNodeParams =
 const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
     { [NodeTypes.OUTPUT]: []
     , [NodeTypes.GAIN]:   []
-    , [NodeTypes.OSC]:    ['sine','triangle','square','sawtooth','custom']
+    , [NodeTypes.OSC]:    ['sine','triangle','square','sawtooth'] // ,'custom'] <- might come back later
     , [NodeTypes.FILTER]:
         ["lowpass", "highpass", "bandpass", /*"lowshelf"
         ,"highshelf", "peaking",*/ "notch", "allpass"]
