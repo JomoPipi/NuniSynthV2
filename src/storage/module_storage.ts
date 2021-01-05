@@ -8,8 +8,9 @@
 const { app } = require ('electron').remote
 const userDataPath = app.getPath ('userData')
 const fs = require('fs')
+const path = require('path')
 
-const modulesFolderPath = userDataPath + '\\Modules'
+const modulesFolderPath = path.join(userDataPath, 'Modules')
 
 if (!fs.existsSync(modulesFolderPath)) 
 {
@@ -18,8 +19,8 @@ if (!fs.existsSync(modulesFolderPath))
 }
 
 function get(key : string) {
-    const path = modulesFolderPath + '\\' + getModuleNames().find(name => name === key)
-    const file = fs.readFileSync(path, 'utf8')
+    const pathToFile = path.join(modulesFolderPath, getModuleNames().find(name => name === key))
+    const file = fs.readFileSync(pathToFile, 'utf8')
     return file
 }
 
@@ -41,7 +42,7 @@ function saveModule(key : string, graphCode : string) {
     D('wait-cursor').classList.add('show')
 
     const file = graphCode
-    const filePath = modulesFolderPath + '\\' + key
+    const filePath = path.join(modulesFolderPath, key)
 
     fs.writeFileSync(filePath, file)
 
@@ -55,5 +56,5 @@ function saveModule(key : string, graphCode : string) {
 function getModuleNames() : string[] {
     return fs
         .readdirSync(modulesFolderPath)
-        .filter((file : any) => fs.statSync(modulesFolderPath + '/' + file).isFile())
+        .filter((file : any) => fs.statSync(path.join(modulesFolderPath, file)).isFile())
 }

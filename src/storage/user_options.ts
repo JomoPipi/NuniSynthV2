@@ -6,9 +6,10 @@
 
 
 const fs = require('fs')
+const path = require('path')
 const { app } = require('electron').remote
 const userDataPath : string = app.getPath('userData')
-const filePath = userDataPath + '\\useroptions'
+const filePath = path.join(userDataPath, 'useroptions')
 
 type UserConfig = {
     'Show Node Images' : boolean

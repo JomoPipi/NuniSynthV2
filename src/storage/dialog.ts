@@ -17,8 +17,9 @@ const { dialog } = require('electron').remote
 const { app } = require('electron').remote
 const userDataPath : string = app.getPath('userData')
 const fs = require('fs')
+const path = require('path')
 
-const projectsFolderPath = userDataPath + '\\Projects'
+const projectsFolderPath = path.join(userDataPath, 'Projects')
 
 if (!fs.existsSync(projectsFolderPath)) 
 {
@@ -33,9 +34,7 @@ export function saveProject() {
     {
         const fileName = makeNuniFile.currentFileName
         const file = makeNuniFile()
-        const filePath = projectsFolderPath + '\\' 
-            + fileName
-            + '.nuni'
+        const filePath = path.join(projectsFolderPath, fileName + '.nuni')
 
         saveProtocol(filePath, file)
 
@@ -60,9 +59,7 @@ export function saveProjectAs() {
     const options = 
         { title
         , filters
-        , defaultPath: projectsFolderPath 
-            + '\\'
-            + (fileName || 'Untitled')
+        , defaultPath: path.join(projectsFolderPath, fileName || 'Untitled')
         }
 
     dialog
@@ -98,12 +95,10 @@ export function openExistingProject() {
         })
 }
 
-function setProjectTitle(path : string) {
-    log('path =',path)
-    log('projectsFolderPath =',projectsFolderPath)
+function setProjectTitle(pathToFile : string) {
     D('project-title').textContent =
     makeNuniFile.currentFileName = 
-        path
+        pathToFile
             .replace(projectsFolderPath, '')
             .replace('.nuni', '')
             .slice(1)
@@ -111,7 +106,7 @@ function setProjectTitle(path : string) {
 
 function saveProtocol(filePath : string, file : string) {
     fs.writeFileSync(filePath, file)
-    const fileName = filePath.split('\\').pop()!.replace('.nuni', '')
+    const fileName = path.sep(filePath).pop()!.replace('.nuni', '')
     saveBuffers(fileName)
 }
 
@@ -122,8 +117,8 @@ function saveProtocol(filePath : string, file : string) {
 
 
 
-const audioBuffersFolderPath = userDataPath + '\\AudioBuffers'
-const audioBuffersImportsPath = userDataPath + '\\AudioBufferImports'
+const audioBuffersFolderPath = path.join(userDataPath, 'AudioBuffers')
+const audioBuffersImportsPath = path.join(userDataPath, 'AudioBufferImports')
 
 const folders = [audioBuffersFolderPath, audioBuffersImportsPath]
 for (const folderPath of folders)
@@ -139,7 +134,7 @@ const CHANNEL_SEPARATOR = '-__-'
 const META = '-_-_-metadata'
 
 function saveBuffers(fileName : string) {
-    const buffersPath = audioBuffersFolderPath + '\\' + fileName
+    const buffersPath = path.join(audioBuffersFolderPath, fileName)
     
     if (!fs.existsSync(buffersPath)) 
     {
@@ -161,43 +156,39 @@ function saveBuffers(fileName : string) {
     }
 
     function saveImportBuffer(key : number, fileName : string) {
-        const path = buffersPath + '\\' + key
+        const pathToFile = path.join(buffersPath, key)
         const metadata = JSON.stringify({ fileName })
-        const metadataPath = path + META
+        const metadataPath = pathToFile + META
         fs.writeFileSync(metadataPath, metadata)
     }
 
     function saveLocalBuffer(key : number) {
-        const path = buffersPath + '\\' + key
+        const pathToFile = path.join(buffersPath, key)
         const audioBuffer = BufferStorage.get(key)
         const { numberOfChannels, length, sampleRate } = audioBuffer
 
         const metadata = JSON.stringify({ numberOfChannels, length, sampleRate })
-        const metadataPath = path + META
+        const metadataPath = pathToFile + META
         fs.writeFileSync(metadataPath, metadata)
 
         for (let ch = 0; ch < numberOfChannels; ch++)
         {
             const float32Array = audioBuffer.getChannelData(ch)
             const buffer = Buffer.from(float32Array.buffer)
-            const channelPath = path + CHANNEL_SEPARATOR + ch
+            const channelPath = pathToFile + CHANNEL_SEPARATOR + ch
             fs.writeFileSync(channelPath, buffer)
         }
     }
 }
 
-function getBasename(path : string) {
-    return path.replace(/^.*[\\\/]/, '')
-}
-
 function loadBuffers(filePath : string) {
-    const fileName = filePath.split('\\').pop()!.replace('.nuni', '')
-    const buffersPath = audioBuffersFolderPath + '\\' + fileName
+    const fileName = path.sep(filePath).pop()!.replace('.nuni', '')
+    const buffersPath = path.join(audioBuffersFolderPath, fileName)
 
     for (let key = 0; key < BufferUtils.nBuffers; key++)
     {
-        const path = buffersPath + '\\' + key
-        const metadataPath = path + META
+        const pathToFile = path.join(buffersPath, key)
+        const metadataPath = pathToFile + META
         if (!fs.existsSync(metadataPath))
         {
             console.warn('Could not retrieve buffer metadata at ' + metadataPath)
@@ -206,7 +197,7 @@ function loadBuffers(filePath : string) {
         const metadata = JSON.parse(fs.readFileSync(metadataPath))
         if (metadata.fileName)
         {
-            const audioFilePath = audioBuffersImportsPath + '\\' + metadata.fileName
+            const audioFilePath = path.join(audioBuffersImportsPath, metadata.fileName)
                         
             fetch(audioFilePath)
                 // Read it into memory as an arrayBuffer
@@ -231,7 +222,7 @@ function loadBuffers(filePath : string) {
     
             for (let ch = 0; ch < numberOfChannels; ch++)
             {
-                const channelPath = path + CHANNEL_SEPARATOR + ch
+                const channelPath = pathToFile + CHANNEL_SEPARATOR + ch
                 const loadedBuffer = fs.readFileSync(channelPath)
                 const f32Array = new Float32Array(loadedBuffer.buffer)
                 newAudioBuffer.copyToChannel(f32Array, ch)
@@ -254,16 +245,16 @@ export function importAudioFile() {
         .then(({ canceled, filePaths } : Indexed) => {
             if (!canceled) 
             {
-                const fileName = getBasename(filePaths[0])
-                const path = audioBuffersImportsPath + '\\' +  fileName
+                const fileName = path.getBasename(filePaths[0])
+                const pathToFile = path.join(audioBuffersImportsPath, fileName)
 
                 // Copy the file to the imports folder:
-                fs.copyFileSync(filePaths[0], path)
+                fs.copyFileSync(filePaths[0], pathToFile)
 
                 // Make the file writable:
-                fs.chmodSync(path, 0o666);
+                fs.chmodSync(pathToFile, 0o666);
 
-                fetch(path)
+                fetch(pathToFile)
                     .then(response => response.arrayBuffer())
                     .then(arrayBuffer => audioCtx.decodeAudioData(arrayBuffer))
                     .then(audioBuffer => {
@@ -287,7 +278,7 @@ function roundTripTest() {
     // This test saves the contents of buffer A to disk,
     // And then loads it into buffer B
 
-    const buffersPath = audioBuffersFolderPath + '\\' + '__test__'
+    const buffersPath = path.join(audioBuffersFolderPath, '__test__')
     const audioBuffer = BufferStorage.get(0)
     const nChannels = audioBuffer.numberOfChannels
     const newAudioBuffer = audioCtx.createBuffer(
@@ -300,9 +291,9 @@ function roundTripTest() {
         const float32Array = audioBuffer.getChannelData(i)
         const buffer = Buffer.from(float32Array.buffer)
 
-        const path = buffersPath + '-' + i
-        fs.writeFileSync(path, buffer)
-        const loadedBuffer = fs.readFileSync(path)
+        const pathToFile = buffersPath + '-' + i
+        fs.writeFileSync(pathToFile, buffer)
+        const loadedBuffer = fs.readFileSync(pathToFile)
 
         const f32a = new Float32Array(loadedBuffer.buffer)
         newAudioBuffer.copyToChannel(f32a, i)
