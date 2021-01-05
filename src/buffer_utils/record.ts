@@ -116,7 +116,7 @@ export function recordTo(index : number) {
                 buffer.copyToChannel(audiobuffer.getChannelData(0), 0)
 
                 BufferStorage.set(index, buffer)
-                BufferUtils.refreshAffectedBuffers()
+                BufferUtils.refreshBuffer(index)
                 recordButton.classList.remove('recording')
                 BufferUtils.updateCurrentBufferImage()
                 f && f()

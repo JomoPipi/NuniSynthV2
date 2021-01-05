@@ -93,7 +93,7 @@ export class NuniRecordingNode
                     buffer.copyToChannel(audiobuffer.getChannelData(0), 0)
 
                     BufferStorage.set(this.bufferKey, buffer)
-                    BufferUtils.refreshAffectedBuffers(this.bufferKey)
+                    BufferUtils.refreshBuffer(this.bufferKey)
                     recordButton.classList.remove('recording')
                     BufferUtils.updateCurrentBufferImage()
                 })

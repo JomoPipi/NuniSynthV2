@@ -98,6 +98,7 @@ export class BufferCanvasFrame {
     }
 
     private refresh() {
+        log('yo im here')
         const imageData = BufferUtils.getImage(
             this.nowShowing, 
             this.ctx, this.H, this.W)

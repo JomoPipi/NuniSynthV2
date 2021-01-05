@@ -20,7 +20,7 @@ function reverseBuffer(index : number) {
     console.warn('this should not be used because it mutates the buffers')
     BufferStorage.get(index).getChannelData(0).reverse()
     BufferStorage.get(index, true).getChannelData(0).reverse()
-    BufferUtils.refreshAffectedBuffers()
+    BufferUtils.refreshBuffer(BufferUtils.currentIndex)
 }
 
 function invertBuffer(index : number) {
@@ -29,7 +29,7 @@ function invertBuffer(index : number) {
     {
         arr[i] *= -1
     }
-    BufferUtils.refreshAffectedBuffers()
+    BufferUtils.refreshBuffer(BufferUtils.currentIndex)
 }
 
 const funcMap = 

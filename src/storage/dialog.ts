@@ -99,6 +99,8 @@ export function openExistingProject() {
 }
 
 function setProjectTitle(path : string) {
+    log('path =',path)
+    log('projectsFolderPath =',projectsFolderPath)
     D('project-title').textContent =
     makeNuniFile.currentFileName = 
         path
@@ -213,7 +215,7 @@ function loadBuffers(filePath : string) {
                 .then(arrayBuffer => audioCtx.decodeAudioData(arrayBuffer))
                 .then(audioBuffer => {
                     BufferStorage.set(key, audioBuffer, metadata.fileName)
-                    BufferUtils.refreshAffectedBuffers(key)
+                    BufferUtils.refreshBuffer(key)
                     if (key === BufferUtils.currentIndex) BufferUtils.updateCurrentBufferImage()
                 })
                 .catch(e => console.warn('That file likely no longer exists', e))
@@ -235,7 +237,7 @@ function loadBuffers(filePath : string) {
                 newAudioBuffer.copyToChannel(f32Array, ch)
             }
             BufferStorage.set(key, newAudioBuffer)
-            BufferUtils.refreshAffectedBuffers(key)
+            BufferUtils.refreshBuffer(key)
         }
     }
 }
@@ -267,7 +269,7 @@ export function importAudioFile() {
                     .then(audioBuffer => {
                         BufferStorage.set(BufferUtils.currentIndex, audioBuffer, fileName)
                         BufferUtils.updateCurrentBufferImage()
-                        BufferUtils.refreshAffectedBuffers()
+                        BufferUtils.refreshBuffer(BufferUtils.currentIndex)
                     })
                     .catch(e => log('look at this fucking error',e))
             }

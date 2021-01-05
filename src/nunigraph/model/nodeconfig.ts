@@ -464,6 +464,7 @@ const NodeTypeDescriptions =
 
 const NodeTypeWarnings : { readonly [key in NodeTypes]? : string } = 
     { [NodeTypes.FILTER]: `Filters may become unstable and we won't do anything about it. If this happens the program will cease to function properly and will need to be re-started.`
+    , [NodeTypes.DELAY]: `delayTime does not exceed 1 second.`
     }
 
 const ConnectionTypeColors : { readonly [key in ConnectionType] : string } =
@@ -738,7 +739,7 @@ type AudioNodeInterfaces<T extends NodeTypes> =
 
     
 const PRODUCTION_MODE_EQUALS_TRUE 
-    = false
+    = true
     
 const DEV_MODE_EQUALS_TRUE : typeof PRODUCTION_MODE_EQUALS_TRUE extends true ? false : true 
     = !PRODUCTION_MODE_EQUALS_TRUE

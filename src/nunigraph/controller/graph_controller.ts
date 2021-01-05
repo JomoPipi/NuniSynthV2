@@ -120,6 +120,7 @@ export class NuniGraphController {
 
         // Right-click options
         this.renderer.canvas.oncontextmenu = (e : MouseEvent) => {
+            if (e.buttons === 1) return;
             this.showContextMenu(e.clientX, e.clientY)
         }
     }

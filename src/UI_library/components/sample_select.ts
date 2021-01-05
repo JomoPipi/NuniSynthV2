@@ -71,6 +71,7 @@ export class SampleSelectComponent {
     }
 
     setImage(n : number = this.currentImage) {
+        log('im here!!')
         this.valueText.innerText = String.fromCharCode(65 + n)
         const imageData = BufferUtils.getImage(n, this.ctx, this.canvas.height, this.canvas.width)
         this.ctx.putImageData(imageData, 0, 0)

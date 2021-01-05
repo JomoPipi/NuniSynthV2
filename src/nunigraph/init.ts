@@ -57,7 +57,7 @@ ActiveControllers.push(GraphController)
 
 snapToGrid.attach(() => ActiveControllers.forEach(c => c.renderer.render()))
 
-if (PRODUCTION_MODE_EQUALS_TRUE == false) 
+if (DEV_MODE_EQUALS_TRUE) 
 {
     (<any>window).controller = GraphController
 }
@@ -67,7 +67,7 @@ Graph_Attachments: {
 
     const g = GraphController.g
     
-    if (PRODUCTION_MODE_EQUALS_TRUE == false) 
+    if (DEV_MODE_EQUALS_TRUE) 
     {
         (<any>window).getAudioNodes = () => [...yieldNodes(g)]
     }

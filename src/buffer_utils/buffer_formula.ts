@@ -40,7 +40,7 @@ export function formulateBuffer(index : number) {
     {
         errorMsgText.innerText = ''
         BufferStorage.set(index, buffer)
-        BufferUtils.refreshAffectedBuffers()
+        BufferUtils.refreshBuffer(index)
         BufferUtils.updateCurrentBufferImage()
     }
 

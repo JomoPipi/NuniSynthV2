@@ -18,7 +18,8 @@ const createWindow = () => {
   // Create the browser window.
   const { width, height } = require('electron').screen.getPrimaryDisplay().size
   const mainWindow = new BrowserWindow(
-    { width//: 500
+    { title: 'NuniSynth'
+    , width//: 500
     , height//: 500
     , webPreferences: 
       { nodeIntegration: true
@@ -68,7 +69,7 @@ const createWindow = () => {
         { type: 'question'
         , buttons: ['Yes', 'No']
         , title: 'Confirm'
-        , message: 'Are you sure you want to quit?'
+        , message: 'Are you sure you want to quit? Unsaved work will be lost.'
         })
         .then(({ response, checkboxChecked }) => {
           if (response === 0) app.quit()
