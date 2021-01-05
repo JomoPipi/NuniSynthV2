@@ -98,8 +98,7 @@ export function openExistingProject() {
 function setProjectTitle(pathToFile : string) {
     D('project-title').textContent =
     makeNuniFile.currentFileName = 
-        pathToFile
-            .replace(projectsFolderPath, '')
+        path.basename(pathToFile)
             .replace('.nuni', '')
             .slice(1)
 }
@@ -245,7 +244,7 @@ export function importAudioFile() {
         .then(({ canceled, filePaths } : Indexed) => {
             if (!canceled) 
             {
-                const fileName = path.getBasename(filePaths[0])
+                const fileName = path.basename(filePaths[0])
                 const pathToFile = path.join(audioBuffersImportsPath, fileName)
 
                 // Copy the file to the imports folder:
