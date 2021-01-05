@@ -184,7 +184,7 @@ function loadBuffers(filePath : string) {
 
     for (let key = 0; key < BufferUtils.nBuffers; key++)
     {
-        const pathToFile = path.join(buffersPath, key)
+        const pathToFile = path.join(buffersPath, key.toString())
         const metadataPath = pathToFile + META
         if (!fs.existsSync(metadataPath))
         {

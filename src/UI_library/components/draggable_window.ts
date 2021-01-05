@@ -24,7 +24,7 @@ type DraggableWindowOptions = {
 export function createDraggableWindow(
     { clickCallback, closeCallback, contentContainer, color, barContent } : DraggableWindowOptions) {
 
-    const exitBtn = E('button', { text: 'x', className: 'exit-button' })
+    const exitBtn = E('button', { text: 'x', className: 'exit-button no-drag' })
     const bar = E('div', { className: 'draggable-window-bar', children: [barContent, exitBtn] })
         // bar.style.border = '1px solid gold'
     const box = E('div', { className: 'window show', children: [bar, contentContainer] })

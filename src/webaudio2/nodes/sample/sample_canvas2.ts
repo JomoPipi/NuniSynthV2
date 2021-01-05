@@ -68,8 +68,19 @@ export class BufferCanvasFrame {
 
         this.H = canvas.height = this.size
         this.W = canvas.width = this.size * SPECIAL_NUM | 0
+        this.frame.style.maxWidth = this.W + 'px'
         this.ctx = canvas.getContext('2d')!
         this.refresh()
+
+        // let X_ZOOM = 1, x_zoom_level = 1
+        // const zoomFactor = 1.2
+        // canvas.onwheel = (e : WheelEvent) => {
+        //     // x_zoom_level = clamp(0, x_zoom_level + (e.deltaY / 100 | 0), 99)
+        //     // const delta = X_ZOOM * zoomFactor ** x_zoom_level
+        //     X_ZOOM = clamp(1, X_ZOOM *= zoomFactor ** Math.sin(e.deltaY), 1000)
+        //     this.W = canvas.width = X_ZOOM * this.size * SPECIAL_NUM | 0
+        //     this.refresh()
+        // }
     }
     
     updateSlicers(leftSlicer : boolean, val : number, _val : number) {
@@ -98,7 +109,6 @@ export class BufferCanvasFrame {
     }
 
     private refresh() {
-        log('yo im here')
         const imageData = BufferUtils.getImage(
             this.nowShowing, 
             this.ctx, this.H, this.W)
