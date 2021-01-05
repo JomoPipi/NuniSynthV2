@@ -103,7 +103,7 @@ function setProjectTitle(pathToFile : string) {
 
 function saveProtocol(filePath : string, file : string) {
     fs.writeFileSync(filePath, file)
-    const fileName = path.sep(filePath).pop()!.replace('.nuni', '')
+    const fileName = filePath.split(path.sep).pop()!.replace('.nuni', '')
     saveBuffers(fileName)
 }
 
@@ -179,7 +179,7 @@ function saveBuffers(fileName : string) {
 }
 
 function loadBuffers(filePath : string) {
-    const fileName = path.sep(filePath).pop()!.replace('.nuni', '')
+    const fileName = filePath.split(path.sep).pop()!.replace('.nuni', '')
     const buffersPath = path.join(audioBuffersFolderPath, fileName)
 
     for (let key = 0; key < BufferUtils.nBuffers; key++)
