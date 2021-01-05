@@ -98,9 +98,7 @@ export function openExistingProject() {
 function setProjectTitle(pathToFile : string) {
     D('project-title').textContent =
     makeNuniFile.currentFileName = 
-        path.basename(pathToFile)
-            .replace('.nuni', '')
-            .slice(1)
+        path.basename(pathToFile).replace('.nuni', '')
 }
 
 function saveProtocol(filePath : string, file : string) {
