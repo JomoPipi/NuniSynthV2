@@ -34,35 +34,39 @@ export class BufferCanvasFrame {
         this.right = E('div', { className: 'slice right', text: '🔪' })
         this.frame.append(canvas,this.lPanel,this.rPanel,this.left,this.right)
 
+        const KNIFE_WIDTH = 20
         let canvasLeft : number = 0
         let canvasWidth : number = 0
-        function mousedown (e : MouseEvent) {
-            canvasLeft = canvas.getBoundingClientRect().left
-            canvasWidth = canvas.offsetWidth
-        }
+        let deltaX : number = 0
+        const mousedown  = (grabbingLeftSlicer : boolean) =>
+            (e : MouseEvent) => {
+                deltaX = (KNIFE_WIDTH - e.offsetX) * (grabbingLeftSlicer ? -1 : 1)
+                canvasLeft = canvas.getBoundingClientRect().left
+                canvasWidth = canvas.offsetWidth
+            }
 
         const mousemove = (grabbingLeftSlicer : boolean) => {
             return (e : MouseEvent) => {
-                const val = clamp(0, e.x - canvasLeft, canvasWidth)
+                const val = clamp(0, e.x - canvasLeft - deltaX, canvasWidth)
                 this.updateSlicers(grabbingLeftSlicer, val, canvasWidth - val)
             }
         }
 
         function mouseup(grabbingLeftSlicer : boolean) {
             return (e : MouseEvent) => {
-                const x = e.x - canvasLeft
+                const x = e.x - canvasLeft - deltaX
                 const percent = clamp(0, x / canvasWidth, 1)
                 update(grabbingLeftSlicer, percent)
             }
         }
 
         this.left.onmousedown = doUntilMouseUp(mousemove(true), 
-            { mousedown
+            { mousedown: mousedown(true)
             , mouseup: mouseup(true) 
             })
 
         this.right.onmousedown = doUntilMouseUp(mousemove(false), 
-            { mousedown
+            { mousedown: mousedown(false)
             , mouseup: mouseup(false)
             })
 

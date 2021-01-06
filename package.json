@@ -92,6 +92,7 @@
     "electron-installer-windows": "^3.0.0",
     "electron-packager": "^15.2.0",
     "electron-prebuilt-compile": "8.2.0",
+    "electron-squirrel-startup": "^1.0.0",
     "typescript": "^4.0.2"
   }
 }

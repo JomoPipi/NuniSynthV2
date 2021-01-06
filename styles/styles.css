@@ -1293,8 +1293,6 @@ code {
 
 .sample-canvas-frame .slice {
   position: absolute;
-  cursor: -webkit-grab;
-  cursor: grab;
   bottom: 0%;
 }
 

@@ -53,12 +53,12 @@ export function createRadioButtonGroup(
     box.onclick = (e : MouseEvent) => {
         const btn = e.target as HTMLButtonElement
         const index = btns.indexOf(btn)
-        if (index >= 0) 
+        if (index >= 0)
         {
             box.dataset.selected = index.toString()
             onclick && onclick(btn.innerText, index)
 
-            for (const _btn of btns) 
+            for (const _btn of btns)
             {
                 _btn.classList.toggle('selected', _btn === btn)
             }
