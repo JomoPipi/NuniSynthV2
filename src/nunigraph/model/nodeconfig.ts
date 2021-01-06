@@ -633,6 +633,8 @@ const Transferable_AudioNodeProperties =
     , MMLString   : true
     , loopStart   : true
     , loopEnd     : true
+    , zoomStart   : true
+    , zoomEnd     : true
     , processorCode : true
     , points      : true
     , nMeasures   : true

@@ -160,7 +160,7 @@ function saveBuffers(fileName : string) {
     }
 
     function saveLocalBuffer(key : number) {
-        const pathToFile = path.join(buffersPath, key)
+        const pathToFile = path.join(buffersPath, key.toString())
         const audioBuffer = BufferStorage.get(key)
         const { numberOfChannels, length, sampleRate } = audioBuffer
 

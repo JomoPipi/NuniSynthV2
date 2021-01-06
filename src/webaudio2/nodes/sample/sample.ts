@@ -25,6 +25,9 @@ export class NuniSampleNode extends NuniSourceNode
     bufferCanvas : BufferCanvasFrame
     _loopStart = 0
     _loopEnd = 1
+
+    private _zoomStart = 0
+    private _zoomEnd = 1
     
     constructor(ctx : AudioContext) {
         super(ctx)
@@ -45,6 +48,11 @@ export class NuniSampleNode extends NuniSourceNode
                 {
                     this._loopEnd = value
                 }
+                NuniSourceNode.prototype.refresh.call(this)
+            },
+            updateZoom: (start : number, end : number) => {
+                this._zoomStart = start
+                this._zoomEnd = end
                 NuniSourceNode.prototype.refresh.call(this)
             }
         })
@@ -69,10 +77,21 @@ export class NuniSampleNode extends NuniSourceNode
         this.refresh()
         this.bufferCanvas.setKey(key)
     }
+    get bufferKey() { return this._bufferKey }
 
-    get bufferKey() {
-        return this._bufferKey
+    set zoomStart(start : number) { 
+        this._zoomStart = start
+        this.bufferCanvas.setZoom(start, this._zoomEnd) 
+        NuniSourceNode.prototype.refresh.call(this)
     }
+    get zoomStart() { return this._zoomStart }
+
+    set zoomEnd(end : number) { 
+        this._zoomEnd = end
+        this.bufferCanvas.setZoom(this._zoomStart, end) 
+        NuniSourceNode.prototype.refresh.call(this)
+    }
+    get zoomEnd() { return this._zoomEnd }
 
     refresh() {
         NuniSourceNode.prototype.refresh.call(this)
@@ -88,10 +107,23 @@ export class NuniSampleNode extends NuniSourceNode
         const reversed = this._loopStart > this._loopEnd
         src.buffer = BufferStorage.get(this._bufferKey, reversed)
         src.loop = this.loop
-        const start = reversed ? 1 - this.loopStart : this.loopStart
-        const end = reversed ? 1 - this.loopEnd : this.loopEnd
-        src.loopStart = start * src.buffer.duration
-        src.loopEnd = end * src.buffer.duration
+
+        // New: zoom stuff
+        const duration = src.buffer.duration
+        const zoomWidth = this._zoomEnd - this._zoomStart
+        const zoomedDuration = zoomWidth * src.buffer.duration
+
+        src.loopStart = (start => reversed ? duration - start : start
+        )(this._zoomStart * duration + this._loopStart * zoomedDuration)
+
+        src.loopEnd = (end => reversed ? duration - end : end
+        )(this._zoomStart * duration + this._loopEnd * zoomedDuration)
+
+        // Old:
+        // const start = reversed ? 1 - this.loopStart : this.loopStart
+        // const end = reversed ? 1 - this.loopEnd : this.loopEnd
+        // src.loopStart = start * src.buffer.duration
+        // src.loopEnd = end * src.buffer.duration
 
         return src
     }
@@ -115,6 +147,8 @@ export class NuniSampleNode extends NuniSourceNode
                     BufferUtils.nBuffers-1)
     
                 value.innerText = String.fromCharCode(65 + key)
+                this.zoomStart = 0
+                this.zoomEnd = 1
                 this.bufferKey = key
             }
             box.appendChild(btn)

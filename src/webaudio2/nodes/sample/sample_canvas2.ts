@@ -8,7 +8,10 @@
 import { BufferUtils } from "../../../buffer_utils/internal.js"
 import { doUntilMouseUp } from "../../../UI_library/events/until_mouseup.js"
 
-type Arguments = { update(grabbingLeft : boolean, percent : number) : void }
+type Arguments = 
+    { update(grabbingLeft : boolean, percent : number) : void
+    , updateZoom(start : number, end : number) : void
+    }
 
 export class BufferCanvasFrame {
 /*  All this does is show a picture of a sample, and allows you to drag the
@@ -25,14 +28,18 @@ export class BufferCanvasFrame {
     private lPanel : HTMLElement
     private rPanel : HTMLElement
 
-    constructor({ update } : Arguments) {
+    private zoomStart = 0
+    private zoomEnd = 1
+
+    constructor({ update, updateZoom } : Arguments) {
         const canvas = E('canvas', { className: 'sample-canvas' })
         this.frame = E('div', { className: 'center sample-canvas-frame' })
         this.lPanel = E('div', { className: 'panel left-panel' })
         this.rPanel = E('div', { className: 'panel right-panel' })
         this.left = E('div', { className: 'slice left', text: '🔪' })
         this.right = E('div', { className: 'slice right', text: '🔪' })
-        this.frame.append(canvas,this.lPanel,this.rPanel,this.left,this.right)
+
+        this.frame.append(canvas, this.lPanel, this.rPanel, this.left, this.right)
 
         const KNIFE_WIDTH = 20
         let canvasLeft : number = 0
@@ -76,15 +83,26 @@ export class BufferCanvasFrame {
         this.ctx = canvas.getContext('2d')!
         this.refresh()
 
-        // let X_ZOOM = 1, x_zoom_level = 1
-        // const zoomFactor = 1.2
-        // canvas.onwheel = (e : WheelEvent) => {
-        //     // x_zoom_level = clamp(0, x_zoom_level + (e.deltaY / 100 | 0), 99)
-        //     // const delta = X_ZOOM * zoomFactor ** x_zoom_level
-        //     X_ZOOM = clamp(1, X_ZOOM *= zoomFactor ** Math.sin(e.deltaY), 1000)
-        //     this.W = canvas.width = X_ZOOM * this.size * SPECIAL_NUM | 0
-        //     this.refresh()
-        // }
+        this.frame.onwheel = (e : WheelEvent) => {
+            const direction = -Math.sign(e.deltaY)
+            const zoomCenter = (this.zoomStart + this.zoomEnd) / 2.0
+            const mouseLeft = e.offsetX / this.W
+            const mouseRight = 1 - mouseLeft
+            this.zoomStart = clamp(0, this.zoomStart +
+                (zoomCenter - this.zoomStart) * mouseLeft * direction / 2.0, 1)
+
+            this.zoomEnd = clamp(0, this.zoomEnd - 
+                (zoomCenter - this.zoomStart) * mouseRight * direction / 2.0, 1)
+
+            updateZoom(this.zoomStart, this.zoomEnd)
+            this.refresh()
+        }
+    }
+
+    setZoom(start : number, end : number) {
+        this.zoomStart = start
+        this.zoomEnd = end
+        this.refresh()
     }
     
     updateSlicers(leftSlicer : boolean, val : number, _val : number) {
@@ -113,9 +131,9 @@ export class BufferCanvasFrame {
     }
 
     private refresh() {
-        const imageData = BufferUtils.getImage(
+        const imageData = BufferUtils.getImage2(
             this.nowShowing, 
-            this.ctx, this.H, this.W)
+            this.ctx, this.H, this.W, this.zoomStart, this.zoomEnd)
         this.ctx.putImageData(imageData, 0, 0)
     }
 }

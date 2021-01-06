@@ -5,7 +5,7 @@
 
 
 
-import { reallyDrawBuffer } from './draw_buffer_worker.js'
+import { reallyDrawBuffer, reallyDrawBuffer2 } from './draw_buffer_worker.js'
 
 let worker : Worker, firstTime = true;
 
@@ -27,5 +27,18 @@ export function drawBuffer2(
      W : number) {
          
     reallyDrawBuffer(buffer, ctx, H, W)
+    return ctx.getImageData(0, 0, W, H)
+}
+
+export function drawBuffer3(
+    buffer : Float32Array, 
+    ctx : CanvasRenderingContext2D,
+    H : number, 
+    W : number,
+    zoomStart : number, 
+    zoomEnd : number
+    ) {
+         
+    reallyDrawBuffer2(buffer, ctx, H, W, zoomStart, zoomEnd)
     return ctx.getImageData(0, 0, W, H)
 }

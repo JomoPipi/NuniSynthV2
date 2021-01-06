@@ -5,7 +5,7 @@
 
 
 
-import { drawBuffer, drawBuffer2 } from './draw_buffer.js'
+import { drawBuffer, drawBuffer2, drawBuffer3 } from './draw_buffer.js'
 import { BufferStorage } from '../storage/buffer_storage.js'
 
 
@@ -63,6 +63,23 @@ class BufferUtily {
         const imageData
             // = this.imageDataCenter[dataCenterAccessKey] 
             = drawBuffer2.call(null, buffer, ctx, H, W)
+        BufferStorage.imageNeedsUpdate[key] = false
+        return imageData
+    }
+
+    getImage2(key : number, ctx : CanvasRenderingContext2D, H : number, W : number,
+        zoomStart : number, zoomEnd : number) {
+
+        const buffer = BufferStorage.get(key).getChannelData(0)
+        // // clear the imageDataCenter for this key:
+        // for (const k_h_w of Object.keys(this.imageDataCenter))
+        // {
+        //     const [ k ] = k_h_w.split(':')
+        //     if (+k === key) this.imageDataCenter[k_h_w] = undefined
+        // }
+        const imageData
+            // = this.imageDataCenter[dataCenterAccessKey] 
+            = drawBuffer3.call(null, buffer, ctx, H, W, zoomStart, zoomEnd)
         BufferStorage.imageNeedsUpdate[key] = false
         return imageData
     }
