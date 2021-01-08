@@ -18,6 +18,7 @@ import { PianoRoll12Tone } from './nodes/pianoroll/pianoroll_12tone.js'
 import { ProcessorNode } from './nodes/processor/processor.js'
 import { AutomationNode } from './nodes/automation/automation.js'
 import { NuniFilterNode } from './nodes/filter/filter.js'
+import { NuniNumberNode } from './nodes/number/number.js'
 
 export const AudioNodeMap = 
     { [NodeTypes.OUTPUT]:     GainNode
@@ -29,7 +30,7 @@ export const AudioNodeMap =
     , [NodeTypes.SAMPLE]:     NuniSampleNode
     , [NodeTypes.G_SEQ]:      GateSequencer
     , [NodeTypes.S_SEQ]:      SampleSequencer
-    , [NodeTypes.NUM]:        ConstantSourceNode
+    , [NodeTypes.NUM]:        NuniNumberNode
     , [NodeTypes.RECORD]:     NuniRecordingNode
     , [NodeTypes.MODULE]:     NuniGraphAudioNode
     , [NodeTypes.ENV]:        Envelope

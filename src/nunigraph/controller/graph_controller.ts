@@ -303,7 +303,7 @@ export class NuniGraphController {
             , children: 
                 [ createSVGIcon(DefaultNodeIcon[node.type])
                 , nodeIdentifier
-                ].concat(node.INPUT_NODE_ID || node.type === NodeTypes.OUTPUT
+                ].concat(node.INPUT_NODE_ID || !HasTitleEditor[node.type]
                     ? []
                     : [titleEditor()])
             })

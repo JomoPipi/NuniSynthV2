@@ -39,12 +39,6 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.title = title
         this.INPUT_NODE_ID = INPUT_NODE_ID
         this.audioNode = audioCtx.createNode(type)
-        
-        // TODO: make an AudioNode class for it.
-        if (is(this, NodeTypes.NUM)) this.audioNode.start(0)
-
-
-
 
         if (this.type !== NodeTypes.COMPRESSOR)
         shit: {

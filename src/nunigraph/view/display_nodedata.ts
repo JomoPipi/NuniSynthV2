@@ -20,12 +20,14 @@ import { GraphController } from '../init.js'
 import { doUntilMouseUp } from '../../UI_library/events/until_mouseup.js'
 import { ProcessorNode } from '../../webaudio2/nodes/processor/processor.js'
 import { ActiveControllers } from '../controller/graph_controller.js'
+import { NuniNumberNode } from '../../webaudio2/nodes/number/number.js'
 
 
 const hasSubtypes = (node : NuniGraphNode) : node is NuniGraphNode<HasSubtypes> =>
     node.type in HasSubtypes
 
-const exposesAudioParams = (node : NuniGraphNode) : node is NuniGraphNode<keyof typeof ExposesAudioparamsInDialogBox> =>
+const exposesAudioParams = (node : NuniGraphNode) 
+: node is NuniGraphNode<keyof typeof ExposesAudioparamsInDialogBox> =>
     node.type in ExposesAudioparamsInDialogBox
 
 export function createValuesWindow(
@@ -83,6 +85,11 @@ export function createValuesWindow(
     }
 
     if (audioNode instanceof NuniSampleNode) 
+    {
+        controls.appendChild(audioNode.getController())
+    }
+
+    if (audioNode instanceof NuniNumberNode)
     {
         controls.appendChild(audioNode.getController())
     }

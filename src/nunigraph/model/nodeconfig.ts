@@ -74,7 +74,7 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PROCESSOR]:  'Processor'
     , [NodeTypes.COMPRESSOR]: 'Compression'
     }
-    
+
 type GraphIcon = string // typeof GraphIconUrls[number]
 const GraphIconKeys = 
     [ 'sine'
@@ -152,6 +152,26 @@ const KnowsWhenDialogBoxCloses =
     }
 type KnowsWhenDialogBoxCloses = keyof typeof KnowsWhenDialogBoxCloses
 
+const HasTitleEditor : { readonly [key in NodeTypes] : boolean } =
+    { [NodeTypes.OUTPUT]: false
+    , [NodeTypes.GAIN]:   false
+    , [NodeTypes.OSC]:    true
+    , [NodeTypes.FILTER]: true
+    , [NodeTypes.PANNER]: false
+    , [NodeTypes.DELAY]:  false
+    , [NodeTypes.SAMPLE]: true
+    , [NodeTypes.G_SEQ]:  true
+    , [NodeTypes.S_SEQ]:  true
+    , [NodeTypes.NUM]:    false
+    , [NodeTypes.RECORD]: true
+    , [NodeTypes.MODULE]: true
+    , [NodeTypes.AUTO]:   true
+    , [NodeTypes.PIANOR]: true
+    , [NodeTypes.ENV]:false
+    , [NodeTypes.PROCESSOR]:true
+    , [NodeTypes.COMPRESSOR]:true
+    }
+
 const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.OUTPUT]: true
     , [NodeTypes.GAIN]:   true
@@ -201,7 +221,7 @@ const ExposesAudioparamsInDialogBox =
     , [NodeTypes.PANNER]:     true
     , [NodeTypes.DELAY]:      true
     , [NodeTypes.SAMPLE]:     true
-    , [NodeTypes.NUM]:        true
+    // , [NodeTypes.NUM]:        true
     , [NodeTypes.COMPRESSOR]: true
     } as const
 

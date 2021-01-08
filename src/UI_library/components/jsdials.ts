@@ -34,7 +34,7 @@ export class JsDial {
             { className: `shadow-knob _${CSS_classIndex || 0}`
             , children: [this.dial]
             }) 
-            
+
         this.max = 1
         this.value = this.min = this.sensitivity = 2**-8
         this.imgDegreeOffset = 195
