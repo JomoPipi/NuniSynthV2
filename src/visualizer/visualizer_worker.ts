@@ -23,7 +23,7 @@ const init = (e : MessageEvent) => {
     bufferLength = e.data.bufferLength
     sliceWidth = W / bufferLength
     h2 = H/2
-    ctx = e.data.canvas.getContext('2d')
+    ctx = e.data.canvas.getContext('2d', { alpha: false })!
     gradient = ctx.createLinearGradient(0, 0, W, 0)
         rainbow.forEach((color,i,arr) =>
         gradient.addColorStop(i/(arr.length-1), color))

@@ -25,7 +25,7 @@ export class XYPad {
     constructor (size : number, callback? : Function) {
         this.canvas = E('canvas')
         this.W = this.H = this.canvas.width = this.canvas.height = size
-        this.ctx = this.canvas.getContext('2d')!
+        this.ctx = this.canvas.getContext('2d', { alpha: false })!
         this.point = [this.W/2, this.H/2]
 
         // TODO: move to CSS

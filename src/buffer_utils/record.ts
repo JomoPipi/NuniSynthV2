@@ -11,10 +11,10 @@ import { BufferStorage } from '../storage/buffer_storage.js'
 import { desktopCapture } from './desktop_capture.js'
 import { createRadioButtonGroup } from "../UI_library/internal.js"
 
-const MIC = 0, GRAPH = 1, DESKTOP = 2
+const MIC = 0, DESKTOP = 1
 const recordButtonGroup = 
     createRadioButtonGroup(
-    { buttons: ['Mic', 'Graph', 'Desktop']
+    { buttons: ['Mic', 'Desktop']
     , selected: 'Mic'
     , className: 'nunisynth!!'
     , containerClassName: 'rec-buttons-container'
@@ -54,16 +54,6 @@ export function recordTo(index : number) {
             .getUserMedia({ audio: true })
             .then(handleStream)
             .catch(errStuff)
-    }
-    // @ts-ignore - Unleash the power of the double equal. Muahahaha!
-    else if (selected == GRAPH)
-    {
-        const mediaStreamDestination = audioCtx.createMediaStreamDestination()
-
-        audioCtx.volume.connect(mediaStreamDestination)
-
-        handleStream(mediaStreamDestination.stream,
-            () => audioCtx.volume.disconnect(mediaStreamDestination))
     }
     // @ts-ignore - Unleash the power of the double equal. Muahahaha!
     else if (selected == DESKTOP)

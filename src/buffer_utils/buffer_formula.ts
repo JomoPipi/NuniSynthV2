@@ -128,15 +128,6 @@ export function formulateBuffer(index : number) {
     }
 }
 
-function preliminaryExecution(exp : string) {
-    // TODO:
-
-    // const n = 1
-    // eval(exp)
-
-    // log('accessed =',JSON.stringify(accessed))
-}
-
 const bufferPresets = 
     { 'Hard Wave': 'sin(n / 32.0) + sin(n / 512.0)'
     , 'Kick-1A': '0.5 * sin(n / sqrt(n/3.0))'

@@ -113,7 +113,7 @@ function createTopRowControls(an : Sequencer) {
             canvas.width = 56
             canvas.height = 35
             canvas.style.cursor = 'pointer' // The way to get back to global ADSRs
-        const ctx = canvas.getContext('2d')!
+        const ctx = canvas.getContext('2d', { alpha: false })!
         const knobs = E('span', { className: 'flex-center' })
             knobs.style.textAlign = 'start' // This stops the knobs from shifting
         const ADSR = 'attack,decay,sustain,release'.split(',')

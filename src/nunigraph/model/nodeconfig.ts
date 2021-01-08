@@ -74,30 +74,7 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PROCESSOR]:  'Processor'
     , [NodeTypes.COMPRESSOR]: 'Compression'
     }
-
-// TODO: delete
-// const NodeTypeEmojiLabel : { readonly [key in NodeTypes] : string } =
-//     { [NodeTypes.OUTPUT]: 'not used'
-//     , [NodeTypes.GAIN]:   '🔊'
-//     , [NodeTypes.OSC]:    '∿'
-//     , [NodeTypes.FILTER]: '🌫️'
-//     , [NodeTypes.PANNER]: '⧟'
-//     , [NodeTypes.DELAY]:  '🕖'
-//     , [NodeTypes.SAMPLE]: '📀'
-//     , [NodeTypes.G_SEQ]:  '⛩️'
-//     , [NodeTypes.S_SEQ]:  '📼'
-//     , [NodeTypes.NUM]:    '🎚️'
-//     , [NodeTypes.RECORD]: '🎙️'
-//     , [NodeTypes.MODULE]: '🎛️'
-//     , [NodeTypes.AUTO]:   '🤖'
     
-//     , [NodeTypes.PIANOR]: '🎼 '
-//     , [NodeTypes.ENV]:    'Envelope (doesn\'t do anything)'
-//     // , [NodeTypes.CUSTOM]: 'Custom Module (should be hidden)'
-//     , [NodeTypes.PROCESSOR]: '💻'
-//     , [NodeTypes.COMPRESSOR]: '💢'
-//     } as const
-
 type GraphIcon = string // typeof GraphIconUrls[number]
 const GraphIconKeys = 
     [ 'sine'

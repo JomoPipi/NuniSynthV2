@@ -95,7 +95,6 @@ export class AutomationNode extends VolumeNodeContainer
         const phase = this.phaseShift * this.durationOfLoop
         const currentTime = time - this.startTime + phase
         const percentage = 1 - (this.measureTime - currentTime - 0.200) / this.durationOfLoop
-        // TODO: check if window is open before doing this:
         if (this.dialogBoxIsOpen)
         {
             this.updateProgressLine(percentage)
@@ -121,7 +120,7 @@ export class AutomationNode extends VolumeNodeContainer
 
         const progressLine = E('canvas')
         drawProgressLine: {
-            const ctx = progressLine.getContext('2d')!
+            const ctx = progressLine.getContext('2d', { alpha: false })!
             const h = 2
             // const margin = 15
             progressLine.style.display = 'block'

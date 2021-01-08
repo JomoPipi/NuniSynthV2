@@ -37,7 +37,6 @@ export class NuniSampleNode extends NuniSourceNode
         this.detune = new NuniAudioParam(ctx)
         this.playbackRate = new NuniAudioParam(ctx)
 
-        this.kbMode = false
         this.bufferCanvas = new BufferCanvasFrame({
             update: (isStart : boolean, value : number) => {
                 if (isStart)
@@ -56,6 +55,7 @@ export class NuniSampleNode extends NuniSourceNode
                 NuniSourceNode.prototype.refresh.call(this)
             }
         })
+        this.kbMode = false
     }
 
     set loopStart(value : number) {
@@ -93,9 +93,16 @@ export class NuniSampleNode extends NuniSourceNode
     }
     get zoomEnd() { return this._zoomEnd }
 
+    private resetZoom() {
+        this._zoomStart = 0
+        this._zoomEnd = 1
+        this.bufferCanvas.setZoom(0, 1)
+    }
+
     refresh() {
         NuniSourceNode.prototype.refresh.call(this)
         this.bufferCanvas?.setKey(this._bufferKey)
+        this.resetZoom()
     }
 
     createSource() {
@@ -108,7 +115,6 @@ export class NuniSampleNode extends NuniSourceNode
         src.buffer = BufferStorage.get(this._bufferKey, reversed)
         src.loop = this.loop
 
-        // New: zoom stuff
         const duration = src.buffer.duration
         const zoomWidth = this._zoomEnd - this._zoomStart
         const zoomedDuration = zoomWidth * src.buffer.duration
@@ -118,12 +124,6 @@ export class NuniSampleNode extends NuniSourceNode
 
         src.loopEnd = (end => reversed ? duration - end : end
         )(this._zoomStart * duration + this._loopEnd * zoomedDuration)
-
-        // Old:
-        // const start = reversed ? 1 - this.loopStart : this.loopStart
-        // const end = reversed ? 1 - this.loopEnd : this.loopEnd
-        // src.loopStart = start * src.buffer.duration
-        // src.loopEnd = end * src.buffer.duration
 
         return src
     }
@@ -147,9 +147,8 @@ export class NuniSampleNode extends NuniSourceNode
                     BufferUtils.nBuffers-1)
     
                 value.innerText = String.fromCharCode(65 + key)
-                this.zoomStart = 0
-                this.zoomEnd = 1
                 this.bufferKey = key
+                this.resetZoom()
             }
             box.appendChild(btn)
         })

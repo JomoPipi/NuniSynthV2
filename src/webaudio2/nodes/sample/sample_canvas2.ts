@@ -80,7 +80,7 @@ export class BufferCanvasFrame {
         this.H = canvas.height = this.size
         this.W = canvas.width = this.size * SPECIAL_NUM | 0
         this.frame.style.maxWidth = this.W + 'px'
-        this.ctx = canvas.getContext('2d')!
+        this.ctx = canvas.getContext('2d', { alpha: false })!
         this.refresh()
 
         this.frame.onwheel = (e : WheelEvent) => {

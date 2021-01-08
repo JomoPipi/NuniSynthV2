@@ -77,7 +77,7 @@ export class NuniGraphRenderer {
         this.fromNode = null
         this.g = g
         this.canvas = canvas
-        this.ctx = canvas.getContext('2d')!
+        this.ctx = canvas.getContext('2d', { alpha: false })!
         this.nodeRadius = 20 // 25
         this.nodeLineWidth = this.nodeRadius/5 + 3
         this.connectionLineWidth = PHI

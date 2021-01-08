@@ -95,7 +95,7 @@ export class AutomationPointsEditor {
 
     constructor() {
         this.canvas = E('canvas'); this.canvas.style.backgroundColor = '#111'
-        this.ctx = this.canvas.getContext('2d')!
+        this.ctx = this.canvas.getContext('2d', { alpha: false })!
         this.ctx.lineWidth = LINE_WIDTH
 
         /* 
