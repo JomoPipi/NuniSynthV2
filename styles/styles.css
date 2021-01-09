@@ -727,6 +727,27 @@ code {
   font-size: .75em;
 }
 
+.slider-component {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.slider-component input[type=range] {
+  -webkit-transform: rotate(-90deg);
+          transform: rotate(-90deg);
+  width: 50px;
+  height: 50px;
+}
+
+.slider-component input[type=range]::-webkit-slider-thumb {
+  background-color: var(--color4);
+}
+
 .shadow-knob {
   display: inline-block;
   position: relative;

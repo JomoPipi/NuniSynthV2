@@ -457,7 +457,7 @@ export class NuniGraphRenderer {
             const fontSize = nodeRadius * 3 / 5
             if (node.title) 
             {
-                ctx.fillStyle = '#BAA'
+                ctx.fillStyle = Theme.isDark ? '#CCC' : '#333'
                 // ctx.font = '15px Arial'
                 ctx.font = fontSize + 'px Arial'
                 ctx.fillText(node.title, X - 30, Y - nodeRadius * 1.5)

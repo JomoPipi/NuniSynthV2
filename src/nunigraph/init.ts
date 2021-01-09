@@ -8,7 +8,7 @@
 import { NuniGraphRenderer } from './view/graph_renderer.js'
 import { NuniGraph } from './model/nunigraph.js'
 import { BufferUtils } from '../buffer_utils/internal.js'
-import { NuniGraphController, ActiveControllers } from './controller/graph_controller.js'
+import { NuniGraphController, OpenGraphControllers } from './controller/graph_controller.js'
 
 import 
     { KB, audioCtx, Sequencer, NuniSampleNode
@@ -53,9 +53,9 @@ export const GraphController
 GraphController.activateEventHandlers()
 GraphController.g.masterGain.setValueOfParam('gain', 0.125)
 
-ActiveControllers.push(GraphController)
+OpenGraphControllers.list.push(GraphController)
 
-snapToGrid.attach(() => ActiveControllers.forEach(c => c.renderer.render()))
+snapToGrid.attach(() => OpenGraphControllers.render())
 
 if (DEV_MODE_EQUALS_TRUE) 
 {

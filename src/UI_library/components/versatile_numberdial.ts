@@ -5,6 +5,7 @@
 
 
 
+import { createToggleSwitch } from './toggleSwitch.js'
 import { createDiscreteDialComponent } from './discrete_dial.js'
 import { createNumberDialComponent3 } from './number_input.js'
 
@@ -60,11 +61,12 @@ export function createVersatileNumberDialComponent(
         , mouseup: options.mouseup
         , shadowKnobClass: 2
         , knobClass: 1
-        }, 1)
+        , rounds: 1
+        })
 
     const discreteModeComponent = createDiscreteDialComponent(strindex, optionList, options.fn, { mouseup: options.mouseup })
 
-    const toggle = E('input', { className: 'toggle0' }); toggle.type = 'checkbox'
+    const toggle = createToggleSwitch(setContinuousMode)
     const children = [continunousModeComponent.container, discreteModeComponent.container, toggle]
     const box = E('div', { children })
 
@@ -77,10 +79,6 @@ export function createVersatileNumberDialComponent(
     else if (options.forceMode === 'discrete' && typeof initialValue === 'number')
     {
         setContinuousMode(false)
-    }
-
-    toggle.oninput = () => {
-        setContinuousMode(toggle.checked)
     }
 
     function setContinuousMode(itsTrue : boolean) {

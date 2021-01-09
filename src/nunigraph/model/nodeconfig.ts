@@ -101,6 +101,10 @@ const GraphIconKeys =
     , 'compress'
     , 'microphone'
     , 'loud-speaker'
+    , 'switch'
+    , 'slider'
+    , 'button'
+
     ] as const
 type SVGIconKey = typeof GraphIconKeys[number]
 
@@ -129,12 +133,13 @@ const DefaultNodeIcon : ReadonlyRecord<NodeTypes, SVGIconKey> =
 const HasDynamicNodeIcon = 
     { [NodeTypes.OSC]: true
     , [NodeTypes.FILTER]: true
+    , [NodeTypes.NUM]: true
     }
 type HasDynamicNodeIcon = keyof typeof HasDynamicNodeIcon
 
 const GraphIconImageObjects =
     GraphIconKeys.reduce((acc, name) => {
-        const url = `images/${name}.svg`
+        const url = `svg_images/${name}.svg`
         const img = new Image()
         img.src = url
         acc[name] = img

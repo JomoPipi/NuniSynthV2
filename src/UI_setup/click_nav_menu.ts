@@ -13,7 +13,7 @@ import
 import { modularizeGraph } from '../nunigraph/controller/modularize_graph.js'
 import { setTheme } from './theme_setup.js'
 import { UserOptions } from '../storage/user_options.js'
-import { ActiveControllers } from '../nunigraph/controller/graph_controller.js'
+import { OpenGraphControllers } from '../nunigraph/controller/graph_controller.js'
 import { createRadioButtonGroup, createToggleButton } from '../UI_library/internal.js'
 
 const tabs = 
@@ -74,8 +74,7 @@ function showConfigWindow() {
             })
         checkBox.oninput = () => {
             UserOptions.config[key] = checkBox.checked
-            ActiveControllers.forEach(controller =>
-                controller.renderer.render())
+            OpenGraphControllers.render()
         }
 
         configWindow.appendChild(box)
@@ -86,7 +85,10 @@ function showConfigWindow() {
         const btns = createRadioButtonGroup(
             { buttons: ['A','B','C','D']
             , selected: UserOptions.config[key]
-            , onclick(_,i) { setTheme(i) } 
+            , onclick(_,i) { 
+                setTheme(i)
+                OpenGraphControllers.render()
+            } 
             , text: '\nTheme'
             })
             

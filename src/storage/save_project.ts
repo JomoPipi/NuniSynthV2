@@ -6,7 +6,7 @@
 
 
 import { GraphController } from '../nunigraph/init.js'
-import { ADSR_Controller } from '../webaudio2/adsr.js'
+import { ADSR_Controller } from '../webaudio2/adsr/adsr.js'
 import { MasterClock } from '../webaudio2/sequencers/master_clock.js'
 
 export function makeNuniFile() {

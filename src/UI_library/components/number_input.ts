@@ -22,6 +22,7 @@ type UpdateFuncSettings = {
     width? : number
     height? : number
     mouseup? : MouseHandler
+    rounds : number
     shadowKnobClass? : 0 | 1 | 2 | 3
     knobClass? : 0 | 1 | 2
     }
@@ -159,8 +160,7 @@ export function createNumberDialComponent2(
 export function createNumberDialComponent3(
     initialValue : number, 
     callback : (n : number) => void,
-    settings : UpdateFuncSettings,
-    rounds : number) {
+    settings : UpdateFuncSettings) {
 
     const mapValue = settings.isLinear
         ? (x : number) => x
@@ -179,7 +179,7 @@ export function createNumberDialComponent3(
     dial.max = unmapValue(settings.max)
     dial.value = unmapValue(initialValue)
     dial.sensitivity = settings.amount
-    dial.rounds = rounds
+    dial.rounds = settings.rounds
     dial.render()
     
     const valueInput = E('input', 

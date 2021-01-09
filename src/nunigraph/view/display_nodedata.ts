@@ -19,7 +19,7 @@ import { createSubdivSelect } from './create_subdivselect.js'
 import { GraphController } from '../init.js'
 import { doUntilMouseUp } from '../../UI_library/events/until_mouseup.js'
 import { ProcessorNode } from '../../webaudio2/nodes/processor/processor.js'
-import { ActiveControllers } from '../controller/graph_controller.js'
+import { OpenGraphControllers } from '../controller/graph_controller.js'
 import { NuniNumberNode } from '../../webaudio2/nodes/number/number.js'
 
 
@@ -284,7 +284,7 @@ function showSubtypes(node : NuniGraphNode<HasSubtypes>, saveCallback: Function)
         const typeImages = types.map(name => {
             
             const img = E('img', { className: 'dim' })
-            img.src = `images/${name}.svg`
+            img.src = `svg_images/${name}.svg`
             img.dataset.name = name
             return img
         })
@@ -307,7 +307,7 @@ function showSubtypes(node : NuniGraphNode<HasSubtypes>, saveCallback: Function)
                     node.audioNode.type = e.target.dataset.name
                 }
             }
-            for (const controller of ActiveControllers)
+            for (const controller of OpenGraphControllers.list)
             {
                 if (controller.g.nodes.includes(node))
                 {
@@ -382,9 +382,9 @@ function exposeAudioParams(node : NuniGraphNode<CanBeAutomated>, saveCallback : 
             , min: AudioParamRanges[param][0]
             , max: AudioParamRanges[param][1]
             , isLinear: hasLinearSlider[param]
+            , rounds: AudioParamKnobTurns[param]
             }
 
-        const rounds = AudioParamKnobTurns[param]
         const numberInput = 
             // createDraggableNumberInput( // Not so user friendly
             // createNumberDialComponent2( // The solution
@@ -392,7 +392,7 @@ function exposeAudioParams(node : NuniGraphNode<CanBeAutomated>, saveCallback : 
             //     mousedownFunc, 
             //     updateFunc,
             //     settings)
-            createNumberDialComponent3(initialValue, updateFunc, settings, rounds)
+            createNumberDialComponent3(initialValue, updateFunc, settings)
 
         // numberInput.container.classList.add('full','flex-center')
         // box.append(textBox, numberInput)

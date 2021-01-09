@@ -18,7 +18,15 @@ import { contextmenu, addModuleToList } from './graph_contextmenu.js'
 import { createSVGIcon } from '../../UI_library/components/svg_icon.js'
 // import { openWindow, closeWindow, showContextMenu } from './window_toggler.js'
 
-export const ActiveControllers = [] as NuniGraphController[]
+export const OpenGraphControllers = {
+    list: [] as NuniGraphController[],
+    render() {
+        for (const controller of this.list)
+        {
+            controller.renderer.render()
+        }
+    }
+}
 
 type DeleteNodeOptions = {
     force? : boolean
@@ -313,8 +321,8 @@ export class NuniGraphController {
         {
             // Mark the controller as 'active'
             const controller = node.audioNode.controller
-            if (ActiveControllers.includes(controller)) throw `graph_controller.ts - this shouldn't have happened`
-            ActiveControllers.push(controller)
+            if (OpenGraphControllers.list.includes(controller)) throw `graph_controller.ts - this shouldn't have happened`
+            OpenGraphControllers.list.push(controller)
             node.audioNode.activateWindow()
 
             // Add a button for additional options
@@ -601,7 +609,7 @@ export class NuniGraphController {
 
         
         const deselectNodesOfOtherGraphs = () => {
-            for (const controller of ActiveControllers) 
+            for (const controller of OpenGraphControllers.list) 
             {
                 if (controller !== this) 
                 {

@@ -5,7 +5,7 @@
 
 
 
-import { ADSR_Controller } from '../adsr.js'
+import { ADSR_Controller } from '../adsr/adsr.js'
 import { KB } from './keyboard.js'
 import { VolumeNodeContainer } from '../volumenode_container.js'
 

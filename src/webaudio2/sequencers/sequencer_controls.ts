@@ -8,7 +8,8 @@
 import { Sequencer, SampleSequencer, MasterClock } from '../internal.js'
 import { createToggleButton, createRadioButtonGroup, createNumberDialComponent, JsDial } from '../../UI_library/internal.js'
 import { createSubdivSelect3 } from '../../nunigraph/view/create_subdivselect.js'
-import { renderADSR } from '../adsr.js'
+import { renderADSR } from '../adsr/adsr.js'
+import { createADSREditor } from '../adsr/adsr_editor.js'
 
 export function sequencerControls(an : Sequencer) {
 
@@ -108,112 +109,10 @@ function createTopRowControls(an : Sequencer) {
     }
 
     choose_ADSR: {
-            
-        const canvas = E('canvas')
-            canvas.width = 56
-            canvas.height = 35
-            canvas.style.cursor = 'pointer' // The way to get back to global ADSRs
-        const ctx = canvas.getContext('2d', { alpha: false })!
-        const knobs = E('span', { className: 'flex-center' })
-            knobs.style.textAlign = 'start' // This stops the knobs from shifting
-        const ADSR = 'attack,decay,sustain,release'.split(',')
-        const render = () =>
-            renderADSR(an.localADSR, ctx, canvas.height, canvas.width, { lineWidth: 2 })
-        const adsrDials =
-            ADSR.reduce((a : any, s : any) => {
-                const dial = new JsDial()
-                const adsr = an.localADSR as any
+        // Legacy code:
+        an.adsrIndex = 5
 
-                dial.value = adsr[s]
-                dial.size = 24
-                dial.sensitivity = 2 ** -10
-                dial.render()
-                dial.attach((value : number) => {
-                    adsr[s] = value * value
-                    render()
-                })
-                knobs.appendChild(dial.html)
-
-                a[s] = dial
-                return a
-            }, {} as Indexable<JsDial>)
-        render()
-
-        function updateKnobs() {
-            const adsr = an.localADSR
-            for (const s of ADSR) 
-            {
-                adsrDials[s].update((<Indexed>adsr)[s] ** .5)
-            }
-        }
-        updateKnobs()
-
-        type CurveType = 'linear' | 'logarithmic' | 'exponential' | 'S'
-        const next = 
-            { linear: 'logarithmic'
-            , logarithmic: 'exponential'
-            , exponential: 'S'
-            , S: 'linear'
-            } as Record<CurveType,CurveType>
-
-        const text = E('span', { text: 'ADSR' })
-        const setHandlers = () => {
-            canvas.onclick = () => {
-                an.localADSR.curve = next[an.localADSR.curve]
-                render()
-            }
-            // text.onclick = () => {
-            //     localADSR.style.display = 'none'
-            //     globalADSRs.style.display = 'inline'
-            //     text.onclick = null
-            //     canvas.onclick = null
-            // }
-        }
-
-        const LOCAL = 5
-
-        // TODO: remove adsrIndexes !== 5
-        an.adsrIndex = LOCAL
-
-        if (an.adsrIndex === LOCAL)
-        {
-            setHandlers()
-        }
-        const localADSR = E('div', 
-            { children: [canvas, knobs]
-            })
-            localADSR.style.display = an.adsrIndex === LOCAL ? 'inline' : 'none'
-        const buttons = [...'ABCD⎍…']
-        const globalADSRs = createRadioButtonGroup(
-            { buttons
-            , selected: buttons[an.adsrIndex]
-            , onclick: 
-                (data : string, index : number) => {
-                    an.adsrIndex = index
-
-                    if (index === LOCAL)
-                    {
-                        localADSR.style.display = 'inline'
-                        globalADSRs.style.display = 'none'
-                        setHandlers()
-                    }
-                }
-            })
-            globalADSRs.style.display = an.adsrIndex === LOCAL ? 'none' : 'inline'
-            
-        const container = E('span', 
-            { children: [text, globalADSRs, localADSR]
-            })
-
-            // Using JavaScript to ensure the widths are the same!😃 
-            const [a,b] = [globalADSRs.style.display, localADSR.style.display]
-            const w1 = container.offsetWidth
-            globalADSRs.style.display = b; localADSR.style.display = a
-            const w2 = container.offsetWidth
-            globalADSRs.style.display = a; localADSR.style.display = b
-            container.style.minWidth = Math.max(w1,w2) + 'px'
-
-        controls.appendChild(container)
+        controls.appendChild(createADSREditor(an.localADSR))
     }
 
     return controls
