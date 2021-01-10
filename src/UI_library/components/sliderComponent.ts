@@ -51,6 +51,6 @@ export function createSliderComponent(initialValue : number, update : (value : n
             slider.max = value
         }
         maxValue.value = value
-        slider.step = myToFixed(clamp(0, v / 64, 1))
+        slider.step = clamp(0, v / 64.0, 1).toString()
     }
 }
