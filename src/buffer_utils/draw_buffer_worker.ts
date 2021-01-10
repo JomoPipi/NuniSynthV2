@@ -72,7 +72,7 @@ export function reallyDrawBuffer(channel : Float32Array, ctx : CanvasRenderingCo
     }
 }
 
-
+const epsilon = 0.03125
 export function reallyDrawBuffer2(
     channel : Float32Array, ctx : CanvasRenderingContext2D, H : number, W : number,
     moveStart : number, moveEnd : number  
@@ -93,20 +93,19 @@ export function reallyDrawBuffer2(
     const end = moveEnd * channel.length | 0
 
     // This allows the stuff to actually be seen:
-    const increment
-        = ((WIDTH_CONSTANT / W) || 1) ** 2
-        + (end - start) / 44100 | 0
+    const increment = (x => x > 1 ? x | 0 : x)(Math.sqrt((end - start) / 4410))
 
     console.log('increment =',increment)
     let max = -Infinity, min = Infinity
     for (let i = start; i < end; i += increment) 
     {
         const x = MARGIN + (W - MARGIN * 2) * (i - start) / (end - start) | 0
-        const y = channel[i] * (H - MARGIN * 2) / 2
+        const index = i | 0
+        const y = channel[index] * (H - MARGIN * 2) / 2
         ctx.moveTo(x, 0)
         ctx.lineTo(x + 1, y)
-        max = Math.max(max, channel[i])
-        min = Math.min(min, channel[i])
+        max = Math.max(max, channel[index])
+        min = Math.min(min, channel[index])
     }
     
     ctx.stroke()
