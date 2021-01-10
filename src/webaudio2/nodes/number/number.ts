@@ -9,6 +9,8 @@ import { OpenGraphControllers } from "../../../nunigraph/controller/graph_contro
 import { createSliderComponent } from "../../../UI_library/components/sliderComponent.js"
 import { createSVGIcon } from "../../../UI_library/components/svg_icon.js"
 import { createNumberDialComponent3, createSVGRadioGroup } from "../../../UI_library/internal.js"
+import { ADSR_Controller } from "../../adsr/adsr.js"
+import { createADSREditor } from "../../adsr/adsr_editor.js"
 
 
 
@@ -72,19 +74,17 @@ export class NuniNumberNode extends ConstantSourceNode
         const slider = createSliderComponent(this.numberValue, updateFunc)
             slider.container.classList.add('hide')
 
-        const beatButton = createSVGIcon('button', 50)
-            beatButton.classList.add('hide', 'push-button')
-            beatButton.onmousedown = () => updateFunc(1)
-            beatButton.onmouseup = () => updateFunc(0)
+        const beatpad = this.createBeatpad()
+            beatpad.classList.add('hide')
 
-        const components = [numberInput.container, slider.container, beatButton]
+        const components = [numberInput.container, slider.container, beatpad]
         const controllerContainer = E('div', { children: components })
 
         const showComponent = (mode : Mode) => {
             const toComponent = 
                 { knob: numberInput.container
                 , slider: slider.container
-                , button: beatButton
+                , button: beatpad
                 }
             for (const component of components)
             {
@@ -120,16 +120,31 @@ export class NuniNumberNode extends ConstantSourceNode
     getNodeIcon() {
         return this.nodeIcon
     }
+
+    private createBeatpad() {
+        
+        const adsrValues = 
+            { attack: 0.010416984558105469
+            , decay: 0.17708349227905273
+            , sustain: 0.2166603088378906
+            , release: 0.3812504768371582
+            , curve: 'exponential' as const
+            }
+
+        const beatButton = createSVGIcon('button', 50)
+            beatButton.classList.add('push-button')
+            beatButton.onmousedown = () => 
+                ADSR_Controller.trigger(this.offset, this.context.currentTime, -1, adsrValues)
+            beatButton.onmouseup = () => 
+                ADSR_Controller.untriggerAdsr(this.offset, this.context.currentTime, -1, adsrValues)
+
+        const adsrComponent = createADSREditor(adsrValues)
+
+        const container = E('div', 
+            { className: 'hide'
+            , children: [beatButton, E('br'), adsrComponent] 
+            })
+
+        return container
+    }
 }
-
-
-// playStepAtTime(id : number, time : number) {  
-
-//     // AD : Overlap-toggle
-
-//     const adsr = this.channelEnvelopes[id]
-//     const gain = adsr.gain
-//     const duration = this.tick
-//     ADSR_Controller.trigger(gain, time, this.adsrIndex, this.localADSR)
-//     ADSR_Controller.untriggerAdsr(gain, time + duration, this.adsrIndex, this.localADSR)
-// }

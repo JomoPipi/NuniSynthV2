@@ -21,6 +21,7 @@ import { doUntilMouseUp } from '../../UI_library/events/until_mouseup.js'
 import { ProcessorNode } from '../../webaudio2/nodes/processor/processor.js'
 import { OpenGraphControllers } from '../controller/graph_controller.js'
 import { NuniNumberNode } from '../../webaudio2/nodes/number/number.js'
+import { createADSREditor } from '../../webaudio2/adsr/adsr_editor.js'
 
 
 const hasSubtypes = (node : NuniGraphNode) : node is NuniGraphNode<HasSubtypes> =>
@@ -94,11 +95,6 @@ export function createValuesWindow(
         controls.appendChild(audioNode.getController())
     }
 
-    if (audioNode instanceof OscillatorNode2) 
-    {
-        controls.appendChild(activateKeyboardButton(audioNode))
-    }
-
     if (node.type === NodeTypes.OUTPUT)
     {
         controls.appendChild(gainControls(
@@ -109,6 +105,11 @@ export function createValuesWindow(
         controls.appendChild(exposeAudioParams(node, saveCallback))
     }
     
+    if (audioNode instanceof NuniSourceNode) 
+    {
+        controls.appendChild(activateKeyboardButton(audioNode))
+    }
+
     if (audioNode instanceof PianoRoll12Tone)
     {
         controls.appendChild(createResizeableCanvasWindow(
@@ -260,12 +261,19 @@ function gainControls(node : NuniGraphNode<NodeTypes.OUTPUT>) {
 
 function activateKeyboardButton(an : NuniSourceNode) {
     
-    return createToggleButton(
+    const adsr = createADSREditor(an.localADSR)
+        adsr.classList.toggle('hide', !an.kbMode)
+    const toggle = createToggleButton(
         an,
         'kbMode',
         { text: '🎹'
-        , className: 'kb-button' 
+        , className: 'kb-button'
+        , 
+            update(on : boolean) {
+                adsr.classList.toggle('hide', !on)
+            }
         })
+    return E('div', { className: 'flex-center some-margin', children: [toggle, adsr] })
 }
 
 

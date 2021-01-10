@@ -28,6 +28,14 @@ export class NuniSourceNode extends VolumeNodeContainer {
     private stopLastNSources : StopFunc[]
     private _kbMode : boolean
     protected soloSource? : SoundSource
+
+    localADSR : ADSRData = 
+        { attack: 0.01
+        , decay: 0.17
+        , sustain: 0.21
+        , release: 0.0//38
+        , curve: 'exponential' as CurveType
+        }
     
     constructor(ctx : AudioContext) {
         super(ctx)
@@ -83,8 +91,8 @@ export class NuniSourceNode extends VolumeNodeContainer {
         adsr.connect(this.volumeNode)
         
         src.connect(adsr)
-        ADSR_Controller.triggerSource(src, adsr.gain, time, 1)
-        const stopTime = ADSR_Controller.untriggerAndGetStopTime(adsr.gain, time + duration)
+        ADSR_Controller.triggerSource(src, adsr.gain, time, 1, this.localADSR)
+        const stopTime = ADSR_Controller.untriggerAndGetStopTime(adsr.gain, time + duration, -1, this.localADSR)
         src.stop(stopTime)
     }
 
@@ -125,11 +133,11 @@ export class NuniSourceNode extends VolumeNodeContainer {
         
         src.connect(adsr)
         
-        ADSR_Controller.triggerSource(src, adsr.gain, time, 1)
+        ADSR_Controller.triggerSource(src, adsr.gain, time, -1, this.localADSR)
         
         this.playingKeys[key] = {
             stop: (time : number) =>
-                src.stop(ADSR_Controller.untriggerAndGetStopTime(adsr.gain, time)),
+                src.stop(ADSR_Controller.untriggerAndGetStopTime(adsr.gain, time, -1, this.localADSR)),
             
             stopImmediately: () => src.stop(this.ctx.currentTime)
         }

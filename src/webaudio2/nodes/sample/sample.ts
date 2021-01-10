@@ -159,12 +159,12 @@ export class NuniSampleNode extends NuniSourceNode
             { update : (on : boolean) => this.refresh() }
             ))
             
-        box.appendChild(createToggleButton(
-            this,
-            'kbMode',
-            { text: '🎹'
-            , className: 'kb-button' 
-            }))
+        // box.appendChild(createToggleButton(
+        //     this,
+        //     'kbMode',
+        //     { text: '🎹'
+        //     , className: 'kb-button' 
+        //     }))
     
         box.appendChild(createToggleButton({}, '⟳', 
             { 

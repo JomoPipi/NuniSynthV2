@@ -8,15 +8,6 @@
 import { JsDial, createRadioButtonGroup } from "../../UI_library/internal.js"
 import { renderADSR } from "./adsr.js"
 
-type CurveType = 'linear' | 'logarithmic' | 'exponential' | 'S'
-type ADSRData = 
-    { attack: number
-    , decay: number
-    , sustain: number
-    , release: number
-    , curve: CurveType
-    }
-
 export function createADSREditor(adsrValues : ADSRData) {
         
     const canvas = E('canvas')
@@ -68,20 +59,19 @@ export function createADSREditor(adsrValues : ADSRData) {
         , S: 'linear'
         } as Record<CurveType,CurveType>
 
-    const text = E('span', { text: 'ADSR' })
+    // const text = E('span', { text: 'ADSR' })
     canvas.onclick = () => {
         adsrValues.curve = next[adsrValues.curve]
         render()
     }
 
-    const localADSR = E('div', 
+    const localADSR = E('span', 
         { children: [canvas, knobs]
         })
-        localADSR.style.display = 'inline'
 
-    const container = E('span', 
-        { children: [text, localADSR]
-        })
+    // const container = E('span', 
+    //     { children: [text, localADSR]
+    //     })
 
-    return container
+    return localADSR
 }

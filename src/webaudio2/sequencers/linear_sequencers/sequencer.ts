@@ -15,16 +15,6 @@ type ChannelData = {
     bufferKey? : number
     }
 
-type CurveType = 'linear' | 'logarithmic' | 'exponential' | 'S'
-type ADSRData = 
-    { attack: number
-    , decay: number
-    , sustain: number
-    , release: number
-    , curve: CurveType
-    }
-
-
 export abstract class Sequencer extends VolumeNodeContainer {
     /**
      * This creates an N-step sequencer out of

@@ -59,7 +59,6 @@ const logarDown = createLogarithmicBuffer(-1)
 
 const N_ADSRs = 4
 
-type CurveType = 'linear' | 'logarithmic' | 'exponential' | 'S'
 
 const defaultADSR = (_ : any, index : number) => {
     const x = index / 8
@@ -166,14 +165,6 @@ type RenderOptions = Partial<{
     updateKnobs? : Function 
     lineWidth? : number
     }>
-
-type ADSRData = 
-    { attack: number
-    , decay: number
-    , sustain: number
-    , release: number
-    , curve: CurveType
-    }
 
 export function renderADSR(
     adsr : ADSRData, 
