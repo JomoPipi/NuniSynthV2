@@ -748,6 +748,10 @@ code {
   background-color: var(--color4);
 }
 
+.record-length-slider {
+  width: 80px;
+}
+
 .shadow-knob {
   display: inline-block;
   position: relative;
@@ -1083,6 +1087,15 @@ code {
   width: 10px;
 }
 
+.text-unit {
+  display: inline-block;
+  text-align: center;
+}
+
+.text-unit.width-40 {
+  width: 40px;
+}
+
 .info-button {
   cursor: help;
   background: #5353a1;
@@ -1278,9 +1291,8 @@ code {
 }
 
 .sample-canvas {
-  background-color: rgba(0, 0, 255, 0.05);
-  -webkit-filter: var(--dark-mode);
-          filter: var(--dark-mode);
+  -webkit-filter: invert(100%);
+          filter: invert(100%);
 }
 
 .sample-canvas.sample-sequencer-channel {

@@ -21,8 +21,7 @@
 }
 
 .sample-canvas {
-    background-color: rgba(0,0,255,0.05);
-    filter: var(--dark-mode);
+    filter: invert(100%);// var(--dark-mode);
 
     &.sample-sequencer-channel {
         border-top-right-radius: 5px;

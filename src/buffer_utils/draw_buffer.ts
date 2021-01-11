@@ -23,11 +23,11 @@ export function drawBuffer(buff : AudioBuffer, canvas : OffscreenCanvas) {
 export function drawBuffer2(
     buffer : Float32Array, 
     ctx : CanvasRenderingContext2D,
-     H : number, 
-     W : number) {
+    H : number, 
+    W : number) {
          
     reallyDrawBuffer(buffer, ctx, H, W)
-    return ctx.getImageData(0, 0, W, H)
+    // return ctx.getImageData(0, 0, W, H)
 }
 
 export function drawBuffer3(

@@ -6,8 +6,9 @@
 
 
 import { NuniRecordingNode, MasterClock } from "../../internal.js";
-import { createSubdivSelect } from "../../../nunigraph/view/create_subdivselect.js";
+import { createSubdivSelect, createSubdivSelect3 } from "../../../nunigraph/view/create_subdivselect.js";
 import { SampleSelectComponent } from "../../../UI_library/components/sample_select.js";
+import { createVersatileNumberDialComponent } from "../../../UI_library/components/versatile_numberdial.js";
 
 
 
@@ -39,15 +40,17 @@ export function audioCaptureNodeControls(audioNode : NuniRecordingNode) {
         const secs = 's '
         const value = audioNode.recordingLength
         const subdivSelect = createSubdivSelect(audioNode, { fn: updateSlider })
-        const lengthText = E('span', { text: value + secs })
+        const lengthText = E('span', { className: 'text-unit width-40', text: value + secs })
         const lengthSlider = E('input',
-            { props:
+            { className: 'record-length-slider'
+            , props:
                 { type: 'range'
                 , min: 0.1
                 , max: 20
                 , step: 0.1
                 , value: audioNode.recordingLength.toString()
-                , oninput: () => {
+                , 
+                    oninput: () => {
                         const value = lengthSlider.value
                         lengthText.innerText = value + secs
                         audioNode.recordingLength = +value
@@ -62,7 +65,7 @@ export function audioCaptureNodeControls(audioNode : NuniRecordingNode) {
             lengthSlider.value = length.toString()
         }
 
-        const box = E('div', { children: [lengthSlider, lengthText, subdivSelect] })
+        const box = E('div', { className: 'some-margin', children: [lengthSlider, lengthText, subdivSelect] })
         controls.appendChild(box)
     }
 

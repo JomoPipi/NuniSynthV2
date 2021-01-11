@@ -76,31 +76,31 @@ export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv :
         ? `${Math.round(1 / an.subdiv)} bars` 
         : '1/' + an.subdiv
 
-    const freeKnob = new JsDial(1)
-        freeKnob.min = -3
-        freeKnob.max = 9
-        freeKnob.rounds = 1
-        freeKnob.size = 20
-        freeKnob.sensitivity = 2**-6
-        freeKnob.html.style.display = an.subdivisionSynced ? 'inline' : 'none'
-        freeKnob.attach((value : number) => {
-            const v = 2 ** value
-            an.subdiv = clamp(0.01, v, 1e9)||0.01
-            fn && fn(v)
-        })
+    // const freeKnob = new JsDial(1)
+    //     freeKnob.min = -3
+    //     freeKnob.max = 9
+    //     freeKnob.rounds = 1
+    //     freeKnob.size = 20
+    //     freeKnob.sensitivity = 2**-6
+    //     freeKnob.html.style.display = an.subdivisionSynced ? 'inline' : 'none'
+    //     freeKnob.attach((value : number) => {
+    //         const v = 2 ** value
+    //         an.subdiv = clamp(0.01, v, 1e9)||0.01
+    //         fn && fn(v)
+    //     })
     
     select.onchange = function() {
         if (select.value === freeTempo)
         {
             an.subdivisionSynced = true
-            freeKnob.html.style.display = 'inline'
-            freeKnob.update(an.subdiv)
+            // freeKnob.html.style.display = 'inline'
+            // freeKnob.update(an.subdiv)
             return
         }
         else 
         {
             an.subdivisionSynced = false
-            freeKnob.html.style.display = 'none'
+            // freeKnob.html.style.display = 'none'
         }
         const n = select.value.endsWith('bars') 
             ? 1.0/+select.value.split(' ')[0]
@@ -111,7 +111,8 @@ export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv :
     }
 
 
-    return E('div', { className: 'flex-center', children: [select, freeKnob.html] })
+    // const oldResult = E('span', { className: 'flex-center', children: [select, freeKnob.html] })
+    return select
 }
 
 export function createSubdivSelect2(fn? : (value : number) => void) {
@@ -150,5 +151,6 @@ export function createSubdivSelect3(initialValue : number, updateFn : (value : n
         , forceMode: options?.forceMode
         })
         
-    return { container: E('div', { /* text: 'subdiv',*/ children: [numberDial] }) }
+    // return { container: E('div', { /* text: 'subdiv',*/ children: [numberDial] }) }
+    return numberDial
 }

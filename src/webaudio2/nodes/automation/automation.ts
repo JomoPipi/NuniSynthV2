@@ -139,7 +139,7 @@ export class AutomationNode extends VolumeNodeContainer
             1 / this._nMeasures, 
             value => this.nMeasures = 1 / clamp(1e-9, value, 1e9),
             { mouseup: () => this.sync() }
-            ).container
+            )
 
         const phaseShifter = E('div', { text: 'phase' })
             {

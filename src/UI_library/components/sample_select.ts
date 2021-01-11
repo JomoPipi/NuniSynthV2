@@ -25,7 +25,7 @@ export class SampleSelectComponent {
 
     constructor(updateFunc : (key : number) => void, initialImage : number) {
         this.canvas = E('canvas', { className: 'sample-canvas sample-sequencer-channel' })
-        this.ctx = this.canvas.getContext('2d', { alpha: false })!
+        this.ctx = this.canvas.getContext('2d')!//, { alpha: false })!
         
         this.canvas.height = 35
         this.canvas.width = this.canvas.height * PHI | 0 // * PHI | 0
@@ -71,10 +71,9 @@ export class SampleSelectComponent {
     }
 
     setImage(n : number = this.currentImage) {
-        log('im here!!')
         this.valueText.innerText = String.fromCharCode(65 + n)
         const imageData = BufferUtils.getImage(n, this.ctx, this.canvas.height, this.canvas.width)
-        this.ctx.putImageData(imageData, 0, 0)
+        // this.ctx.putImageData(imageData, 0, 0)
     }
 
 }

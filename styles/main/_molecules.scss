@@ -105,3 +105,12 @@
         width: 10px;
     }
 }
+
+.text-unit {
+    display: inline-block;
+    text-align: center;
+
+    &.width-40 {
+        width: 40px;
+    }
+}

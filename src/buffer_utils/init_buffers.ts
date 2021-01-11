@@ -64,7 +64,7 @@ class BufferUtily {
             // = this.imageDataCenter[dataCenterAccessKey] 
             = drawBuffer2.call(null, buffer, ctx, H, W)
         BufferStorage.imageNeedsUpdate[key] = false
-        return imageData
+        // return imageData
     }
 
     getImage2(key : number, ctx : CanvasRenderingContext2D, H : number, W : number,

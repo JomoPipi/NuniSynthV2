@@ -414,8 +414,9 @@ function exposeAudioParams(node : NuniGraphNode<CanBeAutomated>, saveCallback : 
         if (isSubdividable[param]) {
             const subdiv = { subdiv: 0 }
             const subdivSelect = createSubdivSelect(subdiv, { fn: updateParam })
+                subdivSelect.style.display = 'block'
 
-            textBox.append(' ', subdivSelect)
+            textBox.append(subdivSelect)
 
             function updateParam(value : number) {
                 const newValue = param === 'frequency'

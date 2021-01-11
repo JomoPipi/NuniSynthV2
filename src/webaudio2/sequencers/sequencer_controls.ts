@@ -105,7 +105,7 @@ function createTopRowControls(an : Sequencer) {
             an.subdiv, 
             value => an.subdiv = value,
             { mouseup() { an.sync() }
-            }).container)
+            }))
     }
 
     choose_ADSR: {
