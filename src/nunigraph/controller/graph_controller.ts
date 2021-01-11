@@ -354,7 +354,7 @@ export class NuniGraphController {
         }
 
         // Create dialogBox:
-        const contentContainer = E('div', { className: 'full' })
+        const contentContainer = E('div')//, { className: 'full' })
         const dialogBox = 
             createDraggableWindow(
             { clickCallback

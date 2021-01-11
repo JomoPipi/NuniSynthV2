@@ -263,17 +263,19 @@ function activateKeyboardButton(an : NuniSourceNode) {
     
     const adsr = createADSREditor(an.localADSR)
         adsr.classList.toggle('hide', !an.kbMode)
+        
     const toggle = createToggleButton(
         an,
         'kbMode',
         { text: '🎹'
-        , className: 'kb-button'
+        , className: 'kb-button neumorph2'
         , 
             update(on : boolean) {
                 adsr.classList.toggle('hide', !on)
             }
         })
-    return E('div', { className: 'flex-center some-margin', children: [toggle, adsr] })
+
+    return E('div', { className: 'flex-center', children: [toggle, adsr] })
 }
 
 
