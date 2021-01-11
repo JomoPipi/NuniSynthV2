@@ -79,7 +79,7 @@ const squareADSR = // Needs to be somewhat smooth to prevent pop sounds
     }
 
 const canvas = D('adsr-canvas') as HTMLCanvasElement
-const ctx = canvas.getContext('2d', { alpha: false })!
+const ctx = canvas.getContext('2d')!
 
 export const ADSR_Controller = {
     canvas,

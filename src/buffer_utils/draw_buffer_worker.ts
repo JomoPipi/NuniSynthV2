@@ -11,7 +11,7 @@ let [ctx, H, W] = [] as any[]
 onmessage = function({ data: { canvas, buffer }}) {
     if (canvas) 
     {
-        ctx = canvas.getContext('2d', { alpha: false })!
+        ctx = canvas.getContext('2d')!
         H = canvas.height, 
         W = canvas.width
     }

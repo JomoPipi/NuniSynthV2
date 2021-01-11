@@ -118,7 +118,7 @@ export class AutomationNode extends VolumeNodeContainer
 
         const progressLine = E('canvas')
         drawProgressLine: {
-            const ctx = progressLine.getContext('2d', { alpha: false })!
+            const ctx = progressLine.getContext('2d')!
             const h = 2
             // const margin = 15
             progressLine.style.display = 'block'

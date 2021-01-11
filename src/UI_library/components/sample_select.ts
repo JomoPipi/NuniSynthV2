@@ -25,7 +25,7 @@ export class SampleSelectComponent {
 
     constructor(updateFunc : (key : number) => void, initialImage : number) {
         this.canvas = E('canvas', { className: 'sample-canvas sample-sequencer-channel' })
-        this.ctx = this.canvas.getContext('2d')!//, { alpha: false })!
+        this.ctx = this.canvas.getContext('2d')!//)!
         
         this.canvas.height = 35
         this.canvas.width = this.canvas.height * PHI | 0 // * PHI | 0

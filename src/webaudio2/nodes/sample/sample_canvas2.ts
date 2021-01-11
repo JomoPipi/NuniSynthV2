@@ -80,7 +80,7 @@ export class BufferCanvasFrame {
         this.H = canvas.height = this.size
         this.W = canvas.width = this.size * SPECIAL_NUM | 0
         this.frame.style.maxWidth = this.W + 'px'
-        this.ctx = canvas.getContext('2d', { alpha: false })!
+        this.ctx = canvas.getContext('2d')!
         this.refresh()
 
         this.frame.onwheel = (e : WheelEvent) => {
@@ -89,10 +89,10 @@ export class BufferCanvasFrame {
             const mouseLeft = e.offsetX / this.W
             const mouseRight = 1 - mouseLeft
             this.zoomStart = clamp(0, this.zoomStart +
-                (zoomCenter - this.zoomStart) * mouseLeft * direction / 2.0, 1)
+                (zoomCenter - this.zoomStart) * mouseLeft * direction / 4.0, 1)
 
             this.zoomEnd = clamp(0, this.zoomEnd - 
-                (zoomCenter - this.zoomStart) * mouseRight * direction / 2.0, 1)
+                (zoomCenter - this.zoomStart) * mouseRight * direction / 4.0, 1)
 
             updateZoom(this.zoomStart, this.zoomEnd)
             this.refresh()
