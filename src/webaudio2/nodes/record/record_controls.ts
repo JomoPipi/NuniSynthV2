@@ -9,6 +9,7 @@ import { NuniRecordingNode, MasterClock } from "../../internal.js";
 import { createSubdivSelect, createSubdivSelect3 } from "../../../nunigraph/view/create_subdivselect.js";
 import { SampleSelectComponent } from "../../../UI_library/components/sample_select.js";
 import { createVersatileNumberDialComponent } from "../../../UI_library/components/versatile_numberdial.js";
+import { createDiscreteDialComponent } from "../../../UI_library/components/discrete_dial.js";
 
 
 
@@ -17,12 +18,12 @@ import { createVersatileNumberDialComponent } from "../../../UI_library/componen
 
 
 export function audioCaptureNodeControls(audioNode : NuniRecordingNode) {
-    const controls = E('div')
+    const controls = E('div', { className: 'some-margin' })
     let refreshBufferImage
-
+    // let updateProgressLine
+    
+    const box = E('div', { className: 'flat-grid' })
     choose_buffer_index: {
-        const box = E('span', { text: 'WRITE TO:' })
-        
         const update = (bufferKey : number) => 
             audioNode.bufferKey = bufferKey
             
@@ -30,61 +31,58 @@ export function audioCaptureNodeControls(audioNode : NuniRecordingNode) {
             new SampleSelectComponent(update, audioNode.bufferKey)
 
         refreshBufferImage = sampleCanvas.setImage.bind(sampleCanvas)
-        box.appendChild(sampleCanvas.html)
 
-        controls.appendChild(box)
+        box.appendChild(sampleCanvas.html)
     }
     
-    choose_recording_length: {
+    // choose_recording_length: {
 
-        const secs = 's '
-        const value = audioNode.recordingLength
-        const subdivSelect = createSubdivSelect(audioNode, { fn: updateSlider })
-        const lengthText = E('span', { className: 'text-unit width-40', text: value + secs })
-        const lengthSlider = E('input',
-            { className: 'record-length-slider'
-            , props:
-                { type: 'range'
-                , min: 0.1
-                , max: 20
-                , step: 0.1
-                , value: audioNode.recordingLength.toString()
-                , 
-                    oninput: () => {
-                        const value = lengthSlider.value
-                        lengthText.innerText = value + secs
-                        audioNode.recordingLength = +value
-                        audioNode.subdiv = 0
-                    }
-                }
-            })
+    //     const subdivisionList = [
+    //         0.0625, 0.125, 0.25, 0.5, 1, 2, 4, 8,
+    //         1.5, 3, 6, 5, 7
+    //         ]
 
-        function updateSlider(value : number) {
-            const length = (60 * 4 / MasterClock.getTempo()) / audioNode.subdiv
-            lengthText.textContent = length + secs
-            lengthSlider.value = length.toString()
-        }
+    //     const subdivisionToString = (n : number) => 
+    //         n <= 1 
+    //             ? `${Math.round(1/n)} bars` 
+    //             : '1/' + n
 
-        const box = E('div', { className: 'some-margin', children: [lengthSlider, lengthText, subdivSelect] })
-        controls.appendChild(box)
-    }
+    //     const update = (s : string, index : number) => audioNode.subdiv = subdivisionList[index]
 
-    record_at_start_of_next_measure: {
-        const checkbox = E('input', 
-            { props: 
-                { type: 'checkbox'
-                , checked: audioNode.sync 
-                }
-            })
+    //     const lengthDial = createDiscreteDialComponent(4, subdivisionList.map(subdivisionToString), update)
 
-        controls.append(checkbox, E('span', { text: ' sync ' }))
+        
+    //     const progressLine = E('canvas')
+    //     drawProgressLine: {
+    //         const ctx = progressLine.getContext('2d', { alpha: false })!
+    //         const h = 2
+    //         // const margin = 15
+    //         progressLine.height = h
+    //         progressLine.width = 130
+            
+    //         updateProgressLine = (v : number) => {
+    //             ctx.fillStyle = '#AB6'
+    //             ctx.clearRect(0, 0, progressLine.width, h)
+    //             // ctx.fillRect(margin, 0, (progressLine.width - margin * 2) * v, h)
+    //             ctx.fillRect(0, 0, progressLine.width * v, h)
+    //         }
+    //     }
 
-        checkbox.oninput = () => {
-            audioNode.sync = checkbox.checked
-        }
-    }
-
-    record_button: {
+    //     const sync = E('input', 
+    //         { props: 
+    //             { type: 'checkbox'
+    //             , checked: audioNode.isInSync 
+    //             , 
+    //                 oninput() { 
+    //                     audioNode.isInSync = sync.checked
+    //                     lengthDial.container.classList.toggle('hide', !sync.checked)
+    //                     progressLine.classList.toggle('hide', !sync.checked)
+    //                 }
+    //             }
+    //         })
+        const messageBox = E('div')
+            messageBox.style.color = 'red'
+        
         const recordButton 
             = E('button', 
             { className: 'record'
@@ -92,10 +90,18 @@ export function audioCaptureNodeControls(audioNode : NuniRecordingNode) {
             })
 
         recordButton.onclick = () => 
-            audioNode.captureAudioFromStream(recordButton)
+            audioNode.captureAudioFromStream(recordButton, messageBox)
 
-        controls.appendChild(recordButton)
-    }
+        box.appendChild(
+            recordButton)//, 
+            // E('span', { text: 'sync ', children: [sync] }), 
+            // E('br'),
+            // progressLine,
+            // E('br'),  
+            // lengthDial.container)
+
+        controls.append(box, messageBox)
+    // }
 
     return { controls, refreshBufferImage }
 }

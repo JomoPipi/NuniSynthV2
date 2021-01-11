@@ -16,14 +16,14 @@ type Options = {
 export function createDiscreteDialComponent(
     initialIndex : number, 
     optionList : string[], 
-    fn : (s : string) => void,
+    fn : (s : string, index : number) => void,
     options : Options = {}) {
     
     const textBox = E('div', { className: 'number-input-2', text: optionList[initialIndex] })
     const dial = new DiscreteDial(optionList.length, options)
 
         dial.onrotation(i => {
-            fn(optionList[i])
+            fn(optionList[i], i)
             textBox.innerText = optionList[i]
         }, { mouseup: options.mouseup })
 

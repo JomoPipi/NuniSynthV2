@@ -94,7 +94,7 @@ Graph_Attachments: {
     const yieldClockedNodes = yieldNodesFiltered(isClockDependent)
     MasterClock.setSchedule(
     {
-        scheduleNotes() {
+        scheduleNotes() { // Optimization: put the an.isPlaying check on the outside?
             for (const node of yieldClockedNodes(g))
             {
                 node.audioNode.scheduleNotes()

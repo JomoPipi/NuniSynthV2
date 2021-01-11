@@ -18,7 +18,6 @@ export class AutomationNode extends VolumeNodeContainer
     phaseShift = 0
     isPlaying = true
     private _nMeasures = 1
-    private startTime = 0
     private measureTime = 0
     private tempo = 120
     private updateProgressLine = (value : number) => {}
@@ -71,7 +70,6 @@ export class AutomationNode extends VolumeNodeContainer
 
     play() {
         this.isPlaying = true
-        this.startTime = 0
         this.measureTime = 0
         this.durationOfLoop = 60 * 4 * this._nMeasures / this.tempo
 
@@ -93,7 +91,7 @@ export class AutomationNode extends VolumeNodeContainer
         if (!this.isPlaying) return;
         const time = this.ctx.currentTime
         const phase = this.phaseShift * this.durationOfLoop
-        const currentTime = time - this.startTime + phase
+        const currentTime = time + phase
         const percentage = 1 - (this.measureTime - currentTime - 0.200) / this.durationOfLoop
         if (this.dialogBoxIsOpen)
         {

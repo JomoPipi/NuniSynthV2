@@ -151,6 +151,7 @@ const KnowsWhenDialogBoxCloses =
     , [NodeTypes.S_SEQ]: true
     , [NodeTypes.AUTO]: true
     , [NodeTypes.MODULE]: true
+    // , [NodeTypes.RECORD]: true
     // TODO: make these true
     // , [NodeTypes.PIANOR]: true
     // , [NodeTypes.PROCESSOR]: true
@@ -322,6 +323,7 @@ const ClockDependent =
     , [NodeTypes.S_SEQ]:  true
     , [NodeTypes.AUTO]:   true
     , [NodeTypes.PIANOR]: true
+    // , [NodeTypes.RECORD]: true
     } as const
 
 

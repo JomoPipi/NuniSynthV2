@@ -148,7 +148,7 @@ export function createSubdivSelect3(initialValue : number, updateFn : (value : n
         , mapNumberToString: numericalValueToSubdivString
         , continuousDial: { min: Math.min(...subdivisionList), max: Math.max(...subdivisionList) }
         , mouseup: options?.mouseup
-        , forceMode: options?.forceMode
+        , forceMode: "discrete" //options?.forceMode
         })
         
     // return { container: E('div', { /* text: 'subdiv',*/ children: [numberDial] }) }
