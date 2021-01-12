@@ -15,7 +15,6 @@ export function addResizability(
     children : HTMLElement[]) {
 
     const dialogBox = E('div', { children })
-    dialogBox.style.border = '1px solid green'
     dialogBox.style.overflow = 'hidden'
     
     const topRow = E('div', { className: 'resizable-window-bottom-row' })
@@ -46,7 +45,11 @@ export function addResizability(
     
     box.onmousedown = doUntilMouseUp(mousemove, 
         { mousedown
-        , mouseup: () => resizeCallback(H, W) 
+        , 
+            mouseup: () => {
+                if (resizeDirection === NONE) return;
+                resizeCallback(H, W)
+            }
         })
 
     function mousedown(e : MouseEvent) {

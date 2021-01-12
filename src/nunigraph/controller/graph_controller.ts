@@ -16,7 +16,6 @@ import { createSelectionPrompt } from '../../UI_library/components/selection_pro
 import { startCustomNodeWizard } from './customnodewizard.js'
 import { contextmenu, addModuleToList } from './graph_contextmenu.js'
 import { createSVGIcon } from '../../UI_library/components/svg_icon.js'
-import { addResizability } from '../../UI_library/components/add_resizability.js'
 // import { openWindow, closeWindow, showContextMenu } from './window_toggler.js'
 
 export const OpenGraphControllers = {
@@ -363,11 +362,11 @@ export class NuniGraphController {
             , color: NodeTypeColors[node.type]
             , barContent
             , resizeUpdate: node.type in HasAResizableDialogBox
-                ? (node as NuniGraphNode<HasAResizableDialogBox>).audioNode.updateBoxDimensions
+                ? (H, W) => (node as NuniGraphNode<HasAResizableDialogBox>).audioNode.updateBoxDimensions(H, W)
                 : undefined
             })
 
-        dialogBox.style.border = '2px solid purple'
+        // dialogBox.style.border = '2px solid purple'
         this.getOpenWindow[node.id] = dialogBox
 
         contentContainer.appendChild(

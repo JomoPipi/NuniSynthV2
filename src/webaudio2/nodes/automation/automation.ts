@@ -25,6 +25,7 @@ export class AutomationNode extends VolumeNodeContainer
     private pointEditor = new AutomationPointsEditor()
     private dialogBoxIsOpen = false
     private controller? : HTMLElement
+    private progressLine = E('canvas')
 
     constructor(ctx : AudioContext) {
         super(ctx)
@@ -47,7 +48,9 @@ export class AutomationNode extends VolumeNodeContainer
     }
 
     updateBoxDimensions(H : number, W : number) {
-        
+        console.log('H,W =',H,W)
+        this.pointEditor.setDimensions(H, W)
+        this.progressLine.width = W
     }
 
     deactivateWindow() {
@@ -120,20 +123,19 @@ export class AutomationNode extends VolumeNodeContainer
 
         const nodeCanvas = this.pointEditor.getController()
 
-        const progressLine = E('canvas')
         drawProgressLine: {
-            const ctx = progressLine.getContext('2d')!
+            const ctx = this.progressLine.getContext('2d')!
             const h = 2
             // const margin = 15
-            progressLine.style.display = 'block'
-            progressLine.height = h
+            this.progressLine.style.display = 'block'
+            this.progressLine.height = h
             
             this.updateProgressLine = v => {
                 if (!this.dialogBoxIsOpen) return;
                 ctx.fillStyle = '#AB6'
-                ctx.clearRect(0, 0, progressLine.width, h)
+                ctx.clearRect(0, 0, this.progressLine.width, h)
                 // ctx.fillRect(margin, 0, (progressLine.width - margin * 2) * v, h)
-                ctx.fillRect(0, 0, progressLine.width * v, h)
+                ctx.fillRect(0, 0, this.progressLine.width * v, h)
             }
         }
 
@@ -171,7 +173,7 @@ export class AutomationNode extends VolumeNodeContainer
             , children: [subdivSelect, phaseShifter, modeSelect] 
             })
 
-        const controller = E('div', { children: [nodeCanvas, progressLine, hardwareControls] })
+        const controller = E('div', { children: [nodeCanvas, this.progressLine, hardwareControls] })
         return controller
     }
 }
