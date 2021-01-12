@@ -746,8 +746,8 @@ type IKnowsWhenDialogBoxCloses<T> = (T extends KnowsWhenDialogBoxCloses
 
 type IHasAResizableDialogBox<T> = (T extends HasAResizableDialogBox
     ? { 
-        onresize(func : (H : number, W : number) => void) : void
-    } 
+        updateBoxDimensions(H : number, W : number) : void
+    }
     : {})
 
 type AudioNodeInterfaces<T extends NodeTypes> =

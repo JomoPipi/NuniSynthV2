@@ -46,6 +46,10 @@ export class AutomationNode extends VolumeNodeContainer
         return this.controller || (this.controller = this.reallyGetController())
     }
 
+    updateBoxDimensions(H : number, W : number) {
+        
+    }
+
     deactivateWindow() {
         this.dialogBoxIsOpen = false
     }
@@ -168,7 +172,6 @@ export class AutomationNode extends VolumeNodeContainer
             })
 
         const controller = E('div', { children: [nodeCanvas, progressLine, hardwareControls] })
-        controller.style.border = '1px solid red'
         return controller
     }
 }

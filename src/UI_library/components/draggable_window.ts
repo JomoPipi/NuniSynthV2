@@ -8,6 +8,7 @@
 import { doUntilMouseUp } from "../events/until_mouseup.js"
 import { rgbaColorContrast } from "../functions/colorContrast.js"
 import { UI_clamp } from "../functions/ui_clamp.js"
+import { addResizability } from "./add_resizability.js"
 
 
 
@@ -19,29 +20,33 @@ type DraggableWindowOptions = {
     color : string
     contentContainer : HTMLElement
     barContent : HTMLElement
-    }
+    resizeUpdate? : (H : number, W : number) => void
+}
 
 export function createDraggableWindow(
-    { clickCallback, closeCallback, contentContainer, color, barContent } : DraggableWindowOptions) {
+    { clickCallback
+    , closeCallback
+    , contentContainer
+    , color, barContent
+    , resizeUpdate 
+    } : DraggableWindowOptions) {
 
     const exitBtn = E('button', { text: 'x', className: 'exit-button no-drag' })
     const bar = E('div', { className: 'draggable-window-bar', children: [barContent, exitBtn] })
-        // bar.style.border = '1px solid gold'
-    const box = E('div', { className: 'window show', children: [bar, contentContainer] })
 
-    // box.style.border = `2px solid ${color}`
-    // box.style.borderLeft =
-    // box.style.borderRight =
+    const box = E('div', { className: 'window show' })
+
+    const children = resizeUpdate
+        ? addResizability(box, resizeUpdate, [bar, contentContainer])
+        : [bar, contentContainer]
+
+    // Let the window be displayed if someone clicks on it.
+    box.onclick = clickCallback.bind(null, box)
+    box.append(...children)
     box.style.borderBottom = `1px solid ${color}`
-    // bar.style.backgroundColor = color || '#555'
-    // bar.style.color = rgbaColorContrast(color || '#555')
 
     exitBtn.onclick = closeCallback.bind(null, box)
-
     addDragFunction(bar, box, clickCallback)
-    
-    // Let the window be displayed if someone clicks on it.
-    box.onmousedown = clickCallback.bind(null, box)
 
     return box
 }
