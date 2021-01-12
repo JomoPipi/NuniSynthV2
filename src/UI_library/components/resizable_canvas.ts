@@ -108,7 +108,7 @@ export function createResizeableCanvas({ canvas, initFunc, mousedownFunc, mousem
                 canvas.width = Math.max(0, w + x - _X)
                 if (keepRatio)
                 {
-                    canvas.height = canvas.width / factor
+                    canvas.height = Math.round(canvas.width / factor)
                 }
             }
             else
@@ -116,7 +116,7 @@ export function createResizeableCanvas({ canvas, initFunc, mousedownFunc, mousem
                 canvas.width = Math.max(0, w + X - x)
                 if (keepRatio)
                 {
-                    canvas.height = canvas.width / factor
+                    canvas.height = Math.round(canvas.width / factor)
                 }
             }
         }
@@ -127,7 +127,7 @@ export function createResizeableCanvas({ canvas, initFunc, mousedownFunc, mousem
                 canvas.height = Math.max(0, h + Y - y)
                 if (keepRatio)
                 {
-                    canvas.width = canvas.height * factor
+                    canvas.width = Math.round(canvas.height * factor)
                 }
             }
         }

@@ -12,7 +12,7 @@ import
     , MasterClock, PianoRoll12Tone, OscillatorNode2, AutomationNode 
     } from '../../webaudio2/internal.js'
 import 
-    { createNumberDialComponent3, createResizeableCanvas, createToggleButton, createResizableWindow
+    { createNumberDialComponent3, createResizeableCanvas, createToggleButton
     , JsDial
     } from '../../UI_library/internal.js'
 import { createSubdivSelect } from './create_subdivselect.js'
@@ -120,8 +120,10 @@ export function createValuesWindow(
     }
     else if (audioNode instanceof ProcessorNode)
     {
-        controls.appendChild(createResizableWindow(
-            audioNode.getUIComponent(), ancestor, audioNode.resizeUI.bind(audioNode)))
+        // controls.appendChild(createResizableWindow(
+        //     audioNode.getController(), ancestor, audioNode.updateBoxDimensions.bind(audioNode)))
+
+        controls.appendChild(audioNode.getController())
     }
     
     return controls

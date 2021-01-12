@@ -35,6 +35,7 @@ export function createDraggableWindow(
     const bar = E('div', { className: 'draggable-window-bar', children: [barContent, exitBtn] })
 
     const box = E('div', { className: 'window show' })
+        // box.style.backgroundColor = 'transparent' // TROLL
 
     const children = resizeUpdate
         ? addResizability(box, resizeUpdate, [bar, contentContainer])

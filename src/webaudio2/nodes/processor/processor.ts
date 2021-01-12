@@ -255,8 +255,7 @@ class CustomProcessor extends AudioWorkletProcessor {
 
 // const noise = Math.sin(this.x++/(((this.y *= 1.0001) % 100) + 694.0));
 
-class CustomAudioNode extends AudioWorkletNode
-  implements AudioNodeInterfaces<NodeTypes.PROCESSOR> {
+class CustomAudioNode extends AudioWorkletNode {
     constructor(audioContext : AudioContext, processorName : string) {
         super (audioContext, processorName, 
             { numberOfInputs: 1
@@ -282,7 +281,7 @@ export class ProcessorNode
     private ctx : AudioContext
     private volumeNode : GainNode
     private editor? : any
-    private UIComponent? : HTMLDivElement
+    private controller? : HTMLDivElement
     private url = ''
 
     constructor (ctx : AudioContext) {
@@ -291,7 +290,7 @@ export class ProcessorNode
         this.ctx = ctx
         this.volumeNode = ctx.createGain()
         this.audioWorkletNode.connect(this.volumeNode)
-        this.getUIComponent()
+        this.getController()
     }
 
     connect(destination : Destination) {
@@ -302,14 +301,16 @@ export class ProcessorNode
         this.volumeNode.disconnect(destination as any)
     }
 
-    resizeUI() {
+    updateBoxDimensions(H : number, W : number) {
+        this.controller!.style.height = Math.max(0, H - 25) +'px'
+        this.controller!.style.width =  W +'px'
         this.editor?.resize()
     }
 
-    getUIComponent() {
-        if (this.UIComponent) return this.UIComponent
+    getController() {
+        if (this.controller) return this.controller
 
-        const div = this.UIComponent = E('div', { className: 'editor-box' })
+        const div = this.controller = E('div', { className: 'editor-box' })
         const topRow = E('div')
         const codeEditor = E('div', { className: 'editor' })
         const codeEditorBox = E('div', { className: 'editor-container', children: [codeEditor] })
@@ -320,12 +321,10 @@ export class ProcessorNode
             .editor-box {
                 display: grid;
                 grid-template-rows: 25px auto;
+                height: 100%;
             }
             .editor-container {
-                width: 100%;
-                height: 100%;
                 overflow-y: scroll;
-                max-height: 500px;
             }
             .editor {
                 width: 100%;
