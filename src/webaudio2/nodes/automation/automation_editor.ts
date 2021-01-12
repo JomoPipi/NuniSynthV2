@@ -127,7 +127,7 @@ export class AutomationPointsEditor {
                     { mousedown: e => this.mousedown(e)
                     , mouseup: e => this.mouseup(e)
                     })
-
+                    
             this.canvas.ondblclick = e => {
                 const t = this.getCanvasTarget(e.offsetX, e.offsetY)
                 if (t.type === 'point' && 0 < t.index && t.index < this.points.length - 1)
