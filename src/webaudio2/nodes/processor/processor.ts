@@ -1,4 +1,3 @@
-import { audioCtx } from "../../audiocontext2";
 
 
 
@@ -256,7 +255,8 @@ class CustomProcessor extends AudioWorkletProcessor {
 
 // const noise = Math.sin(this.x++/(((this.y *= 1.0001) % 100) + 694.0));
 
-class CustomAudioNode extends AudioWorkletNode {
+class CustomAudioNode extends AudioWorkletNode
+  implements AudioNodeInterfaces<NodeTypes.PROCESSOR> {
     constructor(audioContext : AudioContext, processorName : string) {
         super (audioContext, processorName, 
             { numberOfInputs: 1

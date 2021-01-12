@@ -15,7 +15,8 @@ import { VolumeNodeContainer } from "../../volumenode_container.js"
 
 interface NuniNode { id : number, audioNode : Indexed }
 
-export class NuniGraphAudioNode extends VolumeNodeContainer {
+export class NuniGraphAudioNode extends VolumeNodeContainer
+    implements AudioNodeInterfaces<NodeTypes.MODULE> {
 
     static createController? : (canvas : HTMLCanvasElement, vol : GainNode) => NuniGraphController
 

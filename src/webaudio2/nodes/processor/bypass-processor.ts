@@ -5,6 +5,8 @@
 
 
 
+console.log('sfdgkpjsdfgjklsdfgjkl')
+
 interface AudioWorkletProcessor {
     readonly port : MessagePort;
     process(inputs : Float32Array[][], outputs : Float32Array[][], parameters : Map<string, Float32Array>) : void;
@@ -27,7 +29,7 @@ class BypassProcessor extends AudioWorkletProcessor {
         {
             for (let i = 0; i < output[0].length; i++)
             {
-                output[channel][i] = Math.random() * 2 - 1
+                output[channel][i] = Math.random() * 2 - 1;
             }
         }
 
@@ -35,4 +37,5 @@ class BypassProcessor extends AudioWorkletProcessor {
     }
 }
   
-registerProcessor('bypass-processor', BypassProcessor)
+registerProcessor('bypass-processor', BypassProcessor);
+console.log('hello hello');

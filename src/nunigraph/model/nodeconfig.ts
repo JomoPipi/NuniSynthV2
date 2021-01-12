@@ -158,6 +158,15 @@ const KnowsWhenDialogBoxCloses =
     }
 type KnowsWhenDialogBoxCloses = keyof typeof KnowsWhenDialogBoxCloses
 
+const HasAResizableDialogBox =
+    { [NodeTypes.AUTO]:      true
+    // TODO: convert these:
+    // , [NodeTypes.MODULE]:    true
+    // , [NodeTypes.PIANOR]:    true
+    // , [NodeTypes.PROCESSOR]: true
+    }
+type HasAResizableDialogBox = keyof typeof HasAResizableDialogBox
+
 const HasTitleEditor : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.OUTPUT]: false
     , [NodeTypes.GAIN]:   false
@@ -735,11 +744,18 @@ type IKnowsWhenDialogBoxCloses<T> = (T extends KnowsWhenDialogBoxCloses
     }
     : {})
 
+type IHasAResizableDialogBox<T> = (T extends HasAResizableDialogBox
+    ? { 
+        onresize(func : (H : number, W : number) => void) : void
+    } 
+    : {})
+
 type AudioNodeInterfaces<T extends NodeTypes> =
     & BaseAudioNodeProperties
     & IClockDependent<T>
     & IHasDynamicNodeIcon<T>
     & IKnowsWhenDialogBoxCloses<T>
+    & IHasAResizableDialogBox<T>
 
 
 

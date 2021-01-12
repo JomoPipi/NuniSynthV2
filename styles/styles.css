@@ -1032,7 +1032,7 @@ code {
   cursor: pointer;
 }
 
-.resizeable-window-bottom-row {
+.resizable-window-bottom-row {
   display: -ms-grid;
   display: grid;
   -ms-grid-columns: 5px auto 5px;

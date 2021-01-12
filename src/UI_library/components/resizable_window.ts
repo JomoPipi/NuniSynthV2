@@ -13,14 +13,14 @@ import { doUntilMouseUp } from "../events/until_mouseup.js";
 
 
 
-export function createResizeableWindow(content : HTMLElement, ancestor : HTMLElement, resizeCallback? : any) {
+export function createResizableWindow(content : HTMLElement, ancestor : HTMLElement, resizeCallback? : any) {
     const box = E('div')
 
     const topRow = E('div', { className: 'full' }); topRow.style.height = '5px'
     const leftEdge = E('div', { className: 'ew-edge-drag' })
     const rightEdge = E('div', { className: 'ew-edge-drag' })
     const middleRowContainer = E('div', { className: 'draggable-row' })
-    const bottomRow = E('div', { className: 'resizeable-window-bottom-row' })
+    const bottomRow = E('div', { className: 'resizable-window-bottom-row' })
     const dragCorner = E('div', { className: 'nwse-corner-drag-box' })
     const dragCornernesw = E('div', { className: 'nesw-corner-drag-box' })
     const bottomMiddleEdge = E('span')

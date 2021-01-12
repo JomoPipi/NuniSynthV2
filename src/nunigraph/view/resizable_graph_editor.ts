@@ -16,7 +16,7 @@
 //     const leftEdge = E('div', { className: 'ew-edge-drag' })
 //     const rightEdge = E('div', { className: 'ew-edge-drag' })
 //     const middleRowContainer = E('div', { className: 'draggable-row' })
-//     const bottomRow = E('div', { className: 'resizeable-window-bottom-row' })
+//     const bottomRow = E('div', { className: 'resizable-window-bottom-row' })
 //     const dragCorner = E('div', { className: 'nwse-corner-drag-box' })
 //     const dragCornernesw = E('div', { className: 'nesw-corner-drag-box' })
 //     const bottomMiddleEdge = E('span')

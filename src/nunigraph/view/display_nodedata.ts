@@ -12,7 +12,7 @@ import
     , MasterClock, PianoRoll12Tone, OscillatorNode2, AutomationNode 
     } from '../../webaudio2/internal.js'
 import 
-    { createNumberDialComponent3, createResizeableCanvas, createToggleButton, createResizeableWindow
+    { createNumberDialComponent3, createResizeableCanvas, createToggleButton, createResizableWindow
     , JsDial
     } from '../../UI_library/internal.js'
 import { createSubdivSelect } from './create_subdivselect.js'
@@ -120,7 +120,7 @@ export function createValuesWindow(
     }
     else if (audioNode instanceof ProcessorNode)
     {
-        controls.appendChild(createResizeableWindow(
+        controls.appendChild(createResizableWindow(
             audioNode.getUIComponent(), ancestor, audioNode.resizeUI.bind(audioNode)))
     }
     
@@ -136,7 +136,7 @@ function createResizeableCanvasWindow(content : HTMLCanvasElement) {
     const leftEdge = E('div', { className: 'ew-edge-drag' })
     const rightEdge = E('div', { className: 'ew-edge-drag' })
     const middleRowContainer = E('div', { className: 'draggable-row' })
-    const bottomRow = E('div', { className: 'resizeable-window-bottom-row' })
+    const bottomRow = E('div', { className: 'resizable-window-bottom-row' })
     const dragCorner = E('div', { className: 'nwse-corner-drag-box' })
     const dragCornernesw = E('div', { className: 'nesw-corner-drag-box' })
     const bottomMiddleEdge = E('span')

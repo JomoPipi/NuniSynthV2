@@ -363,7 +363,7 @@ export class NuniGraphController {
             , color: NodeTypeColors[node.type]
             , barContent
             })
-        dialogBox.style.border = '2px solid purple'
+        // dialogBox.style.border = '2px solid purple'
         this.getOpenWindow[node.id] = dialogBox
 
         contentContainer.appendChild(

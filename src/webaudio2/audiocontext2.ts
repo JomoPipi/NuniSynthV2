@@ -69,4 +69,4 @@ class AudioContext2 extends AudioContext {
 
 export const audioCtx = new AudioContext2()
 
-audioCtx.audioWorklet.addModule('dist/webaudio2/processor/bypass-processor.js')
+audioCtx.audioWorklet.addModule('dist/webaudio2/nodes/processor/bypass-processor.js')
