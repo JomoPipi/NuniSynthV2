@@ -6,7 +6,6 @@
 
 
 import { NuniGraphNode } from './nunigraph_node.js'
-import { LZW_compress, LZW_decompress } from '../../helpers/lzw_compression.js'
 import { GateSequencer, Sequencer, NuniGraphAudioNode } from '../../webaudio2/internal.js'
 import { ProcessorNode } from '../../webaudio2/nodes/processor/processor.js'
 
@@ -708,14 +707,14 @@ export class NuniGraph {
 
 
     toString() {
-        return LZW_compress(this.toRawString())
+        return this.toRawString()
     }
 
 
 
 
     fromString(s : string) {
-        return this.fromRawString(LZW_decompress(s))
+        return this.fromRawString(s)
     }
 
 

@@ -148,7 +148,6 @@ export class NuniSampleNode extends NuniSourceNode
     
                 value.innerText = String.fromCharCode(65 + key)
                 this.bufferKey = key
-                this.resetZoom()
             }
             box.appendChild(btn)
         })

@@ -41,7 +41,7 @@ export function reallyDrawBuffer(channel : Float32Array, ctx : CanvasRenderingCo
     // This allows the stuff to actually be seen:
     const increment = 1 + (WIDTH_CONSTANT / W) * channel.length / 44100 | 0
 
-    console.log('increment =',increment)
+    // console.log('increment =',increment)
     for (let i = 0; i < channel.length; i += increment) 
     {
         const x = MARGIN + (W - MARGIN * 2) * i / channel.length | 0
@@ -56,19 +56,18 @@ export function reallyDrawBuffer(channel : Float32Array, ctx : CanvasRenderingCo
     ctx.restore()
 
     const isClipping = min <= -1 || max >= 1
-    ctx.strokeStyle = isClipping ? 'red' : 'gray'
-    // ctx.lineWidth = H < 70 ? 1 : 2
+    ctx.strokeStyle = isClipping ? 'cyan' : 'gray'
+    ctx.lineWidth = H < 70 ? 1 : 2
 
 
-    if (isClipping)
-    { 
+    // if (isClipping)
+    // { 
+        // This is because of css filter invert(100%) - we want red:
+        // ctx.strokeStyle = 'cyan'
         ctx.strokeRect(MARGIN / 2, MARGIN / 2, W - MARGIN, H - MARGIN)
-        // This is because of filter invert in dark mode and aiming towards consistency:
-        ctx.setLineDash([7,7])
-        ctx.strokeStyle = 'cyan'
-        ctx.strokeRect(MARGIN / 2, MARGIN / 2, W - MARGIN, H - MARGIN)
-        ctx.setLineDash([1,0])
-    }
+        // ctx.strokeRect(MARGIN / 2, MARGIN / 2, W - MARGIN, H - MARGIN)
+        // ctx.setLineDash([1,0])
+    // }
 }
 
 const epsilon = 0.03125
@@ -94,7 +93,7 @@ export function reallyDrawBuffer2(
     // This allows the stuff to actually be seen:
     const increment = (x => x > 1 ? x | 0 : x)(Math.sqrt((end - start) / 4410))
 
-    console.log('increment =',increment)
+    console.log('::increment =',increment)
     let max = -Infinity, min = Infinity
     for (let i = start; i < end; i += increment) 
     {

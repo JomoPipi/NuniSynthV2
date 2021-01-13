@@ -9,7 +9,7 @@ import { BufferUtils } from "./init_buffers.js"
 import { recordTo } from "./record.js"
 import { formulateBuffer } from "./buffer_formula.js"
 import { BufferStorage } from "../storage/buffer_storage.js"
-import { createSubdivSelect2, createSubdivSelect3 } from "../nunigraph/view/create_subdivselect.js"
+import { createSubdivSelect2 } from "../nunigraph/view/create_subdivselect.js"
 import { MasterClock } from "../webaudio2/internal.js"
 import { importAudioFile } from "../storage/dialog.js"
 
@@ -85,8 +85,3 @@ D('import-buffer-button').onclick = () => importAudioFile()
 // sin(n/(49 + sin(n/14) / tan(n/14)))
 // sin(n/(81 + cos(n/50) / sin(n/25)))
 // sin(n/(64 + sin(n/7) / cos(n/49)))
-
-
-function toggleBufferEditDialog(index : number) {
-    // const d
-}

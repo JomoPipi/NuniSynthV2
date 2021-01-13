@@ -79,7 +79,7 @@ function createNode<T extends NodeTypes>(type : T, e : MouseEvent) : NuniGraphNo
 
 
 
-const nodesSortedByRecurrence : NodeTypes[] = 
+const contextmenuNodeTypes : NodeTypes[] = 
     [ NodeTypes.GAIN
     , NodeTypes.OSC
     , NodeTypes.SAMPLE
@@ -155,7 +155,7 @@ const modulesBtn = E('li',
     })
 
 btnList.appendChild(modulesBtn)
-for (const type of nodesSortedByRecurrence)
+for (const type of contextmenuNodeTypes)
 {
     const icon = createSVGIcon(DefaultNodeIcon[type], 10)
     const label = E('span', { text: NodeLabel[type] })

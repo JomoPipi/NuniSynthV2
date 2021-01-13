@@ -126,6 +126,7 @@ export class BufferCanvasFrame {
     }
 
     setKey(key : number) {
+        log('setting key')
         this.nowShowing = key
         this.refresh()
     }

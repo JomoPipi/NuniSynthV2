@@ -22,8 +22,6 @@ const enum NodeTypes
     AUTO = 'automation',
 
     PIANOR = 'piano-roll',
-    ENV = 'envelope', // <- Not used
-    // CUSTOM = 'custom-module',
     PROCESSOR = 'processor',
     COMPRESSOR = 'compression'
 }
@@ -69,8 +67,6 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.AUTO]:   'Automation'
     
     , [NodeTypes.PIANOR]: '12-Tone Piano Roll'
-    , [NodeTypes.ENV]:    'Envelope (doesn\'t do anything)'
-    // , [NodeTypes.CUSTOM]: 'Custom Module (should be hidden)'
     , [NodeTypes.PROCESSOR]:  'Processor'
     , [NodeTypes.COMPRESSOR]: 'Compression'
     }
@@ -124,8 +120,6 @@ const DefaultNodeIcon : ReadonlyRecord<NodeTypes, SVGIconKey> =
     , [NodeTypes.AUTO]:   'automation'
     
     , [NodeTypes.PIANOR]: 'keyboard'
-    , [NodeTypes.ENV]:    'knob'
-    // , [NodeTypes.CUSTOM]: 'Custom Module (should be hidden)'
     , [NodeTypes.PROCESSOR]: 'processor'
     , [NodeTypes.COMPRESSOR]: 'compress'
     } as const
@@ -133,7 +127,7 @@ const DefaultNodeIcon : ReadonlyRecord<NodeTypes, SVGIconKey> =
 const HasDynamicNodeIcon = 
     { [NodeTypes.OSC]: true
     , [NodeTypes.FILTER]: true
-    , [NodeTypes.NUM]: true
+    // , [NodeTypes.NUM]: true
     }
 type HasDynamicNodeIcon = keyof typeof HasDynamicNodeIcon
 
@@ -182,7 +176,6 @@ const HasTitleEditor : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.MODULE]: true
     , [NodeTypes.AUTO]:   true
     , [NodeTypes.PIANOR]: true
-    , [NodeTypes.ENV]:false
     , [NodeTypes.PROCESSOR]:true
     , [NodeTypes.COMPRESSOR]:true
     }
@@ -202,8 +195,6 @@ const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.MODULE]: true
     , [NodeTypes.AUTO]:   true
     , [NodeTypes.PIANOR]: false
-    , [NodeTypes.ENV]:    true
-    // , [NodeTypes.CUSTOM]: true
     , [NodeTypes.PROCESSOR]:true
     , [NodeTypes.COMPRESSOR]:true
     }
@@ -223,8 +214,6 @@ const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.MODULE]: true
     , [NodeTypes.AUTO]:   false
     , [NodeTypes.PIANOR]: false
-    , [NodeTypes.ENV]:    false
-    // , [NodeTypes.CUSTOM]: false
     , [NodeTypes.PROCESSOR]:false
     , [NodeTypes.COMPRESSOR]:false
     }
@@ -236,7 +225,7 @@ const ExposesAudioparamsInDialogBox =
     , [NodeTypes.PANNER]:     true
     , [NodeTypes.DELAY]:      true
     , [NodeTypes.SAMPLE]:     true
-    // , [NodeTypes.NUM]:        true
+    , [NodeTypes.NUM]:        true
     , [NodeTypes.COMPRESSOR]: true
     } as const
 
@@ -255,8 +244,6 @@ const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.MODULE]: false
     , [NodeTypes.AUTO]:   false
     , [NodeTypes.PIANOR]: false
-    , [NodeTypes.ENV]:    false
-    // , [NodeTypes.CUSTOM]: false
     , [NodeTypes.PROCESSOR]: false
     , [NodeTypes.COMPRESSOR]:false
     }
@@ -276,8 +263,6 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.MODULE]: true
     , [NodeTypes.AUTO]:   false
     , [NodeTypes.PIANOR]: false
-    , [NodeTypes.ENV]:    false
-    // , [NodeTypes.CUSTOM]: false
     , [NodeTypes.PROCESSOR]:false
     , [NodeTypes.COMPRESSOR]:false
     }
@@ -299,8 +284,6 @@ const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.MODULE]: false
     , [NodeTypes.AUTO]:   true
     , [NodeTypes.PIANOR]: false
-    , [NodeTypes.ENV]:    true
-    // , [NodeTypes.CUSTOM]: true
     , [NodeTypes.PROCESSOR]:false
     , [NodeTypes.COMPRESSOR]:true
     }
@@ -321,8 +304,6 @@ const UsesConnectionProtocol2  : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.MODULE]: false
     , [NodeTypes.AUTO]:   true
     , [NodeTypes.PIANOR]: false
-    , [NodeTypes.ENV]:    false
-    // , [NodeTypes.CUSTOM]: false
     , [NodeTypes.PROCESSOR]:false
     , [NodeTypes.COMPRESSOR]:false
     }
@@ -334,29 +315,6 @@ const ClockDependent =
     , [NodeTypes.PIANOR]: true
     // , [NodeTypes.RECORD]: true
     } as const
-
-
-
-const HasResizeableNodeWindow  : { readonly [key in NodeTypes] : boolean } =
-    { [NodeTypes.OUTPUT]: false
-    , [NodeTypes.GAIN]:   false
-    , [NodeTypes.OSC]:    false
-    , [NodeTypes.FILTER]: false
-    , [NodeTypes.PANNER]: false
-    , [NodeTypes.DELAY]:  false
-    , [NodeTypes.SAMPLE]: false // true
-    , [NodeTypes.G_SEQ]:  false
-    , [NodeTypes.S_SEQ]:  false
-    , [NodeTypes.NUM]:    false
-    , [NodeTypes.RECORD]: false
-    , [NodeTypes.MODULE]: false // true
-    , [NodeTypes.AUTO]:   false // true
-    , [NodeTypes.PIANOR]: false // true
-    , [NodeTypes.ENV]:    false
-    // , [NodeTypes.CUSTOM]: true
-    , [NodeTypes.PROCESSOR]: false //true
-    , [NodeTypes.COMPRESSOR]:false
-    }
 
 const AudioNodeParams =
     { [NodeTypes.OUTPUT]: []
@@ -374,7 +332,6 @@ const AudioNodeParams =
     , [NodeTypes.AUTO]:   []
     
     , [NodeTypes.PIANOR]: []
-    , [NodeTypes.ENV]:    []
     , [NodeTypes.PROCESSOR]: []
     , [NodeTypes.COMPRESSOR]: ['threshold', 'knee', 'ratio', 'attack', 'release']
     } as const
@@ -397,8 +354,6 @@ const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
     , [NodeTypes.AUTO]:   []
 
     , [NodeTypes.PIANOR]: []
-    , [NodeTypes.ENV]:    []
-    // , [NodeTypes.CUSTOM]: []
     , [NodeTypes.PROCESSOR]: []
     , [NodeTypes.COMPRESSOR]:[]
     }
@@ -426,8 +381,6 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.AUTO]:   'rgba(150,255,0,0.5)'
     
     , [NodeTypes.PIANOR]: 'rgba(105,100,255,0.5)'
-    , [NodeTypes.ENV]:    'rgba(105,255,255,0.5)'
-    // , [NodeTypes.CUSTOM]: 'rgba(105,255,255,0.5)'
     , [NodeTypes.PROCESSOR]: 'rgba(200,150,255,0.5)'
     , [NodeTypes.COMPRESSOR]:'rgba(200,180,220,0.5)'
     }
@@ -448,8 +401,6 @@ const NodeTypeColors2 : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.AUTO]:   'rgb(150,255,0)'
     
     , [NodeTypes.PIANOR]: 'rgb(105,100,255)'
-    , [NodeTypes.ENV]:    'rgb(105,100,255)'
-    // , [NodeTypes.CUSTOM]: 'rgb(105,255,255)'
     , [NodeTypes.PROCESSOR]: 'rgb(200,150,255)'
     , [NodeTypes.COMPRESSOR]:'rgb(200,180,220)'
     }
@@ -470,7 +421,6 @@ const NodeTypeDescriptions =
     , [NodeTypes.AUTO]:   'Automation nodes automate the input signal.'
 
     , [NodeTypes.PIANOR]: 'Pianoroll nodes are meant to be connected to the detune parameter of nodes that have a detune parameter (Oscillator, Sample, Sample Sequencer, Filter).'
-    , [NodeTypes.ENV]:    'NOT USED'
     , [NodeTypes.PROCESSOR]: 'Processor nodes execute audio processing code.'
     , [NodeTypes.COMPRESSOR]:'Compressor nodes provide a compression effect which lowers the volume of the loudest parts of the signal in order to help prevent clipping and distortion that can occur when multiple sounds are played and multiplexed together at once.'
     } as const
@@ -761,7 +711,7 @@ type AudioNodeInterfaces<T extends NodeTypes> =
 
     
 const PRODUCTION_MODE_EQUALS_TRUE 
-    = true
+    = false
     
 const DEV_MODE_EQUALS_TRUE : typeof PRODUCTION_MODE_EQUALS_TRUE extends true ? false : true 
     = !PRODUCTION_MODE_EQUALS_TRUE

@@ -73,6 +73,8 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
             })
         }
 
+        if (is(this, NodeTypes.NUM)) this.audioNode.start(0)
+
         this.audioParamValues = JSON.parse(JSON.stringify(audioParamValues))
 
         for (const param of AudioNodeParams[this.type]) 
