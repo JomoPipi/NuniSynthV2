@@ -102,7 +102,6 @@ export class BufferCanvasFrame {
     setZoom(start : number, end : number) {
         this.zoomStart = start
         this.zoomEnd = end
-        this.refresh()
     }
     
     updateSlicers(leftSlicer : boolean, val : number, _val : number) {
@@ -126,12 +125,10 @@ export class BufferCanvasFrame {
     }
 
     setKey(key : number) {
-        log('setting key')
         this.nowShowing = key
-        this.refresh()
     }
 
-    private refresh() {
+    refresh() {
         const imageData = BufferUtils.getImage2(
             this.nowShowing, 
             this.ctx, this.H, this.W, this.zoomStart, this.zoomEnd)

@@ -59,12 +59,13 @@ export function reallyDrawBuffer(channel : Float32Array, ctx : CanvasRenderingCo
     ctx.strokeStyle = isClipping ? 'cyan' : 'gray'
     ctx.lineWidth = H < 70 ? 1 : 2
 
+    ctx.strokeRect(MARGIN / 2, MARGIN / 2, W - MARGIN, H - MARGIN)
 
     // if (isClipping)
     // { 
         // This is because of css filter invert(100%) - we want red:
         // ctx.strokeStyle = 'cyan'
-        ctx.strokeRect(MARGIN / 2, MARGIN / 2, W - MARGIN, H - MARGIN)
+        // ctx.strokeRect(MARGIN / 2, MARGIN / 2, W - MARGIN, H - MARGIN)
         // ctx.strokeRect(MARGIN / 2, MARGIN / 2, W - MARGIN, H - MARGIN)
         // ctx.setLineDash([1,0])
     // }
@@ -110,17 +111,8 @@ export function reallyDrawBuffer2(
     ctx.restore()
 
     const isClipping = min <= -1 || max >= 1
-    ctx.strokeStyle = isClipping ? 'red' : 'gray'
-    // ctx.lineWidth = H < 70 ? 1 : 2
+    ctx.strokeStyle = isClipping ? 'cyan' : 'gray'
+    ctx.lineWidth = H < 70 ? 1 : 2
 
-
-    if (isClipping)
-    { 
-        ctx.strokeRect(MARGIN / 2, MARGIN / 2, W - MARGIN, H - MARGIN)
-        // This is because of filter invert in dark mode and aiming towards consistency:
-        ctx.setLineDash([7,7])
-        ctx.strokeStyle = 'cyan'
-        ctx.strokeRect(MARGIN / 2, MARGIN / 2, W - MARGIN, H - MARGIN)
-        ctx.setLineDash([1,0])
-    }
+    ctx.strokeRect(MARGIN / 2, MARGIN / 2, W - MARGIN, H - MARGIN)
 }

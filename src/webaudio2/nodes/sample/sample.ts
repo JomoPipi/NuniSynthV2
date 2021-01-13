@@ -19,13 +19,13 @@ export class NuniSampleNode extends NuniSourceNode
      */
 
     loop : boolean
-    private _bufferKey : number
     detune : NuniAudioParam
     playbackRate : NuniAudioParam
-    bufferCanvas : BufferCanvasFrame
-    _loopStart = 0
-    _loopEnd = 1
-
+    
+    private _bufferKey : number
+    private bufferCanvas : BufferCanvasFrame
+    private _loopStart = 0
+    private _loopEnd = 1
     private _zoomStart = 0
     private _zoomEnd = 1
     
@@ -75,34 +75,30 @@ export class NuniSampleNode extends NuniSourceNode
     set bufferKey(key : number) {
         this._bufferKey = key
         this.refresh()
-        this.bufferCanvas.setKey(key)
     }
     get bufferKey() { return this._bufferKey }
 
     set zoomStart(start : number) { 
         this._zoomStart = start
         this.bufferCanvas.setZoom(start, this._zoomEnd) 
+        this.bufferCanvas.refresh()
         NuniSourceNode.prototype.refresh.call(this)
     }
     get zoomStart() { return this._zoomStart }
 
     set zoomEnd(end : number) { 
         this._zoomEnd = end
-        this.bufferCanvas.setZoom(this._zoomStart, end) 
+        this.bufferCanvas.setZoom(this._zoomStart, end)
+        this.bufferCanvas.refresh()
         NuniSourceNode.prototype.refresh.call(this)
     }
     get zoomEnd() { return this._zoomEnd }
 
-    private resetZoom() {
-        this._zoomStart = 0
-        this._zoomEnd = 1
-        this.bufferCanvas.setZoom(0, 1)
-    }
-
     refresh() {
         NuniSourceNode.prototype.refresh.call(this)
-        this.bufferCanvas?.setKey(this._bufferKey)
-        this.resetZoom()
+        this.bufferCanvas.setKey(this._bufferKey)
+        this.bufferCanvas.setZoom(0, 1)
+        this.bufferCanvas.refresh()
     }
 
     createSource() {
@@ -157,13 +153,6 @@ export class NuniSampleNode extends NuniSourceNode
             'loop', 
             { update : (on : boolean) => this.refresh() }
             ))
-            
-        // box.appendChild(createToggleButton(
-        //     this,
-        //     'kbMode',
-        //     { text: '🎹'
-        //     , className: 'kb-button' 
-        //     }))
     
         box.appendChild(createToggleButton({}, '⟳', 
             { 
