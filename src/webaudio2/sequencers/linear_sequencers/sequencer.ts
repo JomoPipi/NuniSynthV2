@@ -50,6 +50,16 @@ export abstract class Sequencer extends VolumeNodeContainer {
         , curve: 'S'
         }
 
+    volumeLevelUpperLimit = 1
+    private _volumeLevel = 1
+    get volumeLevel() {
+        return this._volumeLevel
+    }
+    set volumeLevel(level : number) {
+        this._volumeLevel = level
+        this.volumeNode.gain.value = level
+    }
+
     constructor(ctx : AudioContext) {
         super(ctx)
         this.ctx = ctx

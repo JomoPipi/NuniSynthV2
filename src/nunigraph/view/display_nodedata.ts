@@ -20,8 +20,9 @@ import { GraphController } from '../init.js'
 import { doUntilMouseUp } from '../../UI_library/events/until_mouseup.js'
 import { ProcessorNode } from '../../webaudio2/nodes/processor/processor.js'
 import { OpenGraphControllers } from '../controller/graph_controller.js'
-import { NuniNumberNode } from '../../webaudio2/nodes/number/number.js'
+// import { NuniNumberNode } from '../../webaudio2/nodes/number/number.js'
 import { createADSREditor } from '../../webaudio2/adsr/adsr_editor.js'
+import { createSliderComponent } from '../../UI_library/components/sliderComponent.js'
 
 
 const hasSubtypes = (node : NuniGraphNode) : node is NuniGraphNode<HasSubtypes> =>
@@ -90,10 +91,10 @@ export function createValuesWindow(
         controls.appendChild(audioNode.getController())
     }
 
-    if (audioNode instanceof NuniNumberNode)
-    {
-        controls.appendChild(audioNode.getController())
-    }
+    // if (audioNode instanceof NuniNumberNode)
+    // {
+    //     controls.appendChild(audioNode.getController())
+    // }
 
     if (node.type === NodeTypes.OUTPUT)
     {
@@ -282,7 +283,7 @@ function activateKeyboardButton(an : NuniSourceNode) {
 
 function showSubtypes(node : NuniGraphNode<HasSubtypes>, saveCallback: Function) : HTMLElement {
 
-    const box = E('span')
+    const box = E('span', { className: 'flex-center' })
 
     if (node.audioNode.type in GraphIconImageObjects)
     {
@@ -357,7 +358,12 @@ function insertOptions(select : HTMLSelectElement, options : readonly string[]) 
 
 function exposeAudioParams(node : NuniGraphNode<CanBeAutomated>, saveCallback : Function) : Node {
     const params = AudioNodeParams[node.type]
-    const className = params.length > 1 ? 'audioparams-container' : 'audioparam-container'
+    const hasVolumeLevel = node.audioNode instanceof NuniSourceNode
+    const className = hasVolumeLevel
+        ? 'audioparams-container-with-slider'
+        : params.length > 1 
+        ? 'audioparams-container' 
+        : 'audioparam-container'
     const allParams = E('div', { className })
     for (const param of params) 
     {
@@ -374,7 +380,7 @@ function exposeAudioParams(node : NuniGraphNode<CanBeAutomated>, saveCallback : 
 
         const textBox = E('div', { children: [text] })
 
-        const box = E('div')
+        const box = E('div', { className: 'center' })
 
         const updateFunc = isGain
             ? (newValue : number) => {
@@ -415,6 +421,10 @@ function exposeAudioParams(node : NuniGraphNode<CanBeAutomated>, saveCallback : 
                 updateFunc(newValue)
             }
         }
+    }
+    if (hasVolumeLevel) 
+    {
+        allParams.appendChild(createSliderComponent(node.audioNode as NuniSourceNode))
     }
     return allParams
 }

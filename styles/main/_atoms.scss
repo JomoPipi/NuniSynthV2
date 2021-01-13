@@ -209,15 +209,25 @@ $shadow: rgba(0, 0, 0, 0.4);
 .slider-component {
     display: flex;
     flex-direction: column;
+    text-align: center;
 
     input[type=range] {
         transform: rotate(-90deg);
-        width: 50px;
-        height: 50px;
+        width: 48px;
+        height: 48px;
+    }
+
+    input[type=range]::-webkit-slider-runnable-track {
+        width: 20px;
+        height: 8px;
     }
     
     input[type=range]::-webkit-slider-thumb {
-        background-color: var(--color4);
+        background-color: var(--color5);
+        width: 12px;
+        height: 12px;
+        margin-top: -2px;
+        border-radius: 100px;
     }
 }
 

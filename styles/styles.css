@@ -738,17 +738,27 @@ code {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+  text-align: center;
 }
 
 .slider-component input[type=range] {
   -webkit-transform: rotate(-90deg);
           transform: rotate(-90deg);
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
+}
+
+.slider-component input[type=range]::-webkit-slider-runnable-track {
+  width: 20px;
+  height: 8px;
 }
 
 .slider-component input[type=range]::-webkit-slider-thumb {
-  background-color: var(--color4);
+  background-color: var(--color5);
+  width: 12px;
+  height: 12px;
+  margin-top: -2px;
+  border-radius: 100px;
 }
 
 .record-length-slider {
@@ -899,10 +909,9 @@ code {
   appearance: none;
   font: 0.75em Roboto;
   letter-spacing: 0.1em;
-  background: transparent;
   color: var(--color5);
   border: 0px solid transparent;
-  width: 44px;
+  width: 40px;
   text-align: center;
 }
 
@@ -1146,6 +1155,15 @@ code {
   display: grid;
   -ms-grid-columns: 1fr 1fr;
       grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 5px 10px;
+}
+
+.audioparams-container-with-slider {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr 0.25fr;
+      grid-template-columns: 1fr 1fr 0.25fr;
   gap: 10px;
   margin: 5px 10px;
 }

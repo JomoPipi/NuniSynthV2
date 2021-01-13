@@ -54,6 +54,12 @@
     gap: 10px;
     margin: 5px 10px;
 }
+.audioparams-container-with-slider {
+    display: grid;
+    grid-template-columns: 1fr 1fr 0.25fr;
+    gap: 10px;
+    margin: 5px 10px;
+}
 .audioparam-container {
     margin: 5px;
     text-align: center;

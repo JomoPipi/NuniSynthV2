@@ -51,6 +51,16 @@ export class NuniSourceNode extends VolumeNodeContainer {
         this.refresh()
     }
 
+    volumeLevelUpperLimit = 1
+    private _volumeLevel = 1
+    get volumeLevel() {
+        return this._volumeLevel
+    }
+    set volumeLevel(level : number) {
+        this._volumeLevel = level
+        this.volumeNode.gain.value = level
+    }
+
     createSource() : Source {
         throw 'Must be implemented in the "concrete" classes.'
     }

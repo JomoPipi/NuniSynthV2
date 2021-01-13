@@ -8,6 +8,7 @@
 import { Sequencer, SampleSequencer } from '../internal.js'
 import { createSubdivSelect3 } from '../../nunigraph/view/create_subdivselect.js'
 import { createADSREditor } from '../adsr/adsr_editor.js'
+import { createSliderComponent } from '../../UI_library/components/sliderComponent.js'
 
 export function sequencerControls(an : Sequencer) {
 
@@ -53,6 +54,11 @@ function createTopRowControls(an : Sequencer) {
             }
         }
         controls.appendChild(btn)
+    }
+
+    volumeLevel: {
+        const slider = createSliderComponent(an)
+        controls.appendChild(slider)
     }
 
     changeStepLength: {

@@ -601,6 +601,8 @@ const Transferable_AudioNodeProperties =
     , processorCode : true
     , points      : true
     , nMeasures   : true
+    , volumeLevel : true
+    , volumeLevelUpperLimit : true
     
     , threshold: true
     , knee: true
