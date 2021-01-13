@@ -5,7 +5,7 @@
 
 
 
-import { JsDial, createRadioButtonGroup } from "../../UI_library/internal.js"
+import { JsDial } from "../../UI_library/internal.js"
 import { renderADSR } from "./adsr.js"
 
 export function createADSREditor(adsrValues : ADSRData) {
@@ -59,7 +59,6 @@ export function createADSREditor(adsrValues : ADSRData) {
         , S: 'linear'
         } as Record<CurveType,CurveType>
 
-    // const text = E('span', { text: 'ADSR' })
     canvas.onclick = () => {
         adsrValues.curve = next[adsrValues.curve]
         render()
@@ -68,10 +67,6 @@ export function createADSREditor(adsrValues : ADSRData) {
     const localADSR = E('span', 
         { children: [canvas, knobs]
         })
-
-    // const container = E('span', 
-    //     { children: [text, localADSR]
-    //     })
 
     return localADSR
 }

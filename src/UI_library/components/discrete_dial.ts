@@ -118,24 +118,3 @@ class DiscreteDial {
                 this.imgDegreeOffset}deg)`
     }
 }
-
-// Non-pointerlocking events:
-// const mousedown = ({ clientX, clientY } : MouseEvent) => {
-//     this.lastX = clientX
-//     this.lastY = clientY
-//     this.render()
-// }
-
-// const mousemove = ({ clientX: x, clientY: y } : MouseEvent) => {
-    
-//     this.realValue += (this.lastY - y + x - this.lastX)
-    
-//     this.value = Math.round(this.realValue / this.tickLength) % this.n
-//     this.lastX = x
-//     this.lastY = y
-
-//     this.render()
-//     fn(this.value)
-// }
-
-// this.dial.onmousedown = doUntilMouseUp(mousemove, { mousedown, mouseup: this.options.mouseup })

@@ -6,7 +6,6 @@
 
 
 import { doUntilMouseUp } from "../events/until_mouseup.js"
-import { rgbaColorContrast } from "../functions/colorContrast.js"
 import { UI_clamp } from "../functions/ui_clamp.js"
 import { addResizability } from "./add_resizability.js"
 

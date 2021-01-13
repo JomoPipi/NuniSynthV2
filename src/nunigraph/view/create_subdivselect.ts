@@ -6,7 +6,6 @@
 
 
 import { createVersatileNumberDialComponent } from "../../UI_library/components/versatile_numberdial.js"
-import { JsDial } from "../../UI_library/internal.js"
 
 
 

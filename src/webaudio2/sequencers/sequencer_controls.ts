@@ -5,10 +5,8 @@
 
 
 
-import { Sequencer, SampleSequencer, MasterClock } from '../internal.js'
-import { createToggleButton, createRadioButtonGroup, createNumberDialComponent, JsDial } from '../../UI_library/internal.js'
+import { Sequencer, SampleSequencer } from '../internal.js'
 import { createSubdivSelect3 } from '../../nunigraph/view/create_subdivselect.js'
-import { renderADSR } from '../adsr/adsr.js'
 import { createADSREditor } from '../adsr/adsr_editor.js'
 
 export function sequencerControls(an : Sequencer) {
@@ -35,7 +33,6 @@ export function sequencerControls(an : Sequencer) {
 function createTopRowControls(an : Sequencer) {
 
     const controls = E('div', { className: 'flat-grid' })
-    // const syncCheckBox = E('input')
     
     addPlayButton: {
         const btn = E('button', 

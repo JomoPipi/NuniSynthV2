@@ -60,7 +60,6 @@ export class NuniGraphRenderer {
     private outerEdgeBoundary : number
     private triangleRadius : number
     private triangleSize : number
-    // private zoom : number
     readonly connectionsCache : ConnectionsCache
     clearConnectionsCache() {
         for (const id in this.connectionsCache) 
@@ -85,17 +84,7 @@ export class NuniGraphRenderer {
         this.outerEdgeBoundary = this.nodeRadius + this.nodeLineWidth
         this.triangleRadius = this.nodeRadius / 3.0
         this.triangleSize = this.innerEdgeBoundary
-        // this.zoom = 1
         this.connectionsCache = {}
-
-        // window.onwheel = (e : WheelEvent) => {
-            // const direction = 2 **  Math.sign(e.deltaY)
-            // this.setNodeRadius(this.nodeRadius /= direction)
-            // this.zoom /= direction
-
-        //     this.render()
-        // }
-
     }
 
     updateNodeRadius() {

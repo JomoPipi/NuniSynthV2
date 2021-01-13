@@ -30,25 +30,7 @@ export function previewScale() {
             }
         }
         count++
-
-        // const [on,off] = [true,false].map(bool => 
-        //     () => {
-        //         if (mode === KB.mode) 
-        //         { // *
-        //             for (const an of KB.connectedNodes()) 
-        //             {
-        //                 an.update(bool, key)
-        //             }
-        //         }
-        //     })
-
-        // const speed = 100
-
-        // setTimeout(on, ++count * speed)
-        // setTimeout(off, count * speed + speed / 4.0)
     }
-    // * prevents bug that may happen when user switches 
-    // modes while the scale is being previewed.
 }
 
 

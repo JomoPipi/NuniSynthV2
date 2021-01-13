@@ -5,7 +5,6 @@
 
 
 
-// import Worker from 'worker-loader!./worker';
 export function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : AnalyserNode) {
     analyser.fftSize = 2048
     analyser.minDecibels = -90

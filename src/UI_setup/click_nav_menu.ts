@@ -14,7 +14,7 @@ import { modularizeGraph } from '../nunigraph/controller/modularize_graph.js'
 import { setTheme } from './theme_setup.js'
 import { UserOptions } from '../storage/user_options.js'
 import { OpenGraphControllers } from '../nunigraph/controller/graph_controller.js'
-import { createRadioButtonGroup, createToggleButton } from '../UI_library/internal.js'
+import { createRadioButtonGroup } from '../UI_library/internal.js'
 
 const tabs = 
     [ 'graph-tab'

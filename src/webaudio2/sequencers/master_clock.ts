@@ -5,7 +5,7 @@
 
 
 
-import { createNumberDialComponent, createNumberDialComponent3 } from "../../UI_library/internal.js"
+import { createNumberDialComponent3 } from "../../UI_library/internal.js"
 
 
 

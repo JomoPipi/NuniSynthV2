@@ -9,8 +9,6 @@ import { NuniGraphNode } from './nunigraph_node.js'
 import { GateSequencer, Sequencer, NuniGraphAudioNode } from '../../webaudio2/internal.js'
 import { ProcessorNode } from '../../webaudio2/nodes/processor/processor.js'
 
-// type Destination = AudioNode | AudioParam | NuniAudioParam
-
 const hasWeirdCopyProtocol = (node : NuniGraphNode)
     : node is NuniGraphNode<keyof typeof
         PostConnection_Transferable_InputRemappable_AudioNodeProperties> =>

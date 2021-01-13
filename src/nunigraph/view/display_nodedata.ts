@@ -9,7 +9,7 @@ import { NuniGraphNode } from '../model/nunigraph_node.js'
 import 
     { NuniSourceNode, NuniSampleNode, Sequencer
     , NuniRecordingNode, NuniGraphAudioNode
-    , MasterClock, PianoRoll12Tone, OscillatorNode2, AutomationNode 
+    , MasterClock, PianoRoll12Tone, AutomationNode 
     } from '../../webaudio2/internal.js'
 import 
     { createNumberDialComponent3, createResizeableCanvas, createToggleButton
@@ -120,9 +120,6 @@ export function createValuesWindow(
     }
     else if (audioNode instanceof ProcessorNode)
     {
-        // controls.appendChild(createResizableWindow(
-        //     audioNode.getController(), ancestor, audioNode.updateBoxDimensions.bind(audioNode)))
-
         controls.appendChild(audioNode.getController())
     }
     
@@ -287,8 +284,6 @@ function showSubtypes(node : NuniGraphNode<HasSubtypes>, saveCallback: Function)
 
     const box = E('span')
 
-    // if (HasCustomSubtype[node.type]) //
-    // if (node.type === NodeTypes.OSC)
     if (node.audioNode.type in GraphIconImageObjects)
     {
         const types = AudioNodeSubTypes[node.type]
@@ -397,17 +392,8 @@ function exposeAudioParams(node : NuniGraphNode<CanBeAutomated>, saveCallback : 
             , rounds: AudioParamKnobTurns[param]
             }
 
-        const numberInput = 
-            // createDraggableNumberInput( // Not so user friendly
-            // createNumberDialComponent2( // The solution
-            //     initialValue, 
-            //     mousedownFunc, 
-            //     updateFunc,
-            //     settings)
-            createNumberDialComponent3(initialValue, updateFunc, settings)
+        const numberInput = createNumberDialComponent3(initialValue, updateFunc, settings)
 
-        // numberInput.container.classList.add('full','flex-center')
-        // box.append(textBox, numberInput)
         box.append(numberInput.container, textBox)
 
         allParams.appendChild(box)
