@@ -47,6 +47,8 @@ export class NuniSourceNode extends VolumeNodeContainer {
     get kbMode() { return this._kbMode }
 
     set kbMode(mode : boolean) { 
+        // The first refresh properly clears the currently playing sources.
+        this.refresh()
         this._kbMode = mode
         this.refresh()
     }
