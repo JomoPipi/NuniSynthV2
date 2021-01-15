@@ -23,8 +23,8 @@ export function renderVisualiserCanvas(canvas : HTMLCanvasElement, analyser : An
 
         const fbc_array = new Uint8Array(bufferLength)
         // const fbc_array2 = new Uint8Array(bufferLength)
-        analyser.getByteFrequencyData(fbc_array)
-        // analyser.getByteTimeDomainData(fbc_array2)
+        // analyser.getByteFrequencyData(fbc_array)
+        analyser.getByteTimeDomainData(fbc_array)
         
         worker.postMessage(
             { buffer: fbc_array.buffer 

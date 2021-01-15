@@ -7,6 +7,10 @@
 
 const { app } = require ('electron').remote
 const userDataPath = app.getPath ('userData')
+
+// Switch for typechecking:
+// import fs from 'fs'
+// import path from 'path'
 const fs = require('fs')
 const path = require('path')
 
@@ -19,7 +23,7 @@ if (!fs.existsSync(modulesFolderPath))
 }
 
 function get(key : string) {
-    const pathToFile = path.join(modulesFolderPath, getModuleNames().find(name => name === key))
+    const pathToFile = path.join(modulesFolderPath, getModuleNames().find(name => name === key)!)
     const file = fs.readFileSync(pathToFile, 'utf8')
     return file
 }

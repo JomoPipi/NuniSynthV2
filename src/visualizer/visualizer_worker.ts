@@ -37,7 +37,9 @@ onmessage = (e : MessageEvent) =>
     }
     else if (e.data.buffer) 
     {
-        drawFrequencySpectrum(e)
+
+        drawTimeDomain(e)
+        // drawFrequencySpectrum(e)
     }
     // else if (e.data.buffer2)
     // {
@@ -45,36 +47,36 @@ onmessage = (e : MessageEvent) =>
     // }
 }
 
-// function drawTimeDomain(e : MessageEvent) {
-//     const buffer2 = e.data.buffer2
-//     const dataArray = new Uint8Array(buffer2)
+function drawTimeDomain(e : MessageEvent) {
+    const buffer2 = e.data.buffer//2
+    const dataArray = new Uint8Array(buffer2)
 
-//     ctx.fillStyle = 'rgb(200, 200, 200)'
-//     ctx.clearRect(0, 0, W, H)
-//     ctx.strokeStyle = gradient
+    ctx.fillStyle = 'rgb(200, 200, 200)'
+    ctx.clearRect(0, 0, W, H)
+    ctx.strokeStyle = gradient
 
-//     const sliceWidth = W * 1.0 / bufferLength
-//     let x = 0, max = -Infinity
-//     const Y = H*1/4
+    const sliceWidth = W * 1.0 / bufferLength
+    let x = 0, max = -Infinity
+    const Y = H*1/4
 
-//     ctx.beginPath()
-//     for(var i = 0; i < bufferLength; i++) {
-//         const v = dataArray[i] / 128.0
-//         const y = v * H/2 + Y
+    ctx.beginPath()
+    for(var i = 0; i < bufferLength; i++) {
+        const v = dataArray[i] / 128.0
+        const y = v * H/2 + Y
 
-//         if(i === 0)
-//             ctx.moveTo(x, y)
-//         else
-//             ctx.lineTo(x, y)
+        if(i === 0)
+            ctx.moveTo(x, y)
+        else
+            ctx.lineTo(x, y)
     
-//         x += sliceWidth
-//         max = Math.max(max, dataArray[i])
-//     }
-//     if (max === 255) ctx.strokeStyle = 'red'
+        x += sliceWidth
+        max = Math.max(max, dataArray[i])
+    }
+    if (max === 255) ctx.strokeStyle = 'red'
 
-//     ctx.lineTo(W, H/2)
-//     ctx.stroke()
-// }
+    ctx.lineTo(W, H/2)
+    ctx.stroke()
+}
 
 function drawFrequencySpectrum(e : MessageEvent) {
     // if (e.data.buffer2) drawTimeDomain(e)

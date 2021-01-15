@@ -5,8 +5,12 @@
 
 
 
+// Switch for typechecking:
+// import fs from 'fs'
+// import path from 'path'
 const fs = require('fs')
 const path = require('path')
+
 const { app } = require('electron').remote
 const userDataPath : string = app.getPath('userData')
 const filePath = path.join(userDataPath, 'useroptions')

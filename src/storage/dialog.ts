@@ -16,6 +16,10 @@ import { makeNuniFile, loadNuniFile } from "./save_project.js"
 const { dialog } = require('electron').remote
 const { app } = require('electron').remote
 const userDataPath : string = app.getPath('userData')
+
+// Switch for typechecking:
+// import fs from 'fs'
+// import path from 'path'
 const fs = require('fs')
 const path = require('path')
 
@@ -153,9 +157,10 @@ function saveBuffers(fileName : string) {
     }
 
     function saveImportBuffer(key : number, fileName : string) {
-        const pathToFile = path.join(buffersPath, key)
+        const pathToFile = path.join(buffersPath, key.toString())
         const metadata = JSON.stringify({ fileName })
         const metadataPath = pathToFile + META
+        console.log('metadataPath =',metadataPath)
         fs.writeFileSync(metadataPath, metadata)
     }
 
@@ -191,7 +196,7 @@ function loadBuffers(filePath : string) {
             console.warn('Could not retrieve buffer metadata at ' + metadataPath)
             return;
         }
-        const metadata = JSON.parse(fs.readFileSync(metadataPath))
+        const metadata = JSON.parse(fs.readFileSync(metadataPath, { encoding: 'utf-8' }))
         if (metadata.fileName)
         {
             const audioFilePath = path.join(audioBuffersImportsPath, metadata.fileName)
