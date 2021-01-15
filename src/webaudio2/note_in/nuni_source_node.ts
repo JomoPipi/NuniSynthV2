@@ -71,10 +71,15 @@ export class NuniSourceNode extends VolumeNodeContainer {
             this.soloSource.stop(0)
             delete this.soloSource
         }
-        this.playingKeys = {}
-        this.stopLastNSources = []
-
-        if (!this.kbMode)
+        if (this.kbMode)
+        {
+            log('HERE WE ARE    ')
+            while (this.stopLastNSources.length) 
+            {
+                this.stopLastNSources.shift()!.stopImmediately()
+            }
+        } 
+        else
         {
             const src = this.createSource()
             const adsr = this.ctx.createGain()
@@ -89,6 +94,8 @@ export class NuniSourceNode extends VolumeNodeContainer {
             src.start(t, offset)
             this.soloSource = src
         }
+        this.playingKeys = {}
+        this.stopLastNSources = []
     }
 
     playKeyAtTime(key : number, time : number, duration : number) {
