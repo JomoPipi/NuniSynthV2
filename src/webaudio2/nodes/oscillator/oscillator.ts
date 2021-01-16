@@ -71,7 +71,7 @@ export class OscillatorNode2 extends NuniSourceNode
         {
             src.type = this._type
         }
-
+        src.start(0)
         return src
     }
 }

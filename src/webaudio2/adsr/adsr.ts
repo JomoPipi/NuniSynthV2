@@ -123,7 +123,7 @@ export const ADSR_Controller = {
         // gain.setTargetAtTime(sustain ** 2, time + attack, decay) // Decay phase
         this.trigger(gain, time, index, adsrValues)
 
-        source.start(time)
+        // source.start(time)
     },
 
     untriggerAndGetStopTime(gain : AudioParam, time : number, index : number, adsrValues : Indexed) {

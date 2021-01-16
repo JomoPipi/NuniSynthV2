@@ -105,21 +105,24 @@ export class NuniSampleNode extends NuniSourceNode
         const src = this.ctx.createBufferSource()
         const reversed = this._loopStart > this._loopEnd
         src.buffer = BufferStorage.get(this._bufferKey, reversed)
-        src.loop = this.loop
 
         const duration = src.buffer.duration
         const zoomWidth = this._zoomEnd - this._zoomStart
         const zoomedDuration = zoomWidth * duration
+
+        src.playbackRate.setValueAtTime(0, this.ctx.currentTime)
+        this.detune.connect(src.detune)
+        this.playbackRate.connect(src.playbackRate)
+
+        src.loop = this.loop
 
         src.loopStart = (start => reversed ? duration - start : start
         )(this._zoomStart * duration + this._loopStart * zoomedDuration)
 
         src.loopEnd = (end => reversed ? duration - end : end
         )(this._zoomStart * duration + this._loopEnd * zoomedDuration)
-
-        src.playbackRate.setValueAtTime(0, this.ctx.currentTime)
-        this.detune.connect(src.detune)
-        this.playbackRate.connect(src.playbackRate)
+        
+        src.start(0, src.loopStart)
 
         return src
     }

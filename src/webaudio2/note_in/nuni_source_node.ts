@@ -75,7 +75,6 @@ export class NuniSourceNode extends VolumeNodeContainer {
         }
         if (this.kbMode)
         {
-            log('HERE WE ARE    ')
             while (this.stopLastNSources.length) 
             {
                 this.stopLastNSources.shift()!.stopImmediately()
@@ -93,7 +92,7 @@ export class NuniSourceNode extends VolumeNodeContainer {
             adsr.connect(this.volumeNode)
             
             src.connect(adsr)
-            src.start(t, offset)
+            // src.start(t, offset)
             this.soloSource = src
         }
         this.playingKeys = {}

@@ -94,7 +94,7 @@ export function reallyDrawBuffer2(
     // This allows the stuff to actually be seen:
     const increment = (x => x > 1 ? x | 0 : x)(Math.sqrt((end - start) / 4410))
 
-    console.log('::increment =',increment)
+    // console.log('::increment =',increment)
     let max = -Infinity, min = Infinity
     for (let i = start; i < end; i += increment) 
     {

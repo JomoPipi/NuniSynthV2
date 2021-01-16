@@ -74,7 +74,8 @@ export class SampleSequencer extends Sequencer
         this.detune.connect(src.detune)
         this.playbackRate.connect(src.playbackRate)
         src.buffer = BufferStorage.get(bufferKey!)
-        // src.loop = loop || false
+        // src.loop = // loop || false
+        // src.start(0)
 
         return src
     }
@@ -101,6 +102,7 @@ export class SampleSequencer extends Sequencer
         
         // Connect the source to the envelope
         src.connect(adsr)
+        src.start(time)
 
         // Schedule the envelope on
         ADSR_Controller.triggerSource(src, adsr.gain, time, this.adsrIndex, this.localADSR)
