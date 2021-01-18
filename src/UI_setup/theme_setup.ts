@@ -10,7 +10,7 @@ import { UserOptions } from '../storage/user_options.js'
 type Color = readonly [number, number, number]
 type ThemeData = readonly [c0 : Color, c1 : Color, c2 : Color, c3 : Color, c4: Color, c5 : Color, c6 : Color]
 
-const ThemeHasADarkColor0 : readonly boolean[] = [true, false, false, true] as const
+const ThemeHasADarkColor0 : readonly boolean[] = [true, false, false, false] as const
 
 const themeData : ReadonlyArray<ThemeData> = (
     [   [ [16, 15, 16]
@@ -35,7 +35,12 @@ const themeData : ReadonlyArray<ThemeData> = (
     // Reversed version:
     // , [[30,30,30],[80,80,80],[240,166,202],[239,195,230],[184,190,221],[156,137,184],[240,230,239]]
     
-    , [[50, 50, 100],[150, 100, 200],[100, 100, 200],[50, 50, 200],[100, 100, 150],[100, 250, 200],[240,230,239]]
+    // Yellowish
+    , [[245, 205, 150],[250, 240, 200],[210, 200, 150],[210, 200, 150],[210, 200, 100],[50, 45, 30],[50,40,10]]
+
+    // Purple
+    // , [[50, 50, 100],[150, 100, 200],[100, 100, 200],[50, 50, 200],[100, 100, 150],[100, 250, 200],[240,230,239]]
+
     // , [[75, 75, 100],[130, 125, 175],[125, 125, 150],[100, 100, 150],[125, 125, 150],[100, 250, 200],[240,230,239]]
     ] as const)
 

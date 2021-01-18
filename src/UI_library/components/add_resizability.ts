@@ -70,6 +70,9 @@ export function addResizability(
 
         xy = [e.clientX, e.clientY]
         wh = [dialogBox.offsetWidth, dialogBox.offsetHeight]
+
+        // This makes it so that H,W are assigned
+        mousemove(e)
     }
 
     function mousemove(e : MouseEvent) {

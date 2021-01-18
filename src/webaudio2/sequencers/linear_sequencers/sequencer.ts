@@ -154,7 +154,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
             const patternTime = this.noteTime + this.startTime + this.phaseShift * this.tick
             if (patternTime > time) 
             { 
-                this.playStepsAtTime(patternTime)//, updateBox)
+                this.playStepsAtTime(patternTime)
             }
             this.nextNote()
         }
@@ -174,8 +174,8 @@ export abstract class Sequencer extends VolumeNodeContainer {
         const playRow = (key : number) => {
             if (this.dialogBoxIsOpen) // Highlight steps if user can see them:
             {
-                this.HTMLBoxes[key][this.currentStep]?.classList.add('highlighted')
                 const lastStep = (this.currentStep + this.nSteps - 1) % this.nSteps
+                this.HTMLBoxes[key][this.currentStep]?.classList.add('highlighted')
                 this.HTMLBoxes[key][lastStep]?.classList.remove('highlighted')
             }
             if (this.stepMatrix[key][this.currentStep] && !this.mutedChannel[key]) 
@@ -188,7 +188,8 @@ export abstract class Sequencer extends VolumeNodeContainer {
         {
             playRow(this.soloChannel)
         }
-        else {
+        else 
+        {
             for (const key in this.channelVolumes)
             {
                 playRow(+key)
