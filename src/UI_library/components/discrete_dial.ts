@@ -97,7 +97,7 @@ class DiscreteDial {
             document.exitPointerLock())
         }
 
-        this.dial.onmousedown = doUntilMouseUp(mousemove, { mousedown: _mousedown, mouseup: _mouseup })
+        this.dial.onmousedown = doUntilMouseUp({ mousedown: _mousedown, mousemove, mouseup: _mouseup })
 
         this.update = (value : number) => {
             const oldvalue = this.value

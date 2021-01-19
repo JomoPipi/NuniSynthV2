@@ -20,8 +20,12 @@
     margin: 20px;
 }
 
+.dark-mode-invert {
+    filter: var(--dark-mode);
+}
+
 .sample-canvas {
-    filter: invert(100%);// var(--dark-mode);
+    filter: invert(100%);
 
     &.sample-sequencer-channel {
         border-top-right-radius: 5px;

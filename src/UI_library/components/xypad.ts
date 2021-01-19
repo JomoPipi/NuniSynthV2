@@ -35,7 +35,7 @@ export class XYPad {
         
         this.render()
 
-        this.canvas.onmousedown = doUntilMouseUp(mousemove)
+        this.canvas.onmousedown = doUntilMouseUp({ mousemove })
         
         const slider = this
         function mousemove(e : MouseEvent) {

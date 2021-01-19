@@ -8,7 +8,7 @@
 import { MasterClock } from '../master_clock.js'
 import { VolumeNodeContainer } from '../../volumenode_container.js'
 import { JsDial } from '../../../UI_library/internal.js'
-import { sequencerControls } from '../sequencer_controls.js'
+import { sequencerControls } from './sequencer_controls.js'
 
 type ChannelData = {
     volume : number // Deprecated

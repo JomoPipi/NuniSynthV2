@@ -133,10 +133,10 @@ function createResizeableCanvasWindow(content : HTMLCanvasElement) {
     const canvas = content
 
     const topRow = E('div', { className: 'full' }); topRow.style.height = '5px'
-    const leftEdge = E('div', { className: 'ew-edge-drag' })
-    const rightEdge = E('div', { className: 'ew-edge-drag' })
+    const leftEdge = E('div', { className: 'resizable-window-column' })
+    const rightEdge = E('div', { className: 'resizable-window-column' })
     const middleRowContainer = E('div', { className: 'draggable-row' })
-    const bottomRow = E('div', { className: 'resizable-window-bottom-row' })
+    const bottomRow = E('div', { className: 'resizable-window-row' })
     const dragCorner = E('div', { className: 'nwse-corner-drag-box' })
     const dragCornernesw = E('div', { className: 'nesw-corner-drag-box' })
     const bottomMiddleEdge = E('span')
@@ -149,7 +149,7 @@ function createResizeableCanvasWindow(content : HTMLCanvasElement) {
     let doLeft = false
     let canvasMinWidth = Infinity
     
-    box.onmousedown = doUntilMouseUp(mousemove, { mousedown })
+    box.onmousedown = doUntilMouseUp({ mousedown, mousemove })
 
     function mousedown(e : MouseEvent) {
         doLeft = [leftEdge, dragCornernesw].includes(e.target as HTMLDivElement)

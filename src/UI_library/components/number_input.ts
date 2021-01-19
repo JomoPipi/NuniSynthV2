@@ -67,7 +67,7 @@ export function createDraggableNumberInput(
                 state.startValue)
     }
 
-    valueInput.onmousedown = doUntilMouseUp(mousemove, { mousedown })
+    valueInput.onmousedown = doUntilMouseUp({ mousedown, mousemove })
     valueInput.oninput = () => updateFunc(+valueInput.value)
     return valueInput
 }
@@ -143,7 +143,7 @@ export function createNumberDialComponent2(
     }
     updateKnob()
 
-    knob.html.onmousedown = doUntilMouseUp(mousemove, { mousedown })
+    knob.html.onmousedown = doUntilMouseUp({ mousedown, mousemove })
     valueInput.oninput = () => { updateFunc(+valueInput.value), updateKnob() }
 
     return component

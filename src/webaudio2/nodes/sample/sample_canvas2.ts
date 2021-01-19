@@ -67,13 +67,15 @@ export class BufferCanvasFrame {
             }
         }
 
-        this.left.onmousedown = doUntilMouseUp(mousemove(true), 
+        this.left.onmousedown = doUntilMouseUp( 
             { mousedown: mousedown(true)
-            , mouseup: mouseup(true) 
+            , mousemove: mousemove(true)
+            , mouseup: mouseup(true)
             })
 
-        this.right.onmousedown = doUntilMouseUp(mousemove(false), 
+        this.right.onmousedown = doUntilMouseUp(
             { mousedown: mousedown(false)
+            , mousemove: mousemove(false)
             , mouseup: mouseup(false)
             })
 

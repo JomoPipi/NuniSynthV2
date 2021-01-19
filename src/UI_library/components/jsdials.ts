@@ -80,7 +80,11 @@ export class JsDial {
             mouseup && mouseup(e)
         }
 
-        this.dial.onmousedown = doUntilMouseUp(_mousemove, { mousedown: _mousedown, mouseup: _mouseup })
+        this.dial.onmousedown = doUntilMouseUp(
+            { mousedown: _mousedown
+            , mousemove: _mousemove
+            , mouseup: _mouseup
+            })
 
         this.update = (value : number) => {
             this.value = value

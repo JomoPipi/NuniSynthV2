@@ -10,6 +10,7 @@ import { AutomationPointsEditor } from "./automation_editor.js"
 import { createRadioButtonGroup } from "../../../UI_library/internal.js"
 import { VolumeNodeContainer } from "../../volumenode_container.js"
 import { MasterClock } from "../../sequencers/master_clock.js"
+import { createDraglineElement } from "../../../UI_library/components/dragline.js"
 
 export class AutomationNode extends VolumeNodeContainer
     implements AudioNodeInterfaces<NodeTypes.AUTO> {
@@ -48,7 +49,6 @@ export class AutomationNode extends VolumeNodeContainer
     }
 
     updateBoxDimensions(H : number, W : number) {
-        console.log('H,W =',H,W)
         this.pointEditor.setDimensions(H, W)
         this.progressLine.width = W
     }
@@ -145,32 +145,18 @@ export class AutomationNode extends VolumeNodeContainer
             { mouseup: () => this.sync() }
             )
 
-        const phaseShifter = E('div', { text: 'phase' })
-            {
-            const percent = E('div', { text: '0.0%' }); percent.style.width = '50px'
-            const control = E('input', { className: 'fader-0' })
-            control.style.display = 'block'
-            control.type = 'range'
-            control.min = '0'
-            control.max = '1'
-            control.step = (2**-8).toString()
-            control.value = this.phaseShift.toString()
-            ;(control.oninput = () => 
-                percent.innerText = (100 * (this.phaseShift = +control.value)).toFixed(0) + '%'
-            )()
-            phaseShifter.append(percent, control)
-            }
-
         const modeSelect = createRadioButtonGroup(
             { buttons: ['👌', '✏️']
             , selected: 0
             , className: 'top-bar-btn'
             , onclick: (_, index) => this.pointEditor.setMode(index)
             })
+            
+        const phaseShifter = createDraglineElement(this, 'phaseShift', { min: 0, max: 1 })
 
         const hardwareControls = E('div', 
             { className: 'space-evenly some-padding'
-            , children: [subdivSelect, phaseShifter, modeSelect] 
+            , children: [subdivSelect, modeSelect, phaseShifter] 
             })
 
         const controller = E('div', { children: [nodeCanvas, this.progressLine, hardwareControls] })

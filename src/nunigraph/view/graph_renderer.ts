@@ -204,9 +204,11 @@ export class NuniGraphRenderer {
         snapNodes : boolean, 
         selectedNodes : NuniGraphNode[]) {
         const { ctx, g } = this
-        ctx.lineWidth = 0.4
-        ctx.strokeStyle = 'rgba(255,255,255,0.5)'
         const gridGrap = W / 40 // 30
+        ctx.lineWidth = 0.4
+        ctx.strokeStyle = Theme.isDark 
+        ? 'rgba(255,255,255,0.5)'
+        : 'rgba(0,0,0,0.5)'
 
         for (let i = 0; i < Math.max(W, H); i += gridGrap) 
         {

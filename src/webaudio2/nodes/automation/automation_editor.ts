@@ -94,7 +94,7 @@ export class AutomationPointsEditor {
     private rangeOfSelectedPoints? : [number, number]
 
     constructor() {
-        this.canvas = E('canvas')
+        this.canvas = E('canvas', { className: 'dark-mode-invert' })
         // this.canvas.style.backgroundColor = '#111'
         this.ctx = this.canvas.getContext('2d')!
         this.ctx.lineWidth = LINE_WIDTH
@@ -123,8 +123,9 @@ export class AutomationPointsEditor {
             this.controllerHTML = this.canvas // box
 
             this.canvas.onmousedown = // e => this.mousedown(e)
-                doUntilMouseUp(e => this.mousemove(e), 
+                doUntilMouseUp(
                     { mousedown: e => this.mousedown(e)
+                    , mousemove: e => this.mousemove(e)
                     , mouseup: e => this.mouseup(e)
                     })
                     
@@ -147,7 +148,7 @@ export class AutomationPointsEditor {
     }
 
     setDimensions(H : number, W : number) {
-        const heightOfOtherElements = 110
+        const heightOfOtherElements = 114
         this.canvas.height = Math.max(0, H - heightOfOtherElements)
         this.canvas.width = W
         this.render()

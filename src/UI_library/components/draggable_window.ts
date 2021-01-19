@@ -7,7 +7,7 @@
 
 import { doUntilMouseUp } from "../events/until_mouseup.js"
 import { UI_clamp } from "../functions/ui_clamp.js"
-import { addResizability } from "./add_resizability.js"
+import { addResizability } from "./resizability.js"
 
 
 
@@ -55,7 +55,7 @@ function addDragFunction(bar : HTMLElement, box : HTMLElement, clickCallback : F
     
     const state = { coords: [0], nodrag: false }
 
-    bar.onmousedown = doUntilMouseUp(mousemove, { mousedown })
+    bar.onmousedown = doUntilMouseUp({ mousedown, mousemove })
 
     function mousedown(e : MouseEvent) {
         state.coords = 

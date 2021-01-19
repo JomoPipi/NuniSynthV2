@@ -5,10 +5,11 @@
 
 
 
-import { Sequencer, SampleSequencer } from '../internal.js'
-import { createSubdivSelect3 } from '../../nunigraph/view/create_subdivselect.js'
-import { createADSREditor } from '../adsr/adsr_editor.js'
-import { createSliderComponent } from '../../UI_library/components/sliderComponent.js'
+import { Sequencer, SampleSequencer } from '../../internal.js'
+import { createSubdivSelect3 } from '../../../nunigraph/view/create_subdivselect.js'
+import { createADSREditor } from '../../adsr/adsr_editor.js'
+import { createSliderComponent } from '../../../UI_library/components/sliderComponent.js'
+import { createDraglineElement } from '../../../UI_library/components/dragline.js'
 
 export function sequencerControls(an : Sequencer) {
 
@@ -127,23 +128,31 @@ function createTopRowControls(an : Sequencer) {
 function createBottomRowControls(an : Sequencer) {
     const row = E('div', { className: 'sequencer-bottom-row' })
     
-    const phaseShifter = E('span', { className: 'flex-center' })
-        {
-        const percent = E('span', { text: '0.0%', className: 'margin-4' })
-            percent.style.display = 'inline-block'
-            percent.style.width = '10px'
-        const control = E('input', { className: 'fader-0' })
-        control.type = 'range'
-        control.min = '0'
-        control.max = '1'
-        control.step = (2**-8).toString()
-        control.value = an.phaseShift.toString()
-        ;(control.oninput = () => 
-            percent.innerText = (100 * (an.phaseShift = +control.value)).toFixed(0) + '%'
-        )()
-        phaseShifter.append(control, percent)
-        }
-    row.appendChild(phaseShifter)
+    // const phaseShifter = E('span', { className: 'flex-center' })
+    //     {
+    //     const percent = E('span', { text: '0.0%', className: 'margin-4' })
+    //         percent.style.display = 'inline-block'
+    //         percent.style.width = '10px'
+    //     const control = E('input', { className: 'phase-shift-slider' })
+    //     control.type = 'range'
+    //     control.min = '0'
+    //     control.max = '100'
+    //     control.step = '1'
+    //     control.value = an.phaseShift.toString()
+    //     control.onmousedown = doUntilMouseUp(
+    //         { mousedown: () => control.requestPointerLock()
+    //         , mousemove: 
+    //             e =>
+    //                 percent.innerText = 
+    //                 (control.value =
+    //                 (an.phaseShift = 
+    //                     clamp(0, an.phaseShift + e.movementX, 100)
+    //                 ) as any).toFixed(0) + '%'
+    //         , mouseup: () => document.exitPointerLock()
+    //         })
+    //     phaseShifter.append(control, percent)
+    //     }
+    // row.appendChild(phaseShifter)
 
     if (an instanceof SampleSequencer) 
     { // add new row
@@ -194,6 +203,8 @@ function createBottomRowControls(an : Sequencer) {
 
         row.appendChild(box)
     }
+    
+    row.appendChild(createDraglineElement(an, 'phaseShift', { min: 0, max: 1 }))
 
     return row
 }

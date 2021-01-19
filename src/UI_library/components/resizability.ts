@@ -17,16 +17,16 @@ export function addResizability(
     const dialogBox = E('div', { children })
     dialogBox.style.overflow = 'hidden'
     
-    const topRow = E('div', { className: 'resizable-window-bottom-row' })
+    const topRow = E('div', { className: 'resizable-window-row' })
     const topLeftCorner = E('div', { className: 'nwse-corner-drag-box' })
     const topMiddleEdge = E('span')
     const topRightCorner = E('div', { className: 'nesw-corner-drag-box' })
 
     const middleRowContainer = E('div', { className: 'draggable-row' })
-    const leftEdge = E('div', { className: 'ew-edge-drag' })
-    const rightEdge = E('div', { className: 'ew-edge-drag' })
+    const leftEdge = E('div', { className: 'resizable-window-column' })
+    const rightEdge = E('div', { className: 'resizable-window-column' })
 
-    const bottomRow = E('div', { className: 'resizable-window-bottom-row' })
+    const bottomRow = E('div', { className: 'resizable-window-row' })
     const bottomLeftCorner = E('div', { className: 'nesw-corner-drag-box' })
     const bottomMiddleEdge = E('span')
     const bottomRightCorner = E('div', { className: 'nwse-corner-drag-box' })
@@ -43,10 +43,11 @@ export function addResizability(
     let H = 0
     let W = 0
     
-    box.onmousedown = doUntilMouseUp(mousemove, 
+    box.onmousedown = doUntilMouseUp(
         { mousedown
-        , 
-            mouseup: () => {
+        , mousemove
+        , mouseup: 
+            () => {
                 if (resizeDirection === NONE) return;
                 resizeCallback(H, W)
             }
@@ -59,7 +60,7 @@ export function addResizability(
 
         resizeDirection =
         [topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner].includes(target)
-            ? 3
+            ? HORIZONTAL | VERTICAL
             : target === rightEdge || target === leftEdge
             ? HORIZONTAL
             : target === topMiddleEdge || target === bottomMiddleEdge 
@@ -71,8 +72,8 @@ export function addResizability(
         xy = [e.clientX, e.clientY]
         wh = [dialogBox.offsetWidth, dialogBox.offsetHeight]
 
-        // This makes it so that H,W are assigned
-        mousemove(e)
+        // Assigning H, W prevents a bug on the first time opening:
+        ;[W,H] = wh
     }
 
     function mousemove(e : MouseEvent) {
