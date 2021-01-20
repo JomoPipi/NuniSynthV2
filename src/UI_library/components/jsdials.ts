@@ -25,6 +25,7 @@ export class JsDial {
     arcLength : number
     rounds : number
     update : (value : number) => void
+    doubleClick? : (value : number) => void
 
     constructor(CSS_classIndex? : number, knobClassIndex? : number) {
         
@@ -53,12 +54,26 @@ export class JsDial {
         this.html.style.height =
             px + 'px'
     }
+
+    attachDoubleClick(func : Function) {
+        // Won't do anything if attach isn't called
+        this.doubleClick = () => func(this.value)
+    }
     
     attach(func : (n : number) => void, { mousedown, mouseup } : Options = {}) {
+        const doubleClickDelay = 500
+        let lastClickTime = 0
+
         const _mousedown = (e : MouseEvent) => {
             mousedown && mousedown(e)
+            const now = Date.now()
+            if (this.doubleClick && now - lastClickTime <= doubleClickDelay)
+            {
+                this.doubleClick(this.value)
+            }
+            lastClickTime = now
             this.render()
-            this.html.requestPointerLock()
+            this.dial.requestPointerLock()
         }
 
         const LIMIT = 100
@@ -74,9 +89,7 @@ export class JsDial {
         }
 
         const _mouseup = (e : MouseEvent) => {
-            // setTimeout(() => // Avoid interrupting double click
             document.exitPointerLock()
-            // , 100)
             mouseup && mouseup(e)
         }
 
@@ -93,13 +106,6 @@ export class JsDial {
         }
 
         this.render()
-    }
-
-    attachDoubleClick(func : Function) {
-        this.dial.ondblclick = () => {
-            func(this.value)
-            this.render()
-        }
     }
 
     render() {

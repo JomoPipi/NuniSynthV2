@@ -20,7 +20,7 @@ type Props = {
     max : number
 }
 
-export function createDraglineElement<T extends string>(obj : Record<T, number>, prop : T, props : Props) {
+export function createDraglineElement<T extends string>(obj : { [key in T] : number }, prop : T, props : Props) {
     // const container = E('span')
 
     // const percent = E('span', { text: '0.0%', className: 'margin-4' })
