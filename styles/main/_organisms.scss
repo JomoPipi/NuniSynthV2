@@ -100,14 +100,18 @@ $number-grab-width: 120px;
 
 
 .lcd-display {
-    background: rgba(20,10,30,0.5); // #050505; // var(--color0);//
+    background: rgba(20,10,30,0.75); // #050505; // var(--color0);//
     padding: 10px;
     margin: 10px 0px;
     color: rgb(206, 252, 255);
-    // box-shadow: 0 0 20px 0px var(--color0);
+    box-shadow: 0 0 20px 0px var(--color2);
     padding: 18x;
     font-family: monospace;
     letter-spacing: 0.15em;
+
+    button {
+        color: rgb(206, 252, 255);
+    }
 }
 
 

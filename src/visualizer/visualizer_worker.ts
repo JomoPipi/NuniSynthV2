@@ -37,18 +37,16 @@ onmessage = (e : MessageEvent) =>
     }
     else if (e.data.buffer) 
     {
-
-        drawTimeDomain(e)
-        // drawFrequencySpectrum(e)
+        drawFrequencySpectrum(e)
     }
-    // else if (e.data.buffer2)
-    // {
-    //     drawTimeDomain(e)
-    // }
+    else if (e.data.buffer2)
+    {
+        drawTimeDomain(e)
+    }
 }
 
 function drawTimeDomain(e : MessageEvent) {
-    const buffer2 = e.data.buffer//2
+    const buffer2 = e.data.buffer2
     const dataArray = new Uint8Array(buffer2)
 
     ctx.fillStyle = 'rgb(200, 200, 200)'
@@ -57,7 +55,7 @@ function drawTimeDomain(e : MessageEvent) {
 
     const sliceWidth = W * 1.0 / bufferLength
     let x = 0, max = -Infinity
-    const Y = H*1/4
+    const Y = 0
 
     ctx.beginPath()
     for(var i = 0; i < bufferLength; i++) {
@@ -65,9 +63,13 @@ function drawTimeDomain(e : MessageEvent) {
         const y = v * H/2 + Y
 
         if(i === 0)
+        {
             ctx.moveTo(x, y)
+        }
         else
+        {
             ctx.lineTo(x, y)
+        }
     
         x += sliceWidth
         max = Math.max(max, dataArray[i])

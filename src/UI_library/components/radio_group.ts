@@ -21,7 +21,7 @@ type RadioButtonOptions = {
     onclick? : (data : any, index : number) => void
     containerClassName? : string
     orientation? : number
-    }
+}
 
 export function createRadioButtonGroup(
     { buttons
