@@ -2138,6 +2138,14 @@ a {
   padding: 0px 17px;
 }
 
+.pianoroll-controller {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  overflow: hidden;
+}
+
 @font-face {
   font-family: OpenSans;
   src: url("OpenSans-Regular.ttf") format("truetype");

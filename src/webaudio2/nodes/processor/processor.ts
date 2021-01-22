@@ -5,8 +5,6 @@
 
 
 
-type Destination = AudioNode | AudioParam
-
 declare var ace : any
 
 const END = 'end'

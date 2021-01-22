@@ -671,8 +671,8 @@ type ParamsOf<T extends NodeTypes> = T extends CanBeAutomated
     : any
 
 interface BaseAudioNodeProperties {
-    connect(input : AudioNode | AudioParam) : void
-    disconnect(input? : AudioNode | AudioParam) : void
+    connect(input : Destination) : void
+    disconnect(input? : Destination) : void
 }
 
 type ClockDependent = keyof typeof ClockDependent
@@ -681,6 +681,7 @@ type IClockDependent<T> = (T extends ClockDependent
         scheduleNotes() : void
         setTempo(tempo : number) : void
         sync() : void
+        isPlaying : boolean
     }
     : {})
 

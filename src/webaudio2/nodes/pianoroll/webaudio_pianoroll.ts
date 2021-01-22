@@ -69,9 +69,6 @@ class Pianoroll extends HTMLElement {
         this.defineProps()
         root.innerHTML =
 `<style>
-.pianoroll{
-    background:#ccc;
-}
 :host {
     user-select: none;
     display: inline-block;
@@ -160,8 +157,6 @@ class Pianoroll extends HTMLElement {
         };
         this.play=function(actx, playcallback, tick) {
             this.scheduleNotes = function() {
-                
-                if (!this.isPlaying) return;
                 const current=this.actx.currentTime;
                 while(this.timestack.length>1 && current>=this.timestack[1][0]){
                     this.timestack.shift();

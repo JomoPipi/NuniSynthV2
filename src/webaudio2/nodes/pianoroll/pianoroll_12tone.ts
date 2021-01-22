@@ -28,10 +28,10 @@ export class PianoRoll12Tone
     xscroll=1
     yscroll=1
     kbwidth=30
-    colrulerbg='${Theme.colors[2]}'
-    colrulerfg='${Theme.colors[5]}'
-    collt='${Theme.colors[1]}'
-    coldk='${Theme.colors[0]}'
+    colrulerbg=\'${Theme.colors[2]}\'
+    colrulerfg=\'${Theme.colors[5]}\'
+    collt=\'${Theme.colors[1]}\'
+    coldk=\'${Theme.colors[0]}\'
 ></webaudio-pianoroll>`
 
         this.pianoRoll = util.removeChild(util.children[0])

@@ -95,7 +95,6 @@ export class AutomationNode extends VolumeNodeContainer
     }
     
     scheduleNotes() {
-        if (!this.isPlaying) return;
         const time = this.ctx.currentTime
         const phase = this.phaseShift * this.durationOfLoop
         const currentTime = time + phase

@@ -145,7 +145,6 @@ export abstract class Sequencer extends VolumeNodeContainer {
     }
 
     scheduleNotes() {
-        if (!this.isPlaying) return;
         const time = this.ctx.currentTime
         const currentTime = time - this.startTime
         

@@ -13,7 +13,7 @@ import { createNumberDialComponent3 } from "../../UI_library/internal.js"
 
 
 
-let activated = false, isPaused = false, _tempo = 69
+let _tempo = 69
 let _setTempo = (t : number) => {}
 let _sync = () => {}
 
@@ -40,21 +40,22 @@ interface ScheduleArgs {
 }
 
 export const MasterClock = {
+    activated: false,
 
-    setSchedule: ({ scheduleNotes, setTempo, sync } : ScheduleArgs) => {
-        if (activated) 
+    setSchedule({ scheduleNotes, setTempo, sync } : ScheduleArgs) {
+        if (this.activated) 
         {
             throw 'MasterClock already has a schedule.'
         }
-        activated = true
+        this.activated = true
         _setTempo = setTempo
         _sync = sync
         startScheduling(scheduleNotes)
     },
 
-    getTempo: () => _tempo,
+    getTempo() { return _tempo },
 
-    setTempo: (tempo : number) => {
+    setTempo(tempo : number) {
         tempoComponent.setValue(tempo)
     },
 }
@@ -63,14 +64,13 @@ MasterClock.setTempo(120)
 
 D('tempo-input-container').appendChild(tempoComponent.container)
 
+let isPaused = false
 function startScheduling(scheduleNotes : () => void) {
 
     if (!isPaused) scheduleNotes()
 
     const goAgain = startScheduling.bind(null, scheduleNotes)
 
-    // window.setTimeout(goAgain)
-    // More efficient, but sequencer stops when tabs are switched:
     window.requestAnimationFrame(goAgain)
 }
 

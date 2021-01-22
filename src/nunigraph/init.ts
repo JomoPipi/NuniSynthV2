@@ -99,7 +99,10 @@ Graph_Attachments: {
         scheduleNotes() { // Optimization: put the an.isPlaying check on the outside?
             for (const node of yieldClockedNodes(g))
             {
-                node.audioNode.scheduleNotes()
+                if (node.audioNode.isPlaying)
+                {
+                    node.audioNode.scheduleNotes()
+                }
             }
         },
         setTempo(tempo : number) {

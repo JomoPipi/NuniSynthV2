@@ -19,12 +19,12 @@ export class VolumeNodeContainer {
         this.volumeNode = ctx.createGain()
         this.volumeNode.gain.value = 1
     }
-    
-    connect(destination : AudioNode | AudioParam) {
-        this.volumeNode.connect(destination as AudioNode) //***
+
+    connect(destination : Destination) {
+        this.volumeNode.connect(destination)
     }
 
-    disconnect(destination? : AudioNode | AudioParam) {
+    disconnect(destination? : Destination) {
         if (!destination) 
         {
             this.volumeNode.disconnect()
