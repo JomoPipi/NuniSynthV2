@@ -514,7 +514,7 @@ export class NuniGraphRenderer {
         { // draw the connection currently being made
             const [X,Y] = [fromNode.x*W, fromNode.y*H]
             ctx.lineWidth = connectionLineWidth
-            ctx.strokeStyle = 'white'
+            ctx.strokeStyle = Theme.isDark ? 'white' : 'black'
             this.directedLine(X, Y, x, y, false)
         }
     }

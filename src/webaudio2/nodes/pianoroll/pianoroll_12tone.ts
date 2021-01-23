@@ -80,7 +80,11 @@ export class PianoRoll12Tone
     set MMLString(s : string) {
         this.pianoRoll.setMMLString(s)
     }
-
+    updateBoxDimensions(H : number, W : number) {
+        this.pianoRoll.height = H
+        this.pianoRoll.width = W
+        // this.pianoRoll.redraw()
+    }
 }
 
 

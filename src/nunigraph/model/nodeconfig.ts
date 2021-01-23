@@ -156,7 +156,7 @@ const HasAResizableDialogBox =
     { [NodeTypes.AUTO]:      true
     // TODO: convert these:
     // , [NodeTypes.MODULE]:    true
-    // , [NodeTypes.PIANOR]:    true
+    , [NodeTypes.PIANOR]:    true
     , [NodeTypes.PROCESSOR]: true
     }
 type HasAResizableDialogBox = keyof typeof HasAResizableDialogBox

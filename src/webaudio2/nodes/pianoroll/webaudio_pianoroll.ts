@@ -180,8 +180,9 @@ class Pianoroll extends HTMLElement {
                         if(this.editmode=="gridmono"||this.editmode=="gridpoly")
                             gmax*=this.gridnoteratio;
                         const cbev={t:this.time1,g:this.time1+gmax*this.tick2time,n:e.n};
-                        if(this.playcallback)
-                            this.playcallback(cbev);
+                        
+                        playcallback(cbev);
+
                         e=this.sequence[++this.index1];
                         if(!e || e.t >= this.markend){
                             this.time1+=(this.markend-this.tick1)*this.tick2time;
@@ -200,7 +201,6 @@ class Pianoroll extends HTMLElement {
             if(this.timer!=null)
                 return;
             this.actx=actx;
-            this.playcallback=playcallback;
             this.timestack=[];
 
 
