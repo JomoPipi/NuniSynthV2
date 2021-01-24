@@ -13,7 +13,9 @@ export class MonoPianoRollControls {
     controller = E('div', { className: 'pianoroll-controller' })
 
     private audioCtx : AudioContext
+    private body : HTMLDivElement
     private canvas : HTMLCanvasElement
+    private keyboardImage : HTMLDivElement
     private markstart : HTMLImageElement
     private markend : HTMLImageElement
     private cursor : HTMLImageElement
@@ -26,8 +28,8 @@ export class MonoPianoRollControls {
         const cursorsrc = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj4NCjxwYXRoIGZpbGw9InJnYmEoMjU1LDEwMCwxMDAsMC44KSIgZD0iTTAsMSAyNCwxMiAwLDIzIHoiLz4NCjwvc3ZnPg0K"
         const markendsrc = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCjxwYXRoIGZpbGw9IiMwYzAiIGQ9Ik0wLDEgMjQsMSAyNCwyMyB6Ii8+DQo8L3N2Zz4NCg=="
 
-        const body = E('div', { className: 'wac-body' })
-        const keyboard = E('div', { className: 'wac-kb' })
+        this.body = E('div', { className: 'wac-body' })
+        this.keyboardImage = E('div', { className: 'wac-kb' })
         this.canvas = E('canvas', { className: 'wac-pianoroll' })
         this.markstart = E('img', { className: 'marker' })
         this.markend = E('img', { className: 'marker' })
@@ -37,8 +39,8 @@ export class MonoPianoRollControls {
         this.markend.src = markendsrc
         this.cursor.src = cursorsrc
 
-        body.append(this.canvas, keyboard, this.markstart, this.markend, this.cursor)
-        this.controller.appendChild(body)
+        this.body.append(this.canvas, this.keyboardImage, this.markstart, this.markend, this.cursor)
+        this.controller.appendChild(this.body)
 
         this.ctx = this.canvas.getContext('2d')!
     }

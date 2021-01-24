@@ -6,6 +6,7 @@
 
 
 // @ts-nocheck
+'use strict'
 
 const defaultProperties = {
     width:              {value:640, observer:'layout'},
@@ -50,12 +51,13 @@ const defaultProperties = {
     markendsrc:         {value:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCjxwYXRoIGZpbGw9IiMwYzAiIGQ9Ik0wLDEgMjQsMSAyNCwyMyB6Ii8+DQo8L3N2Zz4NCg=="},
     markendoffset:      {value:-24},
     kbsrc:              {value:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSI0ODAiPg0KPHBhdGggZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBkPSJNMCwwIGgyNHY0ODBoLTI0eiIvPg0KPHBhdGggZmlsbD0iIzAwMCIgZD0iTTAsNDAgaDEydjQwaC0xMnogTTAsMTIwIGgxMnY0MGgtMTJ6IE0wLDIwMCBoMTJ2NDBoLTEyeiBNMCwzMjAgaDEydjQwaC0xMnogTTAsNDAwIGgxMnY0MGgtMTJ6Ii8+DQo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIGQ9Ik0wLDYwIGgyNCBNMCwxNDAgaDI0IE0wLDIyMCBoMjQgTTAsMjgwIGgyNCBNMCwzNDAgaDI0IE0wLDQyMCBoMjQiLz4NCjwvc3ZnPg0K", observer:'layout'},
-    kbwidth:            {value:40},
     loop:               {value:0},
     preload:            {value:1.0},
     tempo:              {value:120, observer:'updateTimer'},
     enable:             {value:true}
 } as const
+
+const KB_WIDTH = 40
 
 customElements.define("webaudio-pianoroll", 
 
@@ -122,12 +124,12 @@ class Pianoroll extends HTMLElement {
 }
 </style>
 <div class="wac-body" id="wac-body" touch-action="none">
-<canvas id="wac-pianoroll" touch-action="none" tabindex="0"></canvas>
-<div id="wac-kb"></div>
-<img id="wac-markstart" class="marker" src="${this.markstartsrc}"/>
-<img id="wac-markend" class="marker" src="${this.markendsrc}"/>
-<img id="wac-cursor" class="marker" src="${this.cursorsrc}"/>
-<div id="wac-menu">Delete</div>
+    <canvas id="wac-pianoroll" touch-action="none" tabindex="0"></canvas>
+    <div id="wac-kb"></div>
+    <img id="wac-markstart" class="marker" src="${this.markstartsrc}"/>
+    <img id="wac-markend" class="marker" src="${this.markendsrc}"/>
+    <img id="wac-cursor" class="marker" src="${this.cursorsrc}"/>
+    <div id="wac-menu">Delete</div>
 </div>`;
 
         this.sortSequence=function(){
@@ -403,7 +405,7 @@ class Pianoroll extends HTMLElement {
                 ht.m="m";
                 return ht;
             }
-            ht.t=(this.xoffset+(pos.x-this.yruler-this.kbwidth)/this.swidth*this.xrange);
+            ht.t=(this.xoffset+(pos.x-this.yruler-KB_WIDTH)/this.swidth*this.xrange);
             ht.n=this.yoffset-(pos.y-this.height)/this.steph;
             if(pos.y>=this.height || pos.x>=this.width){
                 return ht;
@@ -412,7 +414,7 @@ class Pianoroll extends HTMLElement {
                 ht.m="x";
                 return ht;
             }
-            if(pos.x<this.yruler+this.kbwidth){
+            if(pos.x<this.yruler+KB_WIDTH){
                 ht.m="y";
                 return ht;
             }
@@ -660,65 +662,51 @@ class Pianoroll extends HTMLElement {
                 }
             }
         };
-        this.setListener=function(el, mode){
+        
+        this.ready=function(){
+         
+            this.body=root.children[1];                 // wac-body
+
+            this.canvas = this.body.children[0];        // wac-pianoroll
+            this.ctx=this.canvas.getContext("2d");
+            this.kbimg=this.body.children[1];           // wac-kb
+            this.markstartimg=this.body.children[2];    // wac-markstart
+            this.markendimg=this.body.children[3];      // wac-markend
+            this.cursorimg=this.body.children[4];       // wac-cursor
+            this.menu=this.body.children[5];            // wac-memu (Delete)
+            this.rcMenu={x:0, y:0, width:0, height:0};
+            
+            this.canvas.addEventListener('mousemove',this.mousemove.bind(this),false);
+            this.canvas.addEventListener('keydown',this.keydown.bind(this),false);
+            this.canvas.addEventListener('mousewheel',this.wheel.bind(this),false);
+
+            this.body.addEventListener("mousedown",this.pointerdown.bind(this), true);
+
             this.bindcontextmenu = this.contextmenu.bind(this);
             this.bindpointermove = this.pointermove.bind(this);
             this.bindcancel = this.cancel.bind(this);
-            el.addEventListener("mousedown",this.pointerdown.bind(this), mode);
-            //// el.addEventListener("touchstart",this.pointerdown.bind(this),false);
-            //// if(mode){
-            ////     el.addEventListener("mouseover",this.pointerover.bind(this),false);
-            ////     el.addEventListener("mouseout",this.pointerout.bind(this),false);
-            //// }
-        };
-        this.ready=function(){
-            this.body=root.children[1];
-            this.elem=root.childNodes[2];
-            this.canvas = this.elem.children[0];
-            this.kb = this.elem.children[1];
-            this.ctx=this.canvas.getContext("2d");
-            this.kbimg=this.elem.children[1];
-            this.markstartimg=this.elem.children[2];
-            this.markendimg=this.elem.children[3];
-            this.cursorimg=this.elem.children[4];
-            this.menu=this.elem.children[5];
-            this.rcMenu={x:0, y:0, width:0, height:0};
-            this.lastx=0;
-            this.lasty=0;
-            this.canvas.addEventListener('mousemove',this.mousemove.bind(this),false);
-            this.canvas.addEventListener('keydown',this.keydown.bind(this),false);
-            this.canvas.addEventListener('DOMMouseScroll',this.wheel.bind(this),false);
-            this.canvas.addEventListener('mousewheel',this.wheel.bind(this),false);
-            this.setListener(this.canvas,true);
-            this.setListener(this.markendimg,true);
-            this.setListener(this.markstartimg,true);
-            this.setListener(this.cursorimg,true);
-            this.setListener(this.menu,true);
+
             this.sequence=[];
             this.dragging={o:null};
             this.kbimg.style.height=this.sheight+"px";
             this.kbimg.style.backgroundSize=(this.steph*12)+"px";
+            
             this.layout();
-            this.initialized=1;
-            this.redraw();
         };
-        this.setupImage=function(){
-        };
-        this.preventScroll=function(e){
-            if(e.preventDefault)
-                e.preventDefault();
-        };
+
+        let x = 0
+        let y = 0
         this.getPos=function(e){
             let t=null;
-            if(e){
+            if(e) {
                 t=e.target;
-                this.lastx=e.clientX-this.rcTarget.left;
-                this.lasty=e.clientY-this.rcTarget.top;
+                x=e.clientX-this.rcTarget.left;
+                y=e.clientY-this.rcTarget.top;
             }
-            if(this.lastx>=this.rcMenu.x&&this.lastx<this.rcMenu.x+this.rcMenu.width
-                    &&this.lasty>=this.rcMenu.y&&this.lasty<this.rcMenu.y+this.rcMenu.height)
+            if(x>=this.rcMenu.x&&x<this.rcMenu.x+this.rcMenu.width
+                    &&y>=this.rcMenu.y&&y<this.rcMenu.y+this.rcMenu.height)
                 t=this.menu;
-            return {t:t, x:this.lastx, y:this.lasty};
+            return {t:t, x:x, y:y};
         };
         this.contextmenu= function(e){
             e.stopPropagation();
@@ -924,21 +912,16 @@ class Pianoroll extends HTMLElement {
                 this.sortSequence();
             }
             this.press = 0;
-//            this.mousemove(e);
-            // window.removeEventListener('touchstart',this.preventScroll,false);
+            
             window.removeEventListener("mousemove",this.bindpointermove,false);
-            // window.removeEventListener("touchend",this.bindcancel,false);
+            
             window.removeEventListener("mouseup",this.bindcancel,false);
             ev.preventDefault();
             ev.stopPropagation();
-//            window.removeEventListener("contextmenu",this.contextmenu);
+            
             return false;
         };
-        this.pointerover=function(e) {
-        };
-        this.pointerout=function(e) {
-//            window.removeEventListener("contextmenu",this.contextmenu);
-        };
+        
         this.wheel=function(e) {
             let delta = 0;
             const pos=this.getPos(e);
@@ -975,33 +958,28 @@ class Pianoroll extends HTMLElement {
             e.preventDefault();
         };
         this.layout=function(){
-            if(typeof(this.kbwidth)=="undefined")
-                return;
-            const bodystyle = this.body.style;
+            const bodyStyle = this.body.style;
             if(this.bgsrc)
                 this.canvas.style.background="url('"+this.bgsrc+"')";
             this.kbimg.style.background="url('"+this.kbsrc+"')";
             if(this.width){
                 this.canvas.width = this.width;
-                bodystyle.width = this.canvas.style.width = this.width+"px";
+                bodyStyle.width = this.canvas.style.width = this.width+"px";
             }
             if(this.height) {
                 this.canvas.height = this.height;
-                bodystyle.height = this.canvas.style.height = this.height+"px";
+                bodyStyle.height = this.canvas.style.height = this.height+"px";
             }
-            this.swidth=this.canvas.width-this.yruler;
-            this.swidth-=this.kbwidth;
+            this.swidth = this.canvas.width - this.yruler - KB_WIDTH;
             this.sheight=this.canvas.height-this.xruler;
             this.redraw();
         };
         this.redrawMarker=function(){
-            if(!this.initialized)
-                return;
-            const cur=(this.cursor-this.xoffset)*this.stepw+this.yruler+this.kbwidth;
+            const cur=(this.cursor-this.xoffset)*this.stepw+this.yruler+KB_WIDTH;
             this.cursorimg.style.left=(cur+this.cursoroffset)+"px";
-            const start=(this.markstart-this.xoffset)*this.stepw+this.yruler+this.kbwidth;
+            const start=(this.markstart-this.xoffset)*this.stepw+this.yruler+KB_WIDTH;
             this.markstartimg.style.left=(start+this.markstartoffset)+"px";
-            const end=(this.markend-this.xoffset)*this.stepw+this.yruler+this.kbwidth;
+            const end=(this.markend-this.xoffset)*this.stepw+this.yruler+KB_WIDTH;
             this.markendimg.style.left=(end+this.markendoffset)+"px";
         };
         this.redrawGrid=function(){
@@ -1011,12 +989,12 @@ class Pianoroll extends HTMLElement {
                 else
                     this.ctx.fillStyle=this.collt;
                 let ys = this.height - (y - this.yoffset) * this.steph;
-                this.ctx.fillRect(this.yruler+this.kbwidth, ys|0, this.swidth,-this.steph);
+                this.ctx.fillRect(this.yruler+KB_WIDTH, ys|0, this.swidth,-this.steph);
                 this.ctx.fillStyle=this.colgrid;
-                this.ctx.fillRect(this.yruler+this.kbwidth, ys|0, this.swidth,1);
+                this.ctx.fillRect(this.yruler+KB_WIDTH, ys|0, this.swidth,1);
             }
             for(let t=0;;t+=this.grid){
-                let x=this.stepw*(t-this.xoffset)+this.yruler+this.kbwidth;
+                let x=this.stepw*(t-this.xoffset)+this.yruler+KB_WIDTH;
                 this.ctx.fillRect(x|0,this.xruler,1,this.sheight);
                 if(x>=this.width)
                     break;
@@ -1036,7 +1014,7 @@ class Pianoroll extends HTMLElement {
                 this.ctx.fillRect(this.width-1,0,1,this.xruler);
                 this.ctx.fillStyle=this.colrulerfg;
                 for(let t=0;;t+=this.timebase){
-                    let x=(t-this.xoffset)*this.stepw+this.yruler+this.kbwidth;
+                    let x=(t-this.xoffset)*this.stepw+this.yruler+KB_WIDTH;
                     this.ctx.fillRect(x,0,1,this.xruler);
                     this.ctx.fillText(t/this.timebase+1,x+4,this.xruler-8);
                     if(x>=this.width)
@@ -1063,7 +1041,7 @@ class Pianoroll extends HTMLElement {
             }
             this.kbimg.style.top=(this.xruler)+"px";
             this.kbimg.style.left=this.yruler+"px";
-            this.kbimg.style.width=this.kbwidth+"px";
+            this.kbimg.style.width=KB_WIDTH+"px";
             this.kbimg.style.backgroundSize="100% "+(this.steph*12)+"px";
             this.kbimg.style.backgroundPosition="0px "+(this.sheight+this.steph*this.yoffset)+"px";
         };
@@ -1112,7 +1090,7 @@ class Pianoroll extends HTMLElement {
                 else
                     this.ctx.fillStyle=this.colnote;
                 w=ev.g*this.stepw;
-                x=(ev.t-this.xoffset)*this.stepw+this.yruler+this.kbwidth;
+                x=(ev.t-this.xoffset)*this.stepw+this.yruler+KB_WIDTH;
                 x2=(x+w)|0; x|=0;
                 y=this.height - (ev.n-this.yoffset)*this.steph;
                 y2=(y-this.steph)|0; y|=0;
