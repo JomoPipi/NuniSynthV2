@@ -64,7 +64,7 @@ export class MonoPianoRoll
 
     play() {
         this.isPlaying = true
-        this.pianoRoll.play(this.ctx, ({ start, end, n }) => {
+        this.pianoRoll.play(({ start, end, n }) => {
             this.csn.offset.setValueAtTime(n * 100, start)
             this.csn.offset.setValueAtTime(0, end)
         })
@@ -78,5 +78,11 @@ export class MonoPianoRoll
 
     set MMLString(s : string) {
         this.pianoRoll.setMMLString(s)
+    }
+    
+    updateBoxDimensions(H : number, W : number) {
+        // this.pianoRoll.height = H
+        // this.pianoRoll.width = W
+        // this.pianoRoll.render()
     }
 }

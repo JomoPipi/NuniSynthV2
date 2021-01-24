@@ -55,7 +55,7 @@ const defaultProperties = {
     preload:            {value:1.0},
     tempo:              {value:120, observer:'updateTimer'},
     enable:             {value:true}
-}
+} as const
 
 customElements.define("webaudio-pianoroll", 
 
@@ -67,8 +67,7 @@ class Pianoroll extends HTMLElement {
         // Previously inside connectedCallback
         const root=this
         this.defineProps()
-        root.innerHTML =
-`<style>
+        root.innerHTML = `<style>
 :host {
     user-select: none;
     display: inline-block;
@@ -83,7 +82,6 @@ class Pianoroll extends HTMLElement {
     padding:0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
 }
 #wac-pianoroll {
     cursor: pointer;
@@ -676,7 +674,6 @@ class Pianoroll extends HTMLElement {
         this.ready=function(){
             this.body=root.children[1];
             this.elem=root.childNodes[2];
-            this.proll = this.elem.children[0];
             this.canvas = this.elem.children[0];
             this.kb = this.elem.children[1];
             this.ctx=this.canvas.getContext("2d");
@@ -980,22 +977,21 @@ class Pianoroll extends HTMLElement {
         this.layout=function(){
             if(typeof(this.kbwidth)=="undefined")
                 return;
-            const proll = this.proll;
             const bodystyle = this.body.style;
             if(this.bgsrc)
-                proll.style.background="url('"+this.bgsrc+"')";
+                this.canvas.style.background="url('"+this.bgsrc+"')";
             this.kbimg.style.background="url('"+this.kbsrc+"')";
             if(this.width){
-                proll.width = this.width;
-                bodystyle.width = proll.style.width = this.width+"px";
+                this.canvas.width = this.width;
+                bodystyle.width = this.canvas.style.width = this.width+"px";
             }
             if(this.height) {
-                proll.height = this.height;
-                bodystyle.height = proll.style.height = this.height+"px";
+                this.canvas.height = this.height;
+                bodystyle.height = this.canvas.style.height = this.height+"px";
             }
-            this.swidth=proll.width-this.yruler;
+            this.swidth=this.canvas.width-this.yruler;
             this.swidth-=this.kbwidth;
-            this.sheight=proll.height-this.xruler;
+            this.sheight=this.canvas.height-this.xruler;
             this.redraw();
         };
         this.redrawMarker=function(){

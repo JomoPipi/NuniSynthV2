@@ -83,7 +83,6 @@ export class PianoRoll12Tone
     updateBoxDimensions(H : number, W : number) {
         this.pianoRoll.height = H
         this.pianoRoll.width = W
-        // this.pianoRoll.redraw()
     }
 }
 

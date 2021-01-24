@@ -23,6 +23,7 @@ import { OpenGraphControllers } from '../controller/graph_controller.js'
 // import { NuniNumberNode } from '../../webaudio2/nodes/number/number.js'
 import { createADSREditor } from '../../webaudio2/adsr/adsr_editor.js'
 import { createSliderComponent } from '../../UI_library/components/sliderComponent.js'
+import { MonoPianoRoll } from '../../webaudio2/nodes/pianoroll/mono_pianoroll.js'
 
 
 const hasSubtypes = (node : NuniGraphNode) : node is NuniGraphNode<HasSubtypes> =>
@@ -110,11 +111,16 @@ export function createValuesWindow(
     {
         controls.appendChild(activateKeyboardButton(audioNode))
     }
-
+//////////////////////////////////////////////////////////
     if (audioNode instanceof PianoRoll12Tone)
     {
         controls.appendChild(audioNode.pianoRoll)
     }
+    if (audioNode instanceof MonoPianoRoll)
+    {
+        controls.appendChild(audioNode.getController())
+    }
+//////////////////////////////////////////////////////////
     else if (audioNode instanceof ProcessorNode)
     {
         controls.appendChild(audioNode.getController())

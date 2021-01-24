@@ -13,7 +13,10 @@ import { GateSequencer } from './nodes/gate_sequencer/subgraph_sequencer.js'
 import { SampleSequencer } from './nodes/sample_sequencer/sample_sequencer.js'
 import { NuniRecordingNode } from './nodes/record/record.js'
 import { NuniGraphAudioNode } from './nodes/module/module.js'
+
 import { PianoRoll12Tone } from './nodes/pianoroll/pianoroll_12tone.js'
+import { MonoPianoRoll } from './nodes/pianoroll/mono_pianoroll.js'
+
 import { ProcessorNode } from './nodes/processor/processor.js'
 import { AutomationNode } from './nodes/automation/automation.js'
 import { NuniFilterNode } from './nodes/filter/filter.js'
@@ -32,7 +35,9 @@ export const AudioNodeMap =
     , [NodeTypes.RECORD]:     NuniRecordingNode
     , [NodeTypes.MODULE]:     NuniGraphAudioNode
     , [NodeTypes.COMPRESSOR]: DynamicsCompressorNode
-    , [NodeTypes.PIANOR]:     PianoRoll12Tone
+
+    , [NodeTypes.PIANOR]:     PianoRoll12Tone//MonoPianoRoll
+
     , [NodeTypes.PROCESSOR]:  ProcessorNode
     , [NodeTypes.AUTO]:       AutomationNode
     } as const
