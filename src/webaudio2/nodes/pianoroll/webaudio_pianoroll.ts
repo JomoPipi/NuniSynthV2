@@ -57,6 +57,14 @@ const defaultProperties = {
 
 const KB_WIDTH = 40
 
+enum Targets
+    { UNSELECTED_NOTE = "n"
+    , NOTE_CENTER = "N"
+    , NOTE_LEFT = "B"
+    , NOTE_RIGHT = "E"
+    , EMPTY = "s"
+    }
+
 customElements.define("webaudio-pianoroll", 
 
 class Pianoroll extends HTMLElement {
@@ -399,7 +407,7 @@ class Pianoroll extends HTMLElement {
         this.hitTest=function(pos){
             const ht={t:0,n:0,i:-1,m:" "};
             const l=this.sequence.length;
-            if(pos.t==this.menu){
+            if(pos.target === this.menu){
                 ht.m="m";
                 return ht;
             }
@@ -420,26 +428,26 @@ class Pianoroll extends HTMLElement {
                 const ev=this.sequence[i];
                 if((ht.n|0) == ev.n){
                     if(ev.isSelected && Math.abs(ev.t-ht.t)*this.stepw<8){
-                        ht.m="B";
+                        ht.m=Targets.NOTE_LEFT;
                         ht.i=i;
                         return ht;
                     }
                     if(ev.isSelected && Math.abs(ev.t+ev.g-ht.t)*this.stepw<8){
-                        ht.m="E";
+                        ht.m=Targets.NOTE_RIGHT;
                         ht.i=i;
                         return ht;
                     }
                     if(ht.t>=ev.t&&ht.t<ev.t+ev.g){
                         ht.i=i;
                         if(this.sequence[i].isSelected)
-                            ht.m="N";
+                            ht.m=Targets.NOTE_CENTER;
                         else
-                            ht.m="n";
+                            ht.m=Targets.UNSELECTED_NOTE;
                         return ht;
                     }
                 }
             }
-            ht.m="s";
+            ht.m=Targets.EMPTY;
             return ht;
         };
         this.addNote=function(t,n,g,v){
@@ -531,38 +539,42 @@ class Pianoroll extends HTMLElement {
             }
             return obj;
         };
-        this.editDragDown=function(pos){
+        this.editDragDown=function(pos) {
             const ht=this.hitTest(pos);
             let ev;
-            if(ht.m=="N"){
+            if(ht.m==Targets.NOTE_CENTER){
                 ev=this.sequence[ht.i];
-                this.dragging={o:"D",m:"N",i:ht.i,t:ht.t,n:ev.n,dt:ht.t-ev.t};
+                this.dragging={o:"D",m:Targets.NOTE_CENTER,i:ht.i,t:ht.t,n:ev.n,dt:ht.t-ev.t};
                 for(let i=0,l=this.sequence.length;i<l;++i){
                     ev=this.sequence[i];
                     if(ev.isSelected)
-                        ev.on=ev.n, ev.ot=ev.t, ev.og=ev.g;
+                    {
+                        ev.on=ev.n
+                        ev.ot=ev.t
+                        ev.og=ev.g
+                    }
                 }
                 this.redraw();
             }
-            else if(ht.m=="n"){
+            else if(ht.m==Targets.UNSELECTED_NOTE){
                 ev=this.sequence[ht.i];
                 this.clearSel();
                 ev.isSelected = true;
                 this.redraw();
             }
-            else if(ht.m=="E"){
+            else if(ht.m==Targets.NOTE_RIGHT){
                 const ev = this.sequence[ht.i];
-                this.dragging={o:"D", m:"E", i:ht.i, t:ev.t, g:ev.g, ev:this.selectedNotes()};
+                this.dragging={o:"D", m:Targets.NOTE_RIGHT, i:ht.i, t:ev.t, g:ev.g, ev:this.selectedNotes()};
             }
-            else if(ht.m=="B"){
+            else if(ht.m==Targets.NOTE_LEFT){
                 const ev = this.sequence[ht.i];
-                this.dragging={o:"D", m:"B", i:ht.i, t:ev.t, g:ev.g, ev:this.selectedNotes()};
+                this.dragging={o:"D", m:Targets.NOTE_LEFT, i:ht.i, t:ev.t, g:ev.g, ev:this.selectedNotes()};
             }
-            else if(ht.m=="s"&&ht.t>=0){
+            else if(ht.m==Targets.EMPTY&&ht.t>=0){
                 this.clearSel();
                 var t=((ht.t/this.snap)|0)*this.snap;
                 this.sequence.push({ t:t, n:ht.n|0, g:1, isSelected: true });
-                this.dragging={o:"D",m:"E",i:this.sequence.length-1, t:t, g:1, ev:[{t:t,g:1,ev:this.sequence[this.sequence.length-1]}]};
+                this.dragging={o:"D",m:Targets.NOTE_RIGHT,i:this.sequence.length-1, t:t, g:1, ev:[{t:t,g:1,ev:this.sequence[this.sequence.length-1]}]};
                 this.redraw();
             }
         };
@@ -571,7 +583,7 @@ class Pianoroll extends HTMLElement {
             let ev,t;
             if(this.dragging.o=="D"){
                 switch(this.dragging.m){
-                case "E":
+                case Targets.NOTE_RIGHT:
                     if(this.dragging.ev){
                         const dt=((Math.max(0,ht.t)/this.snap+0.9)|0)*this.snap - this.dragging.t - this.dragging.g;
                         const list=this.dragging.ev;
@@ -587,7 +599,7 @@ class Pianoroll extends HTMLElement {
                     }
                     this.redraw();
                     break;
-                case "B":
+                case Targets.NOTE_LEFT:
                     if(this.dragging.ev){
                         const dt=((Math.max(0,ht.t)/this.snap+0.9)|0)*this.snap - this.dragging.t;
                         const list=this.dragging.ev;
@@ -612,7 +624,7 @@ class Pianoroll extends HTMLElement {
                     if(ev.g<0){
                         ev.t+=ev.g;
                         ev.g=-ev.g;
-                        this.dragging.m="E";
+                        this.dragging.m=Targets.NOTE_RIGHT;
                     }
                     else if(ev.g==0){
                         ev.t=t-1;
@@ -620,7 +632,7 @@ class Pianoroll extends HTMLElement {
                     }
                     this.redraw();
                     break;
-                case "N":
+                case Targets.NOTE_CENTER:
                     ev=this.sequence[this.dragging.i];
                     this.moveSelectedNote((ht.t-this.dragging.t)|0, (ht.n|0)-this.dragging.n);
                     this.redraw();
@@ -630,11 +642,11 @@ class Pianoroll extends HTMLElement {
         };
         this.editGridDown=function(pos){
             const ht=this.hitTest(pos);
-            if(ht.m=="n"){
+            if(ht.m==Targets.UNSELECTED_NOTE){
                 this.delNote(ht.i);
                 this.dragging={o:"G",m:"0"};
             }
-            else if(ht.m=="s"&&ht.t>=0){
+            else if(ht.m==Targets.EMPTY&&ht.t>=0){
                 const pt=Math.floor(ht.t);
                 if(this.editmode=="gridmono")
                     this.delAreaNote(pt,1,ht.i);
@@ -648,14 +660,14 @@ class Pianoroll extends HTMLElement {
                 switch(this.dragging.m){
                 case "1":
                     const px=Math.floor(ht.t);
-                    if(ht.m=="s"){
+                    if(ht.m==Targets.EMPTY){
                         if(this.editmode=="gridmono")
                             this.delAreaNote(px,1,ht.i);
                         this.addNote(px,ht.n|0,1);
                     }
                     break;
                 case "0":
-                    if(ht.m=="n")
+                    if(ht.m==Targets.UNSELECTED_NOTE)
                         this.delNote(ht.i);
                     break;
                 }
@@ -694,16 +706,16 @@ class Pianoroll extends HTMLElement {
         let x = 0
         let y = 0
         this.getPos=function(e){
-            let t=null;
+            let target = null;
             if(e) {
-                t=e.target;
-                x=e.clientX-this.rcTarget.left;
-                y=e.clientY-this.rcTarget.top;
+                target = e.target;
+                x = e.clientX-this.rcTarget.left;
+                y = e.clientY-this.rcTarget.top;
             }
             if(x>=this.rcMenu.x&&x<this.rcMenu.x+this.rcMenu.width
-                    &&y>=this.rcMenu.y&&y<this.rcMenu.y+this.rcMenu.height)
-                t=this.menu;
-            return {t:t, x:x, y:y};
+            && y>=this.rcMenu.y&&y<this.rcMenu.y+this.rcMenu.height)
+                target = this.menu;
+            return { target, x, y }
         };
         this.contextmenu= function(e){
             e.stopPropagation();
@@ -745,9 +757,9 @@ class Pianoroll extends HTMLElement {
 
             if(e.buttons==2||e.ctrlKey){
                 switch(this.downht.m){
-                case "N":
-                case "B":
-                case "E":
+                case Targets.NOTE_CENTER:
+                case Targets.NOTE_LEFT:
+                case Targets.NOTE_RIGHT:
                     this.popMenu(this.downpos);
                     this.dragging={o:"m"};
                     break;
@@ -798,18 +810,18 @@ class Pianoroll extends HTMLElement {
             return false;
         };
         this.mousemove=function(e){
-            if(this.dragging.o==null){
+            if(this.dragging.o==null) {
                 this.rcTarget=this.canvas.getBoundingClientRect();
                 const pos=this.getPos(e);
                 const ht=this.hitTest(pos);
                 switch(ht.m){
-                    case "E": this.canvas.style.cursor="e-resize"; break;
-                    case "B": this.canvas.style.cursor="w-resize"; break;
-                    case "N": this.canvas.style.cursor="move"; break;
-                    case "n": this.canvas.style.cursor="pointer"; break;
-                    case "s": this.canvas.style.cursor="pointer"; break;
-                    }
+                    case Targets.NOTE_RIGHT: this.canvas.style.cursor="e-resize"; break;
+                    case Targets.NOTE_LEFT: this.canvas.style.cursor="w-resize"; break;
+                    case Targets.NOTE_CENTER: this.canvas.style.cursor="move"; break;
+                    case Targets.UNSELECTED_NOTE: this.canvas.style.cursor="pointer"; break;
+                    case Targets.EMPTY: this.canvas.style.cursor="pointer"; break;
                 }
+            }
         };
         this.pointermove=function(ev) {
             let e;
@@ -883,7 +895,7 @@ class Pianoroll extends HTMLElement {
             if(this.dragging.o=="m"){
                 this.menu.style.display="none";
                 this.rcMenu={x:0,y:0,width:0,height:0};
-                if(pos.t==this.menu)
+                if(pos.target==this.menu)
                     this.delSelectedNote();
                 this.redraw();
             }
