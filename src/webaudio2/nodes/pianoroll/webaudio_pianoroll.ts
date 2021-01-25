@@ -31,7 +31,6 @@ const defaultProperties = {
     cursor:             {value:0, observer:'redrawMarker'},
     markstart:          {value:0, observer:'redrawMarker'},
     markend:            {value:16, observer:'redrawMarker'},
-    defvelo:            {value:100},
     collt:              {value:"#ccc"},
     coldk:              {value:"#aaa"},
     colgrid:            {value:"#666"},
@@ -54,7 +53,6 @@ const defaultProperties = {
     loop:               {value:0},
     preload:            {value:1.0},
     tempo:              {value:120, observer:'updateTimer'},
-    enable:             {value:true}
 } as const
 
 const KB_WIDTH = 40
@@ -338,7 +336,7 @@ class Pianoroll extends HTMLElement {
                         tie=0;
                     }
                     else
-                        this.sequence.push(evlast={t:t,n:n,g:l,f:0});
+                        this.sequence.push(evlast = { t, n, g: l, isSelected: false })
                 }
                 t+=l;
             }
@@ -420,20 +418,20 @@ class Pianoroll extends HTMLElement {
             }
             for(let i=0;i<l;++i){
                 const ev=this.sequence[i];
-                if((ht.n|0)==ev.n){
-                    if(ev.f && Math.abs(ev.t-ht.t)*this.stepw<8){
+                if((ht.n|0) == ev.n){
+                    if(ev.isSelected && Math.abs(ev.t-ht.t)*this.stepw<8){
                         ht.m="B";
                         ht.i=i;
                         return ht;
                     }
-                    if(ev.f && Math.abs(ev.t+ev.g-ht.t)*this.stepw<8){
+                    if(ev.isSelected && Math.abs(ev.t+ev.g-ht.t)*this.stepw<8){
                         ht.m="E";
                         ht.i=i;
                         return ht;
                     }
                     if(ht.t>=ev.t&&ht.t<ev.t+ev.g){
                         ht.i=i;
-                        if(this.sequence[i].f)
+                        if(this.sequence[i].isSelected)
                             ht.m="N";
                         else
                             ht.m="n";
@@ -444,9 +442,9 @@ class Pianoroll extends HTMLElement {
             ht.m="s";
             return ht;
         };
-        this.addNote=function(t,n,g,v,f){
-            if(t>=0 && n>=0 && n<128){
-                const ev={t:t,c:0x90,n:n,g:g,v:v,f:f};
+        this.addNote=function(t,n,g,v){
+            if(t >= 0 && 0 <= n && n < 128){
+                const ev={t:t, c:0x90, n:n, g:g, v:v, isSelected: true };
                 this.sequence.push(ev);
                 this.sortSequence();
                 this.redraw();
@@ -462,9 +460,11 @@ class Pianoroll extends HTMLElement {
                 t=t1,t1=t2,t2=t;
             while(e){
                 if(e.t>=t1 && e.t<t2 && e.n>=n1 && e.n <= n2)
-                    e.f=1;
+                    e.isSelected = true
                 else
-                    e.f=0;
+                {
+                    e.isSelected = false
+                }
                 e=this.sequence[++i];
             }
         };
@@ -472,23 +472,22 @@ class Pianoroll extends HTMLElement {
             this.sequence.splice(idx,1);
             this.redraw();
         };
-        this.delAreaNote=function(t,g,n){
-            const l=this.sequence.length;
-            for(let i=l-1;i>=0;--i){
+        this.delAreaNote=function(t,g,n) {
+            for(let i = this.sequence.length-1; i>=0; --i) {
                 const ev=this.sequence[i];
-                if(typeof(n)!="undefined" && n!=i){
-                    if(t<=ev.t && t+g>=ev.t+ev.g){
+                if(typeof(n) != "undefined" && n!=i) {
+                    if(t <= ev.t && t+g>=ev.t+ev.g) {
                         this.sequence.splice(i,1);
                     }
-                    else if(t<=ev.t && t+g>ev.t && t+g<ev.t+ev.g){
+                    else if(t<=ev.t && t+g>ev.t && t+g<ev.t+ev.g) {
                         ev.g=ev.t+ev.g-(t+g);
                         ev.t=t+g;
                     }
-                    else if(t>=ev.t && t<ev.t+ev.g && t+g>=ev.t+ev.g){
+                    else if(t>=ev.t && t<ev.t+ev.g && t+g>=ev.t+ev.g) {
                         ev.g=t-ev.t;
                     }
-                    else if(t>ev.t && t+g<ev.t+ev.g){
-                        this.addNote(t+g,ev.n,ev.t+ev.g-t-g,this.defvelo);
+                    else if(t>ev.t && t+g<ev.t+ev.g) {
+                        this.addNote(t+g,ev.n,ev.t+ev.g-t-g);
                         ev.g=t-ev.t;
                     }
                 }
@@ -498,7 +497,7 @@ class Pianoroll extends HTMLElement {
             const l=this.sequence.length;
             for(let i=l-1;i>=0;--i){
                 const ev=this.sequence[i];
-                if(ev.f)
+                if(ev.isSelected)
                     this.sequence.splice(i,1);
             }
         };
@@ -506,28 +505,28 @@ class Pianoroll extends HTMLElement {
             const l=this.sequence.length;
             for(let i=0;i<l;++i){
                 const ev=this.sequence[i];
-                if(ev.f && ev.ot+dt<0)
+                if(ev.isSelected && ev.ot+dt<0)
                     dt=-ev.ot;
             }
             for(let i=0;i<l;++i){
                 const ev=this.sequence[i];
-                if(ev.f){
+                if(ev.isSelected){
                     ev.t=(((ev.ot+dt)/this.snap+.5)|0)*this.snap;
                     ev.n=ev.on+dn;
                 }
             }
         };
-        this.clearSel=function(){
-            const l=this.sequence.length;
-            for(let i=0;i<l;++i){
-                this.sequence[i].f=0;
+        this.clearSel=function() {
+            for(let i = 0; i < this.sequence.length; ++i) 
+            {
+                this.sequence[i].isSelected = false
             }
         };
         this.selectedNotes=function(){
             let obj=[];
             for(let i = this.sequence.length - 1; i >= 0; --i){
                 const ev=this.sequence[i];
-                if(ev.f)
+                if(ev.isSelected)
                     obj.push({i:i, ev:ev, t:ev.t, g:ev.g});
             }
             return obj;
@@ -540,7 +539,7 @@ class Pianoroll extends HTMLElement {
                 this.dragging={o:"D",m:"N",i:ht.i,t:ht.t,n:ev.n,dt:ht.t-ev.t};
                 for(let i=0,l=this.sequence.length;i<l;++i){
                     ev=this.sequence[i];
-                    if(ev.f)
+                    if(ev.isSelected)
                         ev.on=ev.n, ev.ot=ev.t, ev.og=ev.g;
                 }
                 this.redraw();
@@ -548,7 +547,7 @@ class Pianoroll extends HTMLElement {
             else if(ht.m=="n"){
                 ev=this.sequence[ht.i];
                 this.clearSel();
-                ev.f=1;
+                ev.isSelected = true;
                 this.redraw();
             }
             else if(ht.m=="E"){
@@ -562,7 +561,7 @@ class Pianoroll extends HTMLElement {
             else if(ht.m=="s"&&ht.t>=0){
                 this.clearSel();
                 var t=((ht.t/this.snap)|0)*this.snap;
-                this.sequence.push({t:t, n:ht.n|0, g:1, f:1});
+                this.sequence.push({ t:t, n:ht.n|0, g:1, isSelected: true });
                 this.dragging={o:"D",m:"E",i:this.sequence.length-1, t:t, g:1, ev:[{t:t,g:1,ev:this.sequence[this.sequence.length-1]}]};
                 this.redraw();
             }
@@ -639,7 +638,7 @@ class Pianoroll extends HTMLElement {
                 const pt=Math.floor(ht.t);
                 if(this.editmode=="gridmono")
                     this.delAreaNote(pt,1,ht.i);
-                this.addNote(pt,ht.n|0,1,this.defvelo);
+                this.addNote(pt,ht.n|0,1);
                 this.dragging={o:"G",m:"1"};
             }
         };
@@ -652,7 +651,7 @@ class Pianoroll extends HTMLElement {
                     if(ht.m=="s"){
                         if(this.editmode=="gridmono")
                             this.delAreaNote(px,1,ht.i);
-                        this.addNote(px,ht.n|0,1,this.defvelo);
+                        this.addNote(px,ht.n|0,1);
                     }
                     break;
                 case "0":
@@ -665,31 +664,29 @@ class Pianoroll extends HTMLElement {
         
         this.ready=function(){
          
-            this.body=root.children[1];                 // wac-body
+            this.body=root.children[1]                 // wac-body
 
-            this.canvas = this.body.children[0];        // wac-pianoroll
-            this.ctx=this.canvas.getContext("2d");
-            this.kbimg=this.body.children[1];           // wac-kb
-            this.markstartimg=this.body.children[2];    // wac-markstart
-            this.markendimg=this.body.children[3];      // wac-markend
-            this.cursorimg=this.body.children[4];       // wac-cursor
-            this.menu=this.body.children[5];            // wac-memu (Delete)
-            this.rcMenu={x:0, y:0, width:0, height:0};
+            this.canvas = this.body.children[0]        // wac-pianoroll
+            this.kbimg=this.body.children[1]           // wac-kb
+            this.markstartimg=this.body.children[2]    // wac-markstart
+            this.markendimg=this.body.children[3]      // wac-markend
+            this.cursorimg=this.body.children[4]       // wac-cursor
+            this.menu=this.body.children[5]            // wac-memu (Delete)
+            this.rcMenu = { x: 0, y: 0, width: 0, height: 0 }
+            this.ctx=this.canvas.getContext("2d")
             
-            this.canvas.addEventListener('mousemove',this.mousemove.bind(this),false);
-            this.canvas.addEventListener('keydown',this.keydown.bind(this),false);
-            this.canvas.addEventListener('mousewheel',this.wheel.bind(this),false);
+            this.canvas.addEventListener('mousemove',this.mousemove.bind(this),false)
+            this.canvas.addEventListener('keydown',this.keydown.bind(this),false)
+            this.canvas.addEventListener('mousewheel',this.wheel.bind(this),false)
 
-            this.body.addEventListener("mousedown",this.pointerdown.bind(this), true);
+            this.body.addEventListener("mousedown",this.pointerdown.bind(this), true)
 
-            this.bindcontextmenu = this.contextmenu.bind(this);
-            this.bindpointermove = this.pointermove.bind(this);
-            this.bindcancel = this.cancel.bind(this);
+            this.bindcontextmenu = this.contextmenu.bind(this)
+            this.bindpointermove = this.pointermove.bind(this)
+            this.bindcancel = this.cancel.bind(this)
 
-            this.sequence=[];
-            this.dragging={o:null};
-            this.kbimg.style.height=this.sheight+"px";
-            this.kbimg.style.backgroundSize=(this.steph*12)+"px";
+            this.sequence = [];
+            this.dragging = { o: null }
             
             this.layout();
         };
@@ -733,8 +730,7 @@ class Pianoroll extends HTMLElement {
         
         this.pointerdown=function(ev) {
             let e;
-            if(!this.enable)
-                return;
+            
             if(ev.touches)
                 e = ev.touches[0];
             else
@@ -900,7 +896,7 @@ class Pianoroll extends HTMLElement {
                 if(this.editmode=="dragmono"){
                     for(let ii=this.sequence.length-1;ii>=0;--ii){
                         const ev=this.sequence[ii];
-                        if(ev && ev.f){
+                        if(ev && ev.isSelected){
                             this.delAreaNote(ev.t,ev.g,ii);
                         }
                     }
@@ -1085,7 +1081,7 @@ class Pianoroll extends HTMLElement {
             const l=this.sequence.length;
             for(let s=0; s<l; ++s){
                 const ev=this.sequence[s];
-                if(ev.f)
+                if(ev.isSelected)
                     this.ctx.fillStyle=this.colnotesel;
                 else
                     this.ctx.fillStyle=this.colnote;
@@ -1095,7 +1091,7 @@ class Pianoroll extends HTMLElement {
                 y=this.height - (ev.n-this.yoffset)*this.steph;
                 y2=(y-this.steph)|0; y|=0;
                 this.ctx.fillRect(x,y,x2-x,y2-y);
-                if(ev.f)
+                if(ev.isSelected)
                     this.ctx.fillStyle=this.colnoteselborder;
                 else
                     this.ctx.fillStyle=this.colnoteborder;
