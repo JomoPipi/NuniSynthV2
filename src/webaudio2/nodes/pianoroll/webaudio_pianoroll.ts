@@ -57,12 +57,14 @@ const defaultProperties = {
 
 const KB_WIDTH = 40
 
-enum Targets
-    { UNSELECTED_NOTE = "n"
-    , NOTE_CENTER = "N"
-    , NOTE_LEFT = "B"
-    , NOTE_RIGHT = "E"
-    , EMPTY = "s"
+const Targets =
+    { UNSELECTED_NOTE: "n"
+    , NOTE_CENTER: "N"
+    , NOTE_LEFT: "B"
+    , NOTE_RIGHT: "E"
+    , EMPTY: "s"
+    , X_RULER: "x"
+    , Y_RULER: "y"
     }
 
 customElements.define("webaudio-pianoroll", 
@@ -417,11 +419,11 @@ class Pianoroll extends HTMLElement {
                 return ht;
             }
             if(pos.y<this.xruler){
-                ht.m="x";
+                ht.m=Targets.X_RULER;
                 return ht;
             }
             if(pos.x<this.yruler+KB_WIDTH){
-                ht.m="y";
+                ht.m=Targets.Y_RULER;
                 return ht;
             }
             for(let i=0;i<l;++i){
@@ -513,14 +515,14 @@ class Pianoroll extends HTMLElement {
             const l=this.sequence.length;
             for(let i=0;i<l;++i){
                 const ev=this.sequence[i];
-                if(ev.isSelected && ev.ot+dt<0)
-                    dt=-ev.ot;
+                if(ev.isSelected && ev.lastT+dt<0)
+                    dt=-ev.lastT;
             }
             for(let i=0;i<l;++i){
                 const ev=this.sequence[i];
                 if(ev.isSelected){
-                    ev.t=(((ev.ot+dt)/this.snap+.5)|0)*this.snap;
-                    ev.n=ev.on+dn;
+                    ev.t=(((ev.lastT+dt)/this.snap+.5)|0)*this.snap;
+                    ev.n=ev.lastN+dn;
                 }
             }
         };
@@ -542,16 +544,15 @@ class Pianoroll extends HTMLElement {
         this.editDragDown=function(pos) {
             const ht=this.hitTest(pos);
             let ev;
-            if(ht.m==Targets.NOTE_CENTER){
+            if(ht.m==Targets.NOTE_CENTER) {
                 ev=this.sequence[ht.i];
                 this.dragging={o:"D",m:Targets.NOTE_CENTER,i:ht.i,t:ht.t,n:ev.n,dt:ht.t-ev.t};
                 for(let i=0,l=this.sequence.length;i<l;++i){
                     ev=this.sequence[i];
                     if(ev.isSelected)
                     {
-                        ev.on=ev.n
-                        ev.ot=ev.t
-                        ev.og=ev.g
+                        ev.lastN=ev.n
+                        ev.lastT=ev.t
                     }
                 }
                 this.redraw();
@@ -703,18 +704,16 @@ class Pianoroll extends HTMLElement {
             this.layout();
         };
 
-        let x = 0
-        let y = 0
         this.getPos=function(e){
-            let target = null;
-            if(e) {
-                target = e.target;
-                x = e.clientX-this.rcTarget.left;
-                y = e.clientY-this.rcTarget.top;
-            }
+            
+            let target = e.target;
+            const x = e.clientX-this.rcTarget.left;
+            const y = e.clientY-this.rcTarget.top;
+                
             if(x>=this.rcMenu.x&&x<this.rcMenu.x+this.rcMenu.width
             && y>=this.rcMenu.y&&y<this.rcMenu.y+this.rcMenu.height)
                 target = this.menu;
+                
             return { target, x, y }
         };
         this.contextmenu= function(e){
@@ -885,13 +884,8 @@ class Pianoroll extends HTMLElement {
             return false;
         };
         this.cancel= function(ev) {
-            let e;
-            if(ev.touches)
-                e = null;
-            else
-                e = ev;
-                
-            const pos=this.getPos(e);
+            
+            const pos=this.getPos(ev);
             if(this.dragging.o=="m"){
                 this.menu.style.display="none";
                 this.rcMenu={x:0,y:0,width:0,height:0};
@@ -942,7 +936,7 @@ class Pianoroll extends HTMLElement {
 
             // TODO: use ctrl + wheel instead of hit test?
             const ht=this.hitTest(pos);
-            if((this.wheelzoomx||this.wheelzoom) && e.ctrlKey) { //ht.m!="y"){ // && ht.m=="x"){
+            if((this.wheelzoomx||this.wheelzoom) && e.ctrlKey) { //ht.m!=Targets.Y_RULER){ // && ht.m==Targets.X_RULER){
                 if(delta>0){
                     this.xoffset=ht.t-(ht.t-this.xoffset)/1.2
                     this.xrange/=1.2;
@@ -952,7 +946,7 @@ class Pianoroll extends HTMLElement {
                     this.xrange*=1.2;
                 }
             }
-            else if (this.wheelzoomy||this.wheelzoom) { // && ht.m=="y"){
+            else if (this.wheelzoomy||this.wheelzoom) { // && ht.m==Targets.Y_RULER){
                 if(delta>0){
                     this.yoffset=ht.n-(ht.n-this.yoffset)/1.2
                     this.yrange/=1.2;
@@ -1060,7 +1054,7 @@ class Pianoroll extends HTMLElement {
                 this.ctx.fillStyle=this.colortab.kbwh;
                 this.ctx.fillRect(1,this.xruler,this.yruler,this.sheight);
                 this.ctx.fillStyle=this.colortab.kbbk;
-                for(y=0;y<128;++y){
+                for(let y=0;y<128;++y){
                     const ys=this.height-this.steph*(y-this.yoffset);
                     const ysemi=y%12;
                     const fsemi=this.semiflag[ysemi];

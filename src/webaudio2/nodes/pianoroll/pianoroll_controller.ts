@@ -27,6 +27,7 @@ export class MonoPianoRollControls {
     private markend : HTMLImageElement
     private cursor : HTMLImageElement
     private ctx : CanvasRenderingContext2D
+    private sequence : Note[]
 
     constructor(audioCtx : AudioContext) {
         this.audioCtx = audioCtx
