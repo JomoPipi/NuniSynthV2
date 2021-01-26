@@ -1093,7 +1093,6 @@ class Pianoroll extends HTMLElement {
                     this.ctx.fillStyle=this.colnote;
                 w=ev.g*this.stepw;
                 x=(ev.t-this.xoffset)*this.stepw+RULER_WIDTH+KB_WIDTH;
-                console.log(x)
                 x2=(x+w)|0; x|=0;
                 y=this.height - (ev.n-this.yoffset)*this.steph;
                 y2=(y-this.steph)|0; y|=0;
