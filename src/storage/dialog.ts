@@ -288,7 +288,7 @@ function roundTripTest() {
         audioBuffer.length, 
         audioCtx.sampleRate)
     
-    for (let i = 0; i < nChannels; i++)
+    for (let i = 0; i < nChannels; ++i)
     {
         const float32Array = audioBuffer.getChannelData(i)
         const buffer = Buffer.from(float32Array.buffer)

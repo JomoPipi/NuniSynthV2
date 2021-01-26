@@ -64,6 +64,11 @@ const Targets =
     , EMPTY: "s"
     , X_RULER: "x"
     , Y_RULER: "y"
+    } as const
+
+const DragModes =
+    { SELECTION: "A"
+
     }
 
 customElements.define("webaudio-pianoroll", 
@@ -545,7 +550,7 @@ class Pianoroll extends HTMLElement {
             let ev;
             if(ht.m==Targets.NOTE_CENTER) {
                 ev=this.sequence[ht.i];
-                this.dragging={o:"D",m:Targets.NOTE_CENTER,i:ht.i,t:ht.t,n:ev.n,dt:ht.t-ev.t};
+                this.dragging={mode:"D",m:Targets.NOTE_CENTER,i:ht.i,t:ht.t,n:ev.n,dt:ht.t-ev.t};
                 for(let i=0,l=this.sequence.length;i<l;++i){
                     ev=this.sequence[i];
                     if(ev.isSelected)
@@ -564,24 +569,24 @@ class Pianoroll extends HTMLElement {
             }
             else if(ht.m==Targets.NOTE_RIGHT){
                 const ev = this.sequence[ht.i];
-                this.dragging={o:"D", m:Targets.NOTE_RIGHT, i:ht.i, t:ev.t, g:ev.g, ev:this.selectedNotes()};
+                this.dragging={mode:"D", m:Targets.NOTE_RIGHT, i:ht.i, t:ev.t, g:ev.g, ev:this.selectedNotes()};
             }
             else if(ht.m==Targets.NOTE_LEFT){
                 const ev = this.sequence[ht.i];
-                this.dragging={o:"D", m:Targets.NOTE_LEFT, i:ht.i, t:ev.t, g:ev.g, ev:this.selectedNotes()};
+                this.dragging={mode:"D", m:Targets.NOTE_LEFT, i:ht.i, t:ev.t, g:ev.g, ev:this.selectedNotes()};
             }
             else if(ht.m==Targets.EMPTY&&ht.t>=0){
                 this.clearSel();
                 var t=((ht.t/this.snap)|0)*this.snap;
                 this.sequence.push({ t:t, n:ht.n|0, g:1, isSelected: true });
-                this.dragging={o:"D",m:Targets.NOTE_RIGHT,i:this.sequence.length-1, t:t, g:1, ev:[{t:t,g:1,ev:this.sequence[this.sequence.length-1]}]};
+                this.dragging={mode:"D",m:Targets.NOTE_RIGHT,i:this.sequence.length-1, t:t, g:1, ev:[{t:t,g:1,ev:this.sequence[this.sequence.length-1]}]};
                 this.redraw();
             }
         };
         this.editDragMove=function(pos){
             const ht=this.hitTest(pos);
             let ev,t;
-            if(this.dragging.o=="D"){
+            if(this.dragging.mode=="D"){
                 switch(this.dragging.m){
                 case Targets.NOTE_RIGHT:
                     if(this.dragging.ev){
@@ -644,19 +649,19 @@ class Pianoroll extends HTMLElement {
             const ht=this.hitTest(pos);
             if(ht.m==Targets.UNSELECTED_NOTE){
                 this.delNote(ht.i);
-                this.dragging={o:"G",m:"0"};
+                this.dragging={mode:"G",m:"0"};
             }
             else if(ht.m==Targets.EMPTY&&ht.t>=0){
                 const pt=Math.floor(ht.t);
                 if(this.editmode=="gridmono")
                     this.delAreaNote(pt,1,ht.i);
                 this.addNote(pt,ht.n|0,1);
-                this.dragging={o:"G",m:"1"};
+                this.dragging={mode:"G",m:"1"};
             }
         };
         this.editGridMove=function(pos){
             const ht=this.hitTest(pos);
-            if(this.dragging.o=="G"){
+            if(this.dragging.mode=="G"){
                 switch(this.dragging.m){
                 case "1":
                     const px=Math.floor(ht.t);
@@ -698,7 +703,7 @@ class Pianoroll extends HTMLElement {
             this.bindcancel = this.cancel.bind(this)
 
             this.sequence = [];
-            this.dragging={ o: null }
+            this.dragging={ mode: null }
             
             this.layout();
         };
@@ -754,17 +759,16 @@ class Pianoroll extends HTMLElement {
             window.addEventListener("contextmenu",this.bindcontextmenu);
 
             if(e.buttons==2||e.ctrlKey){
-                log('we here')
                 switch(this.downht.m){
                 case Targets.NOTE_CENTER:
                 case Targets.NOTE_LEFT:
                 case Targets.NOTE_RIGHT:
                     this.popMenu(this.downpos);
-                    this.dragging={o:"m"};
+                    this.dragging={mode:"m"};
                     break;
                 default:
                     if(this.editmode=="dragmono"||this.editmode=="dragpoly")
-                        this.dragging={o:"A",p:this.downpos,p2:this.downpos,t1:this.downht.t,n1:this.downht.n};
+                        this.dragging={mode:DragModes.SELECTION,p:this.downpos,p2:this.downpos,t1:this.downht.t,n1:this.downht.n};
                     break;
                 }
                 ev.preventDefault();
@@ -774,22 +778,22 @@ class Pianoroll extends HTMLElement {
             }
             switch(e.target){
             case this.markendimg:
-                this.dragging={o:"E",x:this.downpos.x,m:this.markend};
+                this.dragging={mode:"E",x:this.downpos.x,m:this.markend};
                 ev.preventDefault();
                 ev.stopPropagation();
                 return false;
             case this.markstartimg:
-                this.dragging={o:"S",x:this.downpos.x,m:this.markstart};
+                this.dragging={mode:"S",x:this.downpos.x,m:this.markstart};
                 ev.preventDefault();
                 ev.stopPropagation();
                 return false;
             case this.cursorimg:
-                this.dragging={o:"P",x:this.downpos.x,m:this.cursor};
+                this.dragging={mode:"P",x:this.downpos.x,m:this.cursor};
                 ev.preventDefault();
                 ev.stopPropagation();
                 return false;
             }
-            this.dragging={o:null,x:this.downpos.x,y:this.downpos.y,offsx:this.xoffset,offsy:this.yoffset};
+            this.dragging={mode:null,x:this.downpos.x,y:this.downpos.y,offsx:this.xoffset,offsy:this.yoffset};
             this.canvas.focus();
             switch(this.editmode){
             case "gridpoly":
@@ -809,7 +813,7 @@ class Pianoroll extends HTMLElement {
             return false;
         };
         this.mousemove=function(e){
-            if(this.dragging.o==null) {
+            if(this.dragging.mode==null) {
                 this.rcTarget=this.canvas.getBoundingClientRect();
                 const pos=this.getPos(e);
                 const ht=this.hitTest(pos);
@@ -832,7 +836,7 @@ class Pianoroll extends HTMLElement {
                 
             const pos=this.getPos(e);
             const ht=this.hitTest(pos);
-            switch(this.dragging.o){
+            switch(this.dragging.mode){
             case null:
                 if(this.xscroll)
                     this.xoffset=this.dragging.offsx+(this.dragging.x-pos.x)*(this.xrange/this.width);
@@ -847,7 +851,7 @@ class Pianoroll extends HTMLElement {
                     this.menu.style.background="#eef";
                 }
                 break;
-            case "A":
+            case DragModes.SELECTION:
                 this.dragging.p2=pos;
                 this.dragging.t2=ht.t;
                 this.dragging.n2=ht.n;
@@ -884,22 +888,20 @@ class Pianoroll extends HTMLElement {
             return false;
         };
         this.cancel= function(ev) {
-            // 0riwakanoko2019
-            
             const pos=this.getPos(ev);
-            if(this.dragging.o=="m"){
+            if(this.dragging.mode=="m"){
                 this.menu.style.display="none";
                 this.rcMenu={x:0,y:0,width:0,height:0};
                 if(pos.target==this.menu)
                     this.delSelectedNote();
                 this.redraw();
             }
-            if(this.dragging.o=="A"){
+            if(this.dragging.mode==DragModes.SELECTION){
                 this.selAreaNote(this.dragging.t1,this.dragging.t2,this.dragging.n1,this.dragging.n2);
-                this.dragging={o:null};
+                this.dragging={mode:null};
                 this.redraw();
             }
-//            if(this.dragging.o=="D"){
+//            if(this.dragging.mode=="D"){
                 if(this.editmode=="dragmono"){
                     for(let ii=this.sequence.length-1;ii>=0;--ii){
                         const ev=this.sequence[ii];
@@ -910,7 +912,7 @@ class Pianoroll extends HTMLElement {
                 }
                 this.redraw();
 //            }
-            this.dragging={o:null};
+            this.dragging={mode:null};
             if(this.press){
                 this.sortSequence();
             }
@@ -1068,8 +1070,8 @@ class Pianoroll extends HTMLElement {
                 this.ctx.fillRect(RULER_WIDTH,RULER_WIDTH,1,this.gridHeight);
             }
         };
-        this.redrawAreaSel=function(){
-            if(this.dragging && this.dragging.o=="A"){
+        this.redrawSelectedArea=function(){
+            if(this.dragging && this.dragging.mode==DragModes.SELECTION){
                 this.ctx.fillStyle=this.colselarea;
                 this.ctx.fillRect(this.dragging.p.x,this.dragging.p.y,this.dragging.p2.x-this.dragging.p.x,this.dragging.p2.y-this.dragging.p.y);
             }
@@ -1108,7 +1110,7 @@ class Pianoroll extends HTMLElement {
             this.redrawYRuler();
             this.redrawXRuler();
             this.redrawMarker();
-            this.redrawAreaSel();
+            this.redrawSelectedArea();
         };
         this.ready();
     }

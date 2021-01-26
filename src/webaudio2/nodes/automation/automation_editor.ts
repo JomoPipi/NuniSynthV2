@@ -202,7 +202,7 @@ export class AutomationPointsEditor {
         const [startIndex, endIndex] = this.rangeOfSelectedPoints || [1e9,-1]
         const [selectStart, selectEnd] = (this.canvasSelectionRange || [NaN, NaN]).sort((a,b) => a - b)
         
-        for (let i = 0; i < this.points.length; i++)
+        for (let i = 0; i < this.points.length; ++i)
         {
             const { x, y } = this.points[i]
             const [X, Y] = this.mapPointToCanvasCoordinate(x, y)
@@ -244,7 +244,7 @@ export class AutomationPointsEditor {
     }
 
     private insertPoint(x : number, y : number) {
-        for (let i = 0; i < this.points.length; i++)
+        for (let i = 0; i < this.points.length; ++i)
         {
             if (x <= this.points[i].x)
             {
@@ -271,7 +271,7 @@ export class AutomationPointsEditor {
         if (this.rangeOfSelectedPoints)
         {
             const hb = this.getTransformHandlebars()
-            for (let i = 0; i < hb.length; i++)
+            for (let i = 0; i < hb.length; ++i)
             {
                 const [x, y, color] = hb[i]
                 const [X, Y] = this.mapPointToCanvasCoordinate(x, y)
@@ -290,7 +290,7 @@ export class AutomationPointsEditor {
         }
 
         // Check for point hit:
-        for (let i = 0; i < points.length; i++)
+        for (let i = 0; i < points.length; ++i)
         {
             const [x, y] = points[i]
             if (distance(x, y, mouseX, mouseY) <= POINT_RADIUS + TOLERANCE)
@@ -300,7 +300,7 @@ export class AutomationPointsEditor {
         }
 
         // Check for line hit:
-        for (let i = 0; i < points.length-1; i++)
+        for (let i = 0; i < points.length-1; ++i)
         {
             const [[x1, y1], [x2, y2]] = points.slice(i)
             if (mouseX < x1 || mouseX > x2) continue
@@ -443,11 +443,11 @@ export class AutomationPointsEditor {
         const [start, end] = this.rangeOfSelectedPoints!
         const { x } = this.points[start]
         const points = []
-        for (let i = start; i <= end; i++)
+        for (let i = start; i <= end; ++i)
         {
             max = Math.max(max, this.points[i].y)
         }
-        for (let i = 0; i < TRANSFORMS.length; i++)
+        for (let i = 0; i < TRANSFORMS.length; ++i)
         {
             points.push([x + xgap * i, dy + max, TRANSFORMS[i][0]] as [number,number,string])
         }
@@ -506,7 +506,7 @@ export class AutomationPointsEditor {
         const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, mouseY)
 
         // Erase unordered points with lower index
-        for (let i = 0; i < this.draggingPoint; i++)
+        for (let i = 0; i < this.draggingPoint; ++i)
         {
             if (this.points[i].x >= this.points[this.draggingPoint].x)
             {
@@ -609,7 +609,7 @@ export class AutomationPointsEditor {
             const threshold = 0.01
             const toDelete = {} as Record<number, true>
             let goAgain = false
-            for (let i = 0; i < this.points.length - 2; i++)
+            for (let i = 0; i < this.points.length - 2; ++i)
             {
                 const [p1, { x, y }, p3] = this.points.slice(i)
                 // Line 1:

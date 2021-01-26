@@ -2167,7 +2167,6 @@ a {
   height: 100%;
   background-size: 100% calc(100%*12/16);
   background-position: left bottom;
-  border: 1px solid red;
 }
 
 .wac-menu {

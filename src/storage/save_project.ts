@@ -24,7 +24,7 @@ export function loadNuniFile(nuniFile : string) {
     GraphController.g.fromJSON(graphCode)
 
     // ADSR_Controller.values = values
-    for (let i = 0; i < 4; i++) 
+    for (let i = 0; i < 4; ++i) 
     // Older graphs do not support
     // Additional ADSRs
         ADSR_Controller.values[i] = values[i]

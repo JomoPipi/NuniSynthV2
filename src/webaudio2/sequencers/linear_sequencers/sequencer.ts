@@ -223,7 +223,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
             this.HTMLBoxes[key] = {}
             const height = clamp(25, 140 / nSteps**0.5, 35)
             const width = height / 2 // (1 + (PHI - 1)/2)
-            for (let i = 0; i < nSteps; i++) 
+            for (let i = 0; i < nSteps; ++i) 
             {
                 const box = E('span')
                 this.HTMLBoxes[key][i] = box
@@ -275,7 +275,7 @@ export abstract class Sequencer extends VolumeNodeContainer {
                         if (j !== lastEntered)
                         {
                             const [start, end] = [i,j].sort((a,b) => a - b)
-                            for (let c = 0; c < this.nSteps; c++)
+                            for (let c = 0; c < this.nSteps; ++c)
                             {
                                 const flip = start <= c && c <= end
                                 setButtonState(key, c, flip !== rowState[c])

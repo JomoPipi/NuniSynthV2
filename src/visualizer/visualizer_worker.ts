@@ -58,7 +58,7 @@ function drawTimeDomain(e : MessageEvent) {
     const Y = 0
 
     ctx.beginPath()
-    for(var i = 0; i < bufferLength; i++) {
+    for(var i = 0; i < bufferLength; ++i) {
         const v = dataArray[i] / 128.0
         const y = v * H/2 + Y
 
@@ -91,7 +91,7 @@ function drawFrequencySpectrum(e : MessageEvent) {
     ctx.beginPath()
     ctx.moveTo(0,h2)
 
-    for (let i = 1; i < bufferLength; i++) 
+    for (let i = 1; i < bufferLength; ++i) 
     {
         if (fbc_array[i] === 255) isClipping = true
         ctx.lineTo(x, map_to_new_range(fbc_array[i], 0, h2))

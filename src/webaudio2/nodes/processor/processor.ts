@@ -238,7 +238,7 @@ class CustomProcessor extends AudioWorkletProcessor {
     
 //     // USER CODING AREA:
 //     const speakers = outputs[0]
-//     for (let i = 0; i < speakers[0].length; i++)
+//     for (let i = 0; i < speakers[0].length; ++i)
 //     {
 //       const noise = Math.sin(Date.now()/(1+i/500))
 //       const gain = parameters.gain[0]

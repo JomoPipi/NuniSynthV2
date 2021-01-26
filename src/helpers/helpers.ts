@@ -17,6 +17,8 @@ type Immutable<Type> = {
     readonly [Key in keyof Type] : Immutable<Type[Key]>
 }
 
+type Values<T> = T[keyof T]
+
 type MouseHandler = (e : MouseEvent) => void
 
 const log = console.log

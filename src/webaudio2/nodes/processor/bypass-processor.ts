@@ -25,7 +25,7 @@ class BypassProcessor extends AudioWorkletProcessor {
         // console.log("inside process")
         for (let channel = 0; channel < output.length; ++channel)
         {
-            for (let i = 0; i < output[0].length; i++)
+            for (let i = 0; i < output[0].length; ++i)
             {
                 output[channel][i] = Math.random() * 2 - 1;
             }

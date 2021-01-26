@@ -36,8 +36,8 @@ export const AudioNodeMap =
     , [NodeTypes.MODULE]:     NuniGraphAudioNode
     , [NodeTypes.COMPRESSOR]: DynamicsCompressorNode
 
-    , [NodeTypes.PIANOR]:     PianoRoll12Tone
-    // , [NodeTypes.PIANOR]:     MonoPianoRoll
+    // , [NodeTypes.PIANOR]:     PianoRoll12Tone
+    , [NodeTypes.PIANOR]:     MonoPianoRoll
 
     , [NodeTypes.PROCESSOR]:  ProcessorNode
     , [NodeTypes.AUTO]:       AutomationNode

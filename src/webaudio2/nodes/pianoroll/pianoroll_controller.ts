@@ -8,13 +8,6 @@
 type NoteEvent = { start : number, end : number, n : number }
 type PlayCallback = (noteEvent : NoteEvent) => void
 
-type Note = {
-    startTime : number
-    endTime : number
-    n : number
-    isSelected : boolean
-}
-
 const markstartsrc = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCjxwYXRoIGZpbGw9IiMwYzAiIGQ9Ik0wLDEgMjQsMSAwLDIzIHoiLz4NCjwvc3ZnPg0K"
 const playheadsrc = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj4NCjxwYXRoIGZpbGw9InJnYmEoMjU1LDEwMCwxMDAsMC44KSIgZD0iTTAsMSAyNCwxMiAwLDIzIHoiLz4NCjwvc3ZnPg0K"
 const markendsrc = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCjxwYXRoIGZpbGw9IiMwYzAiIGQ9Ik0wLDEgMjQsMSAyNCwyMyB6Ii8+DQo8L3N2Zz4NCg=="
@@ -26,6 +19,21 @@ const SEMIFLAG = [6, 1, 0, 1, 0, 2, 1, 0, 1, 0, 1, 0]
 const OCTAVE_OFFSET = -1
 const TIMEBASE = 16
 const X_START = RULER_WIDTH + KB_WIDTH
+
+const Targets =
+    { UNSELECTED_NOTE: "n"
+    , NOTE_CENTER: "N"
+    , NOTE_LEFT: "B"
+    , NOTE_RIGHT: "E"
+    , EMPTY: "s"
+    , X_RULER: "x"
+    , Y_RULER: "y"
+    } as const
+
+const DragModes =
+    { SELECTION: "A"
+    , NONE: 'none'
+    } as const
 
 export class MonoPianoRollControls {
 
@@ -40,7 +48,7 @@ export class MonoPianoRollControls {
     private playheadImage : HTMLImageElement
     private ctx : CanvasRenderingContext2D
     private sequence : Note[]
-    private dragging : {}
+    private dragging : DragData
     private width = 485
     private height = 300
     private xrange = 16
@@ -55,6 +63,10 @@ export class MonoPianoRollControls {
     private gridHeight = -1
     private stepWidth = -1
     private stepHeight = -1
+
+    private bindcontextmenu : MouseHandler
+    private bindpointermove : MouseHandler
+    private bindcancel      : MouseHandler
 
     constructor(audioCtx : AudioContext) {
         this.audioCtx = audioCtx
@@ -80,9 +92,22 @@ export class MonoPianoRollControls {
 
         this.controller.appendChild(this.body)
 
+        this.body.addEventListener("mousedown",this.pointerdown.bind(this), true)
+        this.canvas.addEventListener('mousemove',this.mousemove.bind(this),false)
+        this.canvas.addEventListener('keydown',this.keydown.bind(this),false)
+        this.canvas.addEventListener('mousewheel',this.wheel.bind(this),false)
+
+        this.bindcontextmenu = this.contextmenu.bind(this)
+        this.bindpointermove = this.pointermove.bind(this)
+        this.bindcancel = this.cancel.bind(this)
+
         this.ctx = this.canvas.getContext('2d')!
         this.sequence = []
-        this.dragging = {}
+        this.dragging = 
+            { mode: DragModes.NONE
+            , p1: { x: -1, y: -1 } 
+            , p2: { x: -1, y: -1 } 
+            }
         
         this.layout()
     }
@@ -147,12 +172,12 @@ export class MonoPianoRollControls {
     }
 
     private drawSequence() {
-        for (const { startTime, endTime, isSelected, n } of this.sequence)
+        for (const { t1, t2, isSelected, n } of this.sequence)
         {
             this.ctx.fillStyle = isSelected ? 'red' : 'green'
             this.ctx.strokeStyle = isSelected ? 'white' : 'black'
-            const w = endTime * this.stepWidth
-            const x = (startTime - this.xoffset) * this.stepWidth + X_START
+            const w = t2 * this.stepWidth
+            const x = (t1 - this.xoffset) * this.stepWidth + X_START
             const x2 = x + w | 0
             const x3 = x | 0
             const y = this.height - (n - this.yoffset) * this.stepHeight
@@ -217,6 +242,117 @@ export class MonoPianoRollControls {
     }
 
     private redrawSelectedArea() {
-        // if (this.dragging)
+        if (this.dragging.mode === DragModes.SELECTION)
+        {
+            const { p1, p2 } = this.dragging
+            this.ctx.fillStyle = "rgba(0,0,0,0.3)"
+            this.ctx.fillRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y)
+        }
+    }
+
+
+
+    private pointerdown(e : MouseEvent) {
+        const position = this.getPosition(e)
+        const msg = this.getHoverMessage(position)
+        
+        window.addEventListener("mousemove", this.bindpointermove,false)
+        window.addEventListener("mouseup", this.bindcancel)
+        window.addEventListener("contextmenu", this.bindcontextmenu)
+        
+        if (e.buttons === 2 || e.ctrlKey)
+        {
+            // 
+        }
+    }
+
+    private getPosition(e : MouseEvent) {
+        const rect = this.canvas.getBoundingClientRect()
+        const x = e.clientX - rect.left
+        const y = e.clientY - rect.top
+        return { x, y, target: e.target }
+    }
+
+    private getHoverMessage({ x, y, target } : Position) {
+        const time = this.xoffset + (x - X_START) / this.gridWidth * this.xrange
+        const n = this.yoffset + (this.height - y) / this.stepHeight
+        const message : HoverMessage = { time, n, i: -1, target: Targets.EMPTY }
+
+        if (y >= this.height || x >= this.width) return message
+        if (y < RULER_WIDTH)
+        {
+            message.target = Targets.X_RULER
+            return message
+        }
+        if (x < X_START)
+        {
+            message.target = Targets.Y_RULER
+            return message
+        }
+        const _n = n|0
+        for (let i = 0; i < this.sequence.length; ++i)
+        {
+            const note = this.sequence[i]
+            if (_n === note.n)
+            {
+                if (note.isSelected && Math.abs(note.t1 - time) * this.stepWidth < 8)
+                {
+                    message.target === Targets.NOTE_LEFT
+                    message.i = i
+                    return message
+                }
+                if (note.isSelected && Math.abs(note.t1+note.t2-time) * this.stepWidth < 8)
+                {
+                    message.target = Targets.NOTE_RIGHT
+                    message.i = i
+                    return message
+                }
+                if (note.t1 <= time && time < note.t1 + note.t2)
+                {
+                    message.i = i
+                    message.target = note.isSelected
+                        ? Targets.NOTE_CENTER
+                        : Targets.UNSELECTED_NOTE
+                    return message
+                }
+            }
+        }
+        return message
+    }
+
+    private contextmenu(e : MouseEvent) {
+
+    }
+
+    private pointermove(e : MouseEvent) {
+
+    }
+
+    private cancel(e : MouseEvent) {
+
     }
 }
+
+type HoverMessage = { 
+    time : number
+    n : number
+    i : number
+    target : Values<typeof Targets>
+}
+
+type Note = {
+    t1 : number
+    t2 : number
+    n : number
+    isSelected : boolean
+}
+
+type Point = { x : number, y : number }
+
+type DragData = {
+    mode : typeof DragModes[keyof typeof DragModes]
+    p1 : Point
+    p2 : Point
+}
+
+type Position = { x : number, y : number, target : EventTarget | null }

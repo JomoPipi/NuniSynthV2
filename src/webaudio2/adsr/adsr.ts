@@ -43,7 +43,7 @@ var createLogarithmicBuffer = function createLogarithmicBuffer(direction = 1, ba
         index,
         i;
 
-    for (i = 0; i < length; i++) {
+    for (i = 0; i < length; ++i) {
         //index for the curve array.
         //direction positive for fade in, negative for fade out
         index = direction > 0 ? i : length - 1 - i;

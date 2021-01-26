@@ -22,7 +22,7 @@ function drawPads() {
 
     container.innerHTML = ''
     pads.length = 0
-    for (let i = 1; i < +slider.value+1; i++)
+    for (let i = 1; i < +slider.value+1; ++i)
     {
         const pad = new XYPad(100, callback.function)
         pads.push(pad)
@@ -47,7 +47,7 @@ function createPeriodicWave(ctx : AudioContext) {
     const imag = new Float32Array(n)
     const { H, W } = pads[0]
 
-    for (let i = 1; i < n; i++)
+    for (let i = 1; i < n; ++i)
     {
         const [x,y] = pads[i-1].point
         const X = 2*x/W - 1
