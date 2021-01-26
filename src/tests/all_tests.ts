@@ -141,3 +141,15 @@ const g = GraphController.g // new NuniGraph()
     console.log(`${passed}/${(passed + failed)} tests passed`)
     g.clear()
 })()
+
+;(function copyingPianorollShouldNotThrowError() {
+    g.createNewNode(NodeTypes.PIANOR)
+    try 
+    { 
+        cycleGraph(g.toString()) 
+    }
+    catch (e)
+    {
+        console.warn('test failed! :( \n\n', e)
+    }
+})()

@@ -574,8 +574,6 @@ const Transferable_Pianoroll_properties =
     , yrange      : true
     , xoffset     : true
     , yoffset     : true
-    , xruler      : true
-    , yruler      : true
     , markstart   : true
     , markend     : true
     } as const

@@ -25,8 +25,6 @@ const defaultProperties = {
     xscroll:            {value:0},
     yscroll:            {value:0},
     gridnoteratio:      {value:0.5, observer:'updateTimer'},
-    xruler:             {value:24, observer:'layout'},
-    yruler:             {value:24, observer:'layout'},
     octadj:             {value:-1},
     cursor:             {value:0, observer:'redrawMarker'},
     markstart:          {value:0, observer:'redrawMarker'},
@@ -56,6 +54,7 @@ const defaultProperties = {
 } as const
 
 const KB_WIDTH = 40
+const RULER_WIDTH = 24
 
 const Targets =
     { UNSELECTED_NOTE: "n"
@@ -413,16 +412,16 @@ class Pianoroll extends HTMLElement {
                 ht.m="m";
                 return ht;
             }
-            ht.t=(this.xoffset+(pos.x-this.yruler-KB_WIDTH)/this.swidth*this.xrange);
+            ht.t=(this.xoffset+(pos.x-RULER_WIDTH-KB_WIDTH)/this.gridWidth*this.xrange);
             ht.n=this.yoffset-(pos.y-this.height)/this.steph;
             if(pos.y>=this.height || pos.x>=this.width){
                 return ht;
             }
-            if(pos.y<this.xruler){
+            if(pos.y<RULER_WIDTH){
                 ht.m=Targets.X_RULER;
                 return ht;
             }
-            if(pos.x<this.yruler+KB_WIDTH){
+            if(pos.x<RULER_WIDTH+KB_WIDTH){
                 ht.m=Targets.Y_RULER;
                 return ht;
             }
@@ -972,16 +971,16 @@ class Pianoroll extends HTMLElement {
                 this.canvas.height = this.height;
                 bodyStyle.height = this.canvas.style.height = this.height+"px";
             }
-            this.swidth = this.canvas.width - this.yruler - KB_WIDTH;
-            this.sheight=this.canvas.height-this.xruler;
+            this.gridWidth = this.canvas.width - RULER_WIDTH - KB_WIDTH;
+            this.gridHeight = this.canvas.height - RULER_WIDTH;
             this.redraw();
         };
         this.redrawMarker=function(){
-            const cur=(this.cursor-this.xoffset)*this.stepw+this.yruler+KB_WIDTH;
+            const cur=(this.cursor-this.xoffset)*this.stepw+RULER_WIDTH+KB_WIDTH;
             this.cursorimg.style.left=(cur+this.cursoroffset)+"px";
-            const start=(this.markstart-this.xoffset)*this.stepw+this.yruler+KB_WIDTH;
+            const start=(this.markstart-this.xoffset)*this.stepw+RULER_WIDTH+KB_WIDTH;
             this.markstartimg.style.left=(start+this.markstartoffset)+"px";
-            const end=(this.markend-this.xoffset)*this.stepw+this.yruler+KB_WIDTH;
+            const end=(this.markend-this.xoffset)*this.stepw+RULER_WIDTH+KB_WIDTH;
             this.markendimg.style.left=(end+this.markendoffset)+"px";
         };
         this.redrawGrid=function(){
@@ -991,83 +990,83 @@ class Pianoroll extends HTMLElement {
                 else
                     this.ctx.fillStyle=this.collt;
                 let ys = this.height - (y - this.yoffset) * this.steph;
-                this.ctx.fillRect(this.yruler+KB_WIDTH, ys|0, this.swidth,-this.steph);
+                this.ctx.fillRect(RULER_WIDTH+KB_WIDTH, ys|0, this.gridWidth,-this.steph);
                 this.ctx.fillStyle=this.colgrid;
-                this.ctx.fillRect(this.yruler+KB_WIDTH, ys|0, this.swidth,1);
+                this.ctx.fillRect(RULER_WIDTH+KB_WIDTH, ys|0, this.gridWidth,1);
             }
             for(let t=0;;t+=this.grid){
-                let x=this.stepw*(t-this.xoffset)+this.yruler+KB_WIDTH;
-                this.ctx.fillRect(x|0,this.xruler,1,this.sheight);
+                let x=this.stepw*(t-this.xoffset)+RULER_WIDTH+KB_WIDTH;
+                this.ctx.fillRect(x|0,RULER_WIDTH,1,this.gridHeight);
                 if(x>=this.width)
                     break;
             }
         };
         this.semiflag=[6,1,0,1,0,2,1,0,1,0,1,0];
         this.redrawXRuler=function(){
-            if(this.xruler){
+            if(RULER_WIDTH){
                 this.ctx.textAlign="left";
-                this.ctx.font=(this.xruler/2)+"px 'sans-serif'";
+                this.ctx.font=(RULER_WIDTH/2)+"px 'sans-serif'";
                 this.ctx.fillStyle=this.colrulerbg;
-                this.ctx.fillRect(0,0,this.width,this.xruler);
+                this.ctx.fillRect(0,0,this.width,RULER_WIDTH);
                 this.ctx.fillStyle=this.colrulerborder;
                 this.ctx.fillRect(0,0,this.width,1);
-                this.ctx.fillRect(0,0,1,this.xruler);
-                this.ctx.fillRect(0,this.xruler-1,this.width,1);
-                this.ctx.fillRect(this.width-1,0,1,this.xruler);
+                this.ctx.fillRect(0,0,1,RULER_WIDTH);
+                this.ctx.fillRect(0,RULER_WIDTH-1,this.width,1);
+                this.ctx.fillRect(this.width-1,0,1,RULER_WIDTH);
                 this.ctx.fillStyle=this.colrulerfg;
                 for(let t=0;;t+=this.timebase){
-                    let x=(t-this.xoffset)*this.stepw+this.yruler+KB_WIDTH;
-                    this.ctx.fillRect(x,0,1,this.xruler);
-                    this.ctx.fillText(t/this.timebase+1,x+4,this.xruler-8);
+                    let x=(t-this.xoffset)*this.stepw+RULER_WIDTH+KB_WIDTH;
+                    this.ctx.fillRect(x,0,1,RULER_WIDTH);
+                    this.ctx.fillText(t/this.timebase+1,x+4,RULER_WIDTH-8);
                     if(x>=this.width)
                         break;
                 }
             }
         };
         this.redrawYRuler=function(){
-            if(this.yruler){
+            if(RULER_WIDTH){
                 this.ctx.textAlign="right";
                 this.ctx.font=(this.steph/2)+"px 'sans-serif'";
                 this.ctx.fillStyle=this.colrulerbg;
-                this.ctx.fillRect(0,this.xruler,this.yruler,this.sheight);
+                this.ctx.fillRect(0,RULER_WIDTH,RULER_WIDTH,this.gridHeight);
                 this.ctx.fillStyle=this.colrulerborder;
-                this.ctx.fillRect(0,this.xruler,1,this.sheight);
-                this.ctx.fillRect(this.yruler,this.xruler,1,this.sheight);
-                this.ctx.fillRect(0,this.height-1,this.yruler,1);
+                this.ctx.fillRect(0,RULER_WIDTH,1,this.gridHeight);
+                this.ctx.fillRect(RULER_WIDTH,RULER_WIDTH,1,this.gridHeight);
+                this.ctx.fillRect(0,this.height-1,RULER_WIDTH,1);
                 this.ctx.fillStyle=this.colrulerfg;
                 for(let y=0;y<128;y+=12){
                     const ys=this.height-this.steph*(y-this.yoffset);
-                    this.ctx.fillRect(0,ys|0,this.yruler,-1);
-                    this.ctx.fillText("C"+(((y/12)|0)+this.octadj),this.yruler-4,ys-4);
+                    this.ctx.fillRect(0,ys|0,RULER_WIDTH,-1);
+                    this.ctx.fillText("C"+(((y/12)|0)+this.octadj),RULER_WIDTH-4,ys-4);
                 }
             }
-            this.kbimg.style.top=(this.xruler)+"px";
-            this.kbimg.style.left=this.yruler+"px";
+            this.kbimg.style.top=(RULER_WIDTH)+"px";
+            this.kbimg.style.left=RULER_WIDTH+"px";
             this.kbimg.style.width=KB_WIDTH+"px";
             this.kbimg.style.backgroundSize="100% "+(this.steph*12)+"px";
-            this.kbimg.style.backgroundPosition="0px "+(this.sheight+this.steph*this.yoffset)+"px";
+            this.kbimg.style.backgroundPosition="0px "+(this.gridHeight+this.steph*this.yoffset)+"px";
         };
         this.redrawKeyboard=function(){
-            if(this.yruler){
+            if(RULER_WIDTH){
                 this.ctx.textAlign="right";
                 this.ctx.font=(this.steph/2)+"px 'sans-serif'";
                 this.ctx.fillStyle=this.colortab.kbwh;
-                this.ctx.fillRect(1,this.xruler,this.yruler,this.sheight);
+                this.ctx.fillRect(1,RULER_WIDTH,RULER_WIDTH,this.gridHeight);
                 this.ctx.fillStyle=this.colortab.kbbk;
                 for(let y=0;y<128;++y){
                     const ys=this.height-this.steph*(y-this.yoffset);
                     const ysemi=y%12;
                     const fsemi=this.semiflag[ysemi];
                     if(fsemi&1){
-                        this.ctx.fillRect(0,ys,this.yruler/2,-this.steph);
-                        this.ctx.fillRect(0,(ys-this.steph/2)|0,this.yruler,-1);
+                        this.ctx.fillRect(0,ys,RULER_WIDTH/2,-this.steph);
+                        this.ctx.fillRect(0,(ys-this.steph/2)|0,RULER_WIDTH,-1);
                     }
                     if(fsemi&2)
-                        this.ctx.fillRect(0,ys|0,this.yruler,-1);
+                        this.ctx.fillRect(0,ys|0,RULER_WIDTH,-1);
                     if(fsemi&4)
-                        this.ctx.fillText("C"+(((y/12)|0)+this.octadj),this.yruler-4,ys-4);
+                        this.ctx.fillText("C"+(((y/12)|0)+this.octadj),RULER_WIDTH-4,ys-4);
                 }
-                this.ctx.fillRect(this.yruler,this.xruler,1,this.sheight);
+                this.ctx.fillRect(RULER_WIDTH,RULER_WIDTH,1,this.gridHeight);
             }
         };
         this.redrawAreaSel=function(){
@@ -1081,8 +1080,8 @@ class Pianoroll extends HTMLElement {
             if(!this.ctx)
                 return;
             this.ctx.clearRect(0,0,this.width,this.height);
-            this.stepw = this.swidth/this.xrange;
-            this.steph = this.sheight/this.yrange;
+            this.stepw = this.gridWidth/this.xrange;
+            this.steph = this.gridHeight/this.yrange;
             this.redrawGrid();
             const l=this.sequence.length;
             for(let s=0; s<l; ++s){
@@ -1092,7 +1091,7 @@ class Pianoroll extends HTMLElement {
                 else
                     this.ctx.fillStyle=this.colnote;
                 w=ev.g*this.stepw;
-                x=(ev.t-this.xoffset)*this.stepw+this.yruler+KB_WIDTH;
+                x=(ev.t-this.xoffset)*this.stepw+RULER_WIDTH+KB_WIDTH;
                 x2=(x+w)|0; x|=0;
                 y=this.height - (ev.n-this.yoffset)*this.steph;
                 y2=(y-this.steph)|0; y|=0;

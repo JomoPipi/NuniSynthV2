@@ -578,7 +578,7 @@ export class NuniGraph {
             
         for (const prop in Transferable_AudioNodeProperties)
         {
-            if (prop in node.audioNode) 
+            if (prop in node.audioNode)
             {
                 const p = prop as keyof typeof node.audioNode
                 settings.audioNodeProperties[prop] = 
