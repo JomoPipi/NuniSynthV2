@@ -698,7 +698,7 @@ class Pianoroll extends HTMLElement {
             this.bindcancel = this.cancel.bind(this)
 
             this.sequence = [];
-            this.dragging = { o: null }
+            this.dragging={ o: null }
             
             this.layout();
         };
@@ -754,6 +754,7 @@ class Pianoroll extends HTMLElement {
             window.addEventListener("contextmenu",this.bindcontextmenu);
 
             if(e.buttons==2||e.ctrlKey){
+                log('we here')
                 switch(this.downht.m){
                 case Targets.NOTE_CENTER:
                 case Targets.NOTE_LEFT:
@@ -883,6 +884,7 @@ class Pianoroll extends HTMLElement {
             return false;
         };
         this.cancel= function(ev) {
+            // 0riwakanoko2019
             
             const pos=this.getPos(ev);
             if(this.dragging.o=="m"){

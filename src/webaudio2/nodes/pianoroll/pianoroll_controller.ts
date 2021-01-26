@@ -35,9 +35,9 @@ export class MonoPianoRollControls {
     private body : HTMLDivElement
     private canvas : HTMLCanvasElement
     private keyboardImage : HTMLDivElement
-    private markstart : HTMLImageElement
-    private markend : HTMLImageElement
-    private playhead : HTMLImageElement
+    private markstartImage : HTMLImageElement
+    private markendImage : HTMLImageElement
+    private playheadImage : HTMLImageElement
     private ctx : CanvasRenderingContext2D
     private sequence : Note[]
     private dragging : {}
@@ -47,6 +47,9 @@ export class MonoPianoRollControls {
     private yrange = 16
     private xoffset = 0
     private yoffset = 0
+    private playhead = 0
+    private markstart = 0
+    private markend =  16
 
     private gridWidth = -1
     private gridHeight = -1
@@ -59,16 +62,22 @@ export class MonoPianoRollControls {
         this.body = E('div', { className: 'wac-body' })
         this.keyboardImage = E('div', { className: 'wac-kb' })
         this.canvas = E('canvas', { className: 'wac-pianoroll' })
-        this.markstart = E('img', { className: 'marker' })
-        this.markend = E('img', { className: 'marker' })
-        this.playhead = E('img', { className: 'marker' })
+        this.markstartImage = E('img', { className: 'marker' })
+        this.markendImage = E('img', { className: 'marker' })
+        this.playheadImage = E('img', { className: 'marker' })
 
-        this.markstart.src = markstartsrc
-        this.markend.src = markendsrc
-        this.playhead.src = playheadsrc
+        this.markstartImage.src = markstartsrc
+        this.markendImage.src = markendsrc
+        this.playheadImage.src = playheadsrc
         this.keyboardImage.style.background = `url("${keyboardsrc}")`
 
-        this.body.append(this.canvas, this.keyboardImage, this.markstart, this.markend, this.playhead)
+        this.body.append(
+            this.canvas, 
+            this.keyboardImage, 
+            this.markstartImage, 
+            this.markendImage, 
+            this.playheadImage)
+
         this.controller.appendChild(this.body)
 
         this.ctx = this.canvas.getContext('2d')!
@@ -198,10 +207,16 @@ export class MonoPianoRollControls {
     }
 
     private redrawMarker() {
-
+        const start = (this.markstart - this.xoffset) * this.stepWidth + X_START
+        const now = (this.playhead - this.xoffset) * this.stepWidth + X_START
+        const end = (this.markend - this.xoffset) * this.stepWidth + X_START
+        const endOffset = -24
+        this.markstartImage.style.left = start + 'px'
+        this.playheadImage.style.left = now + 'px'
+        this.markendImage.style.left = (end + endOffset) + 'px'
     }
 
     private redrawSelectedArea() {
-
+        // if (this.dragging)
     }
 }
