@@ -152,4 +152,5 @@ const g = GraphController.g // new NuniGraph()
     {
         console.warn('test failed! :( \n\n', e)
     }
+    g.clear()
 })()

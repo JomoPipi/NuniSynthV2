@@ -9,14 +9,14 @@
 'use strict'
 
 const defaultProperties = {
-    width:              {value:640, observer:'layout'},
-    height:             {value:320, observer:'layout'},
+    width:              {value:485, observer:'layout'},
+    height:             {value:300, observer:'layout'},
     timebase:           {value:16, observer:'layout'},
     editmode:           {value:"dragpoly"},
     xrange:             {value:16, observer:'layout'},
     yrange:             {value:16, observer:'layout'},
     xoffset:            {value:0, observer:'layout'},
-    yoffset:            {value:60, observer:'layout'},
+    yoffset:            {value:0, observer:'layout'},
     grid:               {value:4},
     snap:               {value:1},
     wheelzoom:          {value:0},
@@ -989,8 +989,8 @@ class Pianoroll extends HTMLElement {
                     this.ctx.fillStyle=this.coldk;
                 else
                     this.ctx.fillStyle=this.collt;
-                let ys = this.height - (y - this.yoffset) * this.steph;
-                this.ctx.fillRect(RULER_WIDTH+KB_WIDTH, ys|0, this.gridWidth,-this.steph);
+                let ys = this.height + (this.yoffset - y) * this.steph
+                this.ctx.fillRect(RULER_WIDTH+KB_WIDTH, ys|0, this.gridWidth, -this.steph);
                 this.ctx.fillStyle=this.colgrid;
                 this.ctx.fillRect(RULER_WIDTH+KB_WIDTH, ys|0, this.gridWidth,1);
             }
@@ -1003,43 +1003,40 @@ class Pianoroll extends HTMLElement {
         };
         this.semiflag=[6,1,0,1,0,2,1,0,1,0,1,0];
         this.redrawXRuler=function(){
-            if(RULER_WIDTH){
-                this.ctx.textAlign="left";
-                this.ctx.font=(RULER_WIDTH/2)+"px 'sans-serif'";
-                this.ctx.fillStyle=this.colrulerbg;
-                this.ctx.fillRect(0,0,this.width,RULER_WIDTH);
-                this.ctx.fillStyle=this.colrulerborder;
-                this.ctx.fillRect(0,0,this.width,1);
-                this.ctx.fillRect(0,0,1,RULER_WIDTH);
-                this.ctx.fillRect(0,RULER_WIDTH-1,this.width,1);
-                this.ctx.fillRect(this.width-1,0,1,RULER_WIDTH);
-                this.ctx.fillStyle=this.colrulerfg;
-                for(let t=0;;t+=this.timebase){
-                    let x=(t-this.xoffset)*this.stepw+RULER_WIDTH+KB_WIDTH;
-                    this.ctx.fillRect(x,0,1,RULER_WIDTH);
-                    this.ctx.fillText(t/this.timebase+1,x+4,RULER_WIDTH-8);
-                    if(x>=this.width)
-                        break;
-                }
+            this.ctx.textAlign="left";
+            this.ctx.font=(RULER_WIDTH/2)+"px 'sans-serif'";
+            this.ctx.fillStyle=this.colrulerbg;
+            this.ctx.fillRect(0,0,this.width,RULER_WIDTH);
+            this.ctx.fillStyle=this.colrulerborder;
+            this.ctx.fillRect(0,0,this.width,1);
+            this.ctx.fillRect(0,0,1,RULER_WIDTH);
+            this.ctx.fillRect(0,RULER_WIDTH-1,this.width,1);
+            this.ctx.fillRect(this.width-1,0,1,RULER_WIDTH);
+            this.ctx.fillStyle=this.colrulerfg;
+            for(let t=0;;t+=this.timebase){
+                let x=(t-this.xoffset)*this.stepw+RULER_WIDTH+KB_WIDTH;
+                this.ctx.fillRect(x,0,1,RULER_WIDTH);
+                this.ctx.fillText(t/this.timebase+1,x+4,RULER_WIDTH-8);
+                if(x>=this.width)
+                    break;
             }
         };
-        this.redrawYRuler=function(){
-            if(RULER_WIDTH){
-                this.ctx.textAlign="right";
-                this.ctx.font=(this.steph/2)+"px 'sans-serif'";
-                this.ctx.fillStyle=this.colrulerbg;
-                this.ctx.fillRect(0,RULER_WIDTH,RULER_WIDTH,this.gridHeight);
-                this.ctx.fillStyle=this.colrulerborder;
-                this.ctx.fillRect(0,RULER_WIDTH,1,this.gridHeight);
-                this.ctx.fillRect(RULER_WIDTH,RULER_WIDTH,1,this.gridHeight);
-                this.ctx.fillRect(0,this.height-1,RULER_WIDTH,1);
-                this.ctx.fillStyle=this.colrulerfg;
-                for(let y=0;y<128;y+=12){
-                    const ys=this.height-this.steph*(y-this.yoffset);
-                    this.ctx.fillRect(0,ys|0,RULER_WIDTH,-1);
-                    this.ctx.fillText("C"+(((y/12)|0)+this.octadj),RULER_WIDTH-4,ys-4);
-                }
+        this.redrawYRuler=function(){ 
+            this.ctx.textAlign="right";
+            this.ctx.font=(this.steph/2)+"px 'sans-serif'";
+            this.ctx.fillStyle=this.colrulerbg;
+            this.ctx.fillRect(0,RULER_WIDTH,RULER_WIDTH,this.gridHeight);
+            this.ctx.fillStyle=this.colrulerborder;
+            this.ctx.fillRect(0,RULER_WIDTH,1,this.gridHeight);
+            this.ctx.fillRect(RULER_WIDTH,RULER_WIDTH,1,this.gridHeight);
+            this.ctx.fillRect(0,this.height-1,RULER_WIDTH,1);
+            this.ctx.fillStyle=this.colrulerfg;
+            for(let y=0;y<128;y+=12){
+                const ys=this.height-this.steph*(y-this.yoffset);
+                this.ctx.fillRect(0,ys|0,RULER_WIDTH,-1);
+                this.ctx.fillText("C"+(((y/12)|0)+this.octadj),RULER_WIDTH-4,ys-4);
             }
+                
             this.kbimg.style.top=(RULER_WIDTH)+"px";
             this.kbimg.style.left=RULER_WIDTH+"px";
             this.kbimg.style.width=KB_WIDTH+"px";
@@ -1092,6 +1089,7 @@ class Pianoroll extends HTMLElement {
                     this.ctx.fillStyle=this.colnote;
                 w=ev.g*this.stepw;
                 x=(ev.t-this.xoffset)*this.stepw+RULER_WIDTH+KB_WIDTH;
+                console.log(x)
                 x2=(x+w)|0; x|=0;
                 y=this.height - (ev.n-this.yoffset)*this.steph;
                 y2=(y-this.steph)|0; y|=0;
