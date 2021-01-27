@@ -501,6 +501,7 @@ export class MonoPianoRollControls {
                     = this.dragging.offsety
                     + (position.y - this.dragging.y)
                     * (this.yrange / this.height)
+                this.layout()
                 break
             
             // case DragModes.MENU //
@@ -519,6 +520,7 @@ export class MonoPianoRollControls {
                     | 0)
                 if (this.markstart >= x) this.markstart = x - 1
                 this.markend = x
+                this.redrawMarker()
                 break
             
             case DragModes.MARKSTART:
@@ -529,6 +531,7 @@ export class MonoPianoRollControls {
                     | 0)
                 if (this.markend <= y) this.markend = y+1
                 this.markstart = y
+                this.redrawMarker()
                 break
 
             case DragModes.PLAYHEAD:
@@ -537,6 +540,7 @@ export class MonoPianoRollControls {
                     + (position.x - this.dragging.x)
                     / this.stepWidth + .5
                     | 0)
+                this.redrawMarker()
                 break
         }
         this.editDragMove(msg)

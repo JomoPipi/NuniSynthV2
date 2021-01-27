@@ -64,10 +64,10 @@ export class MonoPianoRoll
 
     play() {
         this.isPlaying = true
-        this.pianoRoll.play(({ start, end, n }) => {
-            this.csn.offset.setValueAtTime(n * 100, start)
-            this.csn.offset.setValueAtTime(0, end)
-        })
+        // this.pianoRoll.play(({ start, end, n }) => {
+        //     this.csn.offset.setValueAtTime(n * 100, start)
+        //     this.csn.offset.setValueAtTime(0, end)
+        // })
     }
 
     sync() {}
