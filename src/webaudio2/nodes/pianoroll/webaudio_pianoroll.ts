@@ -414,51 +414,52 @@ class Pianoroll extends HTMLElement {
             }
             return mml;
         };
-        this.hitTest=function(pos){
-            const ht={t:0,n:0,i:-1,m:" "};
+
+        this.getHoverMessage=function(pos){
+            const msg={t:0,n:0,i:-1,target:" "};
             const l=this.sequence.length;
             if(pos.target === this.menu){
-                ht.m="m";
-                return ht;
+                msg.target="m";
+                return msg;
             }
-            ht.t=(this.xoffset+(pos.x-RULER_WIDTH-KB_WIDTH)/this.gridWidth*this.xrange);
-            ht.n=this.yoffset-(pos.y-this.height)/this.steph;
+            msg.t=(this.xoffset+(pos.x-RULER_WIDTH-KB_WIDTH)/this.gridWidth*this.xrange);
+            msg.n=this.yoffset-(pos.y-this.height)/this.steph;
             if(pos.y>=this.height || pos.x>=this.width){
-                return ht;
+                return msg;
             }
             if(pos.y<RULER_WIDTH){
-                ht.m=Targets.X_RULER;
-                return ht;
+                msg.target=Targets.X_RULER;
+                return msg;
             }
             if(pos.x<RULER_WIDTH+KB_WIDTH){
-                ht.m=Targets.Y_RULER;
-                return ht;
+                msg.target=Targets.Y_RULER;
+                return msg;
             }
             for(let i=0;i<l;++i){
                 const ev=this.sequence[i];
-                if((ht.n|0) == ev.n){
-                    if(ev.isSelected && Math.abs(ev.t-ht.t)*this.stepw<8){
-                        ht.m=Targets.NOTE_LEFT;
-                        ht.i=i;
-                        return ht;
+                if((msg.n|0) == ev.n){
+                    if(ev.isSelected && Math.abs(ev.t-msg.t)*this.stepw<8){
+                        msg.target=Targets.NOTE_LEFT;
+                        msg.i=i;
+                        return msg;
                     }
-                    if(ev.isSelected && Math.abs(ev.t+ev.g-ht.t)*this.stepw<8){
-                        ht.m=Targets.NOTE_RIGHT;
-                        ht.i=i;
-                        return ht;
+                    if(ev.isSelected && Math.abs(ev.t+ev.g-msg.t)*this.stepw<8){
+                        msg.target=Targets.NOTE_RIGHT;
+                        msg.i=i;
+                        return msg;
                     }
-                    if(ht.t>=ev.t&&ht.t<ev.t+ev.g){
-                        ht.i=i;
+                    if(msg.t>=ev.t&&msg.t<ev.t+ev.g){
+                        msg.i=i;
                         if(this.sequence[i].isSelected)
-                            ht.m=Targets.NOTE_CENTER;
+                            msg.target=Targets.NOTE_CENTER;
                         else
-                            ht.m=Targets.UNSELECTED_NOTE;
-                        return ht;
+                            msg.target=Targets.UNSELECTED_NOTE;
+                        return msg;
                     }
                 }
             }
-            ht.m=Targets.EMPTY;
-            return ht;
+            msg.target=Targets.EMPTY;
+            return msg;
         };
         this.addNote=function(t,n,g,v){
             if(t >= 0 && 0 <= n && n < 128){
@@ -552,11 +553,11 @@ class Pianoroll extends HTMLElement {
             return obj;
         };
         this.editDragDown=function(pos) {
-            const ht=this.hitTest(pos);
+            const msg=this.getHoverMessage(pos);
             let ev;
-            if(ht.m==Targets.NOTE_CENTER) {
-                ev=this.sequence[ht.i];
-                this.dragging={mode:DragModes.NOTES,m:Targets.NOTE_CENTER,i:ht.i,t:ht.t,n:ev.n};
+            if(msg.target==Targets.NOTE_CENTER) {
+                ev=this.sequence[msg.i];
+                this.dragging={mode:DragModes.NOTES,target:Targets.NOTE_CENTER,i:msg.i,t:msg.t,n:ev.n};
                 for(let i=0,l=this.sequence.length;i<l;++i){
                     ev=this.sequence[i];
                     if(ev.isSelected)
@@ -567,36 +568,36 @@ class Pianoroll extends HTMLElement {
                 }
                 this.redraw();
             }
-            else if(ht.m==Targets.UNSELECTED_NOTE){
-                ev=this.sequence[ht.i];
+            else if(msg.target==Targets.UNSELECTED_NOTE){
+                ev=this.sequence[msg.i];
                 this.clearSel();
                 ev.isSelected = true;
                 this.redraw();
             }
-            else if(ht.m==Targets.NOTE_RIGHT){
-                const ev = this.sequence[ht.i];
-                this.dragging={mode:DragModes.NOTES, m:Targets.NOTE_RIGHT, i:ht.i, t:ev.t, g:ev.g, ev:this.selectedNotes()};
+            else if(msg.target==Targets.NOTE_RIGHT){
+                const ev = this.sequence[msg.i];
+                this.dragging={mode:DragModes.NOTES, target:Targets.NOTE_RIGHT, i:msg.i, t:ev.t, g:ev.g, ev:this.selectedNotes()};
             }
-            else if(ht.m==Targets.NOTE_LEFT){
-                const ev = this.sequence[ht.i];
-                this.dragging={mode:DragModes.NOTES, m:Targets.NOTE_LEFT, i:ht.i, t:ev.t, g:ev.g, ev:this.selectedNotes()};
+            else if(msg.target==Targets.NOTE_LEFT){
+                const ev = this.sequence[msg.i];
+                this.dragging={mode:DragModes.NOTES, target:Targets.NOTE_LEFT, i:msg.i, t:ev.t, g:ev.g, ev:this.selectedNotes()};
             }
-            else if(ht.m==Targets.EMPTY&&ht.t>=0){
+            else if(msg.target==Targets.EMPTY&&msg.t>=0){
                 this.clearSel();
-                var t=((ht.t/this.snap)|0)*this.snap;
-                this.sequence.push({ t:t, n:ht.n|0, g:1, isSelected: true });
-                this.dragging={mode:DragModes.NOTES,m:Targets.NOTE_RIGHT,i:this.sequence.length-1, t:t, g:1, ev:[{t:t,g:1,ev:this.sequence[this.sequence.length-1]}]};
+                var t=((msg.t/this.snap)|0)*this.snap;
+                this.sequence.push({ t:t, n:msg.n|0, g:1, isSelected: true });
+                this.dragging={mode:DragModes.NOTES,target:Targets.NOTE_RIGHT,i:this.sequence.length-1, t:t, g:1, ev:[{t:t,g:1,ev:this.sequence[this.sequence.length-1]}]};
                 this.redraw();
             }
         };
         this.editDragMove=function(pos){
-            const ht=this.hitTest(pos);
+            const msg=this.getHoverMessage(pos);
             let ev,t;
             if(this.dragging.mode==DragModes.NOTES){
-                switch(this.dragging.m){
+                switch(this.dragging.target){
                 case Targets.NOTE_RIGHT:
                     if(this.dragging.ev){
-                        const dt=((Math.max(0,ht.t)/this.snap+0.9)|0)*this.snap - this.dragging.t - this.dragging.g;
+                        const dt=((Math.max(0,msg.t)/this.snap+0.9)|0)*this.snap - this.dragging.t - this.dragging.g;
                         const list=this.dragging.ev;
                         for(let i = list.length - 1; i >= 0; --i){
                             const ev = list[i].ev;
@@ -612,7 +613,7 @@ class Pianoroll extends HTMLElement {
                     break;
                 case Targets.NOTE_LEFT:
                     if(this.dragging.ev){
-                        const dt=((Math.max(0,ht.t)/this.snap+0.9)|0)*this.snap - this.dragging.t;
+                        const dt=((Math.max(0,msg.t)/this.snap+0.9)|0)*this.snap - this.dragging.t;
                         const list=this.dragging.ev;
                         for(let i = list.length - 1; i >= 0; --i){
                             const ev = list[i].ev;
@@ -629,13 +630,13 @@ class Pianoroll extends HTMLElement {
                     break;
 
                 ev=this.sequence[this.dragging.i];
-                    t=((Math.max(0,ht.t)/this.snap+0.5)|0)*this.snap;
+                    t=((Math.max(0,msg.t)/this.snap+0.5)|0)*this.snap;
                     ev.g=ev.t+ev.g-t;
                     ev.t=t;
                     if(ev.g<0){
                         ev.t+=ev.g;
                         ev.g=-ev.g;
-                        this.dragging.m=Targets.NOTE_RIGHT;
+                        this.dragging.target=Targets.NOTE_RIGHT;
                     }
                     else if(ev.g==0){
                         ev.t=t-1;
@@ -645,41 +646,41 @@ class Pianoroll extends HTMLElement {
                     break;
                 case Targets.NOTE_CENTER:
                     ev=this.sequence[this.dragging.i];
-                    this.moveSelectedNote((ht.t-this.dragging.t)|0, (ht.n|0)-this.dragging.n);
+                    this.moveSelectedNote((msg.t-this.dragging.t)|0, (msg.n|0)-this.dragging.n);
                     this.redraw();
                     break;
                 }
             }
         };
         this.editGridDown=function(pos){
-            const ht=this.hitTest(pos);
-            if(ht.m==Targets.UNSELECTED_NOTE){
-                this.delNote(ht.i);
-                this.dragging={mode:"G",m:"0"};
+            const msg=this.getHoverMessage(pos);
+            if(msg.target==Targets.UNSELECTED_NOTE){
+                this.delNote(msg.i);
+                this.dragging={mode:"G",target:"0"};
             }
-            else if(ht.m==Targets.EMPTY&&ht.t>=0){
-                const pt=Math.floor(ht.t);
+            else if(msg.target==Targets.EMPTY&&msg.t>=0){
+                const pt=Math.floor(msg.t);
                 if(this.editmode=="gridmono")
-                    this.delAreaNote(pt,1,ht.i);
-                this.addNote(pt,ht.n|0,1);
-                this.dragging={mode:"G",m:"1"};
+                    this.delAreaNote(pt,1,msg.i);
+                this.addNote(pt,msg.n|0,1);
+                this.dragging={mode:"G",target:"1"};
             }
         };
         this.editGridMove=function(pos){
-            const ht=this.hitTest(pos);
+            const msg=this.getHoverMessage(pos);
             if(this.dragging.mode=="G"){
-                switch(this.dragging.m){
+                switch(this.dragging.target){
                 case "1":
-                    const px=Math.floor(ht.t);
-                    if(ht.m==Targets.EMPTY){
+                    const px=Math.floor(msg.t);
+                    if(msg.target==Targets.EMPTY){
                         if(this.editmode=="gridmono")
-                            this.delAreaNote(px,1,ht.i);
-                        this.addNote(px,ht.n|0,1);
+                            this.delAreaNote(px,1,msg.i);
+                        this.addNote(px,msg.n|0,1);
                     }
                     break;
                 case "0":
-                    if(ht.m==Targets.UNSELECTED_NOTE)
-                        this.delNote(ht.i);
+                    if(msg.target==Targets.UNSELECTED_NOTE)
+                        this.delNote(msg.i);
                     break;
                 }
             }
@@ -758,14 +759,14 @@ class Pianoroll extends HTMLElement {
                 e = ev;
             this.rcTarget=this.canvas.getBoundingClientRect();
             this.downpos=this.getPos(e);
-            this.downht=this.hitTest(this.downpos);
+            this.downht=this.getHoverMessage(this.downpos);
 
             window.addEventListener("mousemove",this.bindpointermove,false);
             window.addEventListener("mouseup",this.bindcancel);
             window.addEventListener("contextmenu",this.bindcontextmenu);
 
             if(e.buttons==2||e.ctrlKey){
-                switch(this.downht.m){
+                switch(this.downht.target){
                 case Targets.NOTE_CENTER:
                 case Targets.NOTE_LEFT:
                 case Targets.NOTE_RIGHT:
@@ -834,8 +835,8 @@ class Pianoroll extends HTMLElement {
             if(this.dragging.mode==null) {
                 this.rcTarget=this.canvas.getBoundingClientRect();
                 const pos=this.getPos(e);
-                const ht=this.hitTest(pos);
-                switch(ht.m){
+                const msg=this.getHoverMessage(pos);
+                switch(msg.target){
                     case Targets.NOTE_RIGHT: this.canvas.style.cursor="e-resize"; break;
                     case Targets.NOTE_LEFT: this.canvas.style.cursor="w-resize"; break;
                     case Targets.NOTE_CENTER: this.canvas.style.cursor="move"; break;
@@ -853,7 +854,7 @@ class Pianoroll extends HTMLElement {
                 e = ev;
                 
             const pos=this.getPos(e);
-            const ht=this.hitTest(pos);
+            const msg=this.getHoverMessage(pos);
             switch(this.dragging.mode){
             case null:
                 if(this.xscroll)
@@ -862,7 +863,7 @@ class Pianoroll extends HTMLElement {
                     this.yoffset=this.dragging.offsy+(pos.y-this.dragging.y)*(this.yrange/this.height);
                 break;
             case "m":
-                if(ht.m=="m"){
+                if(msg.target=="m"){
                     this.menu.style.background="#ff6";
                 }
                 else {
@@ -871,8 +872,8 @@ class Pianoroll extends HTMLElement {
                 break;
             case DragModes.SELECTION:
                 this.dragging.p2=pos;
-                this.dragging.t2=ht.t;
-                this.dragging.n2=ht.n;
+                this.dragging.t2=msg.t;
+                this.dragging.n2=msg.n;
                 this.redraw();
                 break;
             case DragModes.MARKEND:
@@ -956,24 +957,24 @@ class Pianoroll extends HTMLElement {
                 delta = -e.detail/3;
 
             // TODO: use ctrl + wheel instead of hit test?
-            const ht=this.hitTest(pos);
-            if((this.wheelzoomx||this.wheelzoom) && e.ctrlKey) { //ht.m!=Targets.Y_RULER){ // && ht.m==Targets.X_RULER){
+            const msg=this.getHoverMessage(pos);
+            if((this.wheelzoomx||this.wheelzoom) && e.ctrlKey) { //msg.target!=Targets.Y_RULER){ // && msg.target==Targets.X_RULER){
                 if(delta>0){
-                    this.xoffset=ht.t-(ht.t-this.xoffset)/1.2
+                    this.xoffset=msg.t-(msg.t-this.xoffset)/1.2
                     this.xrange/=1.2;
                 }
                 else{
-                    this.xoffset=ht.t-(ht.t-this.xoffset)*1.2
+                    this.xoffset=msg.t-(msg.t-this.xoffset)*1.2
                     this.xrange*=1.2;
                 }
             }
-            else if (this.wheelzoomy||this.wheelzoom) { // && ht.m==Targets.Y_RULER){
+            else if (this.wheelzoomy||this.wheelzoom) { // && msg.target==Targets.Y_RULER){
                 if(delta>0){
-                    this.yoffset=ht.n-(ht.n-this.yoffset)/1.2
+                    this.yoffset=msg.n-(msg.n-this.yoffset)/1.2
                     this.yrange/=1.2;
                 }
                 else{
-                    this.yoffset=ht.n-(ht.n-this.yoffset)*1.2
+                    this.yoffset=msg.n-(msg.n-this.yoffset)*1.2
                     this.yrange*=1.2;
                 }
 
