@@ -516,12 +516,13 @@ class Pianoroll extends HTMLElement {
                 }
             }
         };
-        this.delSelectedNote=function(){
-            const l=this.sequence.length;
-            for(let i=l-1;i>=0;--i){
-                const ev=this.sequence[i];
-                if(ev.isSelected)
-                    this.sequence.splice(i,1);
+        this.deleteSelectedNotes=function() {
+            for (let i = this.sequence.length-1; i>=0; --i) {
+                const note = this.sequence[i]
+                if(note.isSelected) 
+                {
+                    this.sequence.splice(i, 1)
+                }
             }
         };
         this.moveSelectedNote=function(dt,dn){
@@ -758,7 +759,7 @@ class Pianoroll extends HTMLElement {
         this.keydown=function(e){
             switch(e.keyCode){
             case 46://delNote
-                this.delSelectedNote();
+                this.deleteSelectedNotes();
                 this.redraw();
                 break;
             }
@@ -934,7 +935,7 @@ class Pianoroll extends HTMLElement {
                 this.menu.style.display="none";
                 this.rcMenu={x:0,y:0,width:0,height:0};
                 if(pos.target==this.menu)
-                    this.delSelectedNote();
+                    this.deleteSelectedNotes();
                 this.redraw();
             }
             if(this.dragging.mode==DragModes.SELECTION){

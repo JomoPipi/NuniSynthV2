@@ -104,10 +104,12 @@ export class MonoPianoRollControls {
 
         this.controller.appendChild(this.body)
 
-        this.body.addEventListener("mousedown",this.pointerdown.bind(this), true)
-        this.canvas.addEventListener('mousemove',this.mousemove.bind(this),false)
-        // this.canvas.addEventListener('keydown',this.keydown.bind(this),false)
-        this.canvas.addEventListener('wheel',this.wheel.bind(this),false)
+        this.body.addEventListener("mousedown", this.pointerdown.bind(this), true)
+        this.canvas.addEventListener('mousemove', this.mousemove.bind(this),false)
+
+        //wtf why doesn't it work:
+        this.canvas.addEventListener('keydown', this.keydown.bind(this),false)
+        this.canvas.addEventListener('wheel', this.wheel.bind(this),false)
 
         this.bindcontextmenu = this.contextmenu.bind(this)
         this.bindpointermove = this.pointermove.bind(this)
@@ -738,6 +740,26 @@ export class MonoPianoRollControls {
         
         this.layout()
         e.preventDefault()
+    }
+
+    private keydown(e : KeyboardEvent) {
+        log(e.key, e.key === "Delete")
+        switch(e.key) {
+            case "Delete":
+                this.deleteSelectedNotes()
+                this.redraw()
+                break;
+        }
+    }
+
+    private deleteSelectedNotes() {
+        for (let i = this.sequence.length-1; i >= 0; --i) {
+            const note = this.sequence[i]
+            if(note.isSelected) 
+            {
+                this.sequence.splice(i, 1)
+            }
+        }
     }
 }
 
