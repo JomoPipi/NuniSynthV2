@@ -106,10 +106,9 @@ export class MonoPianoRollControls {
 
         this.body.addEventListener("mousedown", this.pointerdown.bind(this), true)
         this.canvas.addEventListener('mousemove', this.mousemove.bind(this),false)
-
-        //wtf why doesn't it work:
         this.canvas.addEventListener('keydown', this.keydown.bind(this),false)
         this.canvas.addEventListener('wheel', this.wheel.bind(this),false)
+        this.canvas.tabIndex = -1 // Needed for keydown event to work.
 
         this.bindcontextmenu = this.contextmenu.bind(this)
         this.bindpointermove = this.pointermove.bind(this)
@@ -743,7 +742,6 @@ export class MonoPianoRollControls {
     }
 
     private keydown(e : KeyboardEvent) {
-        log(e.key, e.key === "Delete")
         switch(e.key) {
             case "Delete":
                 this.deleteSelectedNotes()
