@@ -107,7 +107,7 @@ export class MonoPianoRollControls {
         this.body.addEventListener("mousedown",this.pointerdown.bind(this), true)
         this.canvas.addEventListener('mousemove',this.mousemove.bind(this),false)
         // this.canvas.addEventListener('keydown',this.keydown.bind(this),false)
-        // this.canvas.addEventListener('mousewheel',this.wheel.bind(this),false)
+        this.canvas.addEventListener('wheel',this.wheel.bind(this),false)
 
         this.bindcontextmenu = this.contextmenu.bind(this)
         this.bindpointermove = this.pointermove.bind(this)
@@ -280,6 +280,7 @@ export class MonoPianoRollControls {
             this.ctx.fillRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y)
         }
     }
+
 
 
 
@@ -650,10 +651,7 @@ export class MonoPianoRollControls {
         }
         this.redraw()
         this.dragging.mode = DragModes.NONE
-        if (this.sequenceShouldBeSorted)
-        {
-            this.sortSequence()
-        }
+        if (this.sequenceShouldBeSorted) this.sortSequence()
         this.sequenceShouldBeSorted = false
 
         window.removeEventListener("mousemove",this.bindpointermove,false)
@@ -668,20 +666,17 @@ export class MonoPianoRollControls {
     private selectNotes() {
         let { t1, t2, n1, n2 } = this.dragging
         
-        let t, i = 0, note = this.sequence[i];
+        let t
         if(n1>n2)
             t=n1,n1=n2,n2=t;
         if(t1>t2)
             t=t1,t1=t2,t2=t;
             
-        while(note){
-            if(t1 <= note.time && note.time < t2 && n1 <= note.n && note.n <= n2)
-                note.isSelected = true
-            else
-            {
-                note.isSelected = false
-            }
-            note = this.sequence[++i];
+        for (const note of this.sequence)
+        {
+            note.isSelected =
+                t1 <= note.time && note.time < t2 && 
+                n1 <= note.n && note.n <= n2
         }
     }
 
@@ -728,6 +723,21 @@ export class MonoPianoRollControls {
 
     private sortSequence() {
         this.sequence.sort((x,y) => x.time - y.time);
+    }
+
+    private wheel(e : WheelEvent) {
+        const position = this.getPosition(e)
+        const msg = this.getHoverMessage(position)
+        const factor = 1 + e.deltaY / 500
+        const [offset, range, x] = e.ctrlKey
+            ? ['xoffset', 'xrange', 'time'] as const
+            : ['yoffset', 'yrange', 'n']    as const
+
+        this[offset] = msg[x] + (this[offset] - msg[x]) * factor
+        this[range] *= factor
+        
+        this.layout()
+        e.preventDefault()
     }
 }
 
