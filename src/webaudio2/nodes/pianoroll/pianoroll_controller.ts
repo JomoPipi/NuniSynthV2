@@ -23,6 +23,9 @@ const X_START = RULER_WIDTH + KB_WIDTH
 // Possible future class members:
 const SNAP = 1
 
+// TODO - remove:
+const length : undefined = undefined
+
 const Targets =
     { UNSELECTED_NOTE: "n"
     , NOTE_CENTER: "N"
@@ -41,7 +44,7 @@ const DragModes =
     , NOTES: "D"
     , NONE: 'none'
     } as const
-
+    
 export class MonoPianoRollControls {
 
     controller = E('div', { className: 'pianoroll-controller' })
@@ -127,13 +130,14 @@ export class MonoPianoRollControls {
             , n1: -1
             , n2: -1
             , time: -1
-            , endTime: -1
+            , length: -1
             , offsetx: -1
             , offsety: -1
             , notes: []
             }
         
-        this.layout()
+        // Wait an iteration of the event loop for properties to be set:
+        requestAnimationFrame(() => this.layout())
     }
 
     scheduleNotes() {}
@@ -199,7 +203,6 @@ export class MonoPianoRollControls {
         for (const { time, length, isSelected, n } of this.sequence)
         {
             this.ctx.fillStyle = isSelected ? 'red' : 'green'
-            this.ctx.strokeStyle = isSelected ? 'white' : 'black'
             const w = length * this.stepWidth
             const x = (time - this.xoffset) * this.stepWidth + X_START
             const x2 = x + w | 0
@@ -207,9 +210,13 @@ export class MonoPianoRollControls {
             const y = this.height - (n - this.yoffset) * this.stepHeight
             const y2 = y - this.stepHeight | 0
             const y3 = y | 0
-            this.ctx.rect(x3, y3, x2 - x3, y2 - y3)
-            this.ctx.fill()
-            this.ctx.stroke()
+            this.ctx.beginPath()
+            this.ctx.fillRect(x3, y3, x2 - x3, y2 - y3)
+            this.ctx.fillStyle = isSelected ? 'white' : 'black'
+            this.ctx.fillRect(x3,y3,1,y2-y3);
+            this.ctx.fillRect(x2,y3,1,y2-y3);
+            this.ctx.fillRect(x3,y3,x2-x3,1);
+            this.ctx.fillRect(x3,y2,x2-x3,1);
         }
     }
 
@@ -299,24 +306,23 @@ export class MonoPianoRollControls {
         switch (e.target)
         {
             case this.markendImage:
-                // this.dragging.mode = "E"
+                this.dragging.mode = DragModes.MARKEND
                 this.dragging.x = position.x
                 this.dragging.markerPosition = this.markend
-                this.dragging.mode = DragModes.MARKEND
                 e.preventDefault()
                 e.stopPropagation()
                 return false
             case this.markstartImage:
+                this.dragging.mode = DragModes.MARKSTART
                 this.dragging.x = position.x
                 this.dragging.markerPosition = this.markstart
-                this.dragging.mode = DragModes.MARKSTART
                 e.preventDefault()
                 e.stopPropagation()
                 return false
             case this.playheadImage:
+                this.dragging.mode = DragModes.PLAYHEAD
                 this.dragging.x = position.x
                 this.dragging.markerPosition = this.playhead
-                this.dragging.mode = DragModes.PLAYHEAD
                 e.preventDefault()
                 e.stopPropagation()
                 return false
@@ -341,11 +347,7 @@ export class MonoPianoRollControls {
         return { x, y, target: e.target }
     }
 
-    private getHoverMessage(input : any) {
-        return trace(this._getHoverMessage(input))
-    }
-
-    private _getHoverMessage({ x, y, target } : Position) {
+    private getHoverMessage({ x, y, target } : Position) {
         const time = this.xoffset + (x - X_START) / this.gridWidth * this.xrange
         const n = this.yoffset + (this.height - y) / this.stepHeight
         const message : HoverMessage = { time, n, i: -1, target: Targets.EMPTY }
@@ -444,7 +446,7 @@ export class MonoPianoRollControls {
             this.dragging.target = Targets.NOTE_RIGHT
             this.dragging.i = msg.i
             this.dragging.time = note.time
-            this.dragging.endTime = note.length
+            this.dragging.length = note.length
             this.dragging.notes = this.getSelectedNotes()
         }
         else if (msg.target === Targets.NOTE_LEFT)
@@ -454,15 +456,15 @@ export class MonoPianoRollControls {
             this.dragging.target = Targets.NOTE_LEFT
             this.dragging.i = msg.i
             this.dragging.time = note.time
-            this.dragging.endTime = note.length
+            this.dragging.length = note.length
             this.dragging.notes = this.getSelectedNotes()
         }
         else if (msg.target === Targets.EMPTY && msg.time >= 0)
         {
             this.clearSelection()
-            const t = (msg.time / SNAP | 0) * SNAP
+            const time = (msg.time / SNAP | 0) * SNAP
             const note =
-                { time: t
+                { time
                 , n: msg.n|0
                 , length: 1
                 , isSelected: true
@@ -473,9 +475,9 @@ export class MonoPianoRollControls {
             this.dragging.mode = DragModes.NOTES
             this.dragging.target = Targets.NOTE_RIGHT
             this.dragging.i = this.sequence.length - 1
-            this.dragging.time = t
-            this.dragging.endTime = 1
-            this.dragging.notes = [{ time: t, length: 1, note, i: -1 }]
+            this.dragging.time = time
+            this.dragging.length = 1
+            this.dragging.notes = [{ time, length: 1, note, i: -1 }]
             this.redraw()
         }
     }
@@ -564,8 +566,8 @@ export class MonoPianoRollControls {
                 {
                     const dt 
                         = (Math.max(0,msg.time) / SNAP + 0.9 | 0) * SNAP 
-                        - this.dragging.t1
-                        - this.dragging.t2
+                        - this.dragging.time
+                        - this.dragging.length
                     const notes = this.dragging.notes
                     for (let i = notes.length - 1; i >= 0; --i)
                     {
@@ -582,7 +584,7 @@ export class MonoPianoRollControls {
                 {
                     const dt 
                         = (Math.max(0,msg.time) / SNAP + 0.9 | 0) * SNAP 
-                        - this.dragging.t1
+                        - this.dragging.time
                     const notes = this.dragging.notes
                     for (let i = notes.length - 1; i >= 0; --i)
                     {
@@ -596,10 +598,9 @@ export class MonoPianoRollControls {
                 break
 
             case Targets.NOTE_CENTER:
-                const note = this.sequence[this.dragging.i]
                 this.moveSelectedNote(
-                    msg.time - this.dragging.t1 | 0,
-                    msg.n - this.dragging.n | 0)
+                    msg.time - this.dragging.time | 0,
+                    (msg.n|0) - this.dragging.n)
                 this.redraw()
                 break
         }
@@ -648,7 +649,7 @@ export class MonoPianoRollControls {
             }
         }
         this.redraw()
-        this.dragging.mode === DragModes.NONE
+        this.dragging.mode = DragModes.NONE
         if (this.sequenceShouldBeSorted)
         {
             this.sortSequence()
@@ -657,6 +658,8 @@ export class MonoPianoRollControls {
 
         window.removeEventListener("mousemove",this.bindpointermove,false)
         window.removeEventListener("mouseup",this.bindcancel,false)
+        window.removeEventListener("contextmenu", this.bindcontextmenu)
+
         e.preventDefault()
         e.stopPropagation()
         return false
@@ -664,11 +667,13 @@ export class MonoPianoRollControls {
 
     private selectNotes() {
         let { t1, t2, n1, n2 } = this.dragging
+        
         let t, i = 0, note = this.sequence[i];
         if(n1>n2)
             t=n1,n1=n2,n2=t;
         if(t1>t2)
             t=t1,t1=t2,t2=t;
+            
         while(note){
             if(t1 <= note.time && note.time < t2 && n1 <= note.n && note.n <= n2)
                 note.isSelected = true
@@ -680,36 +685,45 @@ export class MonoPianoRollControls {
         }
     }
 
-    private deleteAreaOfNote(t1 : number, t2 : number, j : number) {
+    private deleteAreaOfNote(time : number, length : number, j : number) {
         for (let i = this.sequence.length - 1; i >= 0; --i)
         {
             const note = this.sequence[i]
             if (i !== j)
             {
-                if (t1 <= note.time && note.time + note.length <= t1 + t2)
+                if (time <= note.time && note.time + note.length <= time + length)
                 {
                     this.sequence.splice(i, 1)
                 }
-                else if (t1 <= note.time && note.time < t1+t2 && note.time+note.length > t1+t2)
+                else if (time <= note.time && note.time < time + length && 
+                note.time + note.length > time + length)
                 {
-                    note.length = note.time + note.length - t1 - t2
-                    note.time = t1 + t2
+                    note.length = note.time + note.length - time - length
+                    note.time = time + length
                 }
-                else if (t1 > note.time && t1 + t2 < note.time + note.length)
+                else if (note.time <= time && time < note.time + note.length &&
+                time + length >= note.time + note.length)
                 {
-                    this.addNote(t1 + t2, note.n, note.time + note.length - t1 - t2)
-                    note.length = t1 - note.time
+                    note.length = time - note.time
+                }
+                else if (time > note.time && time + length < note.time + note.length)
+                {
+                    this.addNote(time + length, note.n, note.time + note.length - time - length)
+                    note.length = time - note.time
                 }
             }
         }
     }
 
-    private addNote(time : number, n : number, t2 : number)
+    private addNote(time : number, n : number, length : number)
     {
-        const note = { time, length, n, lastN: -1, lastT: -1, isSelected: true }
-        this.sequence.push(note)
-        this.sortSequence()
-        this.redraw()
+        if (time >= 0 && 0 <= n && n < 128)
+        {
+            const note = { time, length, n, lastN: -1, lastT: -1, isSelected: true }
+            this.sequence.push(note)
+            this.sortSequence()
+            this.redraw()
+        }
     }
 
     private sortSequence() {
@@ -744,7 +758,7 @@ type DragData = {
     i : number
     n : number
     time : number
-    endTime : number
+    length : number
     p1 : Point
     p2 : Point
     t1 : number
