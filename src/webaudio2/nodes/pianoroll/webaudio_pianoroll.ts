@@ -1180,11 +1180,7 @@ class Pianoroll extends HTMLElement {
     connectedCallback() {
         
     }
-    sendEvent(ev) {
-        const event = document.createEvent("HTMLEvents");
-        event.initEvent(ev,false,true);
-        this.dispatchEvent(event);
-    }
+    
     getAttr(n,def){
         let v=this.getAttribute(n);
         if(v==""||v==null) return def;

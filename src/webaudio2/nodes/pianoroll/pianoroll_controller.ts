@@ -5,6 +5,14 @@
 
 
 
+import { MasterClock } from "../../sequencers/master_clock.js"
+
+
+
+
+
+
+
 type NoteEvent = { start : number, end : number, n : number }
 type PlayCallback = (noteEvent : NoteEvent) => void
 
@@ -79,9 +87,11 @@ export class MonoPianoRollControls {
     private bindcancel      : MouseHandler
 
     private sequenceShouldBeSorted = false
+    private playCallback : PlayCallback
 
-    constructor(audioCtx : AudioContext) {
+    constructor(audioCtx : AudioContext, playCallback : PlayCallback) {
         this.audioCtx = audioCtx
+        this.playCallback = playCallback
 
         this.body = E('div', { className: 'wac-body' })
         this.keyboardImage = E('div', { className: 'wac-kb' })
@@ -139,14 +149,88 @@ export class MonoPianoRollControls {
         
         // Wait an iteration of the event loop for properties to be set:
         requestAnimationFrame(() => this.layout())
+        this.setTempo(MasterClock.getTempo())
+        this.subdiv = 16
     }
 
     scheduleNotes() {}
-    setTempo(tempo : number) {}
-    play(playCallback : PlayCallback) {}
+    setTempo(tempo : number) {
+        this.tempo = clamp(1, tempo, Infinity)
+        this.tick = (60 * 4 / tempo) / this._subdiv
+        this.restart()
+    }
     getMMLString() { return '' }
     setMMLString(s : string) {}
 
+    set subdiv(subdivision : number) {
+        this._subdiv = subdivision
+        this.tick = (60 * 4 / this.tempo) / this._subdiv
+        this.restart()
+    }
+    get subdiv() {
+        return this._subdiv
+    }
+
+    private tempo = 120
+    private tick = -1
+    private _subdiv = 16
+
+    play() {
+        const tick = this.tick
+        const nSteps = this.markend - this.markstart
+        const loopLength = tick * nSteps
+        const t = Math.max(0, this.audioCtx.currentTime - loopLength)
+
+        const startIndex = (idx => idx < 0 ? 0 : idx)
+            (this.sequence.findIndex(note => note.time >= this.markstart))
+
+        const endIndex = (idx => idx < 0 ? this.sequence.length : idx)
+            (this.sequence.findIndex(note => note.time > this.markend))
+
+        const elapsedLoops = Math.floor(t / loopLength)
+        
+        let loopTime = elapsedLoops * loopLength
+        let noteTime = loopTime
+        let noteIndex = startIndex
+
+        this.scheduleNotes = () => {
+            const currentTime = this.audioCtx.currentTime
+            this.playhead = this.markstart + (currentTime % loopLength) * nSteps / loopLength
+            this.redrawPlayhead()
+            if (!this.sequence.length) return;
+
+            while (noteTime < currentTime + 0.200)
+            {
+                if (noteTime > currentTime)
+                {
+                    const { length, n } = this.sequence[noteIndex]
+                    this.playCallback({ start: noteTime, end: noteTime + length * tick, n })
+                }
+                ++noteIndex
+                if (noteIndex >= endIndex)
+                {
+                    noteIndex = startIndex
+                    loopTime += loopLength
+                }
+                else if (noteIndex < startIndex)
+                {
+                    noteIndex = startIndex
+                }
+                noteTime = loopTime + this.sequence[noteIndex].time * tick
+            }
+        }
+    }
+
+    private stop() {
+        this.scheduleNotes = () => void 0
+    }
+
+    private restart() {
+        this.stop()
+        this.play()
+    }
+
+    // Rendering functions |||||||||||||||||||||||||||||||||||||||||||||||
     private layout() {
         this.canvas.width = this.width
         this.body.style.width = 
@@ -265,12 +349,16 @@ export class MonoPianoRollControls {
 
     private redrawMarker() {
         const start = (this.markstart - this.xoffset) * this.stepWidth + X_START
-        const now = (this.playhead - this.xoffset) * this.stepWidth + X_START
         const end = (this.markend - this.xoffset) * this.stepWidth + X_START
         const endOffset = -24
         this.markstartImage.style.left = start + 'px'
-        this.playheadImage.style.left = now + 'px'
         this.markendImage.style.left = (end + endOffset) + 'px'
+        this.redrawPlayhead()
+    }
+
+    private redrawPlayhead() {
+        const now = (this.playhead - this.xoffset) * this.stepWidth + X_START
+        this.playheadImage.style.left = now + 'px'
     }
 
     private redrawSelectedArea() {
@@ -281,6 +369,7 @@ export class MonoPianoRollControls {
             this.ctx.fillRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y)
         }
     }
+    //                     |||||||||||||||||||||||||||||||||||||||||||||||
 
 
 
@@ -481,6 +570,7 @@ export class MonoPianoRollControls {
             this.dragging.length = 1
             this.dragging.notes = [{ time, length: 1, note, i: -1 }]
             this.redraw()
+            this.restart()
         }
     }
 
@@ -535,7 +625,7 @@ export class MonoPianoRollControls {
                 break
             
             case DragModes.MARKSTART:
-                const y = Math.max(1
+                const y = Math.max(0
                     , this.dragging.markerPosition 
                     + (position.x - this.dragging.x) 
                     / this.stepWidth +.5
@@ -650,6 +740,12 @@ export class MonoPianoRollControls {
                 }
             }
         }
+        if (this.dragging.mode === DragModes.MARKSTART 
+         || this.dragging.mode === DragModes.MARKEND
+         || this.dragging.mode === DragModes.NOTES)
+        {
+            this.restart()
+        }
         this.redraw()
         this.dragging.mode = DragModes.NONE
         if (this.sequenceShouldBeSorted) this.sortSequence()
@@ -751,13 +847,16 @@ export class MonoPianoRollControls {
     }
 
     private deleteSelectedNotes() {
+        let restart = false
         for (let i = this.sequence.length-1; i >= 0; --i) {
             const note = this.sequence[i]
             if(note.isSelected) 
             {
                 this.sequence.splice(i, 1)
+                restart = true
             }
         }
+        if (restart) this.restart()
     }
 }
 
