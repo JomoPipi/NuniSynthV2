@@ -122,6 +122,7 @@ export function addResizability(
                 dialogBox.style.height = H + 'px'
             }
         }
+        resizeCallback(H, W)
     }
 
     return [topRow, middleRowContainer, bottomRow]

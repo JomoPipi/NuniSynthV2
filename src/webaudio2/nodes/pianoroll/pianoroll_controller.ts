@@ -159,8 +159,180 @@ export class MonoPianoRollControls {
         this.tick = (60 * 4 / tempo) / this._subdiv
         this.restart()
     }
-    getMMLString() { return '' }
-    setMMLString(s : string) {}
+    getMMLString() {
+        function makeNote(n : any,l : any,tb : any){
+            let mmlnote="";
+            let ltab=[
+                [960,"1"],[840,"2.."],[720,"2."],[480,"2"],
+                [420,"4.."],[360,"4."],[240,"4"],
+                [210,"8.."],[180,"8."],[120,""],
+                [105,"16.."],[90,"16."],[60,"16"],
+                [45,"32."],[30,"32"],[16,"60"],[15,"64"],
+                [8,"120"],[4,"240"],[2,"480"],[1,"960"]
+            ] as any
+            l=l*960/tb;
+            while(l>0){
+                for(let j=0;j<ltab.length;++j){
+                    while(l>=ltab[j][0]){
+                        l-=ltab[j][0];
+                        mmlnote+="&"+n+ltab[j][1];
+                    }
+                }
+            }
+            return mmlnote.substring(1);
+        }
+        let mml="t"+this.tempo+"o4l8";
+        let ti=0,meas=0,oct=5,n;
+        let notes=["c","d-","d","e-","e","f","g-","g","a-","a","b-","b"];
+        for(let i=0;i<this.sequence.length;++i) {
+            let ev=this.sequence[i];
+            if(ev.time>ti) {
+                let l=ev.time-ti;
+                mml+=makeNote("r",l,this._subdiv);
+                ti=ev.time;
+            }
+            let n=ev.n as any;
+            if(n<oct*12||n>=oct*12+12){
+                oct=(n/12)|0;
+                mml+="o"+(oct-1);
+            }
+            n=notes[n%12];
+            let l=ev.length;
+            if(i+1<this.sequence.length) {
+                let ev2=this.sequence[i+1];
+                if(ev2.time<ev.time+l) {
+                    l=ev2.time-ev.time;
+                    ti=ev2.time;
+                }
+                else
+                    ti=ev.time+ev.length;
+            }
+            else
+                ti=ev.time+ev.length;
+            mml+=makeNote(n,l,this._subdiv);
+        }
+        return mml;
+    }
+    setMMLString(s : string) {
+        this.sequence=[];
+        let [i,l,n,t,defo,defl,tie,evlast] : any[] = [];
+        const parse={s:s,i:i,tb:this._subdiv};
+        function getNum(p : any){
+            let n = 0, x = 1
+            if (p.s[p.i] === '-')
+            {
+                ++p.i
+                x = -1
+            }
+            while(p.s[p.i]>="0"&&p.s[p.i]<="9"){
+                n=n*10+parseInt(p.s[p.i]);
+                ++p.i;
+            }
+            return n * x;
+        }
+        function getLen(p : any){
+            let n=getNum(p);
+            if(n==0)
+                n=defl
+            n=p.tb/n;
+            let n2=n;
+            while(p.s[p.i]=="."){
+                ++p.i;
+                n+=(n2>>=1);
+            }
+            return n;
+        }
+        function getNote(p : any){
+            switch(p.s[p.i]){
+            case "c": case "C": n=0; break;
+            case "d": case "D": n=2; break;
+            case "e": case "E": n=4; break;
+            case "f": case "F": n=5; break;
+            case "g": case "G": n=7; break;
+            case "a": case "A": n=9; break;
+            case "b": case "B": n=11; break;
+            default:
+                n=-1;
+            }
+            ++p.i;
+            if(n<0)
+                return -1;
+            for(;;){
+                switch(p.s[p.i]){
+                case "-": --n; break;
+                case "+": ++n; break;
+                case "#": ++n; break;
+                default:
+                    return n;
+                }
+                ++p.i;
+            }
+        }
+        defo=4;
+        defl=8;
+        t=0;
+        tie=0;
+        evlast=null;
+        let z = 0
+        for(parse.i=0;parse.i<parse.s.length;){
+            switch (parse.s[parse.i]) {
+            case '>':
+                ++parse.i; ++defo; n=-1; l=0;
+                break;
+            case '<':
+                ++parse.i; --defo; n=-1; l=0;
+                break;
+            case '&': case '^':
+                ++parse.i; tie=1; n=-1; l=0;
+                break;
+            case 't': case 'T':
+                ++parse.i; n=-1; l=0;
+                this.setTempo(getNum(parse));
+                break;
+            case 'o': case 'O':
+                ++parse.i; n=-1; l=0;
+                defo=getNum(parse);
+                break;
+            case 'l': case 'L':
+                ++parse.i; n=-1; l=0;
+                defl=getNum(parse);
+                break;
+            case 'r': case 'R':
+                ++parse.i; n=-1;
+                l=getLen(parse);
+                break;
+            default:
+                n=getNote(parse);
+                if(n>=0)
+                    l=getLen(parse);
+                else
+                    l=0;
+                break;
+            }
+            if(n>=0){
+                n=(defo+1)*12+n;
+                if(tie && evlast && evlast.n==n){
+                    evlast.length+=l;
+                    tie=0;
+                }
+                else
+                    this.sequence.push(evlast = 
+                        { time:t
+                        , n
+                        , length: l
+                        , isSelected: false
+                        , lastT: -1
+                        , lastN: -1
+                        })
+            }
+            t+=l;
+        }
+        // Warining: replacing this.layout
+        // with this.redraw here 
+        // can cause it to crash:
+        this.layout()
+        this.restart()
+    }
 
     set subdiv(subdivision : number) {
         this._subdiv = subdivision
@@ -188,7 +360,7 @@ export class MonoPianoRollControls {
             (this.sequence.findIndex(note => note.time > this.markend))
 
         const elapsedLoops = Math.floor(t / loopLength)
-        
+
         let loopTime = elapsedLoops * loopLength
         let noteTime = loopTime
         let noteIndex = startIndex

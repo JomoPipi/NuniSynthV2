@@ -42,7 +42,7 @@ export class MonoPianoRoll
                 }
             })
         }
-        
+
         this.play()
     }
 
