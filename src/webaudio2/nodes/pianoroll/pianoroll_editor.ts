@@ -49,9 +49,10 @@ const DragModes =
     , NONE: 'none'
     } as const
     
-export class MonoPianoRollControls {
+export class  PianoRollEditor {
 
     controller = E('div', { className: 'pianoroll-controller' })
+    snapToGrid : boolean = true
 
     private audioCtx : AudioContext
     private body : HTMLDivElement
@@ -98,7 +99,6 @@ export class MonoPianoRollControls {
 
         this.markstartImage.src = markstartsrc
         this.markendImage.src = markendsrc
-        // this.playheadImage.src = playheadsrc
         this.keyboardImage.style.background = `url("${keyboardsrc}")`
 
         this.body.append(
@@ -727,11 +727,12 @@ export class MonoPianoRollControls {
         else if (msg.target === Targets.EMPTY && msg.time >= 0)
         {
             this.clearSelection()
-            const time = (msg.time / SNAP | 0) * SNAP
+            const time = this.snapToGrid ? (msg.time / SNAP | 0) * SNAP : msg.time
+            const length = this.snapToGrid ? 1 : 0.2
             const note =
                 { time
                 , n: msg.n|0
-                , length: 1
+                , length
                 , isSelected: true
                 , lastN: -1
                 , lastT: -1
@@ -741,8 +742,8 @@ export class MonoPianoRollControls {
             this.dragging.target = Targets.NOTE_RIGHT
             this.dragging.i = this.sequence.length - 1
             this.dragging.time = time
-            this.dragging.length = 1
-            this.dragging.notes = [{ time, length: 1, note, i: -1 }]
+            this.dragging.length = length
+            this.dragging.notes = [{ time, length, note, i: -1 }]
             this.redraw()
             this.restart()
         }
@@ -830,16 +831,18 @@ export class MonoPianoRollControls {
             case Targets.NOTE_RIGHT:
                 if (this.dragging.notes.length)
                 {
+                    const notes = this.dragging.notes
+                    const time = Math.max(0,msg.time)
                     const dt 
-                        = (Math.max(0,msg.time) / SNAP + 0.9 | 0) * SNAP 
+                        = (this.snapToGrid ? (time / SNAP + 0.9 | 0) * SNAP : time)
                         - this.dragging.time
                         - this.dragging.length
-                    const notes = this.dragging.notes
+                    const minLength = this.snapToGrid ? 1 : 0.2
                     for (let i = notes.length - 1; i >= 0; --i)
                     {
                         const note = notes[i].note
                         note.length = notes[i].length + dt
-                        if (note.length <= 0) note.length = 1
+                        if (note.length <= 0) note.length = minLength
                     }
                 }
                 this.redraw()
@@ -848,10 +851,12 @@ export class MonoPianoRollControls {
             case Targets.NOTE_LEFT:
                 if (this.dragging.notes.length)
                 {
-                    const dt 
-                        = (Math.max(0,msg.time) / SNAP + 0.9 | 0) * SNAP 
-                        - this.dragging.time
                     const notes = this.dragging.notes
+                    const time = Math.max(0, msg.time)
+                    const dt = (this.snapToGrid
+                        ? (time / SNAP + 0.9 | 0) * SNAP
+                        : time) - this.dragging.time
+
                     for (let i = notes.length - 1; i >= 0; --i)
                     {
                         const note = notes[i].note
@@ -865,7 +870,7 @@ export class MonoPianoRollControls {
 
             case Targets.NOTE_CENTER:
                 this.moveSelectedNote(
-                    msg.time - this.dragging.time | 0,
+                    this.snapToGrid ? msg.time - this.dragging.time | 0 : msg.time - this.dragging.time,
                     (msg.n|0) - this.dragging.n)
                 this.redraw()
                 break
@@ -886,8 +891,10 @@ export class MonoPianoRollControls {
         {
             if (note.isSelected)
             {
-                note.time = ((note.lastT + dt) / SNAP + .5 | 0) * SNAP
                 note.n = note.lastN + dn
+                note.time = this.snapToGrid 
+                    ? ((note.lastT + dt) / SNAP + .5 | 0) * SNAP 
+                    : note.lastT + dt
             }
         }
     }

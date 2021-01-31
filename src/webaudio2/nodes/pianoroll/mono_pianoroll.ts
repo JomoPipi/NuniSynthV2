@@ -5,7 +5,8 @@
 
 
 
-import { MonoPianoRollControls } from "./pianoroll_controller.js"
+import { createToggleButton } from "../../../UI_library/internal.js"
+import { PianoRollEditor } from "./pianoroll_editor.js"
 
 
 
@@ -19,7 +20,8 @@ export class MonoPianoRoll
     isPlaying = true
     private ctx : AudioContext
     private csn : ConstantSourceNode
-    private pianoRoll : MonoPianoRollControls
+    private pianoRoll : PianoRollEditor
+    private controller? : HTMLElement
 
     constructor(ctx : AudioContext) {
         this.ctx = ctx
@@ -29,7 +31,7 @@ export class MonoPianoRoll
             this.csn.offset.setValueAtTime(n * 100, start)
             this.csn.offset.setValueAtTime(0, end)
         }
-        this.pianoRoll = new MonoPianoRollControls(this.ctx, playCallback)
+        this.pianoRoll = new PianoRollEditor(this.ctx, playCallback)
 
         for (const prop of Object.keys(Transferable_Pianoroll_properties))
         {
@@ -54,8 +56,14 @@ export class MonoPianoRoll
         this.csn.disconnect(destination)
     }
 
+    private readonly SidePanelWidth = 100
     getController() {
-        return this.pianoRoll.controller
+        if (this.controller) return this.controller
+        const sidepanel = E('div')
+        sidepanel.style.width = this.SidePanelWidth + 'px'
+        sidepanel.appendChild(createToggleButton(this.pianoRoll, 'snapToGrid', { text: 'snap to grid' }))
+        this.controller = E('div', { className: 'flat-grid', children: [sidepanel, this.pianoRoll.controller] })
+        return this.controller
     }
     
     scheduleNotes() {
@@ -83,6 +91,6 @@ export class MonoPianoRoll
     
     updateBoxDimensions(H : number, W : number) {
         const barHeight = 25 // height of .draggable-window-bar
-        this.pianoRoll.setDimensions(H - barHeight, W)
+        this.pianoRoll.setDimensions(H - barHeight, W - this.SidePanelWidth)
     }
 }

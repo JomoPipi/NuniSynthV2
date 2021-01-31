@@ -9,7 +9,7 @@ import { NuniGraphNode } from '../model/nunigraph_node.js'
 import 
     { NuniSourceNode, NuniSampleNode, Sequencer
     , NuniRecordingNode, NuniGraphAudioNode
-    , MasterClock, PianoRoll12Tone, AutomationNode 
+    , MasterClock, AutomationNode 
     } from '../../webaudio2/internal.js'
 import 
     { createNumberDialComponent3, createResizeableCanvas, createToggleButton
@@ -112,10 +112,10 @@ export function createValuesWindow(
         controls.appendChild(activateKeyboardButton(audioNode))
     }
 //////////////////////////////////////////////////////////
-    if (audioNode instanceof PianoRoll12Tone)
-    {
-        controls.appendChild(audioNode.pianoRoll)
-    }
+    // if (audioNode instanceof PianoRoll12Tone)
+    // {
+    //     controls.appendChild(audioNode.pianoRoll)
+    // }
     if (audioNode instanceof MonoPianoRoll)
     {
         controls.appendChild(audioNode.getController())
