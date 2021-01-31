@@ -402,6 +402,12 @@ export class MonoPianoRollControls {
         this.play()
     }
 
+    setDimensions(height : number, width : number) {
+        this.height = height
+        this.width = width
+        this.layout()
+    }
+
     // Rendering functions |||||||||||||||||||||||||||||||||||||||||||||||
     private layout() {
         this.canvas.width = this.width
@@ -414,7 +420,7 @@ export class MonoPianoRollControls {
         this.canvas.style.height =
             this.height + 'px'
 
-        this.gridWidth = this.width - RULER_WIDTH - KB_WIDTH
+        this.gridWidth = this.width - X_START
         this.gridHeight = this.height - RULER_WIDTH
 
         this.redraw()

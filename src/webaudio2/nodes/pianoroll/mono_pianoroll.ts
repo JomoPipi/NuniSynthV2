@@ -82,8 +82,7 @@ export class MonoPianoRoll
     }
     
     updateBoxDimensions(H : number, W : number) {
-        // this.pianoRoll.height = H
-        // this.pianoRoll.width = W
-        // this.pianoRoll.render()
+        const barHeight = 25 // height of .draggable-window-bar
+        this.pianoRoll.setDimensions(H - barHeight, W)
     }
 }
