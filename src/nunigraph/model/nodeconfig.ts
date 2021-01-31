@@ -66,11 +66,11 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.MODULE]: 'Module'
     , [NodeTypes.AUTO]:   'Automation'
     
-    , [NodeTypes.PIANOR]: '12-Tone Piano Roll'
+    , [NodeTypes.PIANOR]: 'Mono Piano Roll' // '12-Tone Piano Roll'
     , [NodeTypes.PROCESSOR]:  'Processor'
     , [NodeTypes.COMPRESSOR]: 'Compression'
     }
-
+    
 type GraphIcon = string // typeof GraphIconUrls[number]
 const GraphIconKeys = 
     [ 'sine'

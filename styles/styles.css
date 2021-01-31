@@ -2189,6 +2189,15 @@ a {
   cursor: ew-resize;
 }
 
+.playhead {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  border: none;
+  border-left: 2px solid red;
+  height: 100%;
+}
+
 .wac-kb {
   position: absolute;
   left: 0px;

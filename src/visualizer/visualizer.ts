@@ -15,7 +15,7 @@ D('time-freq-toggle')
     .appendChild(createRadioButtonGroup(
     { buttons: [FREQ, TIME]
     , selected: mode
-    , className: 'neumorph2'
+    , className: 'neumorph2 some-margin'
     , onclick: data => mode = data
     }))
 

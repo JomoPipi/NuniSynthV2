@@ -17,7 +17,6 @@ type NoteEvent = { start : number, end : number, n : number }
 type PlayCallback = (noteEvent : NoteEvent) => void
 
 const markstartsrc = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCjxwYXRoIGZpbGw9IiMwYzAiIGQ9Ik0wLDEgMjQsMSAwLDIzIHoiLz4NCjwvc3ZnPg0K"
-const playheadsrc = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj4NCjxwYXRoIGZpbGw9InJnYmEoMjU1LDEwMCwxMDAsMC44KSIgZD0iTTAsMSAyNCwxMiAwLDIzIHoiLz4NCjwvc3ZnPg0K"
 const markendsrc = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCjxwYXRoIGZpbGw9IiMwYzAiIGQ9Ik0wLDEgMjQsMSAyNCwyMyB6Ii8+DQo8L3N2Zz4NCg=="
 const keyboardsrc = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSI0ODAiPg0KPHBhdGggZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBkPSJNMCwwIGgyNHY0ODBoLTI0eiIvPg0KPHBhdGggZmlsbD0iIzAwMCIgZD0iTTAsNDAgaDEydjQwaC0xMnogTTAsMTIwIGgxMnY0MGgtMTJ6IE0wLDIwMCBoMTJ2NDBoLTEyeiBNMCwzMjAgaDEydjQwaC0xMnogTTAsNDAwIGgxMnY0MGgtMTJ6Ii8+DQo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIGQ9Ik0wLDYwIGgyNCBNMCwxNDAgaDI0IE0wLDIyMCBoMjQgTTAsMjgwIGgyNCBNMCwzNDAgaDI0IE0wLDQyMCBoMjQiLz4NCjwvc3ZnPg0K"
 
@@ -30,9 +29,6 @@ const X_START = RULER_WIDTH + KB_WIDTH
 
 // Possible future class members:
 const SNAP = 1
-
-// TODO - remove:
-const length : undefined = undefined
 
 const Targets =
     { UNSELECTED_NOTE: "n"
@@ -63,7 +59,7 @@ export class MonoPianoRollControls {
     private keyboardImage : HTMLDivElement
     private markstartImage : HTMLImageElement
     private markendImage : HTMLImageElement
-    private playheadImage : HTMLImageElement
+    private playheadImage : HTMLDivElement
     private ctx : CanvasRenderingContext2D
     private sequence : Note[]
     private dragging : DragData
@@ -98,11 +94,11 @@ export class MonoPianoRollControls {
         this.canvas = E('canvas', { className: 'wac-pianoroll' })
         this.markstartImage = E('img', { className: 'marker' })
         this.markendImage = E('img', { className: 'marker' })
-        this.playheadImage = E('img', { className: 'marker' })
+        this.playheadImage = E('img', { className: 'playhead' })
 
         this.markstartImage.src = markstartsrc
         this.markendImage.src = markendsrc
-        this.playheadImage.src = playheadsrc
+        // this.playheadImage.src = playheadsrc
         this.keyboardImage.style.background = `url("${keyboardsrc}")`
 
         this.body.append(
@@ -485,10 +481,10 @@ export class MonoPianoRollControls {
 
     private redrawYRuler() {
         const rulerColor = '#333'
-        const foregroundColor = '#bbb'
+        const foregroundColor = '#ddd'
 
         this.ctx.textAlign = 'right'
-        this.ctx.font = (this.stepHeight / 2 | 0) + "px 'sans-serif'"
+        this.ctx.font = "12px 'sans-serif'"
         this.ctx.fillStyle = rulerColor
         this.ctx.fillRect(0, RULER_WIDTH, RULER_WIDTH, this.gridHeight)
 
@@ -588,13 +584,13 @@ export class MonoPianoRollControls {
                 e.preventDefault()
                 e.stopPropagation()
                 return false
-            case this.playheadImage:
-                this.dragging.mode = DragModes.PLAYHEAD
-                this.dragging.x = position.x
-                this.dragging.markerPosition = this.playhead
-                e.preventDefault()
-                e.stopPropagation()
-                return false
+            // case this.playheadImage:
+            //     this.dragging.mode = DragModes.PLAYHEAD
+            //     this.dragging.x = position.x
+            //     this.dragging.markerPosition = this.playhead
+            //     e.preventDefault()
+            //     e.stopPropagation()
+            //     return false
         }
         this.dragging.mode = DragModes.NONE
         this.dragging.x = position.x

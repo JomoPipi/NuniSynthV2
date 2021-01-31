@@ -122,3 +122,4 @@ const DIRTYGLOBALS : DIRTYGLOBALS =
     , contextmenuRequestPosition: [0, 0]
     , RISING_GLOBAL_Z_INDEX: 0
     }
+
