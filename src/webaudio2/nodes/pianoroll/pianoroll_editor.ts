@@ -349,42 +349,45 @@ export class  PianoRollEditor {
         const loopLength = tick * nSteps
         const t = Math.max(0, this.audioCtx.currentTime - loopLength)
 
-        const startIndex = (idx => idx < 0 ? 0 : idx)
-            (this.sequence.findIndex(note => note.time >= this.markstart))
+        // const startIndex = (idx => idx < 0 ? 0 : idx)
+        //     (this.sequence.findIndex(note => note.time >= this.markstart))
 
-        const endIndex = (idx => idx < 0 ? this.sequence.length : idx)
-            (this.sequence.findIndex(note => note.time > this.markend))
+        // const endIndex = (idx => idx < 0 ? this.sequence.length : idx)
+        //     (this.sequence.findIndex(note => note.time > this.markend))
+
+        const filteredSequence = this.sequence.filter(note => 
+            this.markstart <= note.time && note.time < this.markend)
 
         const elapsedLoops = Math.floor(t / loopLength)
 
         let loopTime = elapsedLoops * loopLength
         let noteTime = loopTime
-        let noteIndex = startIndex
+        let noteIndex = 0 // startIndex
 
         this.scheduleNotes = () => {
             const currentTime = this.audioCtx.currentTime
-            this.playhead = this.markstart + (currentTime % loopLength) * nSteps / loopLength
+            this.playhead = this.markstart + (currentTime % loopLength) / tick
             this.redrawPlayhead()
-            if (!this.sequence.length) return;
+            if (filteredSequence.length === 0) return;
 
             while (noteTime < currentTime + 0.200)
             {
                 if (noteTime > currentTime)
                 {
-                    const { length, n } = this.sequence[noteIndex]
+                    const { length, n } = filteredSequence[noteIndex]
                     this.playCallback({ start: noteTime, end: noteTime + length * tick, n })
                 }
                 ++noteIndex
-                if (noteIndex >= endIndex)
+                if (noteIndex >= filteredSequence.length)// endIndex)
                 {
-                    noteIndex = startIndex
+                    noteIndex = 0 // startIndex
                     loopTime += loopLength
                 }
-                else if (noteIndex < startIndex)
-                {
-                    noteIndex = startIndex
-                }
-                noteTime = loopTime + this.sequence[noteIndex].time * tick
+                // else if (noteIndex < startIndex)
+                // {
+                //     noteIndex = startIndex
+                // }
+                noteTime = loopTime + (filteredSequence[noteIndex].time - this.markstart) * tick
             }
         }
     }

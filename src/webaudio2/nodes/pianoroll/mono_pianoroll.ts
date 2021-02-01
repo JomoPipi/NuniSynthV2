@@ -5,6 +5,7 @@
 
 
 
+import { createSubdivSelect3 } from "../../../nunigraph/view/create_subdivselect.js"
 import { createToggleButton } from "../../../UI_library/internal.js"
 import { PianoRollEditor } from "./pianoroll_editor.js"
 
@@ -61,7 +62,10 @@ export class MonoPianoRoll
         if (this.controller) return this.controller
         const sidepanel = E('div')
         sidepanel.style.width = this.SidePanelWidth + 'px'
-        sidepanel.appendChild(createToggleButton(this.pianoRoll, 'snapToGrid', { text: 'snap to grid' }))
+        sidepanel.append(
+            createToggleButton(this.pianoRoll, 'snapToGrid', { text: 'snap to grid' }),
+            createSubdivSelect3(16, value => this.pianoRoll.subdiv = value, { min: 2 })
+            )
         this.controller = E('div', { className: 'flat-grid', children: [sidepanel, this.pianoRoll.controller] })
         return this.controller
     }

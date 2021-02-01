@@ -135,17 +135,20 @@ type Options3 = Partial<{
     mousedown : MouseHandler
     mouseup : MouseHandler
     forceMode : 'discrete' | 'continuous'
+    min : number
+    max : number
 }>
 
 export function createSubdivSelect3(initialValue : number, updateFn : (value : number) => void, options? : Options3) {
     /** Makes use of VersatileNumberComponent */
     const innerFn = (x : number | string) => updateFn(typeof x === "number" ? x : subdivStringToNumericalValue[x])
+    const list = subdivisionList.filter(d => (options!.min || 0) <= d && d <= (options!.max || Infinity))
 
-    const numberDial = createVersatileNumberDialComponent(initialValue, subdivisionList.map(subdivisionToString),
+    const numberDial = createVersatileNumberDialComponent(initialValue, list.map(subdivisionToString),
         { fn: innerFn
         , mapStringToNumber: subdivStringToNumericalValue
         , mapNumberToString: numericalValueToSubdivString
-        , continuousDial: { min: Math.min(...subdivisionList), max: Math.max(...subdivisionList) }
+        , continuousDial: { min: Math.min(...list), max: Math.max(...list) }
         , mouseup: options?.mouseup
         , forceMode: "discrete" //options?.forceMode
         })
