@@ -156,60 +156,74 @@ export class  PianoRollEditor {
         this.restart()
     }
     getMMLString() {
-        function makeNote(n : any,l : any,tb : any){
-            let mmlnote="";
-            let ltab=[
-                [960,"1"],[840,"2.."],[720,"2."],[480,"2"],
-                [420,"4.."],[360,"4."],[240,"4"],
-                [210,"8.."],[180,"8."],[120,""],
-                [105,"16.."],[90,"16."],[60,"16"],
-                [45,"32."],[30,"32"],[16,"60"],[15,"64"],
-                [8,"120"],[4,"240"],[2,"480"],[1,"960"]
-            ] as any
-            l=l*960/tb;
-            while(l>0){
-                for(let j=0;j<ltab.length;++j){
-                    while(l>=ltab[j][0]){
-                        l-=ltab[j][0];
-                        mmlnote+="&"+n+ltab[j][1];
-                    }
-                }
-            }
-            return mmlnote.substring(1);
-        }
-        let mml="t"+this.tempo+"o4l8";
-        let ti=0,meas=0,oct=5,n;
-        let notes=["c","d-","d","e-","e","f","g-","g","a-","a","b-","b"];
-        for(let i=0;i<this.sequence.length;++i) {
-            let ev=this.sequence[i];
-            if(ev.time>ti) {
-                let l=ev.time-ti;
-                mml+=makeNote("r",l,this._subdiv);
-                ti=ev.time;
-            }
-            let n=ev.n as any;
-            if(n<oct*12||n>=oct*12+12){
-                oct=(n/12)|0;
-                mml+="o"+(oct-1);
-            }
-            n=notes[n%12];
-            let l=ev.length;
-            if(i+1<this.sequence.length) {
-                let ev2=this.sequence[i+1];
-                if(ev2.time<ev.time+l) {
-                    l=ev2.time-ev.time;
-                    ti=ev2.time;
-                }
-                else
-                    ti=ev.time+ev.length;
-            }
-            else
-                ti=ev.time+ev.length;
-            mml+=makeNote(n,l,this._subdiv);
-        }
-        return mml;
+    // The easy way:
+        return JSON.stringify({ sequence: this.sequence, subdiv: this._subdiv })
+
+    // No more:
+        // function makeNote(n : any,l : any,tb : any){
+        //     let mmlnote="";
+        //     let ltab=[
+        //         [960,"1"],[840,"2.."],[720,"2."],[480,"2"],
+        //         [420,"4.."],[360,"4."],[240,"4"],
+        //         [210,"8.."],[180,"8."],[120,""],
+        //         [105,"16.."],[90,"16."],[60,"16"],
+        //         [45,"32."],[30,"32"],[16,"60"],[15,"64"],
+        //         [8,"120"],[4,"240"],[2,"480"],[1,"960"]
+        //     ] as any
+        //     l=l*960/tb;
+        //     while(l>0){
+        //         for(let j=0;j<ltab.length;++j){
+        //             while(l>=ltab[j][0]){
+        //                 l-=ltab[j][0];
+        //                 mmlnote+="&"+n+ltab[j][1];
+        //             }
+        //         }
+        //     }
+        //     return mmlnote.substring(1);
+        // }
+        // let mml="t"+this.tempo+"o4l8";
+        // let ti=0,meas=0,oct=5,n;
+        // let notes=["c","d-","d","e-","e","f","g-","g","a-","a","b-","b"];
+        // for(let i=0;i<this.sequence.length;++i) {
+        //     let ev=this.sequence[i];
+        //     if(ev.time>ti) {
+        //         let l=ev.time-ti;
+        //         mml+=makeNote("r",l,this._subdiv);
+        //         ti=ev.time;
+        //     }
+        //     let n=ev.n as any;
+        //     if(n<oct*12||n>=oct*12+12){
+        //         oct=(n/12)|0;
+        //         mml+="o"+(oct-1);
+        //     }
+        //     n=notes[n%12];
+        //     let l=ev.length;
+        //     if(i+1<this.sequence.length) {
+        //         let ev2=this.sequence[i+1];
+        //         if(ev2.time<ev.time+l) {
+        //             l=ev2.time-ev.time;
+        //             ti=ev2.time;
+        //         }
+        //         else
+        //             ti=ev.time+ev.length;
+        //     }
+        //     else
+        //         ti=ev.time+ev.length;
+        //     mml+=makeNote(n,l,this._subdiv);
+        // }
+        // return mml;
     }
     setMMLString(s : string) {
+
+        if (!s.includes('o4l8'))
+        {
+            const { sequence, subdiv } = JSON.parse(s)
+            this.sequence = sequence
+            this.subdiv = subdiv
+            return;
+        }
+        
+        // Legacy code to not break old graphs:
         this.sequence=[];
         let [i,l,n,t,defo,defl,tie,evlast] : any[] = [];
         const parse={s:s,i:i,tb:this._subdiv};
@@ -464,7 +478,7 @@ export class  PianoRollEditor {
     private drawSequence() {
         for (const { time, length, isSelected, n } of this.sequence)
         {
-            this.ctx.fillStyle = isSelected ? 'red' : 'green'
+            this.ctx.fillStyle = isSelected ? 'lightgreen' : 'green'
             const w = length * this.stepWidth
             const x = (time - this.xoffset) * this.stepWidth + X_START
             const x2 = x + w | 0

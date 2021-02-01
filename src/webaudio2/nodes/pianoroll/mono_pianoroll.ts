@@ -64,7 +64,7 @@ export class MonoPianoRoll
         sidepanel.style.width = this.SidePanelWidth + 'px'
         sidepanel.append(
             createToggleButton(this.pianoRoll, 'snapToGrid', { text: 'snap to grid' }),
-            createSubdivSelect3(16, value => this.pianoRoll.subdiv = value, { min: 2 })
+            createSubdivSelect3(this.pianoRoll.subdiv, value => this.pianoRoll.subdiv = value, { min: 2 })
             )
         this.controller = E('div', { className: 'flat-grid', children: [sidepanel, this.pianoRoll.controller] })
         return this.controller
