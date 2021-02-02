@@ -338,7 +338,7 @@ export class  PianoRollEditor {
             t+=l;
         }
         // Warining: replacing this.layout
-        // with this.redraw here 
+        // with this.render here 
         // can cause it to crash:
         this.layout()
         this.restart()
@@ -381,7 +381,7 @@ export class  PianoRollEditor {
         this.scheduleNotes = () => {
             const currentTime = this.audioCtx.currentTime
             this.playhead = this.markstart + (currentTime % loopLength) / tick
-            this.redrawPlayhead()
+            this.drawPlayhead()
             if (filteredSequence.length === 0) return;
 
             while (noteTime < currentTime + 0.200)
@@ -436,40 +436,51 @@ export class  PianoRollEditor {
         this.gridWidth = this.width - X_START
         this.gridHeight = this.height - RULER_WIDTH
 
-        this.redraw()
+        this.render()
     }
 
-    private redraw() {
+    private render() {
         this.ctx.clearRect(0, 0, this.width, this.height)
         this.stepWidth = this.gridWidth / this.xrange
         this.stepHeight = this.gridHeight / this.yrange
-        this.redrawGrid()
+        this.drawGrid()
+        this.drawYRuler()
+        this.drawXRuler()
         this.drawSequence()
-        this.redrawYRuler()
-        this.redrawXRuler()
-        this.redrawMarker()
-        this.redrawSelectedArea()
+        this.drawMarker()
+        this.drawSelectedArea()
     }
 
-    private redrawGrid() {
+    private drawGrid() {
+        // Horizontal grid lines
         const darkColor = '#222'
-        const liteColor = '#555'
-        const gridColor = '#999'
-
-        // Horizontal Lines:
-        for (let i = 0; i < 128; ++i)
+        const liteColor = '#444'
+        const hGridColor = '#555'
+        for (let i = 0, lastColor = ''; i < 128; ++i)
         {
-            this.ctx.fillStyle = SEMIFLAG[i % 12] & 1 ? darkColor : liteColor
+            const color = SEMIFLAG[i % 12] & 1 ? darkColor : liteColor
+            this.ctx.fillStyle = color
             const y = this.height + (this.yoffset - i) * this.stepHeight | 0
             this.ctx.fillRect(X_START, y, this.gridWidth, -this.stepHeight)
-            this.ctx.fillStyle = gridColor
-            this.ctx.fillRect(X_START, y, this.gridWidth, 1)
+            if (color === lastColor)
+            {
+                this.ctx.fillStyle = hGridColor
+                this.ctx.fillRect(X_START, y, this.gridWidth, 1)
+            }
+            lastColor = color
         }
-        // Vertical Lines:
-        const grid = 4
-        for (let i = 0;; i += grid)
+        
+        // Vertical grid lines
+        const color = '#666'
+        const color2 = '#aaa'
+        const gap = 2 ** ((this.xrange / 2) ** .25 | 0) // 4
+        for (let i = 0, j = 0;; i += gap, j++)
         {
+            const accent = j % 4 === 0
+            this.ctx.fillStyle = accent ? color2 : color
             const x = this.stepWidth * (i - this.xoffset) + X_START | 0
+            // const overlap = 4 + +accent * 3
+            // this.ctx.fillRect(x, RULER_WIDTH - overlap, 1, this.gridHeight + overlap)
             this.ctx.fillRect(x, RULER_WIDTH, 1, this.gridHeight)
             if (x >= this.width) break
         }
@@ -489,16 +500,16 @@ export class  PianoRollEditor {
             this.ctx.beginPath()
             this.ctx.fillRect(x3, y3, x2 - x3, y2 - y3)
             this.ctx.fillStyle = isSelected ? 'white' : 'black'
-            this.ctx.fillRect(x3,y3,1,y2-y3);
-            this.ctx.fillRect(x2,y3,1,y2-y3);
-            this.ctx.fillRect(x3,y3,x2-x3,1);
-            this.ctx.fillRect(x3,y2,x2-x3,1);
+            this.ctx.fillRect(x3,y3,1,y2-y3)
+            this.ctx.fillRect(x2,y3,1,y2-y3)
+            this.ctx.fillRect(x3,y3,x2-x3,1)
+            this.ctx.fillRect(x3,y2,x2-x3,1)
         }
     }
 
-    private redrawYRuler() {
+    private drawYRuler() {
         const rulerColor = '#333'
-        const foregroundColor = '#ddd'
+        const foregroundColor = '#aaa'
 
         this.ctx.textAlign = 'right'
         this.ctx.font = "12px 'sans-serif'"
@@ -509,7 +520,7 @@ export class  PianoRollEditor {
         for (let i = 0; i < 128; i += 12)
         {
             const y = this.height - this.stepHeight * (i - this.yoffset)
-            this.ctx.fillRect(0, y | 0, RULER_WIDTH, -1)
+            // this.ctx.fillRect(0, y | 0, RULER_WIDTH, -1)
             this.ctx.fillText(`C${i/12 + OCTAVE_OFFSET | 0}`, RULER_WIDTH - 4, y - 4)
         }
         const style = this.keyboardImage.style
@@ -520,7 +531,7 @@ export class  PianoRollEditor {
             `0px ${this.gridHeight + this.stepHeight * this.yoffset}px`
     }
 
-    private redrawXRuler() {
+    private drawXRuler() {
         const rulerColor = '#333'
         const foregroundColor = '#bbb'
 
@@ -531,14 +542,14 @@ export class  PianoRollEditor {
         this.ctx.fillStyle = foregroundColor
         for (let t = 0;; t += TIMEBASE)
         {
-            const x = (t - this.xoffset) * this.stepWidth + X_START
+            const x = (t - this.xoffset) * this.stepWidth + X_START | 0
             this.ctx.fillRect(x, 0, 1, RULER_WIDTH)
-            this.ctx.fillText((t / TIMEBASE + 1).toString(), x + 4, RULER_WIDTH - 8)
+            this.ctx.fillText((t / TIMEBASE + 1).toString(), x + 4, RULER_WIDTH - 12)
             if (x >= this.width) break
         }
     }
 
-    private redrawMarker() {
+    private drawMarker() {
         const start = (this.markstart - this.xoffset) * this.stepWidth + X_START
         const end = (this.markend - this.xoffset) * this.stepWidth + X_START
         const endOffset = -16
@@ -546,15 +557,15 @@ export class  PianoRollEditor {
         this.markendImage.style.left = (end + endOffset) + 'px'
         this.loopMarker.style.left = start + 'px'
         this.loopMarker.style.width = (end - start) + 'px'
-        this.redrawPlayhead()
+        this.drawPlayhead()
     }
 
-    private redrawPlayhead() {
+    private drawPlayhead() {
         const now = (this.playhead - this.xoffset) * this.stepWidth + X_START
         this.playheadImage.style.left = now + 'px'
     }
 
-    private redrawSelectedArea() {
+    private drawSelectedArea() {
         if (this.dragging.mode === DragModes.SELECTION)
         {
             const { p1, p2 } = this.dragging
@@ -637,10 +648,10 @@ export class  PianoRollEditor {
         const rect = this.canvas.getBoundingClientRect()
         const x = e.clientX - rect.left
         const y = e.clientY - rect.top
-        return { x, y, target: e.target }
+        return { x, y }
     }
 
-    private getHoverMessage({ x, y, target } : Position) {
+    private getHoverMessage({ x, y } : Position) {
         const time = this.xoffset + (x - X_START) / this.gridWidth * this.xrange
         const n = this.yoffset + (this.height - y) / this.stepHeight
         const message : HoverMessage = { time, n, i: -1, target: Targets.EMPTY }
@@ -723,14 +734,14 @@ export class  PianoRollEditor {
                     note.lastT = note.time
                 }
             }
-            this.redraw()
+            this.render()
         }
         else if (msg.target === Targets.UNSELECTED_NOTE)
         {
             const note = this.sequence[msg.i]
             this.clearSelection()
             note.isSelected = true
-            this.redraw()
+            this.render()
         }
         else if (msg.target === Targets.NOTE_RIGHT)
         {
@@ -772,7 +783,7 @@ export class  PianoRollEditor {
             this.dragging.time = time
             this.dragging.length = length
             this.dragging.notes = [{ time, length, note, i: -1 }]
-            this.redraw()
+            this.render()
             this.restart()
         }
     }
@@ -814,7 +825,7 @@ export class  PianoRollEditor {
                 this.dragging.p2 = position
                 this.dragging.t2 = msg.time
                 this.dragging.n2 = msg.n
-                this.redraw()
+                this.render()
                 break
 
             case DragModes.MARKEND:
@@ -825,7 +836,7 @@ export class  PianoRollEditor {
                     | 0)
                 if (this.markstart >= x) this.markstart = x - 1
                 this.markend = x
-                this.redrawMarker()
+                this.drawMarker()
                 break
             
             case DragModes.MARKSTART:
@@ -836,7 +847,7 @@ export class  PianoRollEditor {
                     | 0)
                 if (this.markend <= y) this.markend = y+1
                 this.markstart = y
-                this.redrawMarker()
+                this.drawMarker()
                 break
 
             case DragModes.LOOPMARKER: 
@@ -848,7 +859,7 @@ export class  PianoRollEditor {
                 const width = this.markend - this.markstart
                 this.markstart = z
                 this.markend = z + width
-                this.redrawMarker()
+                this.drawMarker()
                 break
                 
 
@@ -858,7 +869,7 @@ export class  PianoRollEditor {
             //         + (position.x - this.dragging.x)
             //         / this.stepWidth + .5
             //         | 0)
-            //     this.redrawMarker()
+            //     this.drawMarker()
             //     break
         }
         this.editDragMove(msg)
@@ -887,7 +898,7 @@ export class  PianoRollEditor {
                         if (note.length <= 0) note.length = minLength
                     }
                 }
-                this.redraw()
+                this.render()
                 break
 
             case Targets.NOTE_LEFT:
@@ -907,14 +918,14 @@ export class  PianoRollEditor {
                         if (note.length <= 0) note.length = 1
                     }
                 }
-                this.redraw()
+                this.render()
                 break
 
             case Targets.NOTE_CENTER:
                 this.moveSelectedNote(
                     this.snapToGrid ? msg.time - this.dragging.time | 0 : msg.time - this.dragging.time,
                     (msg.n|0) - this.dragging.n)
-                this.redraw()
+                this.render()
                 break
         }
     }
@@ -950,7 +961,7 @@ export class  PianoRollEditor {
         {
             this.selectNotes()
             this.dragging.mode = DragModes.NONE
-            this.redraw();
+            this.render();
         }
         if (this.dragging.mode === DragModes.NOTES && this.editmode === "dragmono")
         {
@@ -969,7 +980,7 @@ export class  PianoRollEditor {
         {
             this.restart()
         }
-        this.redraw()
+        this.render()
         this.dragging.mode = DragModes.NONE
         if (this.sequenceShouldBeSorted) this.sortSequence()
         this.sequenceShouldBeSorted = false
@@ -1037,7 +1048,7 @@ export class  PianoRollEditor {
             const note = { time, length, n, lastN: -1, lastT: -1, isSelected: true }
             this.sequence.push(note)
             this.sortSequence()
-            this.redraw()
+            this.render()
         }
     }
 
@@ -1047,24 +1058,33 @@ export class  PianoRollEditor {
 
     private wheel(e : WheelEvent) {
         const position = this.getPosition(e)
+        this.zoom(e.ctrlKey, e.deltaY / 500, position)
+        e.preventDefault()
+    }
+
+    zoom(x_axis : boolean, amount : number, position? : Position) {
+        if (!position)
+        {
+            const { width, height } = this.canvas.getBoundingClientRect()
+            position = { x: width / 2, y: height / 2 }
+        }
         const msg = this.getHoverMessage(position)
-        const factor = 1 + e.deltaY / 500
-        const [offset, range, x] = e.ctrlKey
+        const factor = 1 + amount
+        const [offset, range, x] = x_axis
             ? ['xoffset', 'xrange', 'time'] as const
             : ['yoffset', 'yrange', 'n']    as const
 
         this[offset] = msg[x] + (this[offset] - msg[x]) * factor
         this[range] *= factor
-        
+
         this.layout()
-        e.preventDefault()
     }
 
     private keydown(e : KeyboardEvent) {
         switch(e.key) {
             case "Delete":
                 this.deleteSelectedNotes()
-                this.redraw()
+                this.render()
                 break;
         }
     }
@@ -1129,4 +1149,4 @@ type NotePlus = {
     length : number
 }
 
-type Position = { x : number, y : number, target : EventTarget | null }
+type Position = { x : number, y : number } //, target : EventTarget | null }

@@ -79,3 +79,9 @@
     background-size:100% calc(100%*12/16);
     background-position:left bottom;
 }
+.pianoroll-sidepanel {
+    @extend .vert-split;
+    > div, button {
+        margin: 20px 0;
+    }
+}

@@ -6,6 +6,7 @@
 
 
 import { createSubdivSelect3 } from "../../../nunigraph/view/create_subdivselect.js"
+import { createDraglineElement } from "../../../UI_library/components/dragline.js"
 import { createToggleButton } from "../../../UI_library/internal.js"
 import { PianoRollEditor } from "./pianoroll_editor.js"
 
@@ -60,13 +61,29 @@ export class MonoPianoRoll
     private readonly SidePanelWidth = 100
     getController() {
         if (this.controller) return this.controller
-        const sidepanel = E('div')
+
+        const snapToGrid = createToggleButton(this.pianoRoll, 'snapToGrid', { text: 'snap to grid' })
+        const timeBaseSelect = createSubdivSelect3(this.pianoRoll.subdiv, value => this.pianoRoll.subdiv = value, { min: 2 })
+        const buttons = () => 
+            [ E('div', { className: 'push-button nice-btn', text: '-' })
+            , E('div', { className: 'push-button nice-btn', text: '+' })
+            ]
+        const zoomX = E('span', { children: buttons(), className: 'flat-grid' })
+        const zoomY = E('span', { children: buttons().reverse(), className: 'vert-flat-grid' })
+        const zoomControls = E('div', { className: 'space-evenly', children: [zoomX, zoomY] })
+            zoomControls.onmousedown = e => {
+                const btn = e.target as HTMLElement
+                if (!'+-'.includes(btn.innerText)) return
+                const x_axis = zoomX.contains(btn)
+                const amount = btn.innerText === '-' ? 0.2 : -0.2
+                this.pianoRoll.zoom(x_axis, amount)
+            }
+
+        const sidepanel = E('div', { className: 'pianoroll-sidepanel' })
         sidepanel.style.width = this.SidePanelWidth + 'px'
-        sidepanel.append(
-            createToggleButton(this.pianoRoll, 'snapToGrid', { text: 'snap to grid' }),
-            createSubdivSelect3(this.pianoRoll.subdiv, value => this.pianoRoll.subdiv = value, { min: 2 })
-            )
-        this.controller = E('div', { className: 'flat-grid', children: [sidepanel, this.pianoRoll.controller] })
+        sidepanel.append(zoomControls, snapToGrid, timeBaseSelect)
+
+        this.controller = E('div', { className: 'flat', children: [sidepanel, this.pianoRoll.controller] })
         return this.controller
     }
     

@@ -95,6 +95,14 @@ code {
     align-items: center;
 }
 
+.vert-flat-grid {
+    display: flex;
+    height: 100%;
+    flex-grow: 1;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
 .step-updater {
     display: flex;
     flex-direction: column;
@@ -118,6 +126,11 @@ code {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.flat {
+    display: flex;
+    justify-content: space-between;
 }
 
 .table { 
