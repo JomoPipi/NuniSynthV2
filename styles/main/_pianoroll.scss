@@ -48,6 +48,18 @@
     left:0px;
     top:0px;
     cursor:ew-resize;
+    width: 16px;
+    height: 24px;
+    opacity: 0;
+}
+.loop-marker {
+    position: absolute;
+    left: 0px;
+    top: 12px;
+    cursor: move;
+    background-color: rgba(255, 224, 100, 0.3);
+    height: 12px;
+    display: inline-block;
 }
 .playhead {
     position: absolute;

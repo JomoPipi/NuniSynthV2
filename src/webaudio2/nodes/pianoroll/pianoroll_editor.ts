@@ -16,8 +16,6 @@ import { MasterClock } from "../../sequencers/master_clock.js"
 type NoteEvent = { start : number, end : number, n : number }
 type PlayCallback = (noteEvent : NoteEvent) => void
 
-const markstartsrc = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCjxwYXRoIGZpbGw9IiMwYzAiIGQ9Ik0wLDEgMjQsMSAwLDIzIHoiLz4NCjwvc3ZnPg0K"
-const markendsrc = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCjxwYXRoIGZpbGw9IiMwYzAiIGQ9Ik0wLDEgMjQsMSAyNCwyMyB6Ii8+DQo8L3N2Zz4NCg=="
 const keyboardsrc = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSI0ODAiPg0KPHBhdGggZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBkPSJNMCwwIGgyNHY0ODBoLTI0eiIvPg0KPHBhdGggZmlsbD0iIzAwMCIgZD0iTTAsNDAgaDEydjQwaC0xMnogTTAsMTIwIGgxMnY0MGgtMTJ6IE0wLDIwMCBoMTJ2NDBoLTEyeiBNMCwzMjAgaDEydjQwaC0xMnogTTAsNDAwIGgxMnY0MGgtMTJ6Ii8+DQo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIGQ9Ik0wLDYwIGgyNCBNMCwxNDAgaDI0IE0wLDIyMCBoMjQgTTAsMjgwIGgyNCBNMCwzNDAgaDI0IE0wLDQyMCBoMjQiLz4NCjwvc3ZnPg0K"
 
 const KB_WIDTH = 40
@@ -44,7 +42,8 @@ const DragModes =
     { SELECTION: "A"
     , MARKSTART: "S"
     , MARKEND: "E"
-    , PLAYHEAD: "P"
+    // , PLAYHEAD: "P"
+    , LOOPMARKER: "L"
     , NOTES: "D"
     , NONE: 'none'
     } as const
@@ -58,9 +57,10 @@ export class  PianoRollEditor {
     private body : HTMLDivElement
     private canvas : HTMLCanvasElement
     private keyboardImage : HTMLDivElement
-    private markstartImage : HTMLImageElement
-    private markendImage : HTMLImageElement
-    private playheadImage : HTMLDivElement
+    private markstartImage : HTMLSpanElement
+    private markendImage : HTMLSpanElement
+    private playheadImage : HTMLSpanElement
+    private loopMarker : HTMLSpanElement
     private ctx : CanvasRenderingContext2D
     private sequence : Note[]
     private dragging : DragData
@@ -93,17 +93,17 @@ export class  PianoRollEditor {
         this.body = E('div', { className: 'wac-body' })
         this.keyboardImage = E('div', { className: 'wac-kb' })
         this.canvas = E('canvas', { className: 'wac-pianoroll' })
-        this.markstartImage = E('img', { className: 'marker' })
-        this.markendImage = E('img', { className: 'marker' })
-        this.playheadImage = E('img', { className: 'playhead' })
+        this.markstartImage = E('span', { className: 'marker', text: '　' })
+        this.markendImage = E('span', { className: 'marker', text: '　' })
+        this.playheadImage = E('span', { className: 'playhead' })
+        this.loopMarker = E('span', { className: 'loop-marker', text: '　' })
 
-        this.markstartImage.src = markstartsrc
-        this.markendImage.src = markendsrc
         this.keyboardImage.style.background = `url("${keyboardsrc}")`
 
         this.body.append(
             this.canvas, 
             this.keyboardImage, 
+            this.loopMarker,
             this.markstartImage, 
             this.markendImage, 
             this.playheadImage)
@@ -111,9 +111,9 @@ export class  PianoRollEditor {
         this.controller.appendChild(this.body)
 
         this.body.addEventListener("mousedown", this.pointerdown.bind(this), true)
+        this.body.addEventListener('wheel', this.wheel.bind(this),false)
         this.canvas.addEventListener('mousemove', this.mousemove.bind(this),false)
         this.canvas.addEventListener('keydown', this.keydown.bind(this),false)
-        this.canvas.addEventListener('wheel', this.wheel.bind(this),false)
         this.canvas.tabIndex = -1 // Needed for keydown event to work.
 
         this.bindcontextmenu = this.contextmenu.bind(this)
@@ -541,9 +541,11 @@ export class  PianoRollEditor {
     private redrawMarker() {
         const start = (this.markstart - this.xoffset) * this.stepWidth + X_START
         const end = (this.markend - this.xoffset) * this.stepWidth + X_START
-        const endOffset = -24
+        const endOffset = -16
         this.markstartImage.style.left = start + 'px'
         this.markendImage.style.left = (end + endOffset) + 'px'
+        this.loopMarker.style.left = start + 'px'
+        this.loopMarker.style.width = (end - start) + 'px'
         this.redrawPlayhead()
     }
 
@@ -601,6 +603,15 @@ export class  PianoRollEditor {
                 e.preventDefault()
                 e.stopPropagation()
                 return false
+            case this.loopMarker:
+                this.dragging.mode = DragModes.LOOPMARKER
+                this.dragging.x = position.x
+                this.dragging.markerPosition = this.markstart
+                e.preventDefault()
+                e.stopPropagation()
+                return false
+                
+
             // case this.playheadImage:
             //     this.dragging.mode = DragModes.PLAYHEAD
             //     this.dragging.x = position.x
@@ -783,10 +794,11 @@ export class  PianoRollEditor {
     private pointermove(e : MouseEvent) {
         const position = this.getPosition(e)
         const msg = this.getHoverMessage(position)
+
         switch (this.dragging.mode)
         {
             case DragModes.NONE:
-                this.xoffset 
+                this.xoffset
                     = this.dragging.offsetx 
                     + (this.dragging.x - position.x)
                     * (this.xrange / this.width)
@@ -827,14 +839,27 @@ export class  PianoRollEditor {
                 this.redrawMarker()
                 break
 
-            case DragModes.PLAYHEAD:
-                this.playhead = Math.max(0
-                    , this.dragging.markerPosition
-                    + (position.x - this.dragging.x)
-                    / this.stepWidth + .5
+            case DragModes.LOOPMARKER: 
+                const z = Math.max(0
+                    , this.dragging.markerPosition 
+                    + (position.x - this.dragging.x) 
+                    / this.stepWidth +.5
                     | 0)
+                const width = this.markend - this.markstart
+                this.markstart = z
+                this.markend = z + width
                 this.redrawMarker()
                 break
+                
+
+            // case DragModes.PLAYHEAD:
+            //     this.playhead = Math.max(0
+            //         , this.dragging.markerPosition
+            //         + (position.x - this.dragging.x)
+            //         / this.stepWidth + .5
+            //         | 0)
+            //     this.redrawMarker()
+            //     break
         }
         this.editDragMove(msg)
         e.stopPropagation()
