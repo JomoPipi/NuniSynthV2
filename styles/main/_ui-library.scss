@@ -78,10 +78,7 @@
 .draggable-window-bar {
     $sizePx: 25px;
 
-    background:
-        linear-gradient(
-            var(--color1),
-            var(--color0));
+    background: linear-gradient(var(--color1), transparent);
 
     height: $sizePx;
     // width: 100%;

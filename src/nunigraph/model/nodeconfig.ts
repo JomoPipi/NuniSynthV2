@@ -403,7 +403,7 @@ const NodeTypeColors2 : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PIANOR]: 'rgb(105,100,255)'
     , [NodeTypes.PROCESSOR]: 'rgb(200,150,255)'
     , [NodeTypes.COMPRESSOR]:'rgb(200,180,220)'
-    }
+    } as const
 
 const NodeTypeDescriptions =
     { [NodeTypes.OUTPUT]: 'NOT USED'

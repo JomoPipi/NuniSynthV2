@@ -357,7 +357,8 @@ export class NuniGraphController {
             { clickCallback
             , closeCallback
             , contentContainer
-            , color: NodeTypeColors[node.type]
+            , color: NodeTypeColors2[node.type]
+            , nodeType: node.type
             , barContent
             , resizeUpdate: node.type in HasAResizableDialogBox
                 ? (H, W) => (node as NuniGraphNode<HasAResizableDialogBox>).audioNode.updateBoxDimensions(H, W)

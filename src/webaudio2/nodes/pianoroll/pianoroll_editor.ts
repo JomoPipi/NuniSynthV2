@@ -389,9 +389,9 @@ export class  PianoRollEditor {
         this.stepWidth = this.gridWidth / this.xrange
         this.stepHeight = this.gridHeight / this.yrange
         this.drawGrid()
+        this.drawSequence()
         this.drawYRuler()
         this.drawXRuler()
-        this.drawSequence()
         this.drawMarker()
         this.drawSelectedArea()
     }

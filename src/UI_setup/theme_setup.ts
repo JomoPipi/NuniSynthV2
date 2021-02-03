@@ -6,6 +6,7 @@
 
 
 import { UserOptions } from '../storage/user_options.js'
+import { mixRGB } from '../UI_library/functions/rgbcolormix.js'
 
 type Color = readonly [number, number, number]
 type ThemeData = readonly [c0 : Color, c1 : Color, c2 : Color, c3 : Color, c4: Color, c5 : Color, c6 : Color]
@@ -76,5 +77,29 @@ export function setTheme(n : number) {
             .setProperty('--color' + i, ThemeColors[n][i])
     }
 
+    // Set node dialogbox colors
+    for (const nodeType in NodeTypeColors2)
+    {
+        const color = NodeTypeColors2[nodeType as NodeTypes]
+        const tintedColor = mixRGB(color, Theme.colors[0], 0.05)
+        
+        document.documentElement
+            .style
+            .setProperty(`--${nodeType}-dialogbox-color`, tintedColor)
+    }
+
     UserOptions.config.theme = n as 0 | 1 | 2 | 3
 }
+
+// CSS classes for node dialogboxes:
+const style = document.createElement('style')
+style.innerHTML = Object.keys(NodeTypeColors2)
+    .map(nodeType => 
+        `.${nodeType}-dialogbox { 
+            background: 
+                linear-gradient(0deg,
+                var(--${nodeType}-dialogbox-color),
+                var(--color0)); 
+        }`)
+    .join('\n')
+document.getElementsByTagName('head')[0].appendChild(style)

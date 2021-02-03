@@ -848,8 +848,8 @@ code {
 }
 
 .draggable-window-bar {
-  background: -webkit-gradient(linear, left top, left bottom, from(var(--color1)), to(var(--color0)));
-  background: linear-gradient(var(--color1), var(--color0));
+  background: -webkit-gradient(linear, left top, left bottom, from(var(--color1)), to(transparent));
+  background: linear-gradient(var(--color1), transparent);
   height: 25px;
   cursor: move;
   -webkit-box-sizing: border-box;
