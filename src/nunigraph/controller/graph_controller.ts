@@ -922,16 +922,18 @@ export class NuniGraphController {
 
         this.deactivateEventHandlers()
         
-        const prompt = D('connection-type-prompt')
+        const prompt = this.connectionTypePrompt
+        const promptContainer = D('connection-type-prompt-container')
+        promptContainer.classList.add('show')
+        promptContainer.style.zIndex = Number.MAX_SAFE_INTEGER.toString()
+        prompt.innerHTML= ''
+
         const hide_it = () => {
-            prompt.classList.remove('show-grid')
+            promptContainer.classList.remove('show')
             this.activateEventHandlers()
         }
 
-        prompt.classList.add('show-grid')
-        prompt.innerHTML= ''
-        prompt.style.zIndex = Number.MAX_SAFE_INTEGER.toString()
-
+        prompt.appendChild(E('span', { text: 'CONNECT TO..' }))
         for (const param of types as ConnectionType[]) 
         {
             const btn = E('button', { text: param, className: 'connection-type-button' })
@@ -944,12 +946,7 @@ export class NuniGraphController {
             prompt.appendChild(btn)
         }
 
-        const cancel = E('button', 
-            { text: 'cancel'
-            , className: 'connection-type-button'
-            })
-        cancel.onclick = hide_it
-        prompt.appendChild(cancel)
+        promptContainer.onclick = hide_it
 
         const w = prompt.offsetWidth
         const _x = renderer.canvas.width/2 + renderer.canvas.offsetLeft
