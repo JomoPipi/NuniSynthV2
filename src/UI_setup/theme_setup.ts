@@ -81,7 +81,8 @@ export function setTheme(n : number) {
     for (const nodeType in NodeTypeColors2)
     {
         const color = NodeTypeColors2[nodeType as NodeTypes]
-        const tintedColor = mixRGB(color, Theme.colors[0], 0.05)
+        // const tintedColor = mixRGB(color, Theme.colors[0], 0.05)
+        const tintedColor = mixRGB(color, Theme.colors[0], 0.02)
         
         document.documentElement
             .style
@@ -97,9 +98,9 @@ style.innerHTML = Object.keys(NodeTypeColors2)
     .map(nodeType => 
         `.${nodeType}-dialogbox { 
             background: 
-                linear-gradient(0deg,
-                var(--${nodeType}-dialogbox-color),
-                var(--color0)); 
+                linear-gradient(180deg,
+                var(--color0),
+                var(--${nodeType}-dialogbox-color)); 
         }`)
     .join('\n')
 document.getElementsByTagName('head')[0].appendChild(style)
