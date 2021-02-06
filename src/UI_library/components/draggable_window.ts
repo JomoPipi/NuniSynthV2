@@ -22,7 +22,7 @@ type DraggableWindowOptions = {
     contentContainer : HTMLElement
     barContent : HTMLElement
     resizeUpdate? : (H : number, W : number) => void
-    nodeType : NodeTypes
+    // nodeType : NodeTypes
 }
 
 export function createDraggableWindow(
@@ -30,14 +30,14 @@ export function createDraggableWindow(
     , closeCallback
     , contentContainer
     , color, barContent
-    , nodeType
+    // , nodeType
     , resizeUpdate 
     } : DraggableWindowOptions) {
 
     const exitBtn = E('button', { text: 'x', className: 'exit-button no-drag' })
     const bar = E('div', { className: 'draggable-window-bar', children: [barContent, exitBtn] })
 
-    const box = E('div', { className: `window show ${nodeType}-dialogbox` })
+    const box = E('div', { className: `node-window show` }) // ${nodeType}-dialogbox` })
         // box.style.backgroundColor = mixRGB(color, Theme.colors[0], 0.05)
         // box.style.backgroundColor = 'transparent' // TROLL
 

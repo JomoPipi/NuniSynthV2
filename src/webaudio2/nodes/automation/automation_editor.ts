@@ -148,7 +148,7 @@ export class AutomationPointsEditor {
     }
 
     setDimensions(H : number, W : number) {
-        const heightOfOtherElements = 114
+        const heightOfOtherElements = 128
         this.canvas.height = Math.max(0, H - heightOfOtherElements)
         this.canvas.width = W
         this.render()

@@ -189,7 +189,7 @@ function activateKeyboardButton(an : NuniSourceNode) {
         })
 
     return E('div', 
-        { className: 'flex-center some-margin'
+        { className: 'flex-center some-padding'
         , children: [toggle, adsr]
         })
 }

@@ -78,16 +78,15 @@
 .draggable-window-bar {
     $sizePx: 25px;
 
-    background: linear-gradient(var(--color1), transparent);
+    background: linear-gradient(var(--color1), var(--color0));
 
     height: $sizePx;
     // width: 100%;
     cursor: move;
-    box-sizing: border-box;
     display: grid;
     grid-template-columns: auto $sizePx;
-    // border: 2px solid burlywood;
-
+    border: none;
+    
     .exit-button {
         cursor: pointer;
         background-color: inherit;
@@ -97,7 +96,7 @@
         // width: $sizePx;
         // float: right;
         text-Align: center;
-        line-height: $sizePx;
+        // line-height: $sizePx;
 
         &:hover {
             background-color: rgba(255,0,0,0.1);

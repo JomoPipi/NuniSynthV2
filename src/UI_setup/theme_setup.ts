@@ -97,6 +97,8 @@ const style = document.createElement('style')
 style.innerHTML = Object.keys(NodeTypeColors2)
     .map(nodeType => 
         `.${nodeType}-dialogbox { 
+            border: none;
+            height: 100%;
             background: 
                 linear-gradient(180deg,
                 var(--color0),

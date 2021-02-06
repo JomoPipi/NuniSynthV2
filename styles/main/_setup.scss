@@ -413,6 +413,21 @@ button {
     box-shadow: 0px 5px 10px rgba(0,0,0,0.4);
 }
 
+.color0 {
+    background-color: var(--color0);
+}
+
+.node-window {
+    -webkit-app-region: no-drag;
+    display: none;
+    position: absolute;
+    background: transparent;
+    color: var(--color5);
+    // border: 2px solid transparent;
+    z-index: 2;
+    box-shadow: 0px 5px 10px rgba(0,0,0,0.4);
+}
+
 .buffer-stuff-row {
     border-bottom: 10px solid transparent;
     box-sizing: border-box;

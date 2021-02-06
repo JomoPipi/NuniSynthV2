@@ -54,9 +54,11 @@
 
 .nesw-corner-drag-box {
     cursor: nesw-resize;
+    background-color: transparent;
 }
 .nwse-corner-drag-box {
     cursor: nwse-resize;
+    background-color: transparent;
 }
 .resizable-window-column {
     cursor: ew-resize;
@@ -68,6 +70,7 @@
     display: grid;
     grid-template-columns: 5px auto 5px;
     height: 5px;
+    background-color: transparent;
 }
 
 

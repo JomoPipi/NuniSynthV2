@@ -352,13 +352,12 @@ export class NuniGraphController {
         }
 
         // Create dialogBox:
-        const contentContainer = E('div')//, { className: 'full' })
+        const contentContainer = E('div', { className: `full ${node.type}-dialogbox` })
         const dialogBox = createDraggableWindow(
             { clickCallback
             , closeCallback
             , contentContainer
             , color: NodeTypeColors2[node.type]
-            , nodeType: node.type
             , barContent
             , resizeUpdate: node.type in HasAResizableDialogBox
                 ? (H, W) => (node as NuniGraphNode<HasAResizableDialogBox>).audioNode.updateBoxDimensions(H, W)
