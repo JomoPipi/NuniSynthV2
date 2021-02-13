@@ -5,10 +5,10 @@
 
 
 
-import { createSubdivSelect3 } from "../../../nunigraph/view/create_subdivselect.js"
-import { createDraglineElement } from "../../../UI_library/components/dragline.js"
-import { createToggleButton } from "../../../UI_library/internal.js"
-import { PianoRollEditor } from "./pianoroll_editor.js"
+import { createSubdivSelect3 } from "../../../nunigraph/view/create_subdivselect.js";
+import { createToggleButton } from "../../../UI_library/internal.js";
+import { VolumeNodeContainer } from "../../volumenode_container.js";
+import { PianoRollEditor } from "../pianoroll/pianoroll_editor.js";
 
 
 
@@ -16,9 +16,8 @@ import { PianoRollEditor } from "./pianoroll_editor.js"
 
 
 
-export class MonoPianoRoll 
-    implements AudioNodeInterfaces<NodeTypes.PIANOR> {
-
+export class SamplePianoRoll implements AudioNodeInterfaces<NodeTypes.SAMPLE_PIANOR> {
+    
     isPlaying = true
     private ctx : AudioContext
     private csn : ConstantSourceNode
@@ -33,11 +32,12 @@ export class MonoPianoRoll
             this.csn.offset.setValueAtTime(n * 100, start)
             this.csn.offset.setValueAtTime(0, end)
         }
-        this.pianoRoll = new PianoRollEditor(this.ctx, playCallback)
+        const options = { editmode: 'dragpoly' } as const
+        this.pianoRoll = new PianoRollEditor(this.ctx, playCallback, options)
 
         for (const prop of Object.keys(Transferable_Pianoroll_properties))
         {
-            Object.defineProperty(this, prop, { 
+            Object.defineProperty(this, prop, {
                 get() {
                     return this.pianoRoll[prop]
                 }, 
@@ -63,8 +63,7 @@ export class MonoPianoRoll
         if (this.controller) return this.controller
 
         const snapToGrid = createToggleButton(this.pianoRoll, 'snapToGrid', { text: 'snap to grid' })
-        const timeBaseSelect = 
-            createSubdivSelect3(this.pianoRoll.subdiv, value => this.pianoRoll.subdiv = value)//, { min: 2 })
+        const timeBaseSelect = createSubdivSelect3(this.pianoRoll.subdiv, value => this.pianoRoll.subdiv = value)
         const buttons = () => 
             [ E('div', { className: 'push-button nice-btn', text: '-' })
             , E('div', { className: 'push-button nice-btn', text: '+' })

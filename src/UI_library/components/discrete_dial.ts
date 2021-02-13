@@ -26,7 +26,7 @@ export function createDiscreteDialComponent(
             fn(optionList[i], i)
             textBox.innerText = optionList[i]
         }, { mouseup: options.mouseup })
-
+        
         dial.update(initialIndex)
 
     const container = E('div', 

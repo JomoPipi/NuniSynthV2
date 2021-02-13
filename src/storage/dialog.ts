@@ -160,7 +160,6 @@ function saveBuffers(fileName : string) {
         const pathToFile = path.join(buffersPath, key.toString())
         const metadata = JSON.stringify({ fileName })
         const metadataPath = pathToFile + META
-        console.log('metadataPath =',metadataPath)
         fs.writeFileSync(metadataPath, metadata)
     }
 

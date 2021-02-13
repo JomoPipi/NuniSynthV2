@@ -51,11 +51,13 @@ const makeSubdivisionOption = (n : number) =>
 const subdivStringToNumericalValue = subdivisionList.reduce((a,value) => 
     (a[subdivisionToString(value)] = value, a) , {} as Record<string, number>)
 
+
+    
 const numericalValueToSubdivString = (value : number) => 
-    subdivisionToString(subdivisionList.reduce(([closest, distance], x) => {
+    subdivisionToString(trace(subdivisionList.reduce(([closest, distance], x) => {
         const d = Math.abs(x - value)
         return d < distance ? [x, d] : [closest, distance]
-    }, [1e9, 1e9])[0])
+    }, [1e9, 1e9])[0]))
 
 export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv : number, isInSync? : boolean }, options ?: Options) {
     const { fn, allowFree }  = options || {}
@@ -139,10 +141,10 @@ type Options3 = Partial<{
     max : number
 }>
 
-export function createSubdivSelect3(initialValue : number, updateFn : (value : number) => void, options? : Options3) {
+export function createSubdivSelect3(initialValue : number, updateFn : (value : number) => void, options : Options3 = {}) {
     /** Makes use of VersatileNumberComponent */
     const innerFn = (x : number | string) => updateFn(typeof x === "number" ? x : subdivStringToNumericalValue[x])
-    const list = subdivisionList.filter(d => (options!.min || 0) <= d && d <= (options!.max || Infinity))
+    const list = subdivisionList.filter(d => (options.min || 0) <= d && d <= (options.max || Infinity))
 
     const numberDial = createVersatileNumberDialComponent(initialValue, list.map(subdivisionToString),
         { fn: innerFn

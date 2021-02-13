@@ -16,7 +16,7 @@ import { NuniGraphAudioNode } from './nodes/module/module.js'
 
 // import { PianoRoll12Tone } from './nodes/pianoroll/pianoroll_12tone.js'
 import { MonoPianoRoll } from './nodes/pianoroll/mono_pianoroll.js'
-
+import { SamplePianoRoll } from './nodes/samplepianoroll/samplepianoroll.js'
 import { ProcessorNode } from './nodes/processor/processor.js'
 import { AutomationNode } from './nodes/automation/automation.js'
 import { NuniFilterNode } from './nodes/filter/filter.js'
@@ -41,6 +41,7 @@ export const AudioNodeMap =
 
     , [NodeTypes.PROCESSOR]:  ProcessorNode
     , [NodeTypes.AUTO]:       AutomationNode
+    , [NodeTypes.SAMPLE_PIANOR]: SamplePianoRoll
     } as const
 
 class AudioContext2 extends AudioContext {

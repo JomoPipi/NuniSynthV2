@@ -24,6 +24,7 @@ import { OpenGraphControllers } from '../controller/graph_controller.js'
 import { createADSREditor } from '../../webaudio2/adsr/adsr_editor.js'
 import { createSliderComponent } from '../../UI_library/components/sliderComponent.js'
 import { MonoPianoRoll } from '../../webaudio2/nodes/pianoroll/mono_pianoroll.js'
+import { SamplePianoRoll } from '../../webaudio2/nodes/samplepianoroll/samplepianoroll.js'
 
 
 const hasSubtypes = (node : NuniGraphNode) : node is NuniGraphNode<HasSubtypes> =>
@@ -77,6 +78,11 @@ export function createValuesWindow(
         // controls.appendChild(createResizeableGraphEditor(audioNode))
     }
 
+    if (audioNode instanceof SamplePianoRoll)
+    {
+        controls.appendChild(audioNode.getController())
+    }
+
     if (audioNode instanceof NuniRecordingNode) 
     {
         controls.appendChild(audioNode.getController())
@@ -91,11 +97,6 @@ export function createValuesWindow(
     {
         controls.appendChild(audioNode.getController())
     }
-
-    // if (audioNode instanceof NuniNumberNode)
-    // {
-    //     controls.appendChild(audioNode.getController())
-    // }
 
     if (node.type === NodeTypes.OUTPUT)
     {

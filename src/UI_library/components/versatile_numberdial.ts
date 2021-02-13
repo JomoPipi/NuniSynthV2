@@ -89,7 +89,8 @@ export function createVersatileNumberDialComponent(
         }
         else
         {
-            const index = optionList.indexOf(options.mapNumberToString(continunousModeComponent.getValue()))
+            const value = continunousModeComponent.getValue()
+            const index = optionList.indexOf(options.mapNumberToString(value))
             discreteModeComponent.setIndex(index)
 
             // Do this because we want to sync the sequencers:

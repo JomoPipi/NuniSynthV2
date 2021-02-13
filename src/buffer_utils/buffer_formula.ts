@@ -50,7 +50,6 @@ export function formulateBuffer(index : number) {
         {
             const length = buffer.length
             const CURRENT_BUFFER = String.fromCharCode(BufferUtils.currentIndex + 65)
-            console.log('CURRENT_BUFFER =',CURRENT_BUFFER)
             const alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
             const [A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z] = alpha
                 
@@ -75,9 +74,6 @@ export function formulateBuffer(index : number) {
                         })
                         return a
                     }, {})
-
-                    console.log('SAMPLES =',SAMPLES)
-                    console.log('SAMPLES.A =',(SAMPLES as any).A)
                     
                     eval(`
                         for (let n = 0; n < length; n++) 

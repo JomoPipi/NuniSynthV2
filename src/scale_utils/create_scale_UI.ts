@@ -11,7 +11,7 @@ import { setDeltaExpressionScale } from './formulas/deltas.js'
 import { scalePresets } from './presets.js'
 
 apply_scale_button: {
-    const [deltaBtnId, equalBtnId, csvBtnId] = 
+    const [deltaBtnId, equalBtnId, csvBtnId] =
         'apply-cent-delta,apply-equal-temperament,apply-scale-csv'
         .split(',')
 

@@ -23,7 +23,8 @@ const enum NodeTypes
 
     PIANOR = 'piano-roll',
     PROCESSOR = 'processor',
-    COMPRESSOR = 'compression'
+    COMPRESSOR = 'compression',
+    SAMPLE_PIANOR = 'sample-pianooroll'
 }
 
 type AudioParams 
@@ -69,6 +70,7 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PIANOR]: 'Mono Piano Roll' // '12-Tone Piano Roll'
     , [NodeTypes.PROCESSOR]:  'Processor'
     , [NodeTypes.COMPRESSOR]: 'Compression'
+    , [NodeTypes.SAMPLE_PIANOR]: 'Sample Piano Roll'
     }
     
 type GraphIcon = string // typeof GraphIconUrls[number]
@@ -122,6 +124,8 @@ const DefaultNodeIcon : ReadonlyRecord<NodeTypes, SVGIconKey> =
     , [NodeTypes.PIANOR]: 'keyboard'
     , [NodeTypes.PROCESSOR]: 'processor'
     , [NodeTypes.COMPRESSOR]: 'compress'
+
+    , [NodeTypes.SAMPLE_PIANOR]: 'keyboard'
     } as const
 
 const HasDynamicNodeIcon = 
@@ -158,6 +162,7 @@ const HasAResizableDialogBox =
     // , [NodeTypes.MODULE]:    true
     , [NodeTypes.PIANOR]:    true
     , [NodeTypes.PROCESSOR]: true
+    , [NodeTypes.SAMPLE_PIANOR]: true
     }
 type HasAResizableDialogBox = keyof typeof HasAResizableDialogBox
 
@@ -178,6 +183,7 @@ const HasTitleEditor : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PIANOR]: true
     , [NodeTypes.PROCESSOR]:true
     , [NodeTypes.COMPRESSOR]:true
+    , [NodeTypes.SAMPLE_PIANOR]:true
     }
 
 const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
@@ -197,6 +203,7 @@ const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.PROCESSOR]:true
     , [NodeTypes.COMPRESSOR]:true
+    , [NodeTypes.SAMPLE_PIANOR]:false
     }
 
 const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
@@ -216,6 +223,7 @@ const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.PROCESSOR]:false
     , [NodeTypes.COMPRESSOR]:false
+    , [NodeTypes.SAMPLE_PIANOR]:false
     }
 
 const ExposesAudioparamsInDialogBox =
@@ -246,6 +254,7 @@ const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.PROCESSOR]: false
     , [NodeTypes.COMPRESSOR]:false
+    , [NodeTypes.SAMPLE_PIANOR]: false
     }
 
 const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } =
@@ -265,11 +274,12 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.PROCESSOR]:false
     , [NodeTypes.COMPRESSOR]:false
+    , [NodeTypes.SAMPLE_PIANOR]: false
     }
 
 // The ones that are `false` let you delete stuff inside the node. 
 // We don't want the node itself to get deleted.
-const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } =
+const SelectWhenDialogBoxIsClicked : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.OUTPUT]: true
     , [NodeTypes.GAIN]:   true
     , [NodeTypes.OSC]:    true
@@ -286,6 +296,7 @@ const SelectWhenDialogBoxIsClicked  : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.PROCESSOR]:false
     , [NodeTypes.COMPRESSOR]:true
+    , [NodeTypes.SAMPLE_PIANOR]: false
     }
 
 // Goal: convert this to IsNativeAudioNode
@@ -306,6 +317,7 @@ const UsesConnectionProtocol2  : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.PROCESSOR]:false
     , [NodeTypes.COMPRESSOR]:false
+    , [NodeTypes.SAMPLE_PIANOR]:false
     }
     
 const ClockDependent =
@@ -313,6 +325,7 @@ const ClockDependent =
     , [NodeTypes.S_SEQ]:  true
     , [NodeTypes.AUTO]:   true
     , [NodeTypes.PIANOR]: true
+    , [NodeTypes.SAMPLE_PIANOR]: true
     // , [NodeTypes.RECORD]: true
     } as const
 
@@ -334,6 +347,7 @@ const AudioNodeParams =
     , [NodeTypes.PIANOR]: []
     , [NodeTypes.PROCESSOR]: []
     , [NodeTypes.COMPRESSOR]: ['threshold', 'knee', 'ratio', 'attack', 'release']
+    , [NodeTypes.SAMPLE_PIANOR]: []
     } as const
 
 const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
@@ -356,6 +370,7 @@ const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
     , [NodeTypes.PIANOR]: []
     , [NodeTypes.PROCESSOR]: []
     , [NodeTypes.COMPRESSOR]:[]
+    , [NodeTypes.SAMPLE_PIANOR]:[]
     }
 
 const HasSubtypes =
@@ -383,6 +398,7 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PIANOR]: 'rgba(105,100,255,0.5)'
     , [NodeTypes.PROCESSOR]: 'rgba(200,150,255,0.5)'
     , [NodeTypes.COMPRESSOR]:'rgba(200,180,220,0.5)'
+    , [NodeTypes.SAMPLE_PIANOR]:'rgba(0,220,255,0.5)'
     }
 
 const NodeTypeColors2 : { readonly [key in NodeTypes] : string } = 
@@ -403,6 +419,7 @@ const NodeTypeColors2 : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PIANOR]: 'rgb(105,100,255)'
     , [NodeTypes.PROCESSOR]: 'rgb(200,150,255)'
     , [NodeTypes.COMPRESSOR]:'rgb(200,180,220)'
+    , [NodeTypes.SAMPLE_PIANOR]:'rgb(0,220,255)'
     } as const
 
 const NodeTypeDescriptions =
@@ -423,6 +440,7 @@ const NodeTypeDescriptions =
     , [NodeTypes.PIANOR]: 'Pianoroll nodes are meant to be connected to the detune parameter of nodes that have a detune parameter (Oscillator, Sample, Sample Sequencer, Filter).'
     , [NodeTypes.PROCESSOR]: 'Processor nodes execute audio processing code.'
     , [NodeTypes.COMPRESSOR]:'Compressor nodes provide a compression effect which lowers the volume of the loudest parts of the signal in order to help prevent clipping and distortion that can occur when multiple sounds are played and multiplexed together at once.'
+    , [NodeTypes.SAMPLE_PIANOR]: 'It\'s a piano sample roll'
     } as const
 
 const NodeTypeWarnings : { readonly [key in NodeTypes]? : string } = 

@@ -90,6 +90,7 @@ const contextmenuNodeTypes : NodeTypes[] =
     , NodeTypes.FILTER
     , NodeTypes.DELAY
     , NodeTypes.PANNER
+    , NodeTypes.SAMPLE_PIANOR
     , NodeTypes.PIANOR
     , NodeTypes.RECORD
     , NodeTypes.MODULE

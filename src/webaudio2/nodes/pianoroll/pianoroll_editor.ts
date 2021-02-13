@@ -47,6 +47,10 @@ const DragModes =
     , NOTES: "D"
     , NONE: 'none'
     } as const
+
+type Options = {
+    editmode? : 'dragpoly' | 'dragmono'
+}
     
 export class  PianoRollEditor {
 
@@ -86,7 +90,7 @@ export class  PianoRollEditor {
     private sequenceShouldBeSorted = false
     private playCallback : PlayCallback
 
-    constructor(audioCtx : AudioContext, playCallback : PlayCallback) {
+    constructor(audioCtx : AudioContext, playCallback : PlayCallback, options : Options = {}) {
         this.audioCtx = audioCtx
         this.playCallback = playCallback
 
@@ -146,7 +150,11 @@ export class  PianoRollEditor {
         // Wait an iteration of the event loop for properties to be set:
         requestAnimationFrame(() => this.layout())
         this.setTempo(MasterClock.getTempo())
-        this.subdiv = 16
+        this.subdiv = 8
+        if (options.editmode)
+        {
+            this.editmode = options.editmode
+        }
     }
 
     scheduleNotes() {}
@@ -899,7 +907,7 @@ export class  PianoRollEditor {
 
     private contextmenu(e : MouseEvent) {}
 
-    private readonly editmode = "dragmono"
+    private editmode : 'dragmono' | 'dragpoly' = "dragmono"
     private cancel(e : MouseEvent) {
         const position = this.getPosition(e)
         if(this.dragging.mode === DragModes.SELECTION)
