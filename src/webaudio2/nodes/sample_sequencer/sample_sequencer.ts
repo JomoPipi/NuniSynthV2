@@ -111,7 +111,8 @@ export class SampleSequencer extends Sequencer
         const stopTime = ADSR_Controller.untriggerAndGetStopTime(
             adsr.gain, 
             time + duration, 
-            this.adsrIndex, this.localADSR)
+            this.adsrIndex,
+            this.localADSR)
             
         src.stop(stopTime)
     }

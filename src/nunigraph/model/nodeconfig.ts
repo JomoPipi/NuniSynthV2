@@ -347,7 +347,7 @@ const AudioNodeParams =
     , [NodeTypes.PIANOR]: []
     , [NodeTypes.PROCESSOR]: []
     , [NodeTypes.COMPRESSOR]: ['threshold', 'knee', 'ratio', 'attack', 'release']
-    , [NodeTypes.SAMPLE_PIANOR]: []
+    , [NodeTypes.SAMPLE_PIANOR]: ['playbackRate','detune']
     } as const
 
 const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =

@@ -94,6 +94,26 @@ code {
     justify-content: space-evenly;
     align-items: center;
 }
+.vert-split2 {
+    // display: grid;
+    // grid-template-rows: 1fr 1fr;
+    // grid-template-columns: 1fr;
+    
+    display: flex;
+    // height: 35px;
+    flex-direction: column;
+    justify-content: start;
+    align-items: flex-start;
+}
+.flexstart {
+    align-items: flex-start;
+}
+
+.shrink {
+    // max-height: 0;
+    height: 0%;
+    background: purple;
+}
 
 .vert-flat-grid {
     display: flex;

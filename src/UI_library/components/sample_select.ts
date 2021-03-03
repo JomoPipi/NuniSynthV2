@@ -35,10 +35,13 @@ export class SampleSelectComponent {
             , className: 'center'
             })
             this.valueText.style.display = 'inline-block'
-            this.valueText.style.width = '25px' // The rows need to stop being moved by the text
+            this.valueText.style.width = '25px' // The rowss need to stop being moved by the text
     
         this.currentImage = initialImage
         const btnContainer = ['🡅','🡇'].reduce((btnContainer, op, i) => { // change the buffer index
+            // btnContainer.style.backgroundColor='red'
+            // btnContainer.style.maxHeight='35px'
+            // btnContainer.style.height='35px'
             const btn = E('button',
                 { text: op
                 , className: `next-sample-btn`
@@ -57,9 +60,7 @@ export class SampleSelectComponent {
             }
             btnContainer.appendChild(btn)
             return btnContainer
-        }, E('span', { className: 'vert-split' }))
-
-        btnContainer.appendChild(this.valueText)
+        }, E('div', { className: 'vert-split2' }))
 
         this.html = E('div', { className: 'flex-center', children: 
             [ this.valueText

@@ -7,13 +7,7 @@
 
 import { MasterClock } from "../../sequencers/master_clock.js"
 
-
-
-
-
-
-
-type NoteEvent = { start : number, end : number, n : number }
+type NoteEvent = { start : number, end : number, n : number, sample : number }
 type PlayCallback = (noteEvent : NoteEvent) => void
 
 const keyboardsrc = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSI0ODAiPg0KPHBhdGggZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBkPSJNMCwwIGgyNHY0ODBoLTI0eiIvPg0KPHBhdGggZmlsbD0iIzAwMCIgZD0iTTAsNDAgaDEydjQwaC0xMnogTTAsMTIwIGgxMnY0MGgtMTJ6IE0wLDIwMCBoMTJ2NDBoLTEyeiBNMCwzMjAgaDEydjQwaC0xMnogTTAsNDAwIGgxMnY0MGgtMTJ6Ii8+DQo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIGQ9Ik0wLDYwIGgyNCBNMCwxNDAgaDI0IE0wLDIyMCBoMjQgTTAsMjgwIGgyNCBNMCwzNDAgaDI0IE0wLDQyMCBoMjQiLz4NCjwvc3ZnPg0K"
@@ -56,6 +50,7 @@ export class  PianoRollEditor {
 
     controller = E('div', { className: 'pianoroll-controller' })
     snapToGrid : boolean = true
+    currentSample? : number
 
     private audioCtx : AudioContext
     private body : HTMLDivElement
@@ -101,6 +96,7 @@ export class  PianoRollEditor {
         this.markendImage = E('span', { className: 'marker', text: '　' })
         this.playheadImage = E('span', { className: 'playhead' })
         this.loopMarker = E('span', { className: 'loop-marker', text: '　' })
+        
 
         this.keyboardImage.style.background = `url("${keyboardsrc}")`
 
@@ -187,25 +183,25 @@ export class  PianoRollEditor {
                 ++p.i
                 x = -1
             }
-            while(p.s[p.i]>="0"&&p.s[p.i]<="9"){
+            while(p.s[p.i]>="0"&&p.s[p.i]<="9") {
                 n=n*10+parseInt(p.s[p.i]);
                 ++p.i;
             }
             return n * x;
         }
-        function getLen(p : any){
+        function getLen(p : any) {
             let n=getNum(p);
             if(n==0)
                 n=defl
             n=p.tb/n;
             let n2=n;
-            while(p.s[p.i]=="."){
+            while(p.s[p.i]==".") {
                 ++p.i;
                 n+=(n2>>=1);
             }
             return n;
         }
-        function getNote(p : any){
+        function getNote(p : any) {
             switch(p.s[p.i]){
             case "c": case "C": n=0; break;
             case "d": case "D": n=2; break;
@@ -220,8 +216,8 @@ export class  PianoRollEditor {
             ++p.i;
             if(n<0)
                 return -1;
-            for(;;){
-                switch(p.s[p.i]){
+            for(;;) {
+                switch(p.s[p.i]) {
                 case "-": --n; break;
                 case "+": ++n; break;
                 case "#": ++n; break;
@@ -237,7 +233,7 @@ export class  PianoRollEditor {
         tie=0;
         evlast=null;
         let z = 0
-        for(parse.i=0;parse.i<parse.s.length;){
+        for (parse.i=0;parse.i<parse.s.length;) {
             switch (parse.s[parse.i]) {
             case '>':
                 ++parse.i; ++defo; n=-1; l=0;
@@ -286,6 +282,7 @@ export class  PianoRollEditor {
                         , isSelected: false
                         , lastT: -1
                         , lastN: -1
+                        , sample: this.currentSample ?? 0
                         })
             }
             t+=l;
@@ -341,8 +338,8 @@ export class  PianoRollEditor {
             {
                 if (noteTime > currentTime)
                 {
-                    const { length, n } = filteredSequence[noteIndex]
-                    this.playCallback({ start: noteTime, end: noteTime + length * tick, n })
+                    const { length, n, sample } = filteredSequence[noteIndex]
+                    this.playCallback({ start: noteTime, end: noteTime + length * tick, n, sample })
                 }
                 ++noteIndex
                 if (noteIndex >= filteredSequence.length)// endIndex)
@@ -440,9 +437,13 @@ export class  PianoRollEditor {
     }
 
     private drawSequence() {
-        for (const { time, length, isSelected, n } of this.sequence)
+        for (const { time, length, isSelected, n, sample } of this.sequence)
         {
-            this.ctx.fillStyle = isSelected ? 'lightgreen' : 'green'
+            this.ctx.fillStyle = sample >= 0
+                ? `rgb(${128 + (sample * 30 + +isSelected * 10)      % 128},
+                       ${128 + (sample * 51 + 30 + +isSelected * 10) % 128},
+                       ${128 + (sample * 72 + 60 + +isSelected * 10) % 128})`
+                : isSelected ? 'lightgreen' : 'green'
             const w = length * this.stepWidth
             const x = (time - this.xoffset) * this.stepWidth + X_START
             const x2 = x + w | 0
@@ -728,6 +729,7 @@ export class  PianoRollEditor {
                 , isSelected: true
                 , lastN: -1
                 , lastT: -1
+                , sample: this.currentSample || -1
                 }
             this.sequence.push(note)
             this.dragging.mode = DragModes.NOTES
@@ -998,7 +1000,7 @@ export class  PianoRollEditor {
     {
         if (time >= 0 && 0 <= n && n < 128)
         {
-            const note = { time, length, n, lastN: -1, lastT: -1, isSelected: true }
+            const note = { time, length, n, lastN: -1, lastT: -1, isSelected: true, sample: this.currentSample ?? -1 }
             this.sequence.push(note)
             this.sortSequence()
             this.render()
@@ -1070,6 +1072,7 @@ type Note = {
     isSelected : boolean
     lastN : number
     lastT : number
+    sample : number
 }
 
 type Point = { x : number, y : number }

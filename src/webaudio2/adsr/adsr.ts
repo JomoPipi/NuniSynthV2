@@ -35,27 +35,27 @@ waveArray[6] = 0.5
 waveArray[7] = 0
 waveArray[8] = 0.5
 
-var createLogarithmicBuffer = function createLogarithmicBuffer(direction = 1, base? : number, length? : number) {
-    base = base || 10,
-    length = length || 100
-    const curve = new Float32Array(length)
-    let percent = 0,
-        index,
-        i;
+// var createLogarithmicBuffer = function createLogarithmicBuffer(direction = 1, base? : number, length? : number) {
+//     base = base || 10,
+//     length = length || 100
+//     const curve = new Float32Array(length)
+//     let percent = 0,
+//         index,
+//         i;
 
-    for (i = 0; i < length; ++i) {
-        //index for the curve array.
-        //direction positive for fade in, negative for fade out
-        index = direction > 0 ? i : length - 1 - i;
+//     for (i = 0; i < length; ++i) {
+//         //index for the curve array.
+//         //direction positive for fade in, negative for fade out
+//         index = direction > 0 ? i : length - 1 - i;
 
-        percent = i / length;
-        curve[index] = Math.log(1 + base*percent) / Math.log(1 + base);
-    }
+//         percent = i / length;
+//         curve[index] = Math.log(1 + base*percent) / Math.log(1 + base);
+//     }
 
-    return curve;
-};
-const logarUp = createLogarithmicBuffer(1)
-const logarDown = createLogarithmicBuffer(-1)
+//     return curve;
+// };
+// const logarUp = createLogarithmicBuffer(1)
+// const logarDown = createLogarithmicBuffer(-1)
 
 const N_ADSRs = 4
 
@@ -104,10 +104,10 @@ export const ADSR_Controller = {
             gain.exponentialRampToValueAtTime(1, attack + time)
             gain.exponentialRampToValueAtTime(sustain ** 2, time + attack + decay)
         }
-        else if (curve === 'logarithmic') {
-            gain.setValueCurveAtTime(logarUp, time, attack)
-            gain.setValueCurveAtTime(logarDown, time + attack, decay)
-        }
+        // else if (curve === 'logarithmic') {
+        //     gain.setValueCurveAtTime(logarUp, time, attack)
+        //     gain.setValueCurveAtTime(logarDown, time + attack, decay)
+        // }
         else
         {
             gain.setTargetAtTime(1, time, attack)                        // Attack phase
@@ -147,7 +147,7 @@ export const ADSR_Controller = {
 ADSR_Controller.render()
 
 const next = 
-    { linear: 'logarithmic'
+    { linear: 'exponential' // 'logarithmic'
     , logarithmic: 'exponential'
     , exponential: 'S'
     , S: 'linear'
@@ -218,7 +218,8 @@ export function renderADSR(
     ctx.font = `${px}px arial`
 
     //! MIGRATION CODE //!
-    if (!adsr.curve) adsr.curve = next[adsr.curve]
+    const in_use = 'linear,exponential,S'.split(',')
+    if (!adsr.curve || !in_use.includes(adsr.curve)) adsr.curve = next[adsr.curve]
 
     ctx.fillText(adsr.curve.slice(0,3), W - W/2|0, px)
 
