@@ -10,6 +10,7 @@ import { BufferStorage } from "../../../storage/buffer_storage.js";
 import { SampleSelectComponent } from "../../../UI_library/components/sample_select.js";
 import { createToggleButton } from "../../../UI_library/internal.js";
 import { ADSR_Controller } from "../../adsr/adsr.js";
+import { createADSREditor } from "../../adsr/adsr_editor.js";
 import { VolumeNodeContainer } from "../../volumenode_container.js";
 import { PianoRollEditor } from "../pianoroll/pianoroll_editor.js";
 
@@ -146,7 +147,12 @@ export class SamplePianoRoll extends VolumeNodeContainer
             
         const sidepanel = E('div', { className: 'pianoroll-sidepanel' })
         sidepanel.style.width = this.SidePanelWidth + 'px'
-        sidepanel.append(zoomControls, snapToGrid, timeBaseSelect, sampleCanvas.html)
+        sidepanel.append
+            ( zoomControls
+            , snapToGrid
+            , timeBaseSelect
+            , sampleCanvas.html
+            , createADSREditor(this.adsrValues, { orientation: 'square' }))
 
         this.controller = E('div', { className: 'flat', children: [sidepanel, this.pianoRoll.controller] })
         return this.controller
@@ -178,5 +184,9 @@ export class SamplePianoRoll extends VolumeNodeContainer
     updateBoxDimensions(H : number, W : number) {
         const barHeight = 25 // height of .draggable-window-bar
         this.pianoRoll.setDimensions(H - barHeight, W - this.SidePanelWidth)
+    }
+
+    keydown(e : KeyboardEvent) {
+        this.pianoRoll.keydown(e)
     }
 }

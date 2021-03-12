@@ -84,10 +84,15 @@ export class  PianoRollEditor {
 
     private sequenceShouldBeSorted = false
     private playCallback : PlayCallback
+    private clipboard : Note[] = []
 
     constructor(audioCtx : AudioContext, playCallback : PlayCallback, options : Options = {}) {
         this.audioCtx = audioCtx
         this.playCallback = playCallback
+        if (options.editmode === 'dragpoly')
+        {
+            this.currentSample = 0
+        }
 
         this.body = E('div', { className: 'wac-body' })
         this.keyboardImage = E('div', { className: 'wac-kb' })
@@ -113,7 +118,7 @@ export class  PianoRollEditor {
         this.body.addEventListener("mousedown", this.pointerdown.bind(this), true)
         this.body.addEventListener('wheel', this.wheel.bind(this),false)
         this.canvas.addEventListener('mousemove', this.mousemove.bind(this),false)
-        this.canvas.addEventListener('keydown', this.keydown.bind(this),false)
+        // this.canvas.addEventListener('keydown', this.keydown.bind(this),false)
         this.canvas.tabIndex = -1 // Needed for keydown event to work.
 
         this.bindcontextmenu = this.contextmenu.bind(this)
@@ -282,7 +287,7 @@ export class  PianoRollEditor {
                         , isSelected: false
                         , lastT: -1
                         , lastN: -1
-                        , sample: this.currentSample ?? 0
+                        , sample: this.currentSample ?? -1
                         })
             }
             t+=l;
@@ -372,6 +377,7 @@ export class  PianoRollEditor {
     }
 
     // Rendering functions |||||||||||||||||||||||||||||||||||||||||||||||
+    private firstTime = true
     private layout() {
         this.canvas.width = this.width
         this.body.style.width = 
@@ -383,8 +389,18 @@ export class  PianoRollEditor {
         this.canvas.style.height =
             this.height + 'px'
 
-        this.gridWidth = this.width - X_START
-        this.gridHeight = this.height - RULER_WIDTH
+        // TODO: switch with OLD if major bugs are found related to this:
+        // NEW:
+        if (this.firstTime)
+        {
+            this.firstTime = false
+            this.gridWidth = window.innerWidth - X_START
+            this.gridHeight = window.innerHeight - RULER_WIDTH
+        }
+        // OLD:
+            // this.gridWidth = this.width - X_START
+            // this.gridHeight = this.height - RULER_WIDTH
+
 
         this.render()
     }
@@ -540,7 +556,45 @@ export class  PianoRollEditor {
         window.addEventListener("mouseup", this.bindcancel)
         window.addEventListener("contextmenu", this.bindcontextmenu)
         
-        if (e.buttons === 2 || e.ctrlKey)
+        if (e.ctrlKey)
+        {
+            log('clipboard.length',this.clipboard.length)
+            this.clearSelection()
+            const startTime = this.clipboard.sort((a, b) => a.time - b.time)[0].time
+            const startN = this.clipboard[0].n
+            const time = this.snapToGrid ? (msg.time / SNAP | 0) * SNAP : msg.time
+            let i = 0
+            for (const noteToCopy of this.clipboard)
+            {
+                const n = noteToCopy.n + msg.n - startN |0
+                const noteTime = noteToCopy.time + time - startTime
+                const note =
+                    { time: noteTime
+                    , n
+                    , length: noteToCopy.length
+                    , isSelected: true
+                    , lastN: n
+                    , lastT: noteTime
+                    , sample: noteToCopy.sample
+                    }
+                this.sequence.push(note)
+                
+                if (i === 0)
+                {
+                    i = 1
+                    this.dragging.n = n
+                    this.dragging.time = time
+                }
+            }
+            this.dragging.mode = DragModes.NOTES
+            this.dragging.target = Targets.NOTE_CENTER
+            this.dragging.notes = this.getSelectedNotes()
+
+            this.render()
+            this.restart()
+            return false
+        }
+        if (e.buttons === 2)
         {
             this.dragging.mode = DragModes.SELECTION
             this.dragging.p1 = position
@@ -729,7 +783,7 @@ export class  PianoRollEditor {
                 , isSelected: true
                 , lastN: -1
                 , lastT: -1
-                , sample: this.currentSample || -1
+                , sample: this.currentSample ?? -1
                 }
             this.sequence.push(note)
             this.dragging.mode = DragModes.NOTES
@@ -1035,12 +1089,37 @@ export class  PianoRollEditor {
         this.layout()
     }
 
-    private keydown(e : KeyboardEvent) {
+    keydown(e : KeyboardEvent) {
         switch(e.key) {
-            case "Delete":
+            case 'Delete':
                 this.deleteSelectedNotes()
                 this.render()
-                break;
+                break
+            case 'c':
+                if (e.ctrlKey)
+                {
+                    const selectedNotes = this.sequence.filter(note => note.isSelected)
+                    this.clipboard = JSON.parse(JSON.stringify(selectedNotes))
+                    // Flicker the selected notes:
+                    selectedNotes.forEach(note => note.isSelected = false)
+                    this.render()
+                    requestAnimationFrame(() => {
+                        selectedNotes.forEach(note => note.isSelected = true)
+                        this.render()
+                    })
+                }
+                break
+            case 'x':
+                if (e.ctrlKey)
+                {
+                    this.clipboard = JSON.parse(JSON.stringify(this.sequence.filter(note => note.isSelected)))
+                    this.deleteSelectedNotes()
+                    this.render()
+                }
+                break
+            default:
+                // log(e.key)
+                break
         }
     }
 

@@ -37,6 +37,10 @@ const is
     = <T extends NodeTypes>(node : NuniGraphNode, type : T) 
     : node is NuniGraphNode<T> => node.type === type
 
+const iss
+    = <T extends NodeTypes>(node : NuniGraphNode, types : readonly T[]) 
+    : node is NuniGraphNode<T> => types.includes(node.type as any)
+
 export class NuniGraphController {
 /**
  *  Manipulates the graph and its' view
@@ -435,14 +439,14 @@ export class NuniGraphController {
         function clickCallback(box : HTMLElement) {
             moveTheWindowToTheTop(box, node)
 
-            if (SelectWhenDialogBoxIsClicked[node.type])
-            {
+            // if (SelectWhenDialogBoxIsClicked[node.type])
+            // {
                 _this.selectNode(node)
-            }
-            else 
-            {
-                _this.unselectNodes()
-            }
+            // }
+            // else 
+            // {
+            //     _this.unselectNodes()
+            // }
             
             _this.renderer.render({ selectedNodes: [node] })
         }
@@ -805,6 +809,20 @@ export class NuniGraphController {
 
 
     private keydown(e : KeyboardEvent) {
+        
+        const leave = this.selectedNodes.length === 1
+            && this.getOpenWindow[this.selectedNodes[0].id]
+            
+        if (leave)
+        {
+            const node = this.selectedNodes[0]
+            if (iss(node, OverridesGraphOperationKeyboardShortcuts))
+            {
+                node.audioNode.keydown(e)
+                return;
+            }
+        }
+
         // 46 for Windows, 8 for Apple
         if (e.keyCode === 46 || (ISMAC && e.keyCode === 8))
         {   // this.save()

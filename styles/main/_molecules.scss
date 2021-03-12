@@ -131,3 +131,8 @@
         stroke-width: 20px;
     }
 }
+
+.two-by-two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}

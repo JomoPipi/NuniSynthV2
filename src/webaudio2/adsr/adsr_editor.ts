@@ -8,20 +8,26 @@
 import { JsDial } from "../../UI_library/internal.js"
 import { renderADSR } from "./adsr.js"
 
-export function createADSREditor(adsrValues : ADSRData) {
+type Options = Partial<{
+    orientation: 'default' | 'square'
+}>
+
+export function createADSREditor(adsrValues : ADSRData, options : Options = {}) {
         
     const canvas = E('canvas')
         canvas.width = 56
         canvas.height = 35
+        canvas.style.display = 'block'
         canvas.style.cursor = 'pointer' // The way to get back to global ADSRs
     const ctx = canvas.getContext('2d')!
-    const knobs = E('span', { className: 'flex-center' })
+    const className = options.orientation === 'square' ? 'two-by-two' : 'flex-center'
+    const knobs = E('span', { className })
         knobs.style.textAlign = 'start' // This stops the knobs from shifting
     const ADSR = 'attack,decay,sustain,release'.split(',')
     const render = () =>
         renderADSR(adsrValues, ctx, canvas.height, canvas.width, { lineWidth: 2 })
     const adsrDials =
-        ADSR.reduce((a : any, s : any) => {
+        ADSR.reduce((a, s) => {
             const dial = new JsDial()
             const adsr = adsrValues as any
             // const epsilon = 0.00002

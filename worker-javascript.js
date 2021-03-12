@@ -1,5 +1,7 @@
-"no use strict";
+"use strict"
+console.log('this =',this)
 !(function(window) {
+console.log('window =',window)
 if (typeof window.window != "undefined" && window.document)
     return;
 if (window.require && window.define)
@@ -214,7 +216,7 @@ window.onmessage = function(e) {
         main = window.main = new clazz(sender);
     }
 };
-})(this);
+})(window);
 
 define("ace/lib/oop",[], function(require, exports, module) {
 "use strict";

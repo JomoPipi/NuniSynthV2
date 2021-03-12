@@ -237,6 +237,11 @@ const ExposesAudioparamsInDialogBox =
     , [NodeTypes.COMPRESSOR]: true
     } as const
 
+const OverridesGraphOperationKeyboardShortcuts =
+    [ NodeTypes.PIANOR
+    , NodeTypes.SAMPLE_PIANOR
+    ] as const
+
 const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.OUTPUT]: true
     , [NodeTypes.GAIN]:   false
@@ -719,12 +724,20 @@ type IHasAResizableDialogBox<T> = (T extends HasAResizableDialogBox
     }
     : {})
 
+type OverridesGraphOperationKeyboardShortcuts = typeof OverridesGraphOperationKeyboardShortcuts[number]
+type IOverridesGraphOperationKeyboardShortcuts<T> = (T extends OverridesGraphOperationKeyboardShortcuts
+    ? {
+        keydown(e : KeyboardEvent) : void
+    }
+    : {})
+
 type AudioNodeInterfaces<T extends NodeTypes> =
     & BaseAudioNodeProperties
     & IClockDependent<T>
     & IHasDynamicNodeIcon<T>
     & IKnowsWhenDialogBoxCloses<T>
     & IHasAResizableDialogBox<T>
+    & IOverridesGraphOperationKeyboardShortcuts<T>
 
 
 

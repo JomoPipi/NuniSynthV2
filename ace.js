@@ -10348,8 +10348,9 @@
     
             this.$stopWorker();
     
-            if (this.$useWorker)
-                this.$startWorker();
+            // TODO: comment this in and fix the errors.
+            // if (this.$useWorker)
+            //     this.$startWorker();
     
             var tokenizer = mode.getTokenizer();
     
@@ -11557,6 +11558,7 @@
                 this.$useWorker = useWorker;
     
                 this.$stopWorker();
+                console.log('yoyo')
                 if (useWorker)
                     this.$startWorker();
             },

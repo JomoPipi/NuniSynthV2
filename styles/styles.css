@@ -1192,6 +1192,13 @@ code {
   stroke-width: 20px;
 }
 
+.two-by-two {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
+}
+
 .info-button {
   cursor: help;
   background: #5353a1;

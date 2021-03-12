@@ -115,4 +115,8 @@ export class MonoPianoRoll
         const barHeight = 25 // height of .draggable-window-bar
         this.pianoRoll.setDimensions(H - barHeight, W - this.SidePanelWidth)
     }
+
+    keydown(e : KeyboardEvent) {
+        this.pianoRoll.keydown(e)
+    }
 }
