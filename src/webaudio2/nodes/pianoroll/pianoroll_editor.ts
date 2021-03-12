@@ -67,8 +67,8 @@ export class  PianoRollEditor {
     private height = 300
     private xrange = 16
     private yrange = 16
-    private xoffset = 0
-    private yoffset = 0
+    private xoffset = -3
+    private yoffset = 10
     private playhead = 0
     private markstart = 0
     private markend =  16
@@ -149,7 +149,11 @@ export class  PianoRollEditor {
             }
         
         // Wait an iteration of the event loop for properties to be set:
-        requestAnimationFrame(() => this.layout())
+        requestAnimationFrame(() => {
+            this.layout()
+            this.zoom(false, 2)
+            this.zoom(true, 3)
+        })
         this.setTempo(MasterClock.getTempo())
         this.subdiv = 8
         if (options.editmode)
@@ -1103,10 +1107,10 @@ export class  PianoRollEditor {
                     // Flicker the selected notes:
                     selectedNotes.forEach(note => note.isSelected = false)
                     this.render()
-                    requestAnimationFrame(() => {
+                    setTimeout(() => {
                         selectedNotes.forEach(note => note.isSelected = true)
                         this.render()
-                    })
+                    }, 40)
                 }
                 break
             case 'x':
