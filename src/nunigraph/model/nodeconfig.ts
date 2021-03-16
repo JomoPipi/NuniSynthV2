@@ -240,6 +240,7 @@ const ExposesAudioparamsInDialogBox =
 const OverridesGraphOperationKeyboardShortcuts =
     [ NodeTypes.PIANOR
     , NodeTypes.SAMPLE_PIANOR
+    , NodeTypes.MODULE
     ] as const
 
 const HasNoOutput : { readonly [key in NodeTypes] : boolean } =

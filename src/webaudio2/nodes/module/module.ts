@@ -18,6 +18,8 @@ interface NuniNode { id : number, audioNode : Indexed }
 export class NuniGraphAudioNode extends VolumeNodeContainer
     implements AudioNodeInterfaces<NodeTypes.MODULE> {
 
+    keydown(){}
+
     static createController? : (canvas : HTMLCanvasElement, vol : GainNode) => NuniGraphController
 
     canvas : HTMLCanvasElement
