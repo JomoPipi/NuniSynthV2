@@ -30,6 +30,7 @@ const Targets =
     , EMPTY: "s"
     , X_RULER: "x"
     , Y_RULER: "y"
+    , KEYBOARD_START: 'K'
     } as const
 
 const DragModes =
@@ -40,6 +41,7 @@ const DragModes =
     , LOOPMARKER: "L"
     , NOTES: "D"
     , NONE: 'none'
+    , KB_MARKER: 'K'
     } as const
 
 type Options = {
@@ -60,6 +62,7 @@ export class  PianoRollEditor {
     private markendImage : HTMLSpanElement
     private playheadImage : HTMLSpanElement
     private loopMarker : HTMLSpanElement
+    private keyboardBeginMarker : HTMLSpanElement
     private ctx : CanvasRenderingContext2D
     private sequence : Note[]
     private dragging : DragData
@@ -77,6 +80,7 @@ export class  PianoRollEditor {
     private gridHeight = -1
     private stepWidth = -1
     private stepHeight = -1
+    private keyboardBeginIndex = 5 // -1
 
     private bindcontextmenu : MouseHandler
     private bindpointermove : MouseHandler
@@ -101,6 +105,7 @@ export class  PianoRollEditor {
         this.markendImage = E('span', { className: 'marker', text: '　' })
         this.playheadImage = E('span', { className: 'playhead' })
         this.loopMarker = E('span', { className: 'loop-marker', text: '　' })
+        this.keyboardBeginMarker = E('span', { className: 'kb-marker', text: '　' })
         
 
         this.keyboardImage.style.background = `url("${keyboardsrc}")`
@@ -109,6 +114,7 @@ export class  PianoRollEditor {
             this.canvas, 
             this.keyboardImage, 
             this.loopMarker,
+            this.keyboardBeginMarker,
             this.markstartImage, 
             this.markendImage, 
             this.playheadImage)
@@ -419,6 +425,7 @@ export class  PianoRollEditor {
         this.drawXRuler()
         this.drawMarker()
         this.drawSelectedArea()
+        this.drawKbMarker()
     }
 
     private drawGrid() {
@@ -547,6 +554,15 @@ export class  PianoRollEditor {
             this.ctx.fillRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y)
         }
     }
+
+    private drawKbMarker() {
+        if (true) // (this.keyboardBeginIndex >= 0)
+        {
+            const i = this.keyboardBeginIndex
+            const y = this.height + (this.yoffset - i) * this.stepHeight | 0
+            this.keyboardBeginMarker.style.top = (y - 20) + 'px'
+        }
+    }
     //                     |||||||||||||||||||||||||||||||||||||||||||||||
 
 
@@ -562,7 +578,6 @@ export class  PianoRollEditor {
         
         if (e.ctrlKey)
         {
-            log('clipboard.length',this.clipboard.length)
             this.clearSelection()
             const startTime = this.clipboard.sort((a, b) => a.time - b.time)[0].time
             const startN = this.clipboard[0].n
@@ -633,7 +648,13 @@ export class  PianoRollEditor {
                 e.preventDefault()
                 e.stopPropagation()
                 return false
-                
+
+            case this.keyboardBeginMarker:
+                this.dragging.mode = DragModes.KB_MARKER
+                this.dragging.y = position.y
+                e.preventDefault()
+                e.stopPropagation()
+                return false
 
             // case this.playheadImage:
             //     this.dragging.mode = DragModes.PLAYHEAD
@@ -679,6 +700,13 @@ export class  PianoRollEditor {
         }
         if (x < X_START)
         {
+            // const i = this.keyboardBeginIndex
+            // const y1 = this.height + (this.yoffset - i) * this.stepHeight | 0
+            // const y2 = y1 - RULER_WIDTH
+            // message.target = y2 <= y && y <= y1
+            //     ? Targets.KEYBOARD_START
+            //     : Targets.Y_RULER
+            
             message.target = Targets.Y_RULER
             return message
         }
@@ -875,6 +903,13 @@ export class  PianoRollEditor {
                 this.drawMarker()
                 break
                 
+            case DragModes.KB_MARKER:
+                // const y1 = this.dragging.y
+                const y2 = position.y
+                this.keyboardBeginIndex = 
+                    this.yoffset - (y2 - this.height) / this.stepHeight | 0
+                this.drawKbMarker()
+                break
 
             // case DragModes.PLAYHEAD:
             //     this.playhead = Math.max(0
