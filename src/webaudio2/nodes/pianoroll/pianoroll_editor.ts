@@ -59,7 +59,7 @@ export class  PianoRollEditor {
 
     controller = E('div', { className: 'pianoroll-controller' })
     snapToGrid : boolean = true
-    currentSample? : number
+    _currentSample? : number
 
     private audioCtx : AudioContext
     private body : HTMLDivElement
@@ -75,10 +75,10 @@ export class  PianoRollEditor {
     private dragging : DragData
     private width = 485
     private height = 300
-    private xrange = 16
-    private yrange = 16
-    private xoffset = -3
-    private yoffset = 10
+    private xrange = 32 // 16
+    private yrange = 48 // 16
+    private xoffset = -1
+    private yoffset = -2
     private playhead = 0
     private markstart = 0
     private markend =  16
@@ -103,7 +103,7 @@ export class  PianoRollEditor {
         this.playCallback = playCallback
         if (options.editmode === 'dragpoly')
         {
-            this.currentSample = 0
+            this._currentSample = 0
         }
 
         this.body = E('div', { className: 'wac-body' })
@@ -163,11 +163,8 @@ export class  PianoRollEditor {
             }
         
         // Wait an iteration of the event loop for properties to be set:
-        requestAnimationFrame(() => {
-            this.layout()
-            this.zoom(false, 2)
-            this.zoom(true, 3)
-        })
+        requestAnimationFrame(() => this.layout())
+
         this.setTempo(MasterClock.getTempo())
         this.subdiv = 8
         if (options.editmode)
@@ -305,7 +302,7 @@ export class  PianoRollEditor {
                         , isSelected: false
                         , lastT: -1
                         , lastN: -1
-                        , sample: this.currentSample ?? -1
+                        , sample: this._currentSample ?? -1
                         })
             }
             t+=l;
@@ -324,6 +321,15 @@ export class  PianoRollEditor {
     }
     get subdiv() {
         return this._subdiv
+    }
+
+    set currentSample(s : number) {
+        this._currentSample = s
+        this.sequence.forEach(note => note.isSelected && (note.sample = s))
+        this.render()
+    }
+    get currentSample() { 
+        return this._currentSample ?? -1
     }
 
     private tempo = 120
@@ -811,7 +817,7 @@ export class  PianoRollEditor {
                 , isSelected: true
                 , lastN: -1
                 , lastT: -1
-                , sample: this.currentSample ?? -1
+                , sample: this._currentSample ?? -1
                 }
             this.sequence.push(note)
             this.dragging.mode = DragModes.NOTES
@@ -1089,7 +1095,7 @@ export class  PianoRollEditor {
     {
         if (time >= 0 && 0 <= n && n < 128)
         {
-            const note = { time, length, n, lastN: -1, lastT: -1, isSelected: true, sample: this.currentSample ?? -1 }
+            const note = { time, length, n, lastN: -1, lastT: -1, isSelected: true, sample: this._currentSample ?? -1 }
             this.sequence.push(note)
             this.sortSequence()
             this.render()
@@ -1130,12 +1136,13 @@ export class  PianoRollEditor {
         if (this._kbWriteMode && !isNaN(key))
         {
             if (this.keyIsDownSoDontSpam[key]) return;
-            const s = this.currentSample
-            if (s == null) throw 'This is only supposed to be used with SamplePianoroll'
+            this.keyIsDownSoDontSpam[key] = true
+
+            if (this._currentSample == null) throw 'This is only supposed to be used with SamplePianoroll'
             const t = this.playhead
 
-            const stop = this.playCallback(
-                this.currentSample ?? -1, 
+            const stopSound = this.playCallback(
+                this._currentSample ?? -1, 
                 this.audioCtx.currentTime, 
                 key)
 
@@ -1145,11 +1152,10 @@ export class  PianoRollEditor {
                 this.addNote(t, key, length)
                 this.keyIsDownSoDontSpam[key] = false
                 this.restart()
-                stop(this.audioCtx.currentTime)
+                stopSound(this.audioCtx.currentTime)
                 document.removeEventListener('keyup', keyup)
             }
             document.addEventListener('keyup', keyup)
-            this.keyIsDownSoDontSpam[key] = true
             return
         }
         if (e.key === 'Delete')

@@ -600,6 +600,8 @@ const Transferable_Pianoroll_properties =
     , yoffset     : true
     , markstart   : true
     , markend     : true
+    , gridWidth    : true
+    , gridHeight    : true
     } as const
 
 const Transferable_AudioNodeProperties =
