@@ -29,7 +29,7 @@ export class SamplePianoRoll extends VolumeNodeContainer
     private controller? : HTMLElement
     private detune : NuniAudioParam
     private playbackRate : NuniAudioParam
-    private adsrValues : ADSRData =
+    private localADSR : ADSRData =
         { attack: 0.010416984558105469
         , decay: 0.17708349227905273
         , sustain: 0.2166603088378906
@@ -43,15 +43,13 @@ export class SamplePianoRoll extends VolumeNodeContainer
         this.detune = new NuniAudioParam(ctx)
         this.playbackRate = new NuniAudioParam(ctx)
         this.playbackRate.offset.value = 1
-        // this.adsrValues 
-
-        const playCallback = ({ start, end, n, sample } : { start : number, end : number, n : number, sample : number }) => {
-            this.playSample(sample, start, end, n)
-            // this.detune.offset.setValueAtTime(n * 100, start)
-            // this.detune.offset.setValueAtTime(0, end)
-        }
+        
         const options = { editmode: 'dragpoly' } as const
-        this.pianoRoll = new PianoRollEditor(this.ctx, playCallback, options)
+        // this.pianoRoll = new PianoRollEditor(this.ctx, playCallback, options)
+        this.pianoRoll = new PianoRollEditor(
+            this.ctx,
+            this.playSampleCurried.bind(this), 
+            options)
 
         for (const prop of Object.keys(Transferable_Pianoroll_properties))
         {
@@ -81,7 +79,36 @@ export class SamplePianoRoll extends VolumeNodeContainer
         return src
     }
 
-    playSample(sample : number, startTime : number, endTime : number, n : number) {
+    // playSample(sample : number, startTime : number, endTime : number, n : number) {
+
+    //     const src = this.createSource(sample)
+    //     // const key = 'Q'.charCodeAt(0) // noteData.keyIndex
+    //     // src.detune.value = KB.scale[KB.keymap[key]]
+
+    //     const adsr = new GainNode(this.ctx)
+    //     adsr.gain.setValueAtTime(0, 0)
+
+    //     adsr.connect(this.volumeNode)
+        
+    //     // Connect the source to the envelope
+    //     src.connect(adsr)
+    //     src.start(startTime)
+    //     src.detune.value = n * 100
+
+    //     // Schedule the envelope on
+    //     ADSR_Controller.triggerSource(src, adsr.gain, startTime, -1, this.localADSR)
+
+    //     // Schedule the envelope off
+    //     const stopTime = ADSR_Controller.untriggerAndGetStopTime(
+    //         adsr.gain,
+    //         endTime, 
+    //         sample,
+    //         this.localADSR)
+            
+    //     src.stop(stopTime)
+    // }
+
+    playSampleCurried(sample : number, startTime : number, n : number) {
 
         const src = this.createSource(sample)
         // const key = 'Q'.charCodeAt(0) // noteData.keyIndex
@@ -98,16 +125,19 @@ export class SamplePianoRoll extends VolumeNodeContainer
         src.detune.value = n * 100
 
         // Schedule the envelope on
-        ADSR_Controller.triggerSource(src, adsr.gain, startTime, -1, this.adsrValues)
+        ADSR_Controller.triggerSource(src, adsr.gain, startTime, -1, this.localADSR)
 
-        // Schedule the envelope off
-        const stopTime = ADSR_Controller.untriggerAndGetStopTime(
-            adsr.gain,
-            endTime, 
-            sample,
-            this.adsrValues)
-            
-        src.stop(stopTime)
+        return (endTime : number) => {
+
+            // Schedule the envelope off
+            const stopTime = ADSR_Controller.untriggerAndGetStopTime(
+                adsr.gain,
+                endTime, 
+                sample,
+                this.localADSR)
+                
+            src.stop(stopTime)
+        }
     }
 
     connect(destination : Destination) {
@@ -144,6 +174,7 @@ export class SamplePianoRoll extends VolumeNodeContainer
         const sampleCanvas = 
             new SampleSelectComponent(update, 0)
 
+        const writeMode = createToggleButton(this.pianoRoll, 'kbWriteMode', { text: 'WRITE' })
             
         const sidepanel = E('div', { className: 'pianoroll-sidepanel' })
         sidepanel.style.width = this.SidePanelWidth + 'px'
@@ -152,7 +183,8 @@ export class SamplePianoRoll extends VolumeNodeContainer
             , snapToGrid
             , timeBaseSelect
             , sampleCanvas.html
-            , createADSREditor(this.adsrValues, { orientation: 'square' }))
+            , createADSREditor(this.localADSR, { orientation: 'square' })
+            , writeMode)
 
         this.controller = E('div', { className: 'flat', children: [sidepanel, this.pianoRoll.controller] })
         return this.controller

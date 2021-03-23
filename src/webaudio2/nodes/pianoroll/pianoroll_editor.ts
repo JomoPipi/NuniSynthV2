@@ -7,8 +7,9 @@
 
 import { MasterClock } from "../../sequencers/master_clock.js"
 
-type NoteEvent = { start : number, end : number, n : number, sample : number }
-type PlayCallback = (noteEvent : NoteEvent) => void
+// type NoteEvent = { start : number, end : number, n : number, sample : number }
+// type PlayCallback = (noteEvent : NoteEvent) => void
+type PlayCallback = (sample : number, start : number, n : number) => (end : number) => void
 
 const keyboardsrc = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSI0ODAiPg0KPHBhdGggZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBkPSJNMCwwIGgyNHY0ODBoLTI0eiIvPg0KPHBhdGggZmlsbD0iIzAwMCIgZD0iTTAsNDAgaDEydjQwaC0xMnogTTAsMTIwIGgxMnY0MGgtMTJ6IE0wLDIwMCBoMTJ2NDBoLTEyeiBNMCwzMjAgaDEydjQwaC0xMnogTTAsNDAwIGgxMnY0MGgtMTJ6Ii8+DQo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIGQ9Ik0wLDYwIGgyNCBNMCwxNDAgaDI0IE0wLDIyMCBoMjQgTTAsMjgwIGgyNCBNMCwzNDAgaDI0IE0wLDQyMCBoMjQiLz4NCjwvc3ZnPg0K"
 
@@ -18,6 +19,12 @@ const SEMIFLAG = [6, 1, 0, 1, 0, 2, 1, 0, 1, 0, 1, 0]
 const OCTAVE_OFFSET = -1
 const TIMEBASE = 16
 const X_START = RULER_WIDTH + KB_WIDTH
+const KB_KEYS = (keys => 
+    [...keys.toUpperCase()]
+        .reduce((a, key, i) => (a[key] = i, a),
+    [...keys]
+        .reduce((a, key, i) => (a[key] = i, a), {} as Record<string,number>))
+)('1234567890-=qwertyuiop[]asdfghjkl;\'zxcvbnm,./')
 
 // Possible future class members:
 const SNAP = 1
@@ -80,7 +87,8 @@ export class  PianoRollEditor {
     private gridHeight = -1
     private stepWidth = -1
     private stepHeight = -1
-    private keyboardBeginIndex = 5 // -1
+    private keyboardBeginIndex = 0
+    private _kbWriteMode : boolean = false
 
     private bindcontextmenu : MouseHandler
     private bindpointermove : MouseHandler
@@ -328,12 +336,6 @@ export class  PianoRollEditor {
         const loopLength = tick * nSteps
         const t = Math.max(0, this.audioCtx.currentTime - loopLength)
 
-        // const startIndex = (idx => idx < 0 ? 0 : idx)
-        //     (this.sequence.findIndex(note => note.time >= this.markstart))
-
-        // const endIndex = (idx => idx < 0 ? this.sequence.length : idx)
-        //     (this.sequence.findIndex(note => note.time > this.markend))
-
         const filteredSequence = this.sequence.filter(note => 
             this.markstart <= note.time && note.time < this.markend)
 
@@ -354,7 +356,8 @@ export class  PianoRollEditor {
                 if (noteTime > currentTime)
                 {
                     const { length, n, sample } = filteredSequence[noteIndex]
-                    this.playCallback({ start: noteTime, end: noteTime + length * tick, n, sample })
+                    // this.playCallback({ start: noteTime, end: noteTime + length * tick, n, sample })
+                    this.playCallback(sample, noteTime, n)(noteTime + length * tick)
                 }
                 ++noteIndex
                 if (noteIndex >= filteredSequence.length)// endIndex)
@@ -556,7 +559,7 @@ export class  PianoRollEditor {
     }
 
     private drawKbMarker() {
-        if (true) // (this.keyboardBeginIndex >= 0)
+        if (this._kbWriteMode)
         {
             const i = this.keyboardBeginIndex
             const y = this.height + (this.yoffset - i) * this.stepHeight | 0
@@ -700,13 +703,6 @@ export class  PianoRollEditor {
         }
         if (x < X_START)
         {
-            // const i = this.keyboardBeginIndex
-            // const y1 = this.height + (this.yoffset - i) * this.stepHeight | 0
-            // const y2 = y1 - RULER_WIDTH
-            // message.target = y2 <= y && y <= y1
-            //     ? Targets.KEYBOARD_START
-            //     : Targets.Y_RULER
-            
             message.target = Targets.Y_RULER
             return message
         }
@@ -1128,15 +1124,45 @@ export class  PianoRollEditor {
         this.layout()
     }
 
+    private keyIsDownSoDontSpam = {} as Record<string,boolean>
     keydown(e : KeyboardEvent) {
-        switch(e.key) {
-            case 'Delete':
-                this.deleteSelectedNotes()
-                this.render()
-                break
-            case 'c':
-                if (e.ctrlKey)
-                {
+        const key = this.keyboardBeginIndex + KB_KEYS[e.key]
+        if (this._kbWriteMode && !isNaN(key))
+        {
+            if (this.keyIsDownSoDontSpam[key]) return;
+            const s = this.currentSample
+            if (s == null) throw 'This is only supposed to be used with SamplePianoroll'
+            const t = this.playhead
+
+            const stop = this.playCallback(
+                this.currentSample ?? -1, 
+                this.audioCtx.currentTime, 
+                key)
+
+            const keyup = () => {
+                const u = this.playhead
+                const length = (u >= t ? u : this.markend) - t || 0.1
+                this.addNote(t, key, length)
+                this.keyIsDownSoDontSpam[key] = false
+                this.restart()
+                stop(this.audioCtx.currentTime)
+                document.removeEventListener('keyup', keyup)
+            }
+            document.addEventListener('keyup', keyup)
+            this.keyIsDownSoDontSpam[key] = true
+            return
+        }
+        if (e.key === 'Delete')
+        {
+            this.deleteSelectedNotes()
+            this.render()
+            return
+        }
+        if (e.ctrlKey)
+        {
+            switch(e.key)
+            {
+                case 'c':
                     const selectedNotes = this.sequence.filter(note => note.isSelected)
                     this.clipboard = JSON.parse(JSON.stringify(selectedNotes))
                     // Flicker the selected notes:
@@ -1146,20 +1172,25 @@ export class  PianoRollEditor {
                         selectedNotes.forEach(note => note.isSelected = true)
                         this.render()
                     }, 40)
-                }
-                break
-            case 'x':
-                if (e.ctrlKey)
-                {
+                    break
+                case 'x':
                     this.clipboard = JSON.parse(JSON.stringify(this.sequence.filter(note => note.isSelected)))
                     this.deleteSelectedNotes()
                     this.render()
-                }
-                break
-            default:
-                // log(e.key)
-                break
+                    break
+            }
         }
+    }
+
+    set kbWriteMode(on : boolean) {
+        this.keyboardBeginMarker.style.display = on
+            ? 'inline-block'
+            : 'none'
+        this._kbWriteMode = on
+        this.render()
+    }
+    get kbWriteMode() {
+        return this._kbWriteMode
     }
 
     private deleteSelectedNotes() {

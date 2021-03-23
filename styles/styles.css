@@ -2278,7 +2278,7 @@ a {
   height: 20px;
   cursor: move;
   background-color: rgba(255, 224, 100, 0.3);
-  display: inline-block;
+  display: none;
   background: url("images/keyboard_key_1.png");
   background-size: 100%;
 }

@@ -29,10 +29,12 @@ export class MonoPianoRoll
         this.ctx = ctx
         this.csn = ctx.createConstantSource()
         this.csn.start()
-        const playCallback = ({ start, end, n } : { start : number, end : number, n : number }) => {
+        
+        const playCallback = (sample : number, start : number, n : number) => {
             this.csn.offset.setValueAtTime(n * 100, start)
-            this.csn.offset.setValueAtTime(0, end)
+            return (end : number) => this.csn.offset.setValueAtTime(0, end)
         }
+
         this.pianoRoll = new PianoRollEditor(this.ctx, playCallback)
 
         for (const prop of Object.keys(Transferable_Pianoroll_properties))

@@ -188,10 +188,3 @@ Graph_Attachments: {
         }
     }
 }
-
-
-
-setTimeout(() => {
-const node = GraphController.g.createNewNode(NodeTypes.PIANOR)
-GraphController.openWindow(node)
-}, 1000)
