@@ -41,7 +41,7 @@ export function createDraglineElement<T extends string>(obj : { [key in T] : num
         line.setAttribute('points', `0,0 ${v * W},0` )
         obj[prop] = v
     }
-    update(obj[prop])
+    update(0)
     
     const sensitivity = 256
     lineContainer.onmousedown = doUntilMouseUp(
