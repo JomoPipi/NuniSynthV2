@@ -502,7 +502,7 @@ export class  PianoRollEditor {
         style.width = KB_WIDTH + 'px'
         style.backgroundSize = `100% ${this.stepHeight * 12}px`
         style.backgroundPosition = 
-            `0px ${this.gridHeight + this.stepHeight * this.yoffset}px`
+            `0px ${this.height - RULER_WIDTH + this.stepHeight * this.yoffset}px`
     }
 
     private drawXRuler() {

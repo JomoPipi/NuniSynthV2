@@ -476,7 +476,7 @@ export class NuniGraphController {
     closeWindow(id : number) {
         // Closes a node's window if it's open.
 
-        const node = this.g.nodes.find(({ id: _id }) => _id === id)!
+        const node = this.g.nodes.find(node => node.id === id)!
         if (!node) throw 'Not supposed to happen - figure out what to do from here'
 
         const knowsWhenDialogBoxCloses = (node : NuniGraphNode)
