@@ -75,7 +75,7 @@ export class  PianoRollEditor {
     private dragging : DragData
     private width = 485
     private height = 300
-    private xrange = 32 // 16
+    private xrange = 64 // 16
     private yrange = 48 // 16
     private xoffset = -1
     private yoffset = -2
@@ -588,6 +588,7 @@ export class  PianoRollEditor {
         if (e.ctrlKey)
         {
             this.clearSelection()
+            if (this.clipboard.length === 0) return false
             const startTime = this.clipboard.sort((a, b) => a.time - b.time)[0].time
             const startN = this.clipboard[0].n
             const time = this.snapToGrid ? (msg.time / SNAP | 0) * SNAP : msg.time
@@ -678,6 +679,7 @@ export class  PianoRollEditor {
         this.dragging.y = position.y
         this.dragging.offsetx = this.xoffset
         this.dragging.offsety = this.yoffset
+        this.dragging.target = msg.target
         this.canvas.focus()
         this.editDragDown(msg)
         this.sequenceShouldBeSorted = true
@@ -852,6 +854,9 @@ export class  PianoRollEditor {
         switch (this.dragging.mode)
         {
             case DragModes.NONE:
+                if ((this.dragging.target !== Targets.X_RULER &&
+                    this.dragging.target !== Targets.Y_RULER) || e.ctrlKey) return false
+
                 this.xoffset
                     = this.dragging.offsetx 
                     + (this.dragging.x - position.x)
@@ -929,6 +934,7 @@ export class  PianoRollEditor {
 
     private editDragMove(msg : HoverMessage) {
         if (this.dragging.mode !== DragModes.NOTES) return
+        
         switch (this.dragging.target)
         {
             case Targets.NOTE_RIGHT:
