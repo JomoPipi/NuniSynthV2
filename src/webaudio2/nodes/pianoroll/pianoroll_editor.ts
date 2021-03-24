@@ -1138,32 +1138,6 @@ export class  PianoRollEditor {
 
     private keyIsDownSoDontSpam = {} as Record<string,boolean>
     keydown(e : KeyboardEvent) {
-        const key = this.keyboardBeginIndex + KB_KEYS[e.key]
-        if (this._kbWriteMode && !isNaN(key))
-        {
-            if (this.keyIsDownSoDontSpam[key]) return;
-            this.keyIsDownSoDontSpam[key] = true
-
-            if (this._currentSample == null) throw 'This is only supposed to be used with SamplePianoroll'
-            const t = this.playhead
-
-            const stopSound = this.playCallback(
-                this._currentSample ?? -1, 
-                this.audioCtx.currentTime, 
-                key)
-
-            const keyup = () => {
-                const u = this.playhead
-                const length = (u >= t ? u : this.markend) - t || 0.1
-                this.addNote(t, key, length)
-                this.keyIsDownSoDontSpam[key] = false
-                this.restart()
-                stopSound(this.audioCtx.currentTime)
-                document.removeEventListener('keyup', keyup)
-            }
-            document.addEventListener('keyup', keyup)
-            return
-        }
         if (e.key === 'Delete')
         {
             this.deleteSelectedNotes()
@@ -1191,6 +1165,33 @@ export class  PianoRollEditor {
                     this.render()
                     break
             }
+            return;
+        }
+        const key = this.keyboardBeginIndex + KB_KEYS[e.key]
+        if (this._kbWriteMode && !isNaN(key))
+        {
+            if (this.keyIsDownSoDontSpam[key]) return;
+            this.keyIsDownSoDontSpam[key] = true
+
+            if (this._currentSample == null) throw 'This is only supposed to be used with SamplePianoroll'
+            const t = this.playhead
+
+            const stopSound = this.playCallback(
+                this._currentSample ?? -1, 
+                this.audioCtx.currentTime, 
+                key)
+
+            const keyup = () => {
+                const u = this.playhead
+                const length = (u >= t ? u : this.markend) - t || 0.1
+                this.addNote(t, key, length)
+                this.keyIsDownSoDontSpam[key] = false
+                this.restart()
+                stopSound(this.audioCtx.currentTime)
+                document.removeEventListener('keyup', keyup)
+            }
+            document.addEventListener('keyup', keyup)
+            return
         }
     }
 
