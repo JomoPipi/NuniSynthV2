@@ -720,13 +720,15 @@ export class  PianoRollEditor {
             const note = this.sequence[i]
             if (_n === note.n)
             {
-                if (note.isSelected && Math.abs(note.time - time) * this.stepWidth < 8)
+                if (note.isSelected && 
+                    Math.abs(note.time - 0.25 - time) * this.stepWidth < 4)
                 {
                     message.target = Targets.NOTE_LEFT
                     message.i = i
                     return message
                 }
-                if (note.isSelected && Math.abs(note.time+note.length-time) * this.stepWidth < 8)
+                if (note.isSelected && 
+                    Math.abs(note.time + note.length + 0.25 - time) * this.stepWidth < 4)
                 {
                     message.target = Targets.NOTE_RIGHT
                     message.i = i
