@@ -127,7 +127,6 @@ Graph_Attachments: {
 
     BufferUtils.initBufferPresets(audioCtx)
     BufferUtils.setRefreshBufferFunc((index : number) => {
-        // CLEAN THIS UP WITH INTERFACES
         for (const { audioNode: an } of yieldBufferNodes(g)) 
         {
             an.refreshBuffer(index)
