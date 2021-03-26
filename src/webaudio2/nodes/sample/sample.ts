@@ -94,6 +94,11 @@ export class NuniSampleNode extends NuniSourceNode
     }
     get zoomEnd() { return this._zoomEnd }
 
+    refreshBuffer(index : number) {
+        if (index !== this._bufferKey) return
+        this.refresh()
+    }
+
     refresh() {
         NuniSourceNode.prototype.refresh.call(this)
         this.bufferCanvas.setKey(this._bufferKey)

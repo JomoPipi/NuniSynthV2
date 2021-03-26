@@ -76,4 +76,7 @@ export class SampleSelectComponent {
         BufferUtils.getImage(n, this.ctx, this.canvas.height, this.canvas.width)
     }
 
+    get bufferKey() {
+        return this.currentImage
+    }
 }

@@ -63,6 +63,13 @@ export class NuniRecordingNode
 
     // deactivateWindow() { this.dialogBoxIsOpen = false }
 
+    refreshBuffer(index : number) {
+        if (this.bufferKey === index)
+        {
+            this.refreshBufferImage()
+        }
+    }
+
     captureAudioFromStream(recordButton : HTMLElement, messageBox? : HTMLElement) {
 
         const isRecording = recordButton.classList.contains('recording')

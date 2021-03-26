@@ -119,29 +119,18 @@ Graph_Attachments: {
         }
     })
 
+    const reactsToBufferChange = 
+        (node : NuniGraphNode) : node is NuniGraphNode<ReactsToBufferChange> => 
+            node.type in ReactsToBufferChange
+    
+    const yieldBufferNodes = yieldNodesFiltered(reactsToBufferChange)
+
     BufferUtils.initBufferPresets(audioCtx)
     BufferUtils.setRefreshBufferFunc((index : number) => {
         // CLEAN THIS UP WITH INTERFACES
-        for (const { audioNode: an } of yieldNodes(g)) 
+        for (const { audioNode: an } of yieldBufferNodes(g)) 
         {
-            if (an instanceof NuniSampleNode && an.bufferKey === index) 
-            {
-                an.refresh()
-            }
-            else if (an instanceof SampleSequencer)
-            {
-                for (const key in an.channelData)
-                {
-                    if (an.channelData[key].bufferKey === index)
-                    {
-                        an.setBufferKey(+key, index)
-                    }
-                }
-            }
-            else if (an instanceof NuniRecordingNode && an.bufferKey === index)
-            {
-                an.refreshBufferImage()
-            }
+            an.refreshBuffer(index)
         }
     })
 

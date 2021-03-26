@@ -42,6 +42,16 @@ export class SampleSequencer extends Sequencer
     //     this.refresh()
     // }
 
+    refreshBuffer(index : number) {
+        for (const key in this.channelData)
+        {
+            if (this.channelData[key].bufferKey === index)
+            {
+                this.setBufferKey(+key, index)
+            }
+        }
+    }
+
     createChannelVolume(id : number) {
         this.channelVolumes[id] = this.ctx.createGain()
         this.channelVolumes[id].connect(this.volumeNode)

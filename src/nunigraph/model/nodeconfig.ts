@@ -335,6 +335,13 @@ const ClockDependent =
     // , [NodeTypes.RECORD]: true
     } as const
 
+const ReactsToBufferChange =
+    { [NodeTypes.SAMPLE]: true
+    , [NodeTypes.S_SEQ]: true
+    , [NodeTypes.RECORD]: true
+    , [NodeTypes.SAMPLE_PIANOR]: true
+    } as const
+
 const AudioNodeParams =
     { [NodeTypes.OUTPUT]: []
     , [NodeTypes.GAIN]:   ['gain']
@@ -699,6 +706,10 @@ interface BaseAudioNodeProperties {
     disconnect(input? : Destination) : void
 }
 
+type ReactsToBufferChange = keyof typeof ReactsToBufferChange
+type IReactsToBufferChange<T> = (T extends ReactsToBufferChange
+    ? { refreshBuffer(index : number) : void } : {})
+
 type ClockDependent = keyof typeof ClockDependent
 type IClockDependent<T> = (T extends ClockDependent
     ? {
@@ -741,6 +752,7 @@ type AudioNodeInterfaces<T extends NodeTypes> =
     & IKnowsWhenDialogBoxCloses<T>
     & IHasAResizableDialogBox<T>
     & IOverridesGraphOperationKeyboardShortcuts<T>
+    & IReactsToBufferChange<T>
 
 
 

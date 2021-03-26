@@ -25,6 +25,7 @@ export class SamplePianoRoll extends VolumeNodeContainer
     
     isPlaying = true
     ctx : AudioContext
+    private sampleCanvas : SampleSelectComponent
     private pianoRoll : PianoRollEditor
     private controller? : HTMLElement
     private detune : NuniAudioParam
@@ -51,6 +52,12 @@ export class SamplePianoRoll extends VolumeNodeContainer
             this.playSampleCurried.bind(this), 
             options)
 
+        const update = (bufferKey : number) => 
+            this.pianoRoll.currentSample = bufferKey
+
+        this.sampleCanvas = 
+            new SampleSelectComponent(update, 0)
+
         for (const prop of Object.keys(Transferable_Pianoroll_properties))
         {
             Object.defineProperty(this, prop, {
@@ -66,6 +73,12 @@ export class SamplePianoRoll extends VolumeNodeContainer
         this.play()
     }
 
+    refreshBuffer(index : number) {
+        if (index === this.sampleCanvas.bufferKey)
+        {
+            this.sampleCanvas.setImage(index)
+        }
+    }
     
     createSource(sample : number) {
         const src = this.ctx.createBufferSource()
@@ -168,11 +181,6 @@ export class SamplePianoRoll extends VolumeNodeContainer
                 const amount = btn.innerText === '-' ? 0.2 : -0.2
                 this.pianoRoll.zoom(x_axis, amount)
             }
-        
-        const update = (bufferKey : number) => 
-            this.pianoRoll.currentSample = bufferKey
-        const sampleCanvas = 
-            new SampleSelectComponent(update, 0)
 
         const writeMode = createToggleButton(this.pianoRoll, 'kbWriteMode', { text: 'WRITE' })
             
@@ -182,7 +190,7 @@ export class SamplePianoRoll extends VolumeNodeContainer
             ( zoomControls
             , snapToGrid
             , timeBaseSelect
-            , sampleCanvas.html
+            , this.sampleCanvas.html
             , createADSREditor(this.localADSR, { orientation: 'square' })
             , writeMode)
 

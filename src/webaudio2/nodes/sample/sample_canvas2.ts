@@ -85,7 +85,7 @@ export class BufferCanvasFrame {
         this.ctx = canvas.getContext('2d')!
         this.refresh()
 
-        this.frame.onwheel = (e : WheelEvent) => {
+        this.frame.addEventListener('wheel', (e : WheelEvent) => {
             const direction = -Math.sign(e.deltaY)
             const zoomCenter = (this.zoomStart + this.zoomEnd) / 2.0
             const mouseLeft = e.offsetX / this.W
@@ -98,7 +98,7 @@ export class BufferCanvasFrame {
 
             updateZoom(this.zoomStart, this.zoomEnd)
             this.refresh()
-        }
+        }, { passive: true })
     }
 
     setZoom(start : number, end : number) {
