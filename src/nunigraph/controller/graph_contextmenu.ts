@@ -9,7 +9,7 @@ import { ModuleStorage } from "../../storage/module_storage.js"
 import { createSVGIcon } from "../../UI_library/components/svg_icon.js"
 import { GraphController } from "../init.js"
 import { NuniGraphNode } from "../model/nunigraph_node.js"
-
+import { nativeModules } from './nativemodules.js'
 
 
 
@@ -18,11 +18,11 @@ import { NuniGraphNode } from "../model/nunigraph_node.js"
 
 export const graphContextnenu = D('graph-contextmenu')
 
-// D('nuni-logo').onclick = (e : MouseEvent) =>
-//     GraphController.showContextMenu(e.pageX, 0)
+D('nuni-logo').onclick = (e : MouseEvent) =>
+    GraphController.showContextMenu(e.pageX, 85)
 
 graphContextnenu.onclick = (e : any) => {
-    const { createNodeType, moduleName } = e.target.dataset
+    const { createNodeType, moduleName, nativeModuleName } = e.target.dataset
 
     if (createNodeType)
     {
@@ -37,7 +37,19 @@ graphContextnenu.onclick = (e : any) => {
         node.title = moduleName
         GraphController.renderer.render()
     }
+    else if (nativeModuleName)
+    {
+        const node = createNode(NodeTypes.MODULE, e)
+        const graphCode = nativeModules[nativeModuleName as keyof typeof nativeModules]
+
+        node.audioNode.controller.fromString(graphCode)
+        node.title = nativeModuleName
+        GraphController.renderer.render()
+    }
 }
+
+
+
 
 function createNode<T extends NodeTypes>(type : T, e : MouseEvent) : NuniGraphNode<T> {
     const controller 
@@ -102,7 +114,7 @@ const contextmenuNodeTypes : NodeTypes[] =
 
 
 const userModuleContainer = E('ul', { className: 'module-container' })
-const inbuiltModuleContainer = E('ul', { className: 'module-container' })
+const nativeModuleContainer = E('ul', { className: 'module-container' })
 const userModuleButton = E('li', 
     { className: 'module-btn'
     , children: 
@@ -113,40 +125,41 @@ const userModuleButton = E('li',
         , userModuleContainer
         ]
     })
-const inbuiltModuleButton = E('li', 
+const nativeModuleButton = E('li', 
     { className: 'module-btn'
     , children: 
-        [ E('a', 
+        [ E('a',
             { props: { href: '#'
             , text: 'Native Modules'
             } })
-        , inbuiltModuleContainer
+        , nativeModuleContainer
         ]
     })
-
 const moduleTypeContainer = E('ul', 
     { className: 'module-type-container'
-    , children: [userModuleButton, inbuiltModuleButton]
+    , children: [userModuleButton, nativeModuleButton]
     })
 
-const toListElement = (name : string) => {
+const toListElement = (data : string) => (name : string) => {
     const element = E('a', 
         { props: { href:'#' }
         , text: name
         })
-    element.dataset.moduleName = name
+    element.dataset[data] = name
     return E('li', { children: [element] })
 }
-refreshList()
 
+const nativeModuleNames = Object.keys(nativeModules).map(toListElement('nativeModuleName'))
+nativeModuleContainer.append(...nativeModuleNames)
+
+refreshList()
 function refreshList() {
     while (userModuleContainer.lastElementChild)
     {
         userModuleContainer.removeChild(userModuleContainer.lastElementChild)
     }
-    const moduleList = ModuleStorage.list().map(toListElement)
+    const moduleList = ModuleStorage.list().map(toListElement('moduleName'))
     userModuleContainer.append(...moduleList)
-    inbuiltModuleContainer.append(...ModuleStorage.list().slice(0,4).map(toListElement))
 }
 
 export function addModuleToList(title : string, graphCode : string) {
@@ -181,7 +194,7 @@ Fill_The_Context_Menu: {
         })
     
     // btnList.appendChild(userModuleButton)
-    // btnList.appendChild(inbuiltModuleButton)
+    // btnList.appendChild(nativeModuleButton)
     btnList.appendChild(modulesBtn)
     for (const type of contextmenuNodeTypes)
     {
