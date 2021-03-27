@@ -132,7 +132,6 @@ button {
   position: absolute;
   z-index: 90;
   margin: 0px;
-  background-color: transparent;
   /* Hide Dropdowns by Default */
   /* Display Dropdowns on Hover */
   /* First Tier Dropdown */
@@ -217,7 +216,22 @@ button {
   overflow-y: scroll;
   overflow-x: hidden;
   width: 170px;
+  left: 120px;
+  background: blue;
+}
+
+.module-type-container {
+  max-height: 320px;
+  background-color: var(--color0);
+  overflow-y: none;
+  overflow-x: visible;
+  background: red;
+  width: 120px;
   left: 170px;
+}
+
+.module-type-container .module-btn {
+  width: 120px;
 }
 
 .connection-type-prompt-container {

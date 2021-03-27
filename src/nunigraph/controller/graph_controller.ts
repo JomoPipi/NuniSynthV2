@@ -13,7 +13,7 @@ import { clipboard } from './clipboard.js'
 import { UI_clamp, createDraggableWindow } from '../../UI_library/internal.js'
 import { createValuesWindow } from '../view/display_nodedata.js'
 import { createSelectionPrompt } from '../../UI_library/components/selection_prompt.js'
-import { contextmenu, addModuleToList } from './graph_contextmenu.js'
+import { graphContextnenu, addModuleToList } from './graph_contextmenu.js'
 import { createSVGIcon } from '../../UI_library/components/svg_icon.js'
 
 export const OpenGraphControllers = {
@@ -163,7 +163,7 @@ export class NuniGraphController {
 
 
     hideContextMenu() {
-        contextmenu.style.display = 'none'
+        graphContextnenu.style.display = 'none'
     }
 
 
@@ -505,11 +505,11 @@ export class NuniGraphController {
         DIRTYGLOBALS.lastControllerToOpenTheContextmenu = this
         DIRTYGLOBALS.contextmenuRequestPosition = [x, y]
 
-        contextmenu.style.zIndex = (DIRTYGLOBALS.RISING_GLOBAL_Z_INDEX + 1).toString()
-        contextmenu.style.display = 'grid'
+        graphContextnenu.style.zIndex = (DIRTYGLOBALS.RISING_GLOBAL_Z_INDEX + 1).toString()
+        graphContextnenu.style.display = 'grid'
 
         // Place the menu in a 
-        UI_clamp(x, y, contextmenu, document.body, { smartClamp: true })
+        UI_clamp(x, y, graphContextnenu, document.body, { smartClamp: true })
     }
 
 

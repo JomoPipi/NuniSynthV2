@@ -16,12 +16,12 @@ import { NuniGraphNode } from "../model/nunigraph_node.js"
 
 
 
-export const contextmenu = D('graph-contextmenu')
+export const graphContextnenu = D('graph-contextmenu')
 
 // D('nuni-logo').onclick = (e : MouseEvent) =>
 //     GraphController.showContextMenu(e.pageX, 0)
 
-contextmenu.onclick = (e : any) => {
+graphContextnenu.onclick = (e : any) => {
     const { createNodeType, moduleName } = e.target.dataset
 
     if (createNodeType)
@@ -46,7 +46,7 @@ function createNode<T extends NodeTypes>(type : T, e : MouseEvent) : NuniGraphNo
     
     controller.save()
     const node = controller.g.createNewNode(type)
-    const menu = contextmenu
+    const menu = graphContextnenu
 
     if (menu.style.display !== 'none') 
     { // Place the newly created node under the mouse
@@ -60,7 +60,7 @@ function createNode<T extends NodeTypes>(type : T, e : MouseEvent) : NuniGraphNo
                 .parentNode // TODO: clean this line up...
         //* This can be fixed by creating the container in the controller and holding a reference to it
 
-        // Where the user clicked to spawn the contextmenu:
+        // Where the user clicked to spawn the graphContextnenu:
         const [x, y] = DIRTYGLOBALS.contextmenuRequestPosition
         node.x = clamp(0, (x - offsetLeft) / offsetWidth, 1)
         node.y = clamp(0, (y - offsetTop) / offsetHeight, 1)
@@ -101,29 +101,52 @@ const contextmenuNodeTypes : NodeTypes[] =
 
 
 
+const userModuleContainer = E('ul', { className: 'module-container' })
+const inbuiltModuleContainer = E('ul', { className: 'module-container' })
+const userModuleButton = E('li', 
+    { className: 'module-btn'
+    , children: 
+        [ E('a', 
+            { props: { href: '#'
+            , text: 'User Modules'
+            } })
+        , userModuleContainer
+        ]
+    })
+const inbuiltModuleButton = E('li', 
+    { className: 'module-btn'
+    , children: 
+        [ E('a', 
+            { props: { href: '#'
+            , text: 'Native Modules'
+            } })
+        , inbuiltModuleContainer
+        ]
+    })
 
-const moduleContainer = E('ul', { className: 'module-container' })
+const moduleTypeContainer = E('ul', 
+    { className: 'module-type-container'
+    , children: [userModuleButton, inbuiltModuleButton]
+    })
+
+const toListElement = (name : string) => {
+    const element = E('a', 
+        { props: { href:'#' }
+        , text: name
+        })
+    element.dataset.moduleName = name
+    return E('li', { children: [element] })
+}
 refreshList()
 
 function refreshList() {
-    const moduleList = ModuleStorage.list().map(name => {
-        const element = E('a', 
-            { props: { href:'#' }
-            , text: name
-            })
-        element.dataset.moduleName = name
-        return E('li', 
-        { children: 
-            [ element ]
-        })
-    })
-
-    while (moduleContainer.lastElementChild)
+    while (userModuleContainer.lastElementChild)
     {
-        moduleContainer.removeChild(moduleContainer.lastElementChild)
+        userModuleContainer.removeChild(userModuleContainer.lastElementChild)
     }
-    
-    moduleContainer.append(...moduleList)
+    const moduleList = ModuleStorage.list().map(toListElement)
+    userModuleContainer.append(...moduleList)
+    inbuiltModuleContainer.append(...ModuleStorage.list().slice(0,4).map(toListElement))
 }
 
 export function addModuleToList(title : string, graphCode : string) {
@@ -137,56 +160,61 @@ export function addModuleToList(title : string, graphCode : string) {
     }, 500)
 }
 
-// Fill up the menu
-const btnList = E('ul', { text: ' Create New Node...' })
-const container2 = E('li',  { children: [btnList] })
-const container = E('ul', { children: [container2] })
-contextmenu.appendChild(container)
 
 
-const modulesBtn = E('li', 
-    { className: 'contextmenu-btn'
-    , children: 
-        [ E('a', 
-            { props: { href: '#'
-            , text: 'Modules'
-            } })
-        , moduleContainer
-        ]
-    })
 
-btnList.appendChild(modulesBtn)
-for (const type of contextmenuNodeTypes)
-{
-    const icon = createSVGIcon(DefaultNodeIcon[type], 10)
-    const label = E('span', { text: NodeLabel[type] })
-    const surface = E('a',
-        { children: [icon, label, infoElement(type)]
-        , className: 'contextmenu-btn-surface'
-        , props: { href: '#' }
-        })
-    const btn = E('li',
-        { className: 'contextmenu-btn'
-        , children: [surface] 
-        })
-
-    surface.dataset.createNodeType = 
-    icon.dataset.createNodeType =
-    label.dataset.createNodeType = type
-    btn.style.borderColor = NodeTypeColors[type]
-
-    btnList.appendChild(btn)
-}
-
-function infoElement(type : NodeTypes) {
+Fill_The_Context_Menu: {
+    const btnList = E('ul', { text: ' Create New Node...' })
+    const innerContainer = E('li',  { children: [btnList] })
+    const container = E('ul', { children: [innerContainer] })
+    graphContextnenu.appendChild(container)
     
-    return E('span', 
-        { text: 'i'
-        , className: 'tooltip _2'
-        
-        , children: [E('span',
-            { text: NodeTypeDescriptions[type]
-            , className: 'tooltiptext'
-            })]
+    const modulesBtn = E('li', 
+        { className: 'contextmenu-btn'
+        , children: 
+            [ E('a', 
+                { props: { href: '#'
+                , text: 'Modules'
+                } })
+            , moduleTypeContainer
+            ]
         })
+    
+    // btnList.appendChild(userModuleButton)
+    // btnList.appendChild(inbuiltModuleButton)
+    btnList.appendChild(modulesBtn)
+    for (const type of contextmenuNodeTypes)
+    {
+        const icon = createSVGIcon(DefaultNodeIcon[type], 10)
+        const label = E('span', { text: NodeLabel[type] })
+        const surface = E('a',
+            { children: [icon, label, infoElement(type)]
+            , className: 'contextmenu-btn-surface'
+            , props: { href: '#' }
+            })
+        const btn = E('li',
+            { className: 'contextmenu-btn'
+            , children: [surface] 
+            })
+    
+        surface.dataset.createNodeType = 
+        icon.dataset.createNodeType =
+        label.dataset.createNodeType = type
+        btn.style.borderColor = NodeTypeColors[type]
+    
+        btnList.appendChild(btn)
+    }
+    
+    function infoElement(type : NodeTypes) {
+        
+        return E('span', 
+            { text: 'i'
+            , className: 'tooltip _2'
+            
+            , children: [E('span',
+                { text: NodeTypeDescriptions[type]
+                , className: 'tooltiptext'
+                })]
+            })
+    }
 }

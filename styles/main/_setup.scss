@@ -130,7 +130,6 @@ button {
     
     z-index: 90;
     margin: 0px;
-    background-color: transparent;
 
     ul {
         padding: 0;
@@ -214,15 +213,30 @@ button {
     }
 }
 
+$width1: 120px;
+
 .module-container {
-    // top: -20px; 
-    // left: 170px;
     max-height: 320px;
     background-color: var(--color0);
     overflow-y: scroll;
     overflow-x: hidden;
     width: 170px;
+    left: $width1;
+    background: blue;
+}
+
+.module-type-container {
+    max-height: 320px;
+    background-color: var(--color0);
+    overflow-y: none;
+    overflow-x: visible;
+    background: red;
+    width: $width1;
     left: 170px;
+
+    .module-btn {
+        width: $width1;
+    }
 }
 
 
