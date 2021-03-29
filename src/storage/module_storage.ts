@@ -40,7 +40,7 @@ function list() {
     return getModuleNames()
 }
 
-export const ModuleStorage = { set, get, list, has }
+export const ModuleStorage = { set, get, list, has, deleteModule }
 
 function saveModule(key : string, graphCode : string) {
     D('wait-cursor').classList.add('show')
@@ -61,4 +61,13 @@ function getModuleNames() : string[] {
     return fs
         .readdirSync(modulesFolderPath)
         .filter((file : any) => fs.statSync(path.join(modulesFolderPath, file)).isFile())
+}
+
+function deleteModule(name : string, callback : Function) {
+    const p = path.join(modulesFolderPath, name)
+    fs.unlink(p, (err : Error) => {
+        if (err) throw Error
+        callback()
+        console.log('deleted',p)
+    })
 }

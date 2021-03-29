@@ -6,6 +6,8 @@
 
 
 import { ModuleStorage } from "../../storage/module_storage.js"
+import { sendConfirmationBox } from "../../UI_library/components/confirmation_box.js"
+import { createSelectionPrompt } from "../../UI_library/components/selection_prompt.js"
 import { createSVGIcon } from "../../UI_library/components/svg_icon.js"
 import { GraphController } from "../init.js"
 import { NuniGraphNode } from "../model/nunigraph_node.js"
@@ -18,13 +20,42 @@ import { nativeModules } from './nativemodules.js'
 
 export const graphContextnenu = D('graph-contextmenu')
 
+const reallyManageModules = 
+    E('a', { props: { href:'#' }, text: 'Manage Modules..' })
+const manageModulesBtn = 
+    E('li', { children: [reallyManageModules], className: 'manage-modules-btn' })
+
+let MANAGING_MODULES = false
+
 D('nuni-logo').onclick = (e : MouseEvent) =>
     GraphController.showContextMenu(e.pageX, 85)
 
 graphContextnenu.onclick = (e : any) => {
-    const { createNodeType, moduleName, nativeModuleName } = e.target.dataset
 
-    if (createNodeType)
+    if (e.target === reallyManageModules)
+    {
+        MANAGING_MODULES = !MANAGING_MODULES
+        refreshList()
+        return;
+    }
+
+    const { createNodeType, moduleName, nativeModuleName, moduleToDelete } = e.target.dataset
+
+    if (moduleToDelete)
+    {
+        console.log('want to delete ' + moduleToDelete + "?")
+        sendConfirmationBox(
+            `Are you sure you want to delete this? 
+            This action cannot be undone.`,
+            (confirmed : boolean) => {
+                if (confirmed)
+                {
+                    ModuleStorage.deleteModule(moduleToDelete, refreshList)
+                }
+                else console.log('did not delete a module')
+            })
+    }
+    else if (createNodeType)
     {
         createNode(createNodeType, e)
     }
@@ -141,6 +172,25 @@ const moduleTypeContainer = E('ul',
     })
 
 const toListElement = (data : string) => (name : string) => {
+
+    if (MANAGING_MODULES)
+    {
+        const label = E('span', { text: name })
+        const deleteBtn = E('span', { text: '🗑️', className: 'delete-module-btn' })
+        const surface = E('a',
+            { children: [label, deleteBtn]
+            , className: 'contextmenu-btn-surface'
+            , props: { href: '#' }
+            })
+        const btn = E('li', { children: [surface] })
+    
+        label.dataset[data] =
+        surface.dataset[data] = 
+        deleteBtn.dataset.moduleToDelete = name
+    
+        return btn
+    }
+
     const element = E('a', 
         { props: { href:'#' }
         , text: name
@@ -152,6 +202,9 @@ const toListElement = (data : string) => (name : string) => {
 const nativeModuleNames = Object.keys(nativeModules).map(toListElement('nativeModuleName'))
 nativeModuleContainer.append(...nativeModuleNames)
 
+
+
+
 refreshList()
 function refreshList() {
     while (userModuleContainer.lastElementChild)
@@ -160,7 +213,12 @@ function refreshList() {
     }
     const moduleList = ModuleStorage.list().map(toListElement('moduleName'))
     userModuleContainer.append(...moduleList)
+
+    userModuleContainer.appendChild(manageModulesBtn)
 }
+
+
+
 
 export function addModuleToList(title : string, graphCode : string) {
     D('wait-cursor').classList.add('show')
@@ -202,7 +260,6 @@ Fill_The_Context_Menu: {
         const label = E('span', { text: NodeLabel[type] })
         const surface = E('a',
             { children: [icon, label, infoElement(type)]
-            , className: 'contextmenu-btn-surface'
             , props: { href: '#' }
             })
         const btn = E('li',

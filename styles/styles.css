@@ -1383,6 +1383,22 @@ code {
   border-bottom-color: transparent;
 }
 
+.manage-modules-btn {
+  text-align: center;
+}
+
+.manage-modules-btn a {
+  background-color: rgba(255, 0, 0, 0.125);
+}
+
+.delete-module-btn {
+  position: relative;
+  float: right;
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+}
+
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 300px;
