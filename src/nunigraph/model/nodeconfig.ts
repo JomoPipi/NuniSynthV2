@@ -691,8 +691,8 @@ type IReactsToBufferChange<T> = (T extends ReactsToBufferChange
 type ClockDependent = keyof typeof ClockDependent
 type IClockDependent<T> = (T extends ClockDependent
     ? {
-        scheduleNotes(timeElapsed : number) : void
-        setTempo(timeDelta : number) : void
+        scheduleNotes(skipAhead : boolean) : void
+        setTempo(tempo : number) : void
         sync() : void
         isPlaying : boolean
     }

@@ -94,16 +94,15 @@ export class AutomationNode extends VolumeNodeContainer
         this.measureTime += this.durationOfLoop
     }
 
-    scheduleNotes(elapsed : number) {
+    scheduleNotes(skipAhead : boolean) {
         const time = this.ctx.currentTime
         const phase = this.phaseShift * this.durationOfLoop
         const currentTime = time + phase + 0.200
         
-        if (elapsed > 20000) // Skip ahead to prevent lag:
+        if (skipAhead) // Skip ahead to prevent lag:
         {
             const measures = (currentTime - this.measureTime) / this.durationOfLoop | 0
             this.measureTime += this.durationOfLoop * measures
-            console.log('time elapsed =',elapsed)
         }
 
         const percentage = 1 - (this.measureTime - currentTime) / this.durationOfLoop

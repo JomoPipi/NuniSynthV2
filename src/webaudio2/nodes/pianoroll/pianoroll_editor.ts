@@ -130,7 +130,7 @@ export class  PianoRollEditor {
         this.controller.appendChild(this.body)
 
         this.body.addEventListener("mousedown", this.pointerdown.bind(this), true)
-        this.body.addEventListener('wheel', this.wheel.bind(this),false)
+        this.body.addEventListener('wheel', this.wheel.bind(this), { capture: false, passive: true })
         this.canvas.addEventListener('mousemove', this.mousemove.bind(this),false)
         // this.canvas.addEventListener('keydown', this.keydown.bind(this),false)
         this.canvas.tabIndex = -1 // Needed for keydown event to work.
@@ -173,7 +173,7 @@ export class  PianoRollEditor {
         }
     }
 
-    scheduleNotes(elapsed : number) {}
+    scheduleNotes(skipAhead : boolean) {}
     setTempo(tempo : number) {
         this.tempo = clamp(1, tempo, Infinity)
         this.tick = (60 * 4 / tempo) / this._subdiv
@@ -351,13 +351,13 @@ export class  PianoRollEditor {
         let noteTime = loopTime
         let noteIndex = 0 // startIndex
 
-        this.scheduleNotes = (elapsed : number) => {
+        this.scheduleNotes = (skipAhead : boolean) => {
             const currentTime = this.audioCtx.currentTime
             this.playhead = this.markstart + (currentTime % loopLength) / tick
             this.drawPlayhead()
             if (filteredSequence.length === 0) return;
 
-            if (elapsed > 20000) // Skip ahead to prevent lag:
+            if (skipAhead) // Skip ahead to prevent lag:
             {
                 const loops = (currentTime - loopTime) / loopLength | 0
                 loopTime += loopLength * loops

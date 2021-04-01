@@ -183,6 +183,7 @@ const g = GraphController.g // new NuniGraph()
 
     console.log(`${passed}/${(passed + failed)} tests passed`)
     g.clear()
+    GraphController.renderer.render()
 })()
 
 async function wait(ms : number) {

@@ -90,8 +90,8 @@ export class MonoPianoRoll
         return this.controller
     }
     
-    scheduleNotes(elapsed : number) {
-        this.pianoRoll.scheduleNotes(elapsed)
+    scheduleNotes(skipAhead : boolean) {
+        this.pianoRoll.scheduleNotes(skipAhead)
     }
 
     setTempo(tempo : number) {

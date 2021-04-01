@@ -433,9 +433,7 @@ export class NuniGraphController {
 
         function clickCallback(box : HTMLElement) {
             moveTheWindowToTheTop(box, node)
-
             _this.selectNode(node)
-
             _this.renderer.render({ selectedNodes: [node] })
         }
 

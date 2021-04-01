@@ -101,12 +101,14 @@ Graph_Attachments: {
         scheduleNotes() {
             const now = Date.now()
             const delta = now - lastSchedule
+            const skipAhead = delta > 20000
             lastSchedule = now
+            if (skipAhead) console.log(`${delta / 1000} seconds elapsed`)
             for (const node of yieldClockedNodes(g))
             {
                 if (node.audioNode.isPlaying)
                 {
-                    node.audioNode.scheduleNotes(delta)
+                    node.audioNode.scheduleNotes(skipAhead)
                 }
             }
         },
