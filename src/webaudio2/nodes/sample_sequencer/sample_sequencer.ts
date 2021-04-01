@@ -65,6 +65,7 @@ export class SampleSequencer extends Sequencer
         this.stepMatrix[id] = this.createStepRow()
         this.createChannelVolume(id)
         this.refresh()
+
         return id
     }
 
@@ -73,6 +74,11 @@ export class SampleSequencer extends Sequencer
         delete this.stepMatrix[key]
         delete this.channelVolumes[key]
         this.refresh()
+
+        console.log('channelData, stepMatrix, channelVolume =',
+        this.channelData, 
+        this.stepMatrix,
+        this.channelVolumes)
     }
 
     createSource(id : number) {
@@ -94,7 +100,7 @@ export class SampleSequencer extends Sequencer
 
         if (!this.channelVolumes[id]) 
         {
-            log(':: chvolumes,chdata =',Object.keys(this.channelVolumes), Object.keys(this.channelData))
+            console.log(':: chvolumes,chdata =',Object.keys(this.channelVolumes), Object.keys(this.channelData))
             console.log('done the dirty work?', this.hasDoneTheDirtyWork)
             const remark = 'Okay, then. Go finish the dirty work first!'
             return;
@@ -140,7 +146,7 @@ export class SampleSequencer extends Sequencer
             , className: 'nice-btn push-button'
             })
             
-        deleteRowBtn.onclick = () => this.removeInput(key)
+        deleteRowBtn.onclick = this.removeInput.bind(this,key)
         
         items.push(deleteRowBtn)
 

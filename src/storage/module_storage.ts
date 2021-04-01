@@ -18,7 +18,7 @@ const modulesFolderPath = path.join(userDataPath, 'Modules')
 
 if (!fs.existsSync(modulesFolderPath)) 
 {
-    log(`Created folder in ${modulesFolderPath}`)
+    console.log(`Created folder in ${modulesFolderPath}`)
     fs.mkdirSync(modulesFolderPath)
 }
 

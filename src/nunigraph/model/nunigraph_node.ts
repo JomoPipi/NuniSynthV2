@@ -50,6 +50,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
             // requestAnimationFrame is needed because GateSequencer's input(s) need to be remmapped..
             // TODO: put this in a function: audioNode.doBadCode()
             requestAnimationFrame(() => {
+                
                 if (is(this, NodeTypes.S_SEQ) || is(this, NodeTypes.G_SEQ))
                 {
                     if (is(this, NodeTypes.S_SEQ))

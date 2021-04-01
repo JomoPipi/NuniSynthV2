@@ -83,7 +83,7 @@ function updateKeys(keydown : boolean) {
         } 
         else 
         {
-            log('keyCode =', key)
+            console.log('keyCode =', key)
         }
     }
 }

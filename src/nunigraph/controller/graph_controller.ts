@@ -291,10 +291,10 @@ export class NuniGraphController {
     }
     
     openWindow(node : NuniGraphNode) {
-        if (!SelectWhenDialogBoxIsClicked[node.type])
-        {
-            this.unselectNodes()
-        }
+        // if (!SelectWhenDialogBoxIsClicked[node.type])
+        // {
+        //     this.unselectNodes()
+        // }
 
         // If window is already open, move it to the top
         if (this.getOpenWindow[node.id])
@@ -371,12 +371,14 @@ export class NuniGraphController {
         // dialogBox.style.border = '2px solid purple'
         this.getOpenWindow[node.id] = dialogBox
 
+        // requestAnimationFrame(() =>
         contentContainer.appendChild(
             createValuesWindow(
                 node, 
                 () => this.save(),
                 deleteCallBack,
                 dialogBox))
+                // )
 
         dialogBoxesContainer.appendChild(dialogBox)
 
@@ -835,9 +837,8 @@ export class NuniGraphController {
             }
         }
 
-        else if (e.ctrlKey && e.keyCode === 83) 
+        else if (e.ctrlKey && e.keyCode === 83)
         { // ctrl + s : node reproduction function
-
             const nodesToCopy = 
                 this.selectedNodes.filter(node => !node.INPUT_NODE_ID)
                 

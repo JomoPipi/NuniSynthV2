@@ -119,7 +119,7 @@ function showConfigWindow() {
         {
             window.removeEventListener('click', onclick)
             document.body.removeChild(configWindow)
-            log('saving!')
+            console.log('saving!')
             UserOptions.save() // Save config when we click out
         }
     }

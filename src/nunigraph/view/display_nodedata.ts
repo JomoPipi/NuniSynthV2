@@ -90,7 +90,8 @@ export function createValuesWindow(
 
     if (audioNode instanceof Sequencer) 
     {
-        controls.appendChild(audioNode.getController())
+        requestAnimationFrame(() => //! This helped "solve" a race condition
+        controls.appendChild(audioNode.getController()))
     }
 
     if (audioNode instanceof NuniSampleNode) 

@@ -27,7 +27,7 @@ const projectsFolderPath = path.join(userDataPath, 'Projects')
 
 if (!fs.existsSync(projectsFolderPath)) 
 {
-    log(`Created folder in ${projectsFolderPath}`)
+    console.log(`Created folder in ${projectsFolderPath}`)
     fs.mkdirSync(projectsFolderPath)
 }
 
@@ -126,7 +126,7 @@ for (const folderPath of folders)
 {
     if (!fs.existsSync(folderPath)) 
     {
-        log(`Created folder at ${folderPath}.`)
+        console.log(`Created folder at ${folderPath}.`)
         fs.mkdirSync(folderPath)
     }
 }
@@ -139,7 +139,7 @@ function saveBuffers(fileName : string) {
     
     if (!fs.existsSync(buffersPath)) 
     {
-        log(`Created folder for ${fileName}'s audio buffers at ${buffersPath}.`)
+        console.log(`Created folder for ${fileName}'s audio buffers at ${buffersPath}.`)
         fs.mkdirSync(buffersPath)
     }
     
@@ -263,7 +263,7 @@ export function importAudioFile() {
                         BufferUtils.updateCurrentBufferImage()
                         BufferUtils.refreshBuffer(BufferUtils.currentIndex)
                     })
-                    .catch(e => log('look at this fucking error',e))
+                    .catch(e => console.log('look at this fucking error',e))
             }
         })
         .catch((e : Error) => console.warn('the error is:',e))

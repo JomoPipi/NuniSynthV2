@@ -209,10 +209,14 @@ export abstract class Sequencer extends VolumeNodeContainer {
     }
 
     setupGrid() {
+        //! If bugs arise, we can try this in hopes to fix it..
+        // if (!this.hasDoneTheDirtyWork) return;
+
         this.HTMLGrid.innerHTML = ''
         this.HTMLBoxes = {}
         const grid = this.HTMLGrid
         const { nSteps, channelData, mutedChannel, channelVolumes } = this
+        
         const soloButtons : HTMLButtonElement[] = []
 
         for (const key in channelVolumes) 
@@ -236,7 +240,8 @@ export abstract class Sequencer extends VolumeNodeContainer {
                     : []))
                 box.style.width = `${width}px`
                 box.style.height = `${height}px`
-                
+                // log('key =',key,', stepmatrix =',this.stepMatrix)
+                // log('channelData =',channelData)
                 box.classList.toggle('selected', this.stepMatrix[key][i])
                 box.dataset.sequencerKey = `${key}:${i}`
                 stepRow.appendChild(box)

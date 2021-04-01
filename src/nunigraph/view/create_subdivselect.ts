@@ -54,10 +54,10 @@ const subdivStringToNumericalValue = subdivisionList.reduce((a,value) =>
 
     
 const numericalValueToSubdivString = (value : number) => 
-    subdivisionToString(trace(subdivisionList.reduce(([closest, distance], x) => {
+    subdivisionToString(subdivisionList.reduce(([closest, distance], x) => {
         const d = Math.abs(x - value)
         return d < distance ? [x, d] : [closest, distance]
-    }, [1e9, 1e9])[0]))
+    }, [1e9, 1e9])[0])
 
 export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv : number, isInSync? : boolean }, options ?: Options) {
     const { fn, allowFree }  = options || {}

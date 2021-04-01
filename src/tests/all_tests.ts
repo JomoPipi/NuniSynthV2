@@ -50,7 +50,7 @@ function runGraphWholeCopyTests() {
     }
     GraphController.g.clear()
     GraphController.renderer.render()
-    log(`${passed}/${passed + failed} tests passed`)
+    console.log(`${passed}/${passed + failed} tests passed`)
 }
 runGraphWholeCopyTests()
 
@@ -115,7 +115,7 @@ const g = GraphController.g // new NuniGraph()
     }
 
     g.clear()
-    log(`${passed}/${passed + failed} tests passed`)
+    console.log(`${passed}/${passed + failed} tests passed`)
 })()
 
 
@@ -123,24 +123,6 @@ const g = GraphController.g // new NuniGraph()
 
 
 
-
-;(function runSampleSequencerTests() {
-    const node = g.createNewNode(NodeTypes.S_SEQ)
-    const id = node.audioNode.addInput()
-    let passed = 0, failed = 0
-    try
-    {
-        node.audioNode.removeInput(id)
-        passed++
-    } 
-    catch(e)
-    {
-        console.warn('Failed SampleSequencer channel-removal test: \n\n', e)
-        failed++
-    }
-    console.log(`${passed}/${(passed + failed)} tests passed`)
-    g.clear()
-})()
 
 ;(function copyingPianorollShouldNotThrowError() {
     g.createNewNode(NodeTypes.PIANOR)
@@ -154,3 +136,55 @@ const g = GraphController.g // new NuniGraph()
     }
     g.clear()
 })()
+
+
+
+
+
+
+//! Async
+;(async function runSampleSequencerTests() {
+    const node = g.createNewNode(NodeTypes.S_SEQ)
+    const id = node.audioNode.addInput()
+    let passed = 0, failed = 0
+    try
+    {
+        node.audioNode.removeInput(id)
+        passed++
+    } 
+    catch(e)
+    {
+        console.warn('Failed SampleSequencer channel-removal test: \n\n', e)
+        failed++
+    }
+
+    try
+    {
+        g.clear()
+        GraphController.closeAllWindows()
+        const node = g.createNewNode(NodeTypes.S_SEQ)
+        const id0 = node.audioNode.addInput()
+        node.audioNode.removeInput(1) 
+        
+        // g.reproduceNodesAndConnections([node])
+        GraphController.selectNode(node)
+        ;(GraphController as any).keydown({ ctrlKey: true, keyCode: 83 })
+        
+        await wait(2)
+        
+        GraphController.closeAllWindows()
+        passed++
+    }
+    catch(e)
+    {
+        console.warn('Sample Sequencer failed to be copied after deleting rows.', e)
+        failed++
+    }
+
+    console.log(`${passed}/${(passed + failed)} tests passed`)
+    g.clear()
+})()
+
+async function wait(ms : number) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}

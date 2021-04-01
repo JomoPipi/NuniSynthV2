@@ -21,9 +21,7 @@ type Values<T> = T[keyof T]
 
 type MouseHandler = (e : MouseEvent) => void
 
-const log = console.log
-
-const trace = <T>(x : T) => (log(x), x)
+const trace = <T>(x : T) => (console.log(x), x)
 
 const D = (id : string) => {
     const el = document.getElementById(id)

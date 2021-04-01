@@ -120,7 +120,7 @@ class BufferUtily {
             const btn = e.target as HTMLButtonElement
             const [_,n] = btn.id.split('-').map(Number)
 
-            if (isNaN(n)) { log('went here'); return }
+            if (isNaN(n)) { console.log('went here'); return }
 
             // Disable the previous step
             document.getElementById(`buff-${this.currentIndex}`)

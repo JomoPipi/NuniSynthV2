@@ -24,7 +24,7 @@ export function sequencerControls(an : Sequencer) {
     controls.appendChild(an.HTMLGrid)
 
     controls.appendChild(createBottomRowControls(an))
-
+    
     return controls
 }
 

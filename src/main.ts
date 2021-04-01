@@ -16,17 +16,18 @@ import './scale_utils/internal.js'
 import './buffer_utils/internal.js'
 import './nunigraph/controller/modularize_graph.js'
 
-if (DEV_MODE_EQUALS_TRUE)
-{
-    import('./tests/all_tests.js')
-}
-
 window.onload = () => {
-    log('[[((--##--)) Begin NuniSynth ((--##-))]]')
+    console.log('[[((--##--)) Begin NuniSynth ((--##-))]]')
 
     D('loading-screen').style.opacity = '0'
     setTimeout(() => 
         D('loading-screen').style.display = 'none', 2000)
+
+    
+    if (DEV_MODE_EQUALS_TRUE)
+    {
+        import('./tests/all_tests.js')
+    }
 }
 
 // sequencer type

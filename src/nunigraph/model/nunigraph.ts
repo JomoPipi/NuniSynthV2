@@ -755,7 +755,7 @@ export class NuniGraph {
             }
             else
             {
-                log('Prevented a duplicate')
+                console.log('Prevented a duplicate')
             }
             
             const an = toNode.audioNode as GateSequencer | NuniGraphAudioNode

@@ -40,12 +40,12 @@ function getUserConfig() : UserConfig {
             const k = key as keyof UserConfig
             config[key] = config[key] || DefaultConfig[k]
         }
-        log('config = ',config)
+        console.log('config = ',config)
         return config as UserConfig
     } 
     catch (e)
     {
-        log('Creating the file for the first time:', e)
+        console.log('Creating the file for the first time:', e)
         const config = JSON.stringify(DefaultConfig)
         save(config)
         return JSON.parse(config)
@@ -54,7 +54,7 @@ function getUserConfig() : UserConfig {
 
 function save(_file? : string) {
     const file = _file || JSON.stringify(UserOptions.config)
-    log('now we are saving!@! filpath,file =',
+    console.log('now we are saving!@! filpath,file =',
     filePath,'\n\n', file)
     fs.writeFileSync(filePath, file)
 }
