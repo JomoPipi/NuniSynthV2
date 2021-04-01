@@ -291,10 +291,6 @@ export class NuniGraphController {
     }
     
     openWindow(node : NuniGraphNode) {
-        // if (!SelectWhenDialogBoxIsClicked[node.type])
-        // {
-        //     this.unselectNodes()
-        // }
 
         // If window is already open, move it to the top
         if (this.getOpenWindow[node.id])
@@ -368,17 +364,14 @@ export class NuniGraphController {
                 : undefined
             })
 
-        // dialogBox.style.border = '2px solid purple'
         this.getOpenWindow[node.id] = dialogBox
 
-        // requestAnimationFrame(() =>
         contentContainer.appendChild(
             createValuesWindow(
                 node, 
                 () => this.save(),
                 deleteCallBack,
                 dialogBox))
-                // )
 
         dialogBoxesContainer.appendChild(dialogBox)
 
@@ -441,15 +434,8 @@ export class NuniGraphController {
         function clickCallback(box : HTMLElement) {
             moveTheWindowToTheTop(box, node)
 
-            // if (SelectWhenDialogBoxIsClicked[node.type])
-            // {
-                _this.selectNode(node)
-            // }
-            // else 
-            // {
-            //     _this.unselectNodes()
-            // }
-            
+            _this.selectNode(node)
+
             _this.renderer.render({ selectedNodes: [node] })
         }
 
@@ -818,7 +804,8 @@ export class NuniGraphController {
         if (leave)
         {
             const node = this.selectedNodes[0]
-            if (iss(node, OverridesGraphOperationKeyboardShortcuts))
+            const isSelected = this.getOpenWindow[node.id]?.classList.contains('selected3')
+            if (isSelected && iss(node, OverridesGraphOperationKeyboardShortcuts))
             {
                 node.audioNode.keydown(e)
                 return;

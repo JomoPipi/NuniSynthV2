@@ -283,28 +283,6 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.SAMPLE_PIANOR]: false
     }
 
-// The ones that are `false` let you delete stuff inside the node. 
-// We don't want the node itself to get deleted.
-const SelectWhenDialogBoxIsClicked : { readonly [key in NodeTypes] : boolean } =
-    { [NodeTypes.OUTPUT]: true
-    , [NodeTypes.GAIN]:   true
-    , [NodeTypes.OSC]:    true
-    , [NodeTypes.FILTER]: true
-    , [NodeTypes.PANNER]: true
-    , [NodeTypes.DELAY]:  true
-    , [NodeTypes.SAMPLE]: true
-    , [NodeTypes.G_SEQ]:  true
-    , [NodeTypes.S_SEQ]:  true
-    , [NodeTypes.NUM]:    true
-    , [NodeTypes.RECORD]: true
-    , [NodeTypes.MODULE]: false
-    , [NodeTypes.AUTO]:   true
-    , [NodeTypes.PIANOR]: false
-    , [NodeTypes.PROCESSOR]:false
-    , [NodeTypes.COMPRESSOR]:true
-    , [NodeTypes.SAMPLE_PIANOR]: false
-    }
-
 // Goal: convert this to IsNativeAudioNode
 const UsesConnectionProtocol2  : { readonly [key in NodeTypes] : boolean } =
     { [NodeTypes.OUTPUT]: false

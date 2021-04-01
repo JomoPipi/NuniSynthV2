@@ -103,7 +103,7 @@ export class AutomationNode extends VolumeNodeContainer
         {
             const measures = (currentTime - this.measureTime) / this.durationOfLoop | 0
             this.measureTime += this.durationOfLoop * measures
-            console.log('went herterpjospj')
+            console.log('time elapsed =',elapsed)
         }
 
         const percentage = 1 - (this.measureTime - currentTime) / this.durationOfLoop
