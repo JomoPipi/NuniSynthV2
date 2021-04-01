@@ -65,9 +65,9 @@ MasterClock.setTempo(120)
 D('tempo-input-container').appendChild(tempoComponent.container)
 
 let isPaused = false
-function startScheduling(scheduleNotes : () => void) {
+function startScheduling(scheduleNotes : (now : number) => void) {
 
-    if (!isPaused) scheduleNotes()
+    if (!isPaused) scheduleNotes(Date.now())
 
     const goAgain = startScheduling.bind(null, scheduleNotes)
 

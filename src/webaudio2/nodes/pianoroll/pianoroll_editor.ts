@@ -173,7 +173,7 @@ export class  PianoRollEditor {
         }
     }
 
-    scheduleNotes() {}
+    scheduleNotes(elapsed : number) {}
     setTempo(tempo : number) {
         this.tempo = clamp(1, tempo, Infinity)
         this.tick = (60 * 4 / tempo) / this._subdiv
@@ -351,30 +351,33 @@ export class  PianoRollEditor {
         let noteTime = loopTime
         let noteIndex = 0 // startIndex
 
-        this.scheduleNotes = () => {
+        this.scheduleNotes = (elapsed : number) => {
             const currentTime = this.audioCtx.currentTime
             this.playhead = this.markstart + (currentTime % loopLength) / tick
             this.drawPlayhead()
             if (filteredSequence.length === 0) return;
+
+            if (elapsed > 20000) // Skip ahead to prevent lag:
+            {
+                const loops = (currentTime - loopTime) / loopLength | 0
+                loopTime += loopLength * loops
+                noteIndex = 0
+                noteTime = loopTime + (filteredSequence[noteIndex].time - this.markstart) * tick
+            }
 
             while (noteTime < currentTime + 0.200)
             {
                 if (noteTime > currentTime)
                 {
                     const { length, n, sample } = filteredSequence[noteIndex]
-                    // this.playCallback({ start: noteTime, end: noteTime + length * tick, n, sample })
                     this.playCallback(sample, noteTime, n)(noteTime + length * tick)
                 }
                 ++noteIndex
-                if (noteIndex >= filteredSequence.length)// endIndex)
+                if (noteIndex >= filteredSequence.length)
                 {
-                    noteIndex = 0 // startIndex
+                    noteIndex = 0
                     loopTime += loopLength
                 }
-                // else if (noteIndex < startIndex)
-                // {
-                //     noteIndex = startIndex
-                // }
                 noteTime = loopTime + (filteredSequence[noteIndex].time - this.markstart) * tick
             }
         }

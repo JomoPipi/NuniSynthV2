@@ -93,17 +93,25 @@ export class AutomationNode extends VolumeNodeContainer
     nextMeasure() {
         this.measureTime += this.durationOfLoop
     }
-    
-    scheduleNotes() {
+
+    scheduleNotes(elapsed : number) {
         const time = this.ctx.currentTime
         const phase = this.phaseShift * this.durationOfLoop
-        const currentTime = time + phase
-        const percentage = 1 - (this.measureTime - currentTime - 0.200) / this.durationOfLoop
+        const currentTime = time + phase + 0.200
+        
+        if (elapsed > 20000) // Skip ahead to prevent lag:
+        {
+            const measures = (currentTime - this.measureTime) / this.durationOfLoop | 0
+            this.measureTime += this.durationOfLoop * measures
+            console.log('went herterpjospj')
+        }
+
+        const percentage = 1 - (this.measureTime - currentTime) / this.durationOfLoop
         if (this.dialogBoxIsOpen)
         {
             this.updateProgressLine(percentage)
         }
-        while (this.measureTime < currentTime + 0.200) 
+        while (this.measureTime < currentTime) 
         {
             for (const { x, y } of this.pointEditor.points)
             {

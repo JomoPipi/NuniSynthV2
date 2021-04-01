@@ -198,8 +198,8 @@ export class SamplePianoRoll extends VolumeNodeContainer
         return this.controller
     }
     
-    scheduleNotes() {
-        this.pianoRoll.scheduleNotes()
+    scheduleNotes(elapsed : number) {
+        this.pianoRoll.scheduleNotes(elapsed)
     }
 
     setTempo(tempo : number) {

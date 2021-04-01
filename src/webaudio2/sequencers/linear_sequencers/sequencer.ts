@@ -144,10 +144,18 @@ export abstract class Sequencer extends VolumeNodeContainer {
         // this.controls.unhighlightGrid()
     }
 
-    scheduleNotes() {
+    scheduleNotes(elapsed : number) {
+
         const time = this.ctx.currentTime
         const currentTime = time - this.startTime
-        
+
+        if (elapsed > 20000) // Skip ahead to prevent lag:
+        {
+            const steps = (currentTime - this.noteTime) / this.tick | 0
+            this.noteTime += this.tick * steps
+            this.currentStep = (this.currentStep + steps) % this.nSteps
+        }
+
         while (this.noteTime < currentTime + 0.200) 
         {
             const patternTime = this.noteTime + this.startTime + this.phaseShift * this.tick

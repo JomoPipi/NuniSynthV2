@@ -94,14 +94,19 @@ Graph_Attachments: {
             node.type in ClockDependent
     
     const yieldClockedNodes = yieldNodesFiltered(isClockDependent)
+
+    let lastSchedule = Date.now()
     MasterClock.setSchedule(
     {
-        scheduleNotes() { // Optimization: put the an.isPlaying check on the outside?
+        scheduleNotes() {
+            const now = Date.now()
+            const delta = now - lastSchedule
+            lastSchedule = now
             for (const node of yieldClockedNodes(g))
             {
                 if (node.audioNode.isPlaying)
                 {
-                    node.audioNode.scheduleNotes()
+                    node.audioNode.scheduleNotes(delta)
                 }
             }
         },
