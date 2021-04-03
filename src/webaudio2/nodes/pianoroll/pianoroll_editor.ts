@@ -98,6 +98,8 @@ export class  PianoRollEditor {
     private playCallback : PlayCallback
     private clipboard : Note[] = []
 
+    // private  undoRedo
+
     constructor(audioCtx : AudioContext, playCallback : PlayCallback, options : Options = {}) {
         this.audioCtx = audioCtx
         this.playCallback = playCallback
@@ -1120,7 +1122,6 @@ export class  PianoRollEditor {
     private wheel(e : WheelEvent) {
         const position = this.getPosition(e)
         this.zoom(e.ctrlKey, e.deltaY / 500, position)
-        e.preventDefault()
     }
 
     zoom(x_axis : boolean, amount : number, position? : Position) {

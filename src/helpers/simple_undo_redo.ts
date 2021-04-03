@@ -25,11 +25,11 @@ export class UndoRedoModule {
         this.redos = []
     }
 
-    undo() {
+    private undo() {
         this.undo_redo(false)
     }
 
-    redo() {
+    private redo() {
         this.undo_redo(true)
     }
 
