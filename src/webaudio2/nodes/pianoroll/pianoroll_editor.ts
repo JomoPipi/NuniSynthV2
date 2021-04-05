@@ -5,6 +5,7 @@
 
 
 
+import { UndoRedoModule } from "../../../helpers/simple_undo_redo.js"
 import { MasterClock } from "../../sequencers/master_clock.js"
 
 // type NoteEvent = { start : number, end : number, n : number, sample : number }
@@ -98,7 +99,7 @@ export class  PianoRollEditor {
     private playCallback : PlayCallback
     private clipboard : Note[] = []
 
-    // private  undoRedo
+    private undoRedo : UndoRedoModule
 
     constructor(audioCtx : AudioContext, playCallback : PlayCallback, options : Options = {}) {
         this.audioCtx = audioCtx
@@ -173,6 +174,13 @@ export class  PianoRollEditor {
         {
             this.editmode = options.editmode
         }
+
+        this.undoRedo = new UndoRedoModule(
+            () => JSON.stringify(this.sequence), 
+            (s : string) => {
+                this.sequence = JSON.parse(s)
+                this.render()
+            })
     }
 
     scheduleNotes(skipAhead : boolean) {}
@@ -598,6 +606,7 @@ export class  PianoRollEditor {
             const startN = this.clipboard[0].n
             const time = this.snapToGrid ? (msg.time / SNAP | 0) * SNAP : msg.time
             let i = 0
+            this.undoRedo.save()
             for (const noteToCopy of this.clipboard)
             {
                 const n = noteToCopy.n + msg.n - startN |0
@@ -768,9 +777,12 @@ export class  PianoRollEditor {
         }
     }
 
+    private saveIfMoved : boolean = false
     private editDragDown(msg : HoverMessage) {
+        this.saveIfMoved = false
         if (msg.target === Targets.NOTE_CENTER)
         {
+            this.saveIfMoved = true
             const note = this.sequence[msg.i]
             this.dragging.mode = DragModes.NOTES
             this.dragging.target = Targets.NOTE_CENTER
@@ -789,6 +801,7 @@ export class  PianoRollEditor {
         }
         else if (msg.target === Targets.UNSELECTED_NOTE)
         {
+            this.saveIfMoved = true
             const note = this.sequence[msg.i]
             this.clearSelection()
             note.isSelected = true
@@ -796,6 +809,7 @@ export class  PianoRollEditor {
         }
         else if (msg.target === Targets.NOTE_RIGHT)
         {
+            this.saveIfMoved = true
             const note = this.sequence[msg.i]
             this.dragging.mode = DragModes.NOTES
             this.dragging.target = Targets.NOTE_RIGHT
@@ -806,6 +820,7 @@ export class  PianoRollEditor {
         }
         else if (msg.target === Targets.NOTE_LEFT)
         {
+            this.saveIfMoved = true
             const note = this.sequence[msg.i]
             this.dragging.mode = DragModes.NOTES
             this.dragging.target = Targets.NOTE_LEFT
@@ -816,6 +831,7 @@ export class  PianoRollEditor {
         }
         else if (msg.target === Targets.EMPTY && msg.time >= 0)
         {
+            this.undoRedo.save()
             this.clearSelection()
             const time = this.snapToGrid ? (msg.time / SNAP | 0) * SNAP : msg.time
             const length = this.snapToGrid ? 1 : 0.2
@@ -941,6 +957,11 @@ export class  PianoRollEditor {
 
     private editDragMove(msg : HoverMessage) {
         if (this.dragging.mode !== DragModes.NOTES) return
+        if (this.saveIfMoved)
+        {
+            this.saveIfMoved = false
+            this.undoRedo.save()
+        }
         
         switch (this.dragging.target)
         {
@@ -1019,6 +1040,7 @@ export class  PianoRollEditor {
 
     private editmode : 'dragmono' | 'dragpoly' = "dragmono"
     private cancel(e : MouseEvent) {
+        this.saveIfMoved = false
         const position = this.getPosition(e)
         if(this.dragging.mode === DragModes.SELECTION)
         {
@@ -1143,9 +1165,15 @@ export class  PianoRollEditor {
     }
 
     private keyIsDownSoDontSpam = {} as Record<string,boolean>
+    private lastKeyPressId = -1
     keydown(e : KeyboardEvent) {
+        clearTimeout(this.lastKeyPressId)
+        this.lastKeyPressId = window.setTimeout(() => this.undoRedo.save(), 1000)
+        
+        this.undoRedo.tryInput(e)
         if (e.key === 'Delete')
         {
+            this.undoRedo.save()
             this.deleteSelectedNotes()
             this.render()
             return
@@ -1166,6 +1194,7 @@ export class  PianoRollEditor {
                     }, 40)
                     break
                 case 'x':
+                    this.undoRedo.save()
                     this.clipboard = JSON.parse(JSON.stringify(this.sequence.filter(note => note.isSelected)))
                     this.deleteSelectedNotes()
                     this.render()
