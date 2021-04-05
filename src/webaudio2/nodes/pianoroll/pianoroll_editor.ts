@@ -335,7 +335,19 @@ export class  PianoRollEditor {
 
     set currentSample(s : number) {
         this._currentSample = s
-        this.sequence.forEach(note => note.isSelected && (note.sample = s))
+        let saved = false
+        for (const note of this.sequence)
+        {
+            if (note.isSelected)
+            {
+                if (!saved)
+                {
+                    saved = true
+                    this.undoRedo.save()
+                }
+                note.sample = s
+            }
+        }
         this.render()
     }
     get currentSample() { 
@@ -1167,6 +1179,7 @@ export class  PianoRollEditor {
     private keyIsDownSoDontSpam = {} as Record<string,boolean>
     private lastKeyPressId = -1
     keydown(e : KeyboardEvent) {
+        if (this.lastKeyPressId < 0) this.undoRedo.save()
         clearTimeout(this.lastKeyPressId)
         this.lastKeyPressId = window.setTimeout(() => this.undoRedo.save(), 1000)
         
