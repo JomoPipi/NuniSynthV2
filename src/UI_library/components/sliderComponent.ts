@@ -18,7 +18,7 @@ export function createSliderComponent(audioNode : RequiredProperties) {
     const initialValue = audioNode.volumeLevel
     const initialUpperLimit = audioNode.volumeLevelUpperLimit
 
-    const text = E('span', { className: 'number-input-2 center', text: myToFixed(initialValue) })
+    const text = E('span', { className: 'number-box center', text: myToFixed(initialValue) })
         text.style.display = 'inline-block'
 
     const slider = E('input')

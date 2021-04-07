@@ -157,7 +157,7 @@
     }
 }
 
-.number-input-2 {
+.number-box {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -167,6 +167,11 @@
     border: 0px solid transparent;
     width: 40px;
     text-align: center;
+}
+.number-input-2 {
+    @extend .number-box;
+    border: 1px solid rgba(0,255,255,0.2);
+    background: linear-gradient(var(--color1), var(--color0));
 }
 .number-input-2::-webkit-inner-spin-button {
     -webkit-appearance: none;

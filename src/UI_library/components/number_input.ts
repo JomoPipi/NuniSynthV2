@@ -28,7 +28,7 @@ type UpdateFuncSettings = {
     }
 
 const myToFixed = (value : number) => 
-    value.toFixed(clamp(0, 3 - Math.ceil(Math.log10(Math.abs(value))), 4))
+    value.toFixed(clamp(0, 3 - Math.ceil(Math.log10(Math.abs(value))), 3))
 
 export function createDraggableNumberInput(
     initialValue : number, 

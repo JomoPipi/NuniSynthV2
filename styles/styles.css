@@ -984,7 +984,7 @@ code {
           animation: gradient 1.618s ease infinite;
 }
 
-.number-input-2 {
+.number-box, .number-input-2 {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -994,6 +994,12 @@ code {
   border: 0px solid transparent;
   width: 40px;
   text-align: center;
+}
+
+.number-input-2 {
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  background: -webkit-gradient(linear, left top, left bottom, from(var(--color1)), to(var(--color0)));
+  background: linear-gradient(var(--color1), var(--color0));
 }
 
 .number-input-2::-webkit-inner-spin-button {
