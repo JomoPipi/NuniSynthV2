@@ -38,7 +38,7 @@ export class UndoRedoModule {
         {
             e.shiftKey 
                 ? this.redo()
-                : this.undo() 
+                : this.undo()
             return true
         }
     }

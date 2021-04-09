@@ -11,6 +11,7 @@ code {
 
 .code2 {
     background-color: var(--color0);
+    // filter: hue-rotate(90deg);
 }
 
 .margin-4 {
@@ -235,10 +236,6 @@ $shadow: rgba(0, 0, 0, 0.4);
     align-items: center;
 }
 
-.smaller-text {
-    font-size: .75em;
-}
-
 .slider-component {
     display: flex;
     flex-direction: column;
@@ -266,4 +263,11 @@ $shadow: rgba(0, 0, 0, 0.4);
 
 .record-length-slider {
     width: 80px;
+}
+
+.new-buffer-length-text {
+    display: inline-block;
+    width: 30px;
+    text-align: center;
+    background-color: var(--color1);
 }

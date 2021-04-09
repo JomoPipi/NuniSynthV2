@@ -161,7 +161,7 @@ const nativeModuleButton = E('li',
     , children: 
         [ E('a',
             { props: { href: '#'
-            , text: 'Native Modules'
+            , text: 'Core Modules'
             } })
         , nativeModuleContainer
         ]

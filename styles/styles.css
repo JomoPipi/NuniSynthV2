@@ -809,10 +809,6 @@ code {
           align-items: center;
 }
 
-.smaller-text {
-  font-size: .75em;
-}
-
 .slider-component {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -846,6 +842,13 @@ code {
 
 .record-length-slider {
   width: 80px;
+}
+
+.new-buffer-length-text {
+  display: inline-block;
+  width: 30px;
+  text-align: center;
+  background-color: var(--color1);
 }
 
 .shadow-knob {
@@ -920,7 +923,7 @@ code {
   background-color: inherit;
   color: inherit;
   border: none;
-  text-Align: center;
+  text-align: center;
 }
 
 .draggable-window-bar .exit-button:hover {
@@ -1234,6 +1237,11 @@ code {
   height: 20px;
 }
 
+.info-button.gray {
+  color: var(--color4);
+  background: var(--color0);
+}
+
 .record {
   border-radius: 100%;
   width: 40px;
@@ -1418,6 +1426,17 @@ code {
   top: 100%;
   left: 50%;
   margin-left: -310px;
+}
+
+.tooltip .tooltiptext.ni {
+  font-style: normal;
+  font-weight: 100;
+  font-size: 1.1em;
+  padding: 10px;
+  line-height: 1.3em;
+  color: var(--color5);
+  background: var(--color1);
+  border: 1px solid var(--color4);
 }
 
 .tooltip:hover .tooltiptext {

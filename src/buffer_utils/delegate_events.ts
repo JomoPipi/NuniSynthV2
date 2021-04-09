@@ -46,17 +46,24 @@ D('buffer-functions').onclick = (e : MouseEvent) => {
 
 const lengthSlider = D('new-buffer-length') as HTMLSelectElement
 const lengthText = D('new-buffer-length-text')
+const nSamplesText = D('n-samples-text')
+
+const SAMPLE_RATE = 48000
 
 const setLength = (value : number) => {
     const seconds = (60 * 4 / MasterClock.getTempo() / value)
-    lengthSlider.value = lengthText.innerText = seconds.toString()
+    lengthSlider.value = lengthText.innerText = seconds.toFixed(1)
     BufferUtils.nextBufferDuration = seconds
+
+    nSamplesText.innerText = Math.round(seconds * SAMPLE_RATE).toString()
 }
 
 lengthSlider.oninput = () => {
-    const seconds = lengthSlider.value
-    lengthText.innerText = seconds
-    BufferUtils.nextBufferDuration = +seconds
+    const seconds = +lengthSlider.value
+    lengthText.innerText = seconds.toFixed(1)
+    BufferUtils.nextBufferDuration = seconds
+
+    nSamplesText.innerText = Math.round(seconds * SAMPLE_RATE).toString()
 }
 
 const subdivSelect2 = createSubdivSelect2(setLength)
