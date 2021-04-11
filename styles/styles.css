@@ -851,6 +851,12 @@ code {
   background-color: var(--color1);
 }
 
+#buffer-length-stuff {
+  text-align: center;
+  border: 1px solid var(--color2);
+  padding: 15px 0px;
+}
+
 .shadow-knob {
   display: inline-block;
   position: relative;

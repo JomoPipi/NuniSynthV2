@@ -235,7 +235,8 @@ export function addModuleToList(title : string, graphCode : string) {
 
 
 Fill_The_Context_Menu: {
-    const btnList = E('ul', { text: ' Create New Node...' })
+    const listText = E('div', { text: 'Create New Node', className: 'center' })
+    const btnList = E('ul', { children: [listText] })
     const innerContainer = E('li',  { children: [btnList] })
     const container = E('ul', { children: [innerContainer] })
     graphContextnenu.appendChild(container)

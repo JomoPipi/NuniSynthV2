@@ -9,7 +9,7 @@ import { BufferUtils } from "./init_buffers.js"
 import { recordTo } from "./record.js"
 import { formulateBuffer } from "./buffer_formula.js"
 import { BufferStorage } from "../storage/buffer_storage.js"
-import { createSubdivSelect2 } from "../nunigraph/view/create_subdivselect.js"
+import { createSubdivSelect, createSubdivSelect2 } from "../nunigraph/view/create_subdivselect.js"
 import { MasterClock } from "../webaudio2/internal.js"
 import { importAudioFile } from "../storage/dialog.js"
 
@@ -64,14 +64,16 @@ lengthSlider.oninput = () => {
     BufferUtils.nextBufferDuration = seconds
 
     nSamplesText.innerText = Math.round(seconds * SAMPLE_RATE).toString()
+    subdivSelect.value = ''
 }
 
-const subdivSelect2 = createSubdivSelect2(setLength)
-    subdivSelect2.style.backgroundColor = 'gray' // Makes a gray line on top.. just looks pretty :)
+const subdivSelect = createSubdivSelect({ subdiv: 0 }, { fn: setLength })
+// const subdivSelect2 = createSubdivSelect2(setLength)
+    // subdivSelect2.style.backgroundColor = 'gray' // Makes a gray line on top.. just looks pretty :)
 
 // const subdivSelect = createSubdivSelect3()
 
-D('buffer-length-stuff').append(subdivSelect2)
+D('buffer-length-stuff').append(subdivSelect)
 
 
 D('import-buffer-button').onclick = () => importAudioFile()

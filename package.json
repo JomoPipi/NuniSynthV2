@@ -87,13 +87,14 @@
     "@electron-forge/maker-squirrel": "^6.0.0-beta.53",
     "@electron-forge/maker-zip": "^6.0.0-beta.53",
     "@types/dom-mediacapture-record": "^1.0.7",
-    "electron": "^11.1.1",
+    "electron": "^11.4.2",
     "electron-builder": "^22.9.1",
     "electron-builder-squirrel-windows": "^22.10.4",
     "electron-forge": "^5.2.4",
     "electron-installer-windows": "^3.0.0",
     "electron-packager": "^15.2.0",
     "electron-prebuilt-compile": "8.2.0",
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-winstaller": "^5.0.0"
   }
 }

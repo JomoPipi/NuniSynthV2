@@ -395,12 +395,14 @@
               
               <div class="_tab_ show">
   
-                <span id="buffer-length-stuff">
-                  Next Sample's Length:
+                <div id="buffer-length-stuff">
+                  length of next clip:
                   <span class="code2 new-buffer-length-text"
                     id="new-buffer-length-text"> 
                     3.0
-                  </span> seconds </span> <br>
+                  </span> seconds </span>
+                  
+                  <br> <br>
   
                   <input 
                     id="new-buffer-length"
@@ -410,17 +412,16 @@
                     step=0.1
                     value=3> 
                     
-                </span>
+                </div>
                 <br>
                 <span id="formula-template-container"> </span>
   
                 <div class="builder-section center">
   
-                  <button id="record" class="record"> 
+                  <button id="record" class="record">
                     rec </button>
-  
 
-                  <audio id="myaudio" style="border:1px solid white;"> omg</audio>
+                  <audio id="myaudio" style="border:1px solid white;">omg</audio>
 
                   <span id="desktop-capture-source-prompt-container"></span>
 
@@ -438,23 +439,23 @@
                     i
                     <span class="tooltiptext ni">
                       <span class="code2">n</span>  
-                      represents the position of each sample in the buffer.
-                      Samples should be numbers between 
+                      represents the position of each sample in the clip.
+                      Samples are numbers between 
                       <span class="code2">-1</span> and
                       <span class="code2">1</span>. See examples and play with the numbers and operators.
-                      <span class="code2">SAMPLES[A](n)</span>, 
-                      <span class="code2">SAMPLES[B](n)</span>, 
-                      <span class="code2">SAMPLES[C](n)</span> gets you the data point at index <span class="code2">n</span> of the specified sample.
+                      <span class="code2">SAMPLES[A](n)</span>,
+                      <span class="code2">SAMPLES[B](n)</span>,
+                      <span class="code2">SAMPLES[C](n)</span> gets you the sample at position <span class="code2">n</span> of the clip.
                       <br>
                     </span>
                   </button> 
   
                   <br>
+                  <br>
 
                   <code>
                     <!-- for n from 0 to 48000 * seconds: <br> -->
-                    for n from 0 to <span class="code2" id="n-samples-text">144000</span>: <br>
-                    &nbsp;data[n] =
+                    for n from 0 to <span class="code2" id="n-samples-text">144000</span>: data[n] =
                   </code>
   
                   <input

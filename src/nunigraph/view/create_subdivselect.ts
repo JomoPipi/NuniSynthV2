@@ -129,7 +129,7 @@ export function createSubdivSelect2(fn? : (value : number) => void) {
         fn && fn(n)
     }
 
-    return E('span', { children: [select] })
+    return select
 }
 
 
