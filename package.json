@@ -77,9 +77,6 @@
       ]
     }
   },
-  "dependencies": {
-    "tsc": "^1.20150623.0"
-  },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.53",
     "@electron-forge/maker-deb": "^6.0.0-beta.53",
