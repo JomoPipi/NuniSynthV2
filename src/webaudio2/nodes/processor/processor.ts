@@ -299,6 +299,8 @@ export class ProcessorNode
         this.volumeNode.disconnect(destination as any)
     }
 
+    keydown(){}
+
     updateBoxDimensions(H : number, W : number) {
         this.controller!.style.height = Math.max(0, H - 25) +'px'
         this.controller!.style.width =  W +'px'
