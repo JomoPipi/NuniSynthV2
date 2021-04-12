@@ -5,6 +5,7 @@
   "description": "A modular audio graphical software sandbox ecosystem.",
   "main": "src/index.js",
   "scripts": {
+    "setup": "electron-installer-windows --src release-builds/NuniSynth-win32-ia32/ --dest installers/",
     "do_it": "electron-packager . NuniSynth --verbose --platform=win32 --arch=x64 --out=release-builds",
     "test": "jest",
     "start": "electron .",
@@ -91,9 +92,11 @@
     "electron-installer-windows": "^3.0.0",
     "electron-packager": "^15.2.0",
     "electron-prebuilt-compile": "8.2.0",
-    "electron-squirrel-startup": "^1.0.0",
     "electron-winstaller": "^5.0.0",
     "tsc": "^1.20150623.0",
     "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0"
   }
 }
