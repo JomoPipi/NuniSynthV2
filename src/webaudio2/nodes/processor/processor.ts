@@ -264,7 +264,7 @@ class CustomAudioNode extends AudioWorkletNode {
 }
 
 // const WASM = { instance: undefined }
-// WebAssembly.instantiateStreaming(fetch('song.wasm'), importObject)
+// WebAssembly.instantiateStreaming(fetch('resources/song.wasm'), importObject)
 //     .then(results => {
 //         WASM.instance = results.instance.exports
 //         console.log('wasm instance = ', WASM.instance)
@@ -402,7 +402,7 @@ export class ProcessorNode
         this.audioWorkletNode.connect(this.volumeNode)
         this.inputChannelNode.connect(this.audioWorkletNode)
         
-        const bytes = await fetch('song.wasm')
+        const bytes = await fetch('resources/song.wasm')
             .then(r => r.arrayBuffer())
 
         this.audioWorkletNode.port.postMessage({ topic: "wasm", 
