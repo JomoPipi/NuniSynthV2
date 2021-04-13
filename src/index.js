@@ -5,12 +5,10 @@
 
 
 
-const { app, BrowserWindow, contentTracing, dialog } = require('electron')
+const { app, BrowserWindow, dialog, Menu } = require('electron')
 const path = require('path')
 
 const { autoUpdater } = require("electron-updater")
-
-autoUpdater.checkForUpdatesAndNotify()
 
 //! TOP LEVEL RETURN:
 // if(1+1 === 2) {
@@ -28,7 +26,58 @@ autoUpdater.checkForUpdatesAndNotify()
 //   // squirrel event handled and app will exit in 1000ms, so don't do anything else
 //   return;
 // }
+const template = []
+let win;
 
+function sendStatusToWindow(text) {
+  log.info(text);
+  win.webContents.send('message', text);
+}
+function createDefaultWindow() {
+  win = new BrowserWindow({
+      webPreferences: {
+          nodeIntegration: true,
+          contextIsolation: false
+      }
+  });
+  // win.webContents.openDevTools();
+  win.on('closed', () => {
+    win = null;
+  });
+  win.loadURL(`file://${__dirname}/version.html#v${app.getVersion()}`);
+  return win;
+}
+autoUpdater.on('checking-for-update', () => {
+  sendStatusToWindow('Checking for update...');
+})
+autoUpdater.on('update-available', (info) => {
+  sendStatusToWindow('Update available.');
+})
+autoUpdater.on('update-not-available', (info) => {
+  sendStatusToWindow('Update not available.');
+})
+autoUpdater.on('error', (err) => {
+  sendStatusToWindow('Error in auto-updater. ' + err);
+})
+autoUpdater.on('download-progress', (progressObj) => {
+  let log_message = "Download speed: " + progressObj.bytesPerSecond;
+  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+  log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+  sendStatusToWindow(log_message);
+})
+autoUpdater.on('update-downloaded', (info) => {
+  sendStatusToWindow('Update downloaded');
+});
+app.on('ready', function() {
+  // Create the Menu
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+
+  createDefaultWindow();
+});
+app.on('window-all-closed', () => {
+  app.quit();
+});
 
 function handleSquirrelEvent() {
   if (process.argv.length === 1) {
@@ -110,7 +159,7 @@ const createWindow = () => {
     , fullscreenable: true
     , opacity: 1
     })
-  
+  mainWindow.webContents.openDevTools()
   // mainWindow.setMenu(null)
 
   // and load the index.html of the app.
@@ -158,6 +207,7 @@ const createWindow = () => {
 
 app.on('ready', _ => { 
   // Transparency Workaround
+  autoUpdater.checkForUpdatesAndNotify()
   setTimeout(createWindow, 10)
 })
 

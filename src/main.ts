@@ -18,6 +18,8 @@ import './nunigraph/controller/modularize_graph.js'
 
 window.onload = () => {
     console.log('[[((--##--)) Begin NuniSynth ((--##-))]]')
+    
+    console.log('!!!!MESSAGE!!!!')
 
     D('loading-screen').style.opacity = '0'
     setTimeout(() => 
