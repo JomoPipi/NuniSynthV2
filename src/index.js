@@ -7,8 +7,21 @@
 
 const { app, BrowserWindow, dialog, Menu } = require('electron')
 const path = require('path')
+const log = require('electron-log');
 
 const { autoUpdater } = require("electron-updater")
+
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('App starting...');
+
+autoUpdater.setFeedURL({
+    provider: 'github',
+    repo: 'nunisynthv2',
+    owner: 'JomoPipi',
+    private: true,
+    token: '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'
+})
 
 //! TOP LEVEL RETURN:
 // if(1+1 === 2) {
@@ -27,11 +40,33 @@ const { autoUpdater } = require("electron-updater")
 //   return;
 // }
 const template = []
+
+if (process.platform === 'darwin') {
+  // OS X
+  const name = app.getName();
+  template.unshift({
+    label: name,
+    submenu: [
+      {
+        label: 'About ' + name,
+        role: 'about'
+      },
+      {
+        label: 'Quit',
+        accelerator: 'Command+Q',
+        click() { app.quit(); }
+      },
+    ]
+  })
+}
+
+
 let win;
 
 function sendStatusToWindow(text) {
   log.info(text);
   win.webContents.send('message', text);
+  console.log('sent a message!', text)
 }
 function createDefaultWindow() {
   win = new BrowserWindow({
@@ -40,14 +75,21 @@ function createDefaultWindow() {
           contextIsolation: false
       }
   });
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
   win.on('closed', () => {
     win = null;
   });
   win.loadURL(`file://${__dirname}/version.html#v${app.getVersion()}`);
+
+  win.webContents.on('did-finish-load', () => {
+    sendStatusToWindow('Initializing...')
+  });
+
   return win;
 }
+
 autoUpdater.on('checking-for-update', () => {
+  console.log('swag swag checking for updates')
   sendStatusToWindow('Checking for update...');
 })
 autoUpdater.on('update-available', (info) => {
@@ -68,6 +110,8 @@ autoUpdater.on('download-progress', (progressObj) => {
 autoUpdater.on('update-downloaded', (info) => {
   sendStatusToWindow('Update downloaded');
 });
+
+
 app.on('ready', function() {
   // Create the Menu
   const menu = Menu.buildFromTemplate(template);
@@ -78,68 +122,6 @@ app.on('ready', function() {
 app.on('window-all-closed', () => {
   app.quit();
 });
-
-function handleSquirrelEvent() {
-  if (process.argv.length === 1) {
-    return false;
-  }
-
-  const ChildProcess = require('child_process');
-  const path = require('path');
-
-  const appFolder = path.resolve(process.execPath, '..');
-  const rootAtomFolder = path.resolve(appFolder, '..');
-  const updateDotExe = path.resolve(path.join(rootAtomFolder, 'Update.exe'));
-  const exeName = path.basename(process.execPath);
-
-  const spawn = function(command, args) {
-    let spawnedProcess, error;
-
-    try {
-      spawnedProcess = ChildProcess.spawn(command, args, {detached: true});
-    } catch (error) {}
-
-    return spawnedProcess;
-  };
-
-  const spawnUpdate = function(args) {
-    return spawn(updateDotExe, args);
-  };
-
-  const squirrelEvent = process.argv[1];
-  switch (squirrelEvent) {
-    case '--squirrel-install':
-    case '--squirrel-updated':
-      // Optionally do things such as:
-      // - Add your .exe to the PATH
-      // - Write to the registry for things like file associations and
-      //   explorer context menus
-
-      // Install desktop and start menu shortcuts
-      spawnUpdate(['--createShortcut', exeName]);
-
-      setTimeout(app.quit, 1000);
-      return true;
-
-    case '--squirrel-uninstall':
-      // Undo anything you did in the --squirrel-install and
-      // --squirrel-updated handlers
-
-      // Remove desktop and start menu shortcuts
-      spawnUpdate(['--removeShortcut', exeName]);
-
-      setTimeout(app.quit, 1000);
-      return true;
-
-    case '--squirrel-obsolete':
-      // This is called on the outgoing version of your app before
-      // we update to the new version - it's the opposite of
-      // --squirrel-updated
-
-      app.quit();
-      return true;
-  }
-};
 
 const createWindow = () => {
   // Create the browser window.
@@ -152,6 +134,7 @@ const createWindow = () => {
       { nodeIntegration: true
       , preload: './preload.js'
       , enableRemoteModule: true
+      , contextIsolation: false
       // , devTools: false // TODO : uncomment for production
       }
     , icon: __dirname + '/../styles/icon.ico'
@@ -208,6 +191,7 @@ const createWindow = () => {
 app.on('ready', _ => { 
   // Transparency Workaround
   autoUpdater.checkForUpdatesAndNotify()
+  // autoUpdater.checkForUpdates()
   setTimeout(createWindow, 10)
 })
 
