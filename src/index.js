@@ -8,6 +8,10 @@
 const { app, BrowserWindow, contentTracing, dialog } = require('electron')
 const path = require('path')
 
+const { autoUpdater } = require("electron-updater")
+
+autoUpdater.checkForUpdatesAndNotify()
+
 //! TOP LEVEL RETURN:
 // if(1+1 === 2) {
 //   console.log('it is!')
@@ -15,14 +19,16 @@ const path = require('path')
 // }
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) 
-{ // eslint-disable-line global-require
-  app.quit()
-}
-if (handleSquirrelEvent()) {
-  // squirrel event handled and app will exit in 1000ms, so don't do anything else
-  return;
-}
+//! REMOVED SQUIRREL.WINDOWS
+// if (require('electron-squirrel-startup')) 
+// { // eslint-disable-line global-require
+//   app.quit()
+// }
+// if (handleSquirrelEvent()) {
+//   // squirrel event handled and app will exit in 1000ms, so don't do anything else
+//   return;
+// }
+
 
 function handleSquirrelEvent() {
   if (process.argv.length === 1) {

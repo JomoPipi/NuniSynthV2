@@ -1,7 +1,7 @@
 {
   "name": "nunisynth",
   "productName": "nunisynth",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A modular audio graphical software sandbox ecosystem.",
   "main": "src/index.js",
   "scripts": {
@@ -12,17 +12,27 @@
     "dev": "node './scripts/dev.mjs'",
     "package": "electron-forge package",
     "make": "electron-forge make --platform=win32 --arch=x64",
-    "publish": "electron-forge publish",
+    "publish": "electron-builder --win -p always",
+    "publish-mac": "electron-builder --mac -p always",
     "lint": "echo \"No linting configured\"",
-    "pack": "electron-builder --mac --dir",
-    "dist": "electron-builder --mac",
+    "pack": "electron-builder -npm inst-dir",
+    "dist": "electron-builder",
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
     "package-win": "electron-packager . NuniSynth --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"NuniSynth\"",
     "package-linux": "electron-packager . NuniSynth --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
   },
   "build": {
+    "publish": [{
+      "provider": "github",
+      "owner": "JomoPipi",
+      "repo": "NuniSynthv2"
+    }],
     "appId": "NuniSynth",
-    "category": "your.app.category.type",
+    "productName": "NuniSynth",
+    "directories": {
+      "output": "build",
+      "buildResources": "."
+    },
     "dmg": {
       "contents": [
         {
@@ -44,8 +54,16 @@
       ]
     },
     "win": {
-      "target": "NSIS",
-      "icon": "icon2.ico"
+      "target": [
+        "NSIS"
+      ],
+      "icon": "./assets/icon.ico"
+    },
+    "nsis": {
+      "installerIcon": "./assets/icon.ico",
+      "uninstallerIcon": "./assets/icon.ico",
+      "license": "LICENSE",
+      "runAfterFinish": true
     }
   },
   "keywords": [],
@@ -86,8 +104,7 @@
     "@electron-forge/maker-zip": "^6.0.0-beta.53",
     "@types/dom-mediacapture-record": "^1.0.7",
     "electron": "^11.4.2",
-    "electron-builder": "^22.9.1",
-    "electron-builder-squirrel-windows": "^22.10.4",
+    "electron-builder": "^22.10.5",
     "electron-forge": "^5.2.4",
     "electron-installer-windows": "^3.0.0",
     "electron-packager": "^15.2.0",
@@ -97,6 +114,6 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-updater": "^4.3.8"
   }
 }
