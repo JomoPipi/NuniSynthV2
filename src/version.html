@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Electron Updater Example</title>
+  <title>NuniSynth Update Sage</title>
 </head>
 <body>
   Current version: <span id="version">vX.Y.Z</span>
@@ -12,12 +12,11 @@ let version = window.location.hash.substring(1);
 document.getElementById('version').innerText = version;
 
 // Listen for messages
-const {ipcRenderer} = require('electron');
+const { ipcRenderer } = require('electron');
 ipcRenderer.on('message', function(event, text) {
-  console.log('got a message!!')
-  var container = document.getElementById('messages');
-  var message = document.createElement('div');
-  message.innerHTML = text;
+  const container = document.getElementById('messages');
+  const message = document.createElement('div');
+  message.innerText = text;
   container.appendChild(message);
 })
 </script>

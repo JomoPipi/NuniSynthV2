@@ -23,22 +23,6 @@ autoUpdater.setFeedURL({
     token: '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'
 })
 
-//! TOP LEVEL RETURN:
-// if(1+1 === 2) {
-//   console.log('it is!')
-//   return;
-// }
-
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-//! REMOVED SQUIRREL.WINDOWS
-// if (require('electron-squirrel-startup')) 
-// { // eslint-disable-line global-require
-//   app.quit()
-// }
-// if (handleSquirrelEvent()) {
-//   // squirrel event handled and app will exit in 1000ms, so don't do anything else
-//   return;
-// }
 const template = []
 
 if (process.platform === 'darwin') {
@@ -75,7 +59,7 @@ function createDefaultWindow() {
           contextIsolation: false
       }
   });
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
   win.on('closed', () => {
     win = null;
   });
@@ -96,7 +80,7 @@ autoUpdater.on('update-available', (info) => {
   sendStatusToWindow('Update available.');
 })
 autoUpdater.on('update-not-available', (info) => {
-  sendStatusToWindow('Update not available.');
+  sendStatusToWindow("You are on the latest version!");
 })
 autoUpdater.on('error', (err) => {
   sendStatusToWindow('Error in auto-updater. ' + err);
@@ -142,7 +126,7 @@ const createWindow = () => {
     , fullscreenable: true
     , opacity: 1
     })
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
   // mainWindow.setMenu(null)
 
   // and load the index.html of the app.
