@@ -165,18 +165,15 @@ const createWindow = () => {
 }
 
 app.on('ready', _ => { 
-  // Transparency Workaround
-  autoUpdater.checkForUpdatesAndNotify()
-  // autoUpdater.checkForUpdates()
-  setTimeout(createWindow, 10)
-
-  setTimeout(() => {
-  // Create the Menu
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 
   createDefaultWindow();
-  }, 100)
+
+  // Transparency Workaround
+  autoUpdater.checkForUpdatesAndNotify()
+  // autoUpdater.checkForUpdates()
+  setTimeout(createWindow, 10)
 })
 
 app.on('window-all-closed', () => {
