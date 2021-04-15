@@ -1,7 +1,7 @@
 {
   "name": "nunisynth",
   "productName": "nunisynth",
-  "version": "1.0.7",
+  "version": "1.0.16",
   "description": "A modular audio graphical software sandbox ecosystem.",
   "main": "src/index.js",
   "scripts": {
@@ -14,6 +14,7 @@
     "make": "electron-forge make --platform=win32 --arch=x64",
     "publish": "electron-builder --win -p always",
     "publish-mac": "electron-builder --mac -p always",
+    "publish-all": "electron-builder --win --mac -p always",
     "lint": "echo \"No linting configured\"",
     "pack": "electron-builder -npm inst-dir",
     "dist": "electron-builder",

@@ -59,7 +59,7 @@ function createDefaultWindow() {
           contextIsolation: false
       }
   });
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
   win.on('closed', () => {
     win = null;
   });
@@ -132,7 +132,7 @@ const createWindow = () => {
   })()
 
   // Open the DevTools:
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
 
   // Receive Traffic Light Message:
@@ -169,13 +169,14 @@ app.on('ready', _ => {
   autoUpdater.checkForUpdatesAndNotify()
   // autoUpdater.checkForUpdates()
   setTimeout(createWindow, 10)
-  setTimeout(function() {
-    // Create the Menu
-    const menu = Menu.buildFromTemplate(template);
-    Menu.setApplicationMenu(menu);
 
-    createDefaultWindow();
-  }, 40)
+  setTimeout(() => {
+  // Create the Menu
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+
+  createDefaultWindow();
+  }, 100)
 })
 
 app.on('window-all-closed', () => {
