@@ -95,14 +95,6 @@ autoUpdater.on('update-downloaded', (info) => {
   sendStatusToWindow('Update downloaded');
 });
 
-
-app.on('ready', function() {
-  // Create the Menu
-  const menu = Menu.buildFromTemplate(template);
-  Menu.setApplicationMenu(menu);
-
-  createDefaultWindow();
-});
 app.on('window-all-closed', () => {
   app.quit();
 });
@@ -177,6 +169,13 @@ app.on('ready', _ => {
   autoUpdater.checkForUpdatesAndNotify()
   // autoUpdater.checkForUpdates()
   setTimeout(createWindow, 10)
+  setTimeout(function() {
+    // Create the Menu
+    const menu = Menu.buildFromTemplate(template);
+    Menu.setApplicationMenu(menu);
+
+    createDefaultWindow();
+  }, 40)
 })
 
 app.on('window-all-closed', () => {
