@@ -1,7 +1,7 @@
 {
   "name": "nunisynth",
   "productName": "nunisynth",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A modular audio graphical software sandbox ecosystem.",
   "main": "src/index.js",
   "scripts": {
@@ -34,6 +34,13 @@
     "directories": {
       "output": "build",
       "buildResources": "."
+    },
+    "mac": {
+      "category": "NuniSynth.category.type",
+      "target": [
+        "zip",
+        "dmg"
+      ]
     },
     "dmg": {
       "contents": [
