@@ -1,7 +1,7 @@
 {
   "name": "nunisynth",
   "productName": "nunisynth",
-  "version": "1.0.17",
+  "version": "1.0.19",
   "description": "A modular audio graphical software sandbox ecosystem.",
   "main": "src/index.js",
   "scripts": {
@@ -64,9 +64,9 @@
       ]
     },
     "win": {
-      "target": [
-        "NSIS"
-      ],
+      "publisherName": ["Ronald Corona"],
+      "verifyUpdateCodeSignature": false,
+      "target": ["nsis"],
       "icon": "./assets/icon.ico"
     },
     "nsis": {
