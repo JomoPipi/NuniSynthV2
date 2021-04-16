@@ -4,20 +4,31 @@
   <title>NuniSynth Update Sage</title>
 </head>
 <body>
-  Current version: <span id="version">vX.Y.Z</span>
+  Current version: 
+  <span id="version" style="color:purple;">vX.Y.Z</span>
   <div id="messages"></div>
 <script>
 // Display the current version
-let version = window.location.hash.substring(1);
+const version = window.location.hash.substring(1);
 document.getElementById('version').innerText = version;
 
+const container = document.getElementById('messages');
+const downloadMessages = document.createElement('div')
+container.appendChild(downloadMessages)
 // Listen for messages
 const { ipcRenderer } = require('electron');
 ipcRenderer.on('message', function(event, text) {
-  const container = document.getElementById('messages');
-  const message = document.createElement('div');
-  message.innerText = text;
-  container.appendChild(message);
+  if (Array.isArray(text) && text[0].startsWith("Download speed: "))
+  {
+    const [str, percent] = text
+    downloadMessages.innerText = str
+  }
+  else
+  {
+    const message = document.createElement('div');
+    message.innerText = text;
+    container.appendChild(message);
+  }
 })
 </script>
 </body>
