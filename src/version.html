@@ -4,16 +4,48 @@
   <title>NuniSynth Update Sage</title>
 </head>
 <body>
-  Current version: 
-  <span id="version" style="color:purple;">vX.Y.Z</span>
-  <div id="messages"></div>
+  <div style="border-bottom:blue"> Current version: </div>
+  <span id="version" style="color:purple;font-size:20px">vX.Y.Z</span>
+  <div id="container">
+    <div id='downloadMessages'>
+      <div id="progressBar"></div>
+      <span id="downloadMessagesText"></span>
+    </div>
+  </div>
+  <style>
+    #progressBar {
+      /* background-color: #bfb; */
+      background-color: transparent;
+      width: 0px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      /* border: 2px solid red; */
+      backdrop-filter: hue-rotate(180deg);
+      box-shadow: 0px 0px 3px 1px rgba(89, 0, 255, 0.432);
+    }
+    #downloadMessages {
+      /* border: 1px solid purple; */
+      background-color: #fbb;
+      position: relative;
+      padding: 4px;
+      border-radius: 3px;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
 <script>
 // Display the current version
 const version = window.location.hash.substring(1);
 document.getElementById('version').innerText = version;
 
-const container = document.getElementById('messages');
-const downloadMessages = document.createElement('div')
+function update(percent) {
+  console.log('p =',percent)
+  progressBar.style.width = percent + '%'
+  // downloadMessages.style.background = 
+  // `linear-gradient(0.25turn, #bfb ${percent}%, #fbb ${100 - percent}%)`
+}
 container.appendChild(downloadMessages)
 // Listen for messages
 const { ipcRenderer } = require('electron');
@@ -21,7 +53,10 @@ ipcRenderer.on('message', function(event, text) {
   if (Array.isArray(text) && text[0].startsWith("Download speed: "))
   {
     const [str, percent] = text
-    downloadMessages.innerText = str
+    downloadMessagesText.innerText = str
+    downloadMessages.style.display = 'block'
+    console.log('we here')
+    update(percent)
   }
   else
   {

@@ -95,6 +95,7 @@ autoUpdater.on('download-progress', (progressObj) => {
   
   sendStatusToWindow(log_message);
 })
+
 autoUpdater.on('update-downloaded', (info) => {
   sendStatusToWindow('Update downloaded');
 });
@@ -136,7 +137,7 @@ const createWindow = () => {
   })()
 
   // Open the DevTools:
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
 
   // Receive Traffic Light Message:
@@ -178,6 +179,18 @@ app.on('ready', _ => {
   autoUpdater.checkForUpdatesAndNotify()
   // autoUpdater.checkForUpdates()
   setTimeout(createWindow, 10)
+
+// Test progress bar 
+//   for (let i = 0; i <= 100; i++) 
+// {
+//   setTimeout(() => {
+//     const log_message = ["Download speed: " + i,
+//     i
+//     ];
+    
+//     sendStatusToWindow(log_message);
+//   }, i * 500)
+// }
 })
 
 app.on('window-all-closed', () => {
