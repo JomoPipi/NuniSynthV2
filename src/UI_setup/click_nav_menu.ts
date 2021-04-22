@@ -60,6 +60,7 @@ function showTab(name : string) {
     }
 }
 
+const partyModeDiv = E('div', { className: 'party-mode' })
 function showConfigWindow() {
     const configWindow = E('div', { className: 'window show' })
 
@@ -68,7 +69,7 @@ function showConfigWindow() {
         const checkBox = E('input')
             checkBox.type = 'checkbox'
             checkBox.checked = UserOptions.config[key]
-        const box = E('span', 
+        const box = E('div', 
             { text: key + ' '
             , children: [checkBox] 
             })
@@ -79,6 +80,24 @@ function showConfigWindow() {
 
         configWindow.appendChild(box)
     }
+    
+    {
+        const key = 'Party Mode'
+        const checkBox = E('input')
+            checkBox.type = 'checkbox'
+            checkBox.checked = UserOptions.config[key]
+        const box = E('div', 
+            { text: key + ' '
+            , children: [checkBox] 
+            })
+        checkBox.oninput = () => {
+            UserOptions.config[key] = checkBox.checked
+            setParty(checkBox.checked)
+        }
+
+        configWindow.appendChild(box)
+    }
+
 
     {
         const key = 'theme'
@@ -122,5 +141,19 @@ function showConfigWindow() {
             console.log('saving!')
             UserOptions.save() // Save config when we click out
         }
+    }
+}
+
+setParty(UserOptions.config['Party Mode'])
+
+function setParty(yes : boolean) {
+    // return;
+    if (yes)
+    {
+        document.body.appendChild(partyModeDiv)
+    }
+    else if (document.body.contains(partyModeDiv))
+    {
+        document.body.removeChild(partyModeDiv)
     }
 }

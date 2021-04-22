@@ -17,12 +17,14 @@ const filePath = path.join(userDataPath, 'useroptions')
 
 type UserConfig = {
     'Show Node Images' : boolean
+    'Party Mode' : boolean
     theme : 0 | 1 | 2 | 3
 }
 
 const DefaultConfig : UserConfig = 
     { 'Show Node Images': true
     , theme: 0
+    , "Party Mode": false
     } as const
 
 export const UserOptions = 

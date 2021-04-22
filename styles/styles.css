@@ -507,6 +507,40 @@ button {
   background: rgba(0, 255, 0, 0.25);
 }
 
+.party-mode {
+  position: absolute;
+  background: transparent;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  -webkit-animation: woo 4s linear infinite;
+          animation: woo 4s linear infinite;
+}
+
+@-webkit-keyframes woo {
+  0% {
+    -webkit-backdrop-filter: hue-rotate(360deg);
+            backdrop-filter: hue-rotate(360deg);
+  }
+  100% {
+    -webkit-backdrop-filter: hue-rotate(0deg);
+            backdrop-filter: hue-rotate(0deg);
+  }
+}
+
+@keyframes woo {
+  0% {
+    -webkit-backdrop-filter: hue-rotate(360deg);
+            backdrop-filter: hue-rotate(360deg);
+  }
+  100% {
+    -webkit-backdrop-filter: hue-rotate(0deg);
+            backdrop-filter: hue-rotate(0deg);
+  }
+}
+
 code {
   font-family: monospace;
 }

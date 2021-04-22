@@ -530,3 +530,23 @@ $width1: 120px;
 #restore-window:hover {
     background: rgba(0,255,0,0.25);
 }
+
+.party-mode {
+    position: absolute;
+    background: transparent;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    animation: woo 4s linear infinite;
+}
+
+@keyframes woo {
+    0% {
+        backdrop-filter: hue-rotate(360deg);
+    }
+    100% {
+        backdrop-filter: hue-rotate(0deg);
+    }
+}
