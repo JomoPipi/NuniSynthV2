@@ -42,6 +42,7 @@ type AllElements = {
     span   : HTMLSpanElement
     img    : HTMLImageElement
     object : HTMLObjectElement
+    label  : HTMLLabelElement
 
     // TODO: Remove these:
     br     : HTMLBRElement

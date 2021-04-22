@@ -13,8 +13,7 @@ import { BufferStorage } from "./buffer_storage.js"
 
 import { makeNuniFile, loadNuniFile } from "./save_project.js"
 
-const { dialog } = require('electron').remote
-const { app } = require('electron').remote
+const { dialog, app } = require('electron').remote
 const userDataPath : string = app.getPath('userData')
 
 // Switch for typechecking:

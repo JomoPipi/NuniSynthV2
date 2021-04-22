@@ -14,11 +14,19 @@ import { createADSREditor } from "../../adsr/adsr_editor.js";
 import { VolumeNodeContainer } from "../../volumenode_container.js";
 import { PianoRollEditor } from "../pianoroll/pianoroll_editor.js";
 
-
-
-
-
-
+type MidiEvent = 
+    { deltaTime : number
+    , type : number
+    , metaType : number
+    , channel : number
+    , data : any
+    }
+type MidiObject = 
+    { formatType : number
+    , tracks : number
+    , track : { event : MidiEvent[] }[]
+    , timeDivision : number
+    }
 
 export class SamplePianoRoll extends VolumeNodeContainer
  implements AudioNodeInterfaces<NodeTypes.SAMPLE_PIANOR> {
@@ -162,6 +170,7 @@ export class SamplePianoRoll extends VolumeNodeContainer
     }
 
     private readonly SidePanelWidth = 100
+    private nextFileReaderId = 0
     getController() {
         if (this.controller) return this.controller
 
@@ -184,6 +193,111 @@ export class SamplePianoRoll extends VolumeNodeContainer
 
         const writeMode = createToggleButton(this.pianoRoll, 'kbWriteMode', { text: 'WRITE' })
             
+        const fileReader = E('input'); fileReader.type = 'file'
+        fileReader.oninput = () => {
+            console.log('yoyo')
+            try {
+                console.log('clearing sequence!')
+                this.pianoRoll.clearSequence()
+                ;(window as any).MidiParser.parse(fileReader, handleMidiData)
+            }
+            catch (e)
+            { 
+                console.log('Error!!!!!!!!!!!', e) 
+            }
+            const MidiEventTypes =
+                { NOTE_OFF: 8
+                , NOTE_ON: 9
+                , NOTE_AFTERTOUCH: 10
+                , CONTROLLER: 11
+                , PROGRAM_CHANGE: 12
+                , CHANNEL_AFTERTOUCH: 13
+                , PITCH_BEND: 14
+                } as const
+            
+            const pianoRoll = this.pianoRoll
+            type Note = {
+                time : number
+                length : number
+                n : number
+                isSelected : boolean
+                lastN : number
+                lastT : number
+                sample : number
+            }
+            function handleMidiData(o : MidiObject) {
+                console.log('o.formatType =',o.formatType)
+                if (o.formatType !== 1 && o.formatType !== 2) throw 'unsupported'
+                const newSequence : Note[] = []
+                let sample = 0
+                o.track.slice(1).forEach(({ event }) => {
+                    ++sample
+                    if (event.length < 2) return;
+                    const [_, { data: instrument }, ...track] = event
+                    const notesThatNeedToEnd : Record<number,[number, number]> = {}
+                    let noteTime = 0
+                    if (instrument === 'Drums') { console.log('insstrument equals Drums!!'); return; }
+                    console.log('instrument =',instrument)
+                    for (const midiEvent of track)
+                    {
+                        const { data, type, deltaTime, metaType } = midiEvent
+                        if (metaType === 47)
+                        {
+                            // console.log('END OF TRACk')
+                            continue;
+                        }
+                        if (type === MidiEventTypes.PROGRAM_CHANGE)
+                        {
+                            console.log('IMPLEMENT INSTRUMENTS')
+                            continue;
+                        }
+                        if (!Array.isArray(data)) throw 'Error parsing midi event: ' + JSON.stringify(midiEvent)
+                        const [note, velocity] = data as number[]
+                        noteTime += deltaTime / o.timeDivision
+                        if (type === MidiEventTypes.NOTE_ON)
+                        {
+                            if (note in notesThatNeedToEnd && velocity === 0)
+                            {
+                                const [index, startTime] = notesThatNeedToEnd[note]
+                                delete notesThatNeedToEnd[note]
+                                const n = newSequence[index]
+                                n.length = noteTime - startTime
+                            }
+                            else if (velocity > 0)
+                            {
+                                notesThatNeedToEnd[note] = [newSequence.length, noteTime]
+                                const newNote : Note =
+                                    { time: noteTime
+                                    , length: -1
+                                    , isSelected: false
+                                    , n: note
+                                    , lastN: note
+                                    , lastT: noteTime
+                                    , sample
+                                    }
+                                newSequence.push(newNote)
+                            }
+                        }
+                    }
+                    console.log(`Loading instrument: ${instrument}`)
+                })
+                console.log('seq.length =',newSequence.length)
+                pianoRoll.setSequence(newSequence)
+                console.log('yooo!!')
+            }
+        }
+        fileReader.id = 'SamplePianoRollMidiFileReader' + (++this.nextFileReaderId).toString()
+        fileReader.style.width = '0px'
+        fileReader.style.display = 'none'
+        fileReader.style.marginTop = '5px'
+        const fileReaderLabel = E('label', 
+            { className: 'neumorph2 push-btn'
+            , text: 'MIDI' 
+            })
+            fileReaderLabel.htmlFor = fileReader.id
+            // fileReaderLabel.style.paddingTop = 
+        const fileReaderContainer = E('span', { children: [fileReaderLabel, fileReader] })
+
         const sidepanel = E('div', { className: 'pianoroll-sidepanel' })
         sidepanel.style.width = this.SidePanelWidth + 'px'
         sidepanel.append
@@ -192,7 +306,8 @@ export class SamplePianoRoll extends VolumeNodeContainer
             , timeBaseSelect
             , this.sampleCanvas.html
             , createADSREditor(this.localADSR, { orientation: 'square' })
-            , writeMode)
+            , writeMode
+            , fileReaderContainer)
 
         this.controller = E('div', { className: 'flat', children: [sidepanel, this.pianoRoll.controller] })
         return this.controller

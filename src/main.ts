@@ -18,17 +18,27 @@ import './nunigraph/controller/modularize_graph.js'
 
 window.onload = () => {
     console.log('[[((--##--)) Begin NuniSynth ((--##-))]]')
-    
-    console.log('!!!!MESSAGE!!!!')
 
     D('loading-screen').style.opacity = '0'
     setTimeout(() => 
         D('loading-screen').style.display = 'none', 2000)
 
-    
     if (DEV_MODE_EQUALS_TRUE)
     {
         import('./tests/all_tests.js')
+        
+        // ALLOW DEVTOOLS TO BE OPENED WITH F12 and the app the be refreshed with F5
+        const { remote } = require('electron')
+        document.addEventListener("keydown", function (e) {
+            if (e.which === 123)
+            {
+                remote.getCurrentWindow().toggleDevTools()
+            }
+            else if (e.which === 116)
+            {
+                location.reload()
+            }
+        })
     }
 }
 

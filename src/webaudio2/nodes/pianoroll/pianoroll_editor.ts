@@ -1266,6 +1266,16 @@ export class  PianoRollEditor {
         }
         if (restart) this.restart()
     }
+
+    clearSequence() {
+        this.sequence = []
+        this.render()
+    }
+
+    setSequence(s : Note[]) {
+        this.sequence = s
+        this.render
+    }
 }
 
 type HoverMessage = { 
