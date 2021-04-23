@@ -26,6 +26,7 @@
     
     <script src="libraries/ace/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="libraries/midiparser/main.js" type="text/javascript" charset="utf-8"></script>
+    <script src="libraries/towav/audiobuffertowav.js" type="text/javascript" charset="utf-8"></script>
     <script src="dist/helpers/helpers.js" defer></script>
     <script src="dist/nunigraph/model/nodeconfig.js" defer></script>
 
@@ -362,11 +363,12 @@
           <div class="main-tab">
   
             <div class="lcd-display">
-              <code> SAMPLE </code>
+              <!-- <code> SAMPLE </code> -->
               <code id="buffer-info"> A -- 3 seconds </code>
               <button id="import-buffer-button" class="neumorph2 push-button"> IMPORT </button>
+              <button id="export-buffer-button" class="neumorph2 push-button"> EXPORT </button>
             </div>
-    
+            
             <div>
               <div id="bufferbox1" class="buffer-box">
                 <div id="buffer-container" class="buffers-list"></div>

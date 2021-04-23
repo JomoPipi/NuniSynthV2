@@ -70,7 +70,7 @@ class BufferUtily {
         D('buffer-info').innerText =
         `${
             String.fromCharCode(65 + n)
-        } -- ${
+        } : ${
             buff.duration
         } seconds`
     

@@ -9,9 +9,10 @@ import { BufferUtils } from "./init_buffers.js"
 import { recordTo } from "./record.js"
 import { formulateBuffer } from "./buffer_formula.js"
 import { BufferStorage } from "../storage/buffer_storage.js"
-import { createSubdivSelect, createSubdivSelect2 } from "../nunigraph/view/create_subdivselect.js"
+import { createSubdivSelect } from "../nunigraph/view/create_subdivselect.js"
 import { MasterClock } from "../webaudio2/internal.js"
 import { importAudioFile } from "../storage/dialog.js"
+import { exportCurrentBuffer } from "./export_buffer.js"
 
 
 
@@ -79,6 +80,7 @@ D('buffer-length-stuff').append(subdivSelect)
 D('import-buffer-button').onclick = () => importAudioFile()
     // toggleBufferEditDialog(BufferUtils.currentIndex)
 
+D('export-buffer-button').onclick = exportCurrentBuffer
 
 // BUFFER EXPS
 

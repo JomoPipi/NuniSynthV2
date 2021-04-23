@@ -11,3 +11,4 @@ export * from './record.js'
 export * from './buffer_formula.js'
 
 import './delegate_events.js'
+import './export_buffer.js'
