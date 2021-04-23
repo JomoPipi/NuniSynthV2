@@ -1,7 +1,7 @@
 {
   "name": "nunisynth",
   "productName": "nunisynth",
-  "version": "1.0.33",
+  "version": "1.0.38",
   "description": "A modular audio graphical software sandbox ecosystem.",
   "main": "src/index.js",
   "scripts": {
@@ -23,6 +23,7 @@
     "package-linux": "electron-packager . NuniSynth --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
   },
   "build": {
+    "afterSign": "scripts/notarize.js",
     "publish": [
       {
         "provider": "github",
@@ -37,9 +38,10 @@
       "buildResources": "."
     },
     "mac": {
-      "icon": "styles/nuni_icon.png",
+      "icon": "assets/nuni_icon.png",
       "entitlements": "entitlements.mac.plist",
       "entitlementsInherit": "entitlements.mac.plist",
+      "gatekeeperAssess": false,
       "hardenedRuntime": true,
       "category": "NuniSynth.category.type",
       "target": [
@@ -48,6 +50,7 @@
       ]
     },
     "dmg": {
+      "sign": false,
       "contents": [
         {
           "x": 110,
@@ -62,7 +65,7 @@
       ]
     },
     "linux": {
-      "icon": "styles/nuni_icon.png",
+      "icon": "assets/nuni_icon.ico",
       "target": [
         "AppImage",
         "deb"
@@ -70,11 +73,12 @@
     },
     "win": {
       "verifyUpdateCodeSignature": false,
-      "target": ["nsis"],
-      "icon": "./assets/icon.ico"
+      "target": [
+        "nsis"
+      ],
+      "icon": "assets/nuni_icon.ico"
     },
     "nsis": {
-      "icon": "styles/nuni_icon.png",
       "installerIcon": "./assets/icon.ico",
       "uninstallerIcon": "./assets/icon.ico",
       "license": "LICENSE",
@@ -122,12 +126,14 @@
     "electron-builder": "^22.10.5",
     "electron-forge": "^5.2.4",
     "electron-installer-windows": "^3.0.0",
+    "electron-notarize": "^1.0.0",
     "electron-packager": "^15.2.0",
     "electron-prebuilt-compile": "8.2.0",
     "electron-winstaller": "^5.0.0",
     "typescript": "^4.2.4"
   },
   "dependencies": {
+    "dotenv": "^8.2.0",
     "electron-log": "^4.3.4",
     "electron-updater": "^4.3.8"
   }
