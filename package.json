@@ -1,7 +1,7 @@
 {
   "name": "nunisynth",
   "productName": "nunisynth",
-  "version": "1.0.30",
+  "version": "1.0.33",
   "description": "A modular audio graphical software sandbox ecosystem.",
   "main": "src/index.js",
   "scripts": {
@@ -37,6 +37,7 @@
       "buildResources": "."
     },
     "mac": {
+      "icon": "styles/nuni_icon.png",
       "entitlements": "entitlements.mac.plist",
       "entitlementsInherit": "entitlements.mac.plist",
       "hardenedRuntime": true,
@@ -61,6 +62,7 @@
       ]
     },
     "linux": {
+      "icon": "styles/nuni_icon.png",
       "target": [
         "AppImage",
         "deb"
@@ -72,6 +74,7 @@
       "icon": "./assets/icon.ico"
     },
     "nsis": {
+      "icon": "styles/nuni_icon.png",
       "installerIcon": "./assets/icon.ico",
       "uninstallerIcon": "./assets/icon.ico",
       "license": "LICENSE",
