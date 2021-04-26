@@ -17,9 +17,12 @@ let _tempo = 69
 let _setTempo = (t : number) => {}
 let _sync = () => {}
 
+let syncTimeoutId = -1
 const tempoComponent = createNumberDialComponent3(
     120, 
     (value : number) => {
+        window.clearTimeout(syncTimeoutId)
+        syncTimeoutId = window.setTimeout(_sync, 500)
         _setTempo(value)
         return (_tempo = clamp(1, value, 69420))
     }, 
