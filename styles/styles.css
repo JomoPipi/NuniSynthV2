@@ -30,10 +30,6 @@ button {
   font-family: nunito;
 }
 
-.font {
-  font-family: nunito;
-}
-
 input {
   margin: 0px;
   padding: 0px;
@@ -1945,6 +1941,7 @@ a {
 .loading-text {
   margin-top: 50vh;
   font-size: 1.5em;
+  font-family: sans-serif;
 }
 
 .loader .l_main {
