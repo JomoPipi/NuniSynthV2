@@ -22,6 +22,7 @@ const
     , tanh, trunc
     } = Math
 
+const SAMPLE_RATE = 48000
 export function formulateBuffer(index : number) {
     
     const seconds = BufferUtils.nextBufferDuration
@@ -29,6 +30,9 @@ export function formulateBuffer(index : number) {
     const buffer = audioCtx
         .createBuffer(1, audioCtx.sampleRate * seconds, audioCtx.sampleRate)
         
+    // For the eval:
+    const nSamples = Math.round(seconds * SAMPLE_RATE)
+
     const isError = validateExp(formulaInput.value)
 
     if (isError) 
