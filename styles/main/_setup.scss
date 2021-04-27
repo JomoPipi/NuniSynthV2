@@ -15,6 +15,18 @@
     background: transparent; //
 }
 
+html {
+    font-family: nunito;
+}
+
+button { 
+    font-family: nunito;
+}
+
+.font {
+    font-family: nunito;
+}
+
 input {
     margin: 0px;
     padding: 0px;
@@ -121,6 +133,7 @@ button {
 
 // MENUS - FORKED FROM .menu-nav
 .graph-contextmenu {
+
     display: none;
     position: absolute;
 
@@ -136,7 +149,6 @@ button {
         margin: 0;
         list-style: none;
         position: relative;
-        
     }
         
     ul li {
@@ -178,7 +190,8 @@ button {
         font-size:12px;
         line-height: 20px;
         text-decoration:none;
-        font-family: sans-serif;
+        // font-family: sans-serif;
+        font-family: nunito;
     }
     
     a:hover { 
@@ -326,6 +339,7 @@ $width1: 120px;
     background-color: var(--color0);
     width: 400px;
     height: 400px;
+    border-radius: 15px;
     margin: auto auto;
     padding-top: 5px;
     text-align: center;
@@ -432,6 +446,7 @@ $width1: 120px;
 }
 
 .node-window {
+    $d1: calc(var(--dark1) * 255);
     -webkit-app-region: no-drag;
     display: none;
     position: absolute;
@@ -439,7 +454,7 @@ $width1: 120px;
     color: var(--color5);
     // border: 2px solid transparent;
     z-index: 2;
-    box-shadow: 0px 5px 10px rgba(0,0,0,0.4);
+    box-shadow: 0px 5px 10px rgba($d1, $d1, $d1, 0.2);
 }
 
 .buffer-stuff-row {

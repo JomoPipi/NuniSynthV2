@@ -11,7 +11,7 @@ import { NuniGraphNode } from '../model/nunigraph_node.js'
 import { NuniGraph } from '../model/nunigraph.js'
 import { clipboard } from './clipboard.js'
 import { UI_clamp, createDraggableWindow } from '../../UI_library/internal.js'
-import { createValuesWindow } from '../view/display_nodedata.js'
+import { createValuesWindow } from '../view/create_dialogbox.js'
 import { createSelectionPrompt } from '../../UI_library/components/selection_prompt.js'
 import { graphContextnenu, addModuleToList } from './graph_contextmenu.js'
 import { createSVGIcon } from '../../UI_library/components/svg_icon.js'
@@ -76,7 +76,6 @@ export class NuniGraphController {
         g : NuniGraph, 
         prompt : HTMLElement, 
         renderer : NuniGraphRenderer,
-        // createValuesWindow : CreateValuesWindow
         ) {
 
         this.g = g
@@ -85,7 +84,6 @@ export class NuniGraphController {
         // this.undoRedoModule = new UndoRedoModule(
         //     () => this.g.toRawString(),
         //     (state : string) => this.g.fromRawString(state))
-        // this.createValuesWindow = createValuesWindow
 
         this.mouseIsDown = false
         this.selectedNodes = []

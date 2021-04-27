@@ -141,9 +141,9 @@ export class NuniSampleNode extends NuniSourceNode
     
     
         // TODO: change this to a select box, 
-        // and don't depend on BufferUtils, 
+        // and don't depend on BufferUtils,
         // depend on BufferStorage, instead.
-        ;['🡄','🡆'].forEach((op,i) => { // change the buffer index
+        ;['ᐊ','ᐅ'].forEach((op,i) => { // change the buffer index
             const btn = E('button', { text: op, className: 'push-button' })
             btn.onclick = () => {
                 const key = clamp(0,

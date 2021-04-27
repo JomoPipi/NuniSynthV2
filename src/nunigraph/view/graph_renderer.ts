@@ -450,7 +450,7 @@ export class NuniGraphRenderer {
             {
                 ctx.fillStyle = Theme.isDark ? '#CCC' : '#333'
                 // ctx.font = '15px Arial'
-                ctx.font = fontSize + 'px Arial'
+                ctx.font = fontSize + 'px nunito' // Arial'
                 ctx.fillText(node.title, X - 30, Y - nodeRadius * 1.5)
             }
             if (UserOptions.config["Show Node Images"])

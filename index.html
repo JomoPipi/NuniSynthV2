@@ -400,7 +400,7 @@
   
                 <div id="buffer-length-stuff">
                   length of next clip:
-                  <span class="code2 new-buffer-length-text"
+                  <span class="code3 new-buffer-length-text"
                     id="new-buffer-length-text"> 
                     3.0
                   </span> seconds </span>
@@ -441,14 +441,14 @@
                     class="info-button gray tooltip"> 
                     i
                     <span class="tooltiptext ni">
-                      <span class="code2">n</span>  
+                      <span class="code3">n</span>  
                       represents the position of each sample in the clip.
                       Samples are numbers between 
-                      <span class="code2">-1</span> and
-                      <span class="code2">1</span>. See examples and play with the numbers and operators.
-                      <span class="code2">SAMPLES[A](n)</span>,
-                      <span class="code2">SAMPLES[B](n)</span>,
-                      <span class="code2">SAMPLES[C](n)</span> gets you the sample at position <span class="code2">n</span> of the clip.
+                      <span class="code3">-1</span> and
+                      <span class="code3">1</span>. See examples and play with the numbers and operators.
+                      <span class="code3">SAMPLES[A](n)</span>,
+                      <span class="code3">SAMPLES[B](n)</span>,
+                      <span class="code3">SAMPLES[C](n)</span> gets you the sample at position <span class="code3">n</span> of the clip.
                       <br>
                     </span>
                   </button> 
@@ -458,7 +458,7 @@
 
                   <code>
                     <!-- for n from 0 to 48000 * seconds: <br> -->
-                    <span class="code">nSamples</span> = <span class="code2" id="n-samples-text">144000</span>
+                    <span class="code">nSamples</span> = <span class="code3" id="n-samples-text">144000</span>
                     <br>
                     for n from 0 to nSamples: data[n] =
                   </code>
@@ -565,7 +565,7 @@
 
 <div id="info-menu-container" class="info-menu-container">
   <div id="info-menu" class="info-menu"> 
-    Welcome to NuniSynth
+    NuniSynth Quick Guide
     <div class="info-menu-grid">
       
       <div>
@@ -573,30 +573,26 @@
           <div class="info-text-container side-margin">
             <span class="about-info-text">
               <ul>
-                <li> Right-click inside the graph to create new nodes. </li>
+                <li> Right-click in the graph to create nodes. </li>
                 
-                <li> Drag the edge of a node to start making a connection. </li>
+                <li> Drag from one node to another to make a connection. </li>
                 
-                <li> <code> ctrl + s </code> to duplicate selected nodes in place </li>
+                <li> <code class="code3">ctrl + s</code> duplicates selected nodes </li>
                 
-                <li> <code> ctrl + c </code> to copy selected nodes </li>
+                <li> <code class="code3">ctrl + c</code> copies selected nodes </li>
                 
-                <li> <code> ctrl + x </code> to cut selected nodes </li>
+                <li> <code class="code3">ctrl + x</code> cuts selected nodes </li>
                 
-                <li> <code> ctrl + click </code> to paste selected nodes </li>
+                <li> <code class="code3">ctrl + click</code> pastes copied nodes </li>
               </ul>
               
               <div style="text-align:center;">
                 <br>
-                <br>
                 <div>
                   NuniSynth is a graphical modular software designed for
                   building instruments, effects, and complex audio functions.
-                </div>
-                <br>
-                <div>
-                  Feel free to leave feedback, suggestions, questions, or thoughts at
-                  <code> ronaldmcorona@gmail.com</code>.
+                  Feel free to leave feedback, suggestions, or questions at
+                  ronaldmcorona@gmail.com.
                 </div>
               </div>
 

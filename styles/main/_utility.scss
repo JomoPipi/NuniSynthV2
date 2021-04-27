@@ -27,8 +27,12 @@
 }
 
 .selected3 {
+    $r: calc(200 * var(--dark1) + 5);
+    $g: calc(200 * var(--dark1) + 1);
+    $b: calc(200 * var(--dark1) + 54);
     // border: 2px solid var(--color2);
-    box-shadow: 0px 0px 10px rgba(255, 255, 255, .3);
+    box-shadow: 0px 0px 15px rgba($r, $g, $b, 0.5);
+    // backdrop-filter: invert(100%);
 }
 
 .highlighted {

@@ -9,9 +9,14 @@ code {
     font-family: monospace;
 }
 
-.code2 {
-    background-color: var(--color0);
-    // filter: hue-rotate(90deg);
+// .code2 {
+//     background-color: var(--color0);
+//     // filter: hue-rotate(90deg);
+// }
+
+.code3 {
+    $x: calc(var(--dark1) * 255);
+    background-color: rgba($x, $x, $x, 0.15);
 }
 
 .margin-4 {

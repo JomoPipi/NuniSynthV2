@@ -43,6 +43,7 @@ $canvas-bg: radial-gradient(circle, var(--color0) 34%, var(--color1) 100%);
 	--color5: rgb(154, 151, 163);
 	--color6: rgb(255, 255, 255);
 	--dark-mode: invert(100%);
+	--dark1: 1;
 }
 
 *:focus {
@@ -64,6 +65,7 @@ $canvas-bg: radial-gradient(circle, var(--color0) 34%, var(--color1) 100%);
 
 
 @font-face { 
-	font-family: OpenSans;
-	src: url("OpenSans-Regular.ttf") format('truetype');
+	font-family: nunito;
+	// src: url("OpenSans-Regular.ttf") format('truetype');
+	src: url("Nunito/Nunito-Regular.ttf") format('truetype');
 }

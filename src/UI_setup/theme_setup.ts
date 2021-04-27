@@ -68,6 +68,10 @@ export function setTheme(n : number) {
     document.documentElement 
         .style
         .setProperty('--dark-mode', Theme.isDark ? 'invert(0%)' : 'invert(100%)')
+
+    document.documentElement
+        .style
+        .setProperty('--dark1', Theme.isDark ? '1' : '0')
         
     // There should be 7 colors in each theme
     for (let i = 0; i < theme.length; ++i)
