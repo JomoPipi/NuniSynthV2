@@ -182,11 +182,15 @@ export class  PianoRollEditor {
                 this.render()
             })
     }
-
+    private loopLength = -1
     scheduleNotes(skipAhead : boolean) {}
     setTempo(tempo : number) {
         this.tempo = clamp(1, tempo, Infinity)
         this.tick = (60 * 4 / tempo) / this._subdiv
+        const nSteps = this.markend - this.markstart
+        this.loopLength = this.tick * nSteps
+    }
+    sync() {
         this.restart()
     }
     getMMLString() {
@@ -359,31 +363,32 @@ export class  PianoRollEditor {
     private _subdiv = 16
 
     play() {
-        const tick = this.tick
-        const nSteps = this.markend - this.markstart
-        const loopLength = tick * nSteps
+        this.setTempo(this.tempo)
         
-        const t = Math.max(0, this.audioCtx.currentTime - loopLength)
-        const elapsedLoops = Math.floor(t / loopLength)
+        const t = Math.max(0, this.audioCtx.currentTime - this.loopLength)
+        const elapsedLoops = Math.floor(t / this.loopLength)
         const filteredSequence = this.sequence.filter(note => 
             this.markstart <= note.time && note.time < this.markend)
 
-        let loopTime = elapsedLoops * loopLength
+        let loopTime = elapsedLoops * this.loopLength
         let noteTime = loopTime
         let noteIndex = 0 // startIndex
 
         this.scheduleNotes = (skipAhead : boolean) => {
             const currentTime = this.audioCtx.currentTime
-            this.playhead = this.markstart + (currentTime % loopLength) / tick
+            // this.playhead = this.markstart + (currentTime % this.loopLength) / this.tick
+            this.playhead = this.markstart 
+                + ((currentTime - loopTime + this.loopLength) % this.loopLength) 
+                / this.tick
             this.drawPlayhead()
             if (filteredSequence.length === 0) return;
 
             if (skipAhead) // Skip ahead to prevent lag:
             {
-                const loops = (currentTime - loopTime) / loopLength | 0
-                loopTime += loopLength * loops
+                const loops = (currentTime - loopTime) / this.loopLength | 0
+                loopTime += this.loopLength * loops
                 noteIndex = 0
-                noteTime = loopTime + (filteredSequence[noteIndex].time - this.markstart) * tick
+                noteTime = loopTime + (filteredSequence[noteIndex].time - this.markstart) * this.tick
             }
 
             while (noteTime < currentTime + 0.200)
@@ -391,15 +396,15 @@ export class  PianoRollEditor {
                 if (noteTime > currentTime)
                 {
                     const { length, n, sample } = filteredSequence[noteIndex]
-                    this.playCallback(sample, noteTime, n)(noteTime + length * tick)
+                    this.playCallback(sample, noteTime, n)(noteTime + length * this.tick)
                 }
                 ++noteIndex
                 if (noteIndex >= filteredSequence.length)
                 {
                     noteIndex = 0
-                    loopTime += loopLength
+                    loopTime += this.loopLength
                 }
-                noteTime = loopTime + (filteredSequence[noteIndex].time - this.markstart) * tick
+                noteTime = loopTime + (filteredSequence[noteIndex].time - this.markstart) * this.tick
             }
         }
     }

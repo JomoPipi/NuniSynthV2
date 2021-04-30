@@ -326,7 +326,9 @@ export class SamplePianoRoll extends VolumeNodeContainer
         this.pianoRoll.play()
     }
 
-    sync() {}
+    sync() {
+        this.pianoRoll.sync()
+    }
 
     get MMLString() {
         return this.pianoRoll.getMMLString()
