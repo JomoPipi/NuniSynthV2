@@ -17,6 +17,7 @@
     @extend .center;
     margin-top: 50vh;
     font-size: 1.5em;
+    font-family: sans-serif;
 }
 .loader .l_main{position:absolute;top:25%;left:50%;width:172px;height:128px;margin:0;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}
 @media (max-width:550px){.loader{-webkit-transform:scale(0.75);transform:scale(0.75)}}
