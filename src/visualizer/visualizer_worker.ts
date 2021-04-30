@@ -13,7 +13,7 @@ const map_to_new_range = (value : number, start : number, end : number) =>
     value / 255.0 * (start - end) + end
 
 const widthConstant = 138
-const rainbow = '#C88,#AA8,#898,#9AB,#A8F,#EBE'.split(',')
+const rainbow = '#C44,#AA4,#494,#4AB,#A4F,#E7E'.split(',')
 
 let [ctx, W, H, h2, gradient, bufferLength, sliceWidth] = [] as any[]
 

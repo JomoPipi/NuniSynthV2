@@ -362,12 +362,11 @@ export class  PianoRollEditor {
         const tick = this.tick
         const nSteps = this.markend - this.markstart
         const loopLength = tick * nSteps
+        
         const t = Math.max(0, this.audioCtx.currentTime - loopLength)
-
+        const elapsedLoops = Math.floor(t / loopLength)
         const filteredSequence = this.sequence.filter(note => 
             this.markstart <= note.time && note.time < this.markend)
-
-        const elapsedLoops = Math.floor(t / loopLength)
 
         let loopTime = elapsedLoops * loopLength
         let noteTime = loopTime
