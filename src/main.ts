@@ -15,6 +15,7 @@ import './UI_setup/internal.js'
 import './scale_utils/internal.js'
 import './buffer_utils/internal.js'
 import './nunigraph/controller/modularize_graph.js'
+import './storage/save_project.js'
 
 window.onload = () => {
     console.log('[[((--##--)) Begin NuniSynth ((--##-))]]')

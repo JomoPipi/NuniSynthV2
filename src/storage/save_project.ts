@@ -35,5 +35,5 @@ export function loadNuniFile(nuniFile : string) {
     MasterClock.setTempo(t)
 
     GraphController.renderer.render()
-    ADSR_Controller.render({ updateKnobs: true })
+    // ADSR_Controller.render({ updateKnobs: true })
 }

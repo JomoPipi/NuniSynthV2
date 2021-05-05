@@ -28,7 +28,7 @@ export function createADSREditor(adsrValues : ADSRData, options : Options = {}) 
         renderADSR(adsrValues, ctx, canvas.height, canvas.width, { lineWidth: 2 })
     const adsrDials =
         ADSR.reduce((a, s) => {
-            const dial = new JsDial()
+            const dial = new JsDial({ style: 5 })
             const adsr = adsrValues as any
             // const epsilon = 0.00002
 

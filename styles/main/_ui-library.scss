@@ -5,6 +5,10 @@
 
 
 
+$a: calc(255 * var(--dark1));
+$b: calc(100 * var(--dark1));
+$wob: rgb($a, $a, $a);
+
 .shadow-knob {
     display: inline-block;
     position: relative;
@@ -14,14 +18,17 @@
     margin: 2px;
 
     border-radius: 100%;
-    background: 
-        linear-gradient(
-            rgba(0, 0, 0, 0),
-            rgba(0, 0, 0, 0.7)
-        ),
-        url('images/shadow-knob.png');
-    background-size: 100% 100%;
     pointer-events: none;
+
+    ._0 {
+        background: 
+            linear-gradient(
+                rgba(0, 0, 0, 0),
+                rgba(0, 0, 0, 0.7)
+            ),
+            url('images/shadow-knob.png');
+        background-size: 100% 100%;
+    }
 
     &._1 {
         background: linear-gradient(
@@ -43,6 +50,18 @@
     &._3 {
         background: transparent;
     }
+    &._4 {
+        @extend ._1;
+    }
+
+    &._5 {
+        border: 2px solid var(--color2);
+    }
+    &._6 {
+        @extend ._1;
+        filter: hue-rotate(180deg);
+        filter: sepia(200%);
+    }
 }
 
 
@@ -59,18 +78,37 @@
     border-radius: 100%;
 
     border: none; //2px solid var(--color4);
-    background-image: url('images/knob.png');
-    background-size: 100% 100%;
     background-repeat: no-repeat;
     opacity: .4;
     pointer-events: auto;
+    background-size: 100% 100%;
+
+    &._0 {
+        background-image: url('images/knob.png');
+    }
 
     &._1 {
         background-image: url('images/knob1.png');
+        opacity: .9;
+        filter: invert(1);
+    }
+    &._2 {
+        background-image: url('images/knob0.png');
     }
 
-    &._2 { 
+    &._3 { 
+        background-image: url('images/knob2.png');
+    }
+    &._4 {
         background-image: url('images/knob.png');
+        border: 2px solid var(--color1);
+        box-sizing: border-box;
+    }
+    &._5 {
+        background-image: url('images/knob3.png');
+        border: 2px solid transparent;
+        box-sizing: border-box;
+        filter: var(--dark-mode);
     }
 }
 

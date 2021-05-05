@@ -5,7 +5,7 @@
 
 
 
-import { JsDial, createRadioButtonGroup } from "../../UI_library/internal.js"
+// import { JsDial, createRadioButtonGroup } from "../../UI_library/internal.js"
 
 
 
@@ -78,11 +78,11 @@ const squareADSR = // Needs to be somewhat smooth to prevent pop sounds
     , curve: 'S' as CurveType
     }
 
-const canvas = D('adsr-canvas') as HTMLCanvasElement
-const ctx = canvas.getContext('2d')!
+// const canvas = D('adsr-canvas') as HTMLCanvasElement
+// const ctx = canvas.getContext('2d')!
 
 export const ADSR_Controller = {
-    canvas,
+    // canvas,
 
     index: 0,
 
@@ -139,12 +139,12 @@ export const ADSR_Controller = {
         gain.setTargetAtTime(0, time, release)
     },
 
-    render(options? : any) {
-        const adsr = ADSR_Controller.values[this.index]
-        renderADSR(adsr, ctx, canvas.height, canvas.width, options)
-    }
+    // render(options? : any) {
+    //     const adsr = ADSR_Controller.values[this.index]
+    //     renderADSR(adsr, ctx, canvas.height, canvas.width, options)
+    // }
 }
-ADSR_Controller.render()
+// ADSR_Controller.render()
 
 const next = 
     { linear: 'exponential' // 'logarithmic'
@@ -154,12 +154,12 @@ const next =
     , undefined: 'S' // Backwards compatibility
     } as const
 
-canvas.onclick = () => {
-    const adsr = ADSR_Controller.values[ADSR_Controller.index]
+// canvas.onclick = () => {
+//     const adsr = ADSR_Controller.values[ADSR_Controller.index]
 
-    adsr.curve = next[adsr.curve]
-    ADSR_Controller.render()
-}
+//     adsr.curve = next[adsr.curve]
+//     ADSR_Controller.render()
+// }
 
 type RenderOptions = Partial<{ 
     updateKnobs? : Function 
@@ -223,54 +223,55 @@ export function renderADSR(
 
     ctx.fillText(adsr.curve.slice(0,3), W - W/2|0, px)
 
-    if (typeof options.updateKnobs === 'boolean') // Because of loadNuniFile
-    {
-        updateKnobs()
-    }
-    else
-    {
-        options.updateKnobs && options.updateKnobs()
-    }
+    //! Global ADSRs no longer exist.
+    // if (typeof options.updateKnobs === 'boolean') // Because of loadNuniFile
+    // {
+    //     updateKnobs()
+    // }
+    // else
+    // {
+    //     options.updateKnobs && options.updateKnobs()
+    // }
 }
 
-const knobs = D('adsr-knobs')
-const ADSR = 'attack,decay,sustain,release'.split(',')
-const adsrDials =
-    ADSR.reduce((a,s) => {
-        const dial = new JsDial(1)
-        const adsr = ADSR_Controller as Indexed
+// const knobs = D('adsr-knobs')
+// const ADSR = 'attack,decay,sustain,release'.split(',')
+// const adsrDials =
+//     ADSR.reduce((a,s) => {
+//         const dial = new JsDial(3)
+//         const adsr = ADSR_Controller as Indexed
         
-        dial.value = adsr.values[adsr.index][s]
-        dial.sensitivity = 2 ** -10
-        dial.render()
-        dial.attach((value : number) => {
-            adsr.values[adsr.index][s] = value * value
-            adsr.render()
-        })
-        knobs.appendChild(dial.html)
+//         dial.value = adsr.values[adsr.index][s]
+//         dial.sensitivity = 2 ** -10
+//         dial.render()
+//         dial.attach((value : number) => {
+//             adsr.values[adsr.index][s] = value * value
+//             adsr.render()
+//         })
+//         knobs.appendChild(dial.html)
 
-        a[s] = dial
-        return a
-    }, {} as Indexable<JsDial>)
+//         a[s] = dial
+//         return a
+//     }, {} as Indexable<JsDial>)
     
-function updateKnobs() {
-    const adsr = ADSR_Controller
-    for (const s of ADSR) 
-    {
-        adsrDials[s].update((<Indexed>adsr.values[adsr.index])[s] ** .5)
-    }
-}
+// function updateKnobs() {
+//     const adsr = ADSR_Controller
+//     for (const s of ADSR) 
+//     {
+//         adsrDials[s].update((<Indexed>adsr.values[adsr.index])[s] ** .5)
+//     }
+// }
 
-D('select-adsr').appendChild(createRadioButtonGroup(
-    { text: 'ADSR '
-    , buttons: [...'ABCD']
-    , selected: 'A'
-    , onclick: 
-        (data : any, index : number) => {
-            const adsr = ADSR_Controller
-            adsr.index = index
+// D('select-adsr').appendChild(createRadioButtonGroup(
+//     { text: 'ADSR '
+//     , buttons: [...'ABCD']
+//     , selected: 'A'
+//     , onclick: 
+//         (data : any, index : number) => {
+//             const adsr = ADSR_Controller
+//             adsr.index = index
 
-            adsr.render({ updateKnobs })
-        }
-    , orientation: 2
-    }))
+//             adsr.render({ updateKnobs })
+//         }
+//     , orientation: 2
+//     }))

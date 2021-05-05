@@ -12,6 +12,8 @@ type Options = {
     mouseup? : MouseHandler
 }
 
+interface ConstructorOptions { style? : number, size? : number }
+
 export class JsDial {
     
     sensitivity : number
@@ -27,12 +29,27 @@ export class JsDial {
     update : (value : number) => void
     doubleClick? : (value : number) => void
 
-    constructor(CSS_classIndex? : number, knobClassIndex? : number) {
+    // constructor(CSS_classIndex? : number, knobClassIndex? : number) {
+    constructor(options : ConstructorOptions = {}) {
         
-        this.dial = E('div', { className: `js-dial _${knobClassIndex || 0}` })
+        const KNOB_STYLES =
+            [ [4,0]
+            , [3,4]
+            , [0,1]
+            , [5,3]
+            , [0,6]
+            , [0,3]
+            , [1,2]
+            , [0,2]
+            , [1,5]
+            ]
+        
+        const [dial, shadow] = KNOB_STYLES[options.style || 0]
+
+        this.dial = E('div', { className: `js-dial _${dial || 0}` })
         
         this.html = E('div', 
-            { className: `shadow-knob _${CSS_classIndex || 0}`
+            { className: `shadow-knob _${shadow || 0}`
             , children: [this.dial]
             }) 
 

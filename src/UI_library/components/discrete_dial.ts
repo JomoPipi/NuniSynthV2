@@ -65,14 +65,12 @@ class DiscreteDial {
         this.n = n 
         this.options = options
         
-        this.dial = E('div', { className: 'js-dial' })
-        // this.dial = E('div', { className: `js-dial _${knobClassIndex || 0}` })
+        this.dial = E('div', { className: `js-dial _${0}` })
         
         this.html = E('div', 
-            { className: `shadow-knob _${options.CSS_classIndex || 0}`
+            { className: `shadow-knob _2` // _${options.CSS_classIndex || 0}`
             , children: [this.dial]
-            }) 
-            
+            })
 
         this.update(0)
     }

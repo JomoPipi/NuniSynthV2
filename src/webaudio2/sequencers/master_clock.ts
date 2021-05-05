@@ -31,8 +31,7 @@ const tempoComponent = createNumberDialComponent3(
     , max: 999
     , isLinear: true
     , mouseup() { _sync() }
-    , shadowKnobClass: 3
-    , knobClass: 2
+    , knobStyle: 2
     , rounds: 8
     })
 

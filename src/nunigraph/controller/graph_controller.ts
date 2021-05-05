@@ -15,6 +15,8 @@ import { createValuesWindow } from '../view/create_dialogbox.js'
 import { createSelectionPrompt } from '../../UI_library/components/selection_prompt.js'
 import { graphContextnenu, addModuleToList } from './graph_contextmenu.js'
 import { createSVGIcon } from '../../UI_library/components/svg_icon.js'
+import { ModuleStorage } from '../../storage/module_storage.js'
+import { sendNotificationBox } from '../../UI_library/components/notification_box.js'
 
 export const OpenGraphControllers = {
     list: [] as NuniGraphController[],
@@ -337,9 +339,16 @@ export class NuniGraphController {
                             const [ saveModule ] = prompt.children
                             if (e.target === saveModule)
                             {
-                                addModuleToList(
-                                    node.title || 'Untitled',
-                                    node.audioNode.controller.g.toString())
+                                const name = node.title || 'Untitled'
+                                if (ModuleStorage.list().includes(name))
+                                {
+                                    sendNotificationBox(`User module "${name}" already exists.`)
+                                }
+                                else
+                                {
+                                    addModuleToList(name, node.audioNode.controller.g.toString())
+                                    sendNotificationBox(`Module "${name}" was created!`)
+                                }
                             }
                             barContent.removeChild(barContent.lastElementChild!)
                         }, { once: true }))

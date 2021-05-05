@@ -59,8 +59,7 @@ export function createVersatileNumberDialComponent(
         , amount: 2**-8
         , isLinear: false
         , mouseup: options.mouseup
-        , shadowKnobClass: 2
-        , knobClass: 1
+        , knobStyle: 6
         , rounds: 1
         })
 

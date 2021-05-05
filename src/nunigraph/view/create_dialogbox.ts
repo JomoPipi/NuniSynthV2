@@ -146,7 +146,7 @@ function warningButton(type : NodeTypes) {
 
 function gainControls(node : NuniGraphNode<NodeTypes.OUTPUT>) {
     const value = node.audioNode.gain.value
-    const dial = new JsDial(1)
+    const dial = new JsDial({ style: 2 })
     dial.min = 0.1
     dial.max = Math.SQRT2
     dial.value = value**(1/4.0)
@@ -273,6 +273,17 @@ function insertOptions(select : HTMLSelectElement, options : readonly string[]) 
 
 
 
+const KNOBTYPES =
+    { [NodeTypes.GAIN]: [0,45]
+    , [NodeTypes.OSC]: [5]
+    , [NodeTypes.FILTER]: [7]
+    , [NodeTypes.PANNER]: [3, 60]
+    , [NodeTypes.DELAY]: [1]
+    , [NodeTypes.SAMPLE]: [2]
+    , [NodeTypes.S_SEQ]: [2]
+    , [NodeTypes.NUM]: [4]
+    , [NodeTypes.COMPRESSOR]: [8, 32]
+    } as const
 
 function exposeAudioParams(node : NuniGraphNode<CanBeAutomated>, saveCallback : Function) : Node {
     const params = AudioNodeParams[node.type]
@@ -308,12 +319,15 @@ function exposeAudioParams(node : NuniGraphNode<CanBeAutomated>, saveCallback : 
             : (newValue : number) =>
                 node.setValueOfParam(param, newValue)
 
+        const [style, size] = KNOBTYPES[node.type]
         const settings = 
             { amount: AudioParamSliderFactor[param]
             , min: AudioParamRanges[param][0]
             , max: AudioParamRanges[param][1]
             , isLinear: hasLinearSlider[param]
             , rounds: AudioParamKnobTurns[param]
+            , knobStyle: style
+            , size
             }
 
         const numberInput = createNumberDialComponent3(initialValue, updateFunc, settings)

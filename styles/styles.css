@@ -908,13 +908,16 @@ code {
   height: 40px;
   margin: 2px;
   border-radius: 100%;
-  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.7))), url("images/shadow-knob.png");
-  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7)), url("images/shadow-knob.png");
-  background-size: 100% 100%;
   pointer-events: none;
 }
 
-.shadow-knob._1 {
+.shadow-knob ._0 {
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.7))), url("images/shadow-knob.png");
+  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7)), url("images/shadow-knob.png");
+  background-size: 100% 100%;
+}
+
+.shadow-knob._1, .shadow-knob._4, .shadow-knob._6 {
   background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.7))), url("images/shadow-knob3.png");
   background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7)), url("images/shadow-knob3.png");
   background-size: 100% 100%;
@@ -930,6 +933,17 @@ code {
   background: transparent;
 }
 
+.shadow-knob._5 {
+  border: 2px solid var(--color2);
+}
+
+.shadow-knob._6 {
+  -webkit-filter: hue-rotate(180deg);
+          filter: hue-rotate(180deg);
+  -webkit-filter: sepia(200%);
+          filter: sepia(200%);
+}
+
 .js-dial {
   cursor: pointer;
   position: absolute;
@@ -941,19 +955,45 @@ code {
   height: 40px;
   border-radius: 100%;
   border: none;
-  background-image: url("images/knob.png");
-  background-size: 100% 100%;
   background-repeat: no-repeat;
   opacity: .4;
   pointer-events: auto;
+  background-size: 100% 100%;
 }
 
-.js-dial._1 {
+.js-dial._0 {
+  background-image: url("images/knob.png");
+}
+
+.js-dial._1, .js-dial.shadow-knob._4, .js-dial.shadow-knob._6 {
   background-image: url("images/knob1.png");
+  opacity: .9;
+  -webkit-filter: invert(1);
+          filter: invert(1);
 }
 
 .js-dial._2 {
+  background-image: url("images/knob0.png");
+}
+
+.js-dial._3 {
+  background-image: url("images/knob2.png");
+}
+
+.js-dial._4 {
   background-image: url("images/knob.png");
+  border: 2px solid var(--color1);
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.js-dial._5 {
+  background-image: url("images/knob3.png");
+  border: 2px solid transparent;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  -webkit-filter: var(--dark-mode);
+          filter: var(--dark-mode);
 }
 
 .draggable-window-bar {
