@@ -42,6 +42,16 @@ export function createValuesWindow(
 
     const { audioNode } = node
     const controls = E('div')
+    // controls.style.background = 'blue'
+    const bgClasses =
+        { [NodeTypes.OSC]: 'osc-bg'
+        , [NodeTypes.FILTER]: 'filter-bg'
+        , [NodeTypes.SAMPLE]: 'sample-bg'
+        }
+    if (node.type in bgClasses)
+    {
+        controls.classList.add(bgClasses[node.type as keyof typeof bgClasses])
+    }
     
     if (hasSubtypes(node))
     {

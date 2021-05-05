@@ -457,6 +457,22 @@ $width1: 120px;
     box-shadow: 0px 5px 10px rgba($d1, $d1, $d1, 0.2);
 }
 
+.osc-bg {
+    background: url('images/osc-bg.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.filter-bg {
+    background: url('images/filter-bg.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.sample-bg {
+    background: url('images/sample-bg.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
 .buffer-stuff-row {
     border-bottom: 10px solid transparent;
     box-sizing: border-box;

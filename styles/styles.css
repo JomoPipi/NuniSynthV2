@@ -435,6 +435,24 @@ button {
           box-shadow: 0px 5px 10px rgba(calc(var(--dark1) * 255), calc(var(--dark1) * 255), calc(var(--dark1) * 255), 0.2);
 }
 
+.osc-bg {
+  background: url("images/osc-bg.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.filter-bg {
+  background: url("images/filter-bg.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.sample-bg {
+  background: url("images/sample-bg.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
 .buffer-stuff-row {
   border-bottom: 10px solid transparent;
   -webkit-box-sizing: border-box;
@@ -955,10 +973,10 @@ code {
   height: 40px;
   border-radius: 100%;
   border: none;
+  background-size: 100% 100%;
   background-repeat: no-repeat;
   opacity: .4;
   pointer-events: auto;
-  background-size: 100% 100%;
 }
 
 .js-dial._0 {
