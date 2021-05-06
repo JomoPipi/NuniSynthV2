@@ -43,15 +43,35 @@ const themeData : ReadonlyArray<ThemeData> = (
     // , [[50, 50, 100],[150, 100, 200],[100, 100, 200],[50, 50, 200],[100, 100, 150],[100, 250, 200],[240,230,239]]
 
     // , [[75, 75, 100],[130, 125, 175],[125, 125, 150],[100, 100, 150],[125, 125, 150],[100, 250, 200],[240,230,239]]
+
     ] as const)
 
 const ThemeColors = themeData.map(theme => theme.map(([r,g,b]) => `rgb(${r},${g},${b})`))
+if (UserOptions.config.customTheme.length > 0)
+{
+    ThemeColors[3] = UserOptions.config.customTheme
+    console.log(JSON.stringify(ThemeColors[3]))
+}
 
-export const Theme = { colors: ThemeColors[0], isDark: ThemeHasADarkColor0[0] }
+// Changing the light theme:
+ThemeColors[1] = ["#eae1e1","#bcb0a4","#485c65","#657381","#878e92","#5c6161","#030303"]
+
+export const Theme = 
+    { colors: ThemeColors[0]
+    , isDark: ThemeHasADarkColor0[0]
+    , set: setTheme
+    , 
+        setCustomThemeColor(index : number, color : string) {
+            ThemeColors[3][index] = color
+            setTheme(3)
+        }
+    ,   getCustomTheme() {
+            return ThemeColors[3]
+        }
+    }
 
 setTheme(UserOptions.config.theme)
-export function setTheme(n : number) {
-
+function setTheme(n : number) {
     // Theme.isDark = 
     //     themes[n][0]
     //     .slice(4,-1)
@@ -78,7 +98,7 @@ export function setTheme(n : number) {
     {
         document.documentElement
             .style
-            .setProperty('--color' + i, ThemeColors[n][i])
+            .setProperty('--color' + i, theme[i])
     }
 
     // Set node dialogbox colors

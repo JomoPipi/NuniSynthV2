@@ -19,12 +19,14 @@ type UserConfig = {
     'Show Node Images' : boolean
     'Party Mode' : boolean
     theme : 0 | 1 | 2 | 3
+    customTheme : string[]
 }
 
 const DefaultConfig : UserConfig = 
     { 'Show Node Images': true
     , theme: 0
     , "Party Mode": false
+    , customTheme: [] as string[]
     } as const
 
 export const UserOptions = 

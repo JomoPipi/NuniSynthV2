@@ -11,7 +11,7 @@ import
     , saveProject
     } from '../storage/dialog.js'
 import { modularizeGraph } from '../nunigraph/controller/modularize_graph.js'
-import { setTheme } from './theme_setup.js'
+import { Theme } from './theme_setup.js'
 import { UserOptions } from '../storage/user_options.js'
 import { OpenGraphControllers } from '../nunigraph/controller/graph_controller.js'
 import { createRadioButtonGroup } from '../UI_library/internal.js'
@@ -100,18 +100,36 @@ function showConfigWindow() {
 
 
     {
+        const customTheme = Theme.getCustomTheme()
+        const customThemePicker = [...Array(7)].reduce((div, _, i) => {
+            const picker = E('input', { className: 'top-bar-btn' })
+            picker.type = 'color'
+            picker.value = customTheme[i]
+            picker.onchange = () => {
+                Theme.setCustomThemeColor(i, picker.value)
+                UserOptions.config.customTheme = Theme.getCustomTheme()
+            }
+            div.appendChild(picker)
+            return div
+            }, E('div', { className: 'selected2 hide' }))
+        customThemePicker.style.display = UserOptions.config.theme === 3 ? 'block' : 'none'
+
         const key = 'theme'
         const btns = createRadioButtonGroup(
             { buttons: ['A','B','C','D']
             , selected: UserOptions.config[key]
             , onclick(_,i) { 
-                setTheme(i)
+                Theme.set(i)
                 OpenGraphControllers.render()
+
+                const showCustom = i === 3
+                customThemePicker.style.display = showCustom ? 'block' : 'none'
             } 
             , text: '\nTheme'
             })
             
         configWindow.appendChild(btns)
+        configWindow.appendChild(customThemePicker)
     }
 
 

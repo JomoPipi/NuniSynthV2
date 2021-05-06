@@ -12,10 +12,9 @@ import { createVersatileNumberDialComponent } from "../../UI_library/components/
 
 
 
-
 const subdivisionList = [
-    0.0625, 0.125, 0.25, 0.5, 1, 2, 4, 8, 16, 32, 64, 128,
-    1.5, 3, 6, 12, 24, 48, 96, 
+    0.0625, 0.125, 0.25, 0.5, 1, 2*2/3, 2, 2*4/3, 4, 2*8/3, 8, 2*16/3, 16, 2*32/3, 32, 2*64/3, 64, 2*128/3, 128,
+    3, 6, 12, 24, 48, 96, 
     5, 10, 15, 20, 25,
     7, 14, 21, 28,
     9, 18, 27,
@@ -37,9 +36,12 @@ type Options =
 
 const freeTempo = 'Free'
 
+const roundError = 0.01
 const subdivisionToString = (n : number) => 
-    n <= 1 
-        ? `${Math.round(1/n)} bars` 
+    n <= 1
+        ? `${Math.round(1/n)} bars`
+        : n % 1 > 0
+        ? '1/' + Math.round(3*n/2) + 'd'
         : '1/' + n
 
 const makeSubdivisionOption = (n : number) =>
@@ -58,6 +60,11 @@ const numericalValueToSubdivString = (value : number) =>
         const d = Math.abs(x - value)
         return d < distance ? [x, d] : [closest, distance]
     }, [1e9, 1e9])[0])
+
+// const getSubdivFromString
+// const n = select.value.endsWith('bars') 
+//     ? 1.0/+select.value.split(' ')[0]
+//     : +select.value.split('/')[1];
 
 export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv : number, isInSync? : boolean }, options ?: Options) {
     const { fn, allowFree }  = options || {}
@@ -103,9 +110,10 @@ export function createSubdivSelect(an : { subdivisionSynced? : boolean, subdiv :
             an.subdivisionSynced = false
             // freeKnob.html.style.display = 'none'
         }
-        const n = select.value.endsWith('bars') 
-            ? 1.0/+select.value.split(' ')[0]
-            : +select.value.split('/')[1];
+        // const n = select.value.endsWith('bars') 
+        //     ? 1.0/+select.value.split(' ')[0]
+        //     : +select.value.split('/')[1]
+        const n = subdivStringToNumericalValue[select.value]
 
         an.subdiv = n
         fn && fn(n)
@@ -122,9 +130,10 @@ export function createSubdivSelect2(fn? : (value : number) => void) {
         E('select', { children: subdivisionList.map(makeSubdivisionOption) })
 
     select.onchange = function() {
-        const n = select.value.endsWith('bars') 
-            ? 1.0/+select.value.split(' ')[0]
-            : +select.value.split('/')[1]
+        // const n = select.value.endsWith('bars') 
+        //     ? 1.0/+select.value.split(' ')[0]
+        //     : +select.value.split('/')[1]
+        const n = subdivStringToNumericalValue[select.value]
 
         fn && fn(n)
     }
