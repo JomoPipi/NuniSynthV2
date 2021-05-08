@@ -545,6 +545,7 @@ button {
   pointer-events: none;
   -webkit-animation: woo 4s linear infinite;
           animation: woo 4s linear infinite;
+  z-index: 2147483645;
 }
 
 @-webkit-keyframes woo {

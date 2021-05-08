@@ -72,18 +72,18 @@ export const Theme =
 
 setTheme(UserOptions.config.theme)
 function setTheme(n : number) {
-    // Theme.isDark = 
-    //     themes[n][0]
-    //     .slice(4,-1)
-    //     .split(',')
-    //     .reduce((a,v) => a + +v, 0) < 300
-    // log('has dark color0', ThemeData.hasDarkColor0)
 
     const theme = ThemeColors[n]
     Theme.colors = theme
     if (!theme) throw `${n} is not the index of a theme.`
 
-    Theme.isDark = ThemeHasADarkColor0[n]
+    Theme.isDark = n !== 3
+        ? ThemeHasADarkColor0[n]
+        : Theme.isDark = 
+            theme[0]
+            .slice(4,-1)
+            .split(',')
+            .reduce((a,v) => a + +v, 0) < 300
 
     document.documentElement 
         .style
