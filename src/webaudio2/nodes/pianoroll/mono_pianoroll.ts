@@ -64,7 +64,10 @@ export class MonoPianoRoll
     getController() {
         if (this.controller) return this.controller
 
-        const snapToGrid = createToggleButton(this.pianoRoll, 'snapToGrid', { text: 'snap to grid' })
+        const snapToGrid = createToggleButton(this.pianoRoll, 'snapToGrid', 
+            { text: 'snap to grid'
+            , className: 'nice-btn2'
+            })
         const timeBaseSelect = 
             createSubdivSelect3(this.pianoRoll.subdiv, value => this.pianoRoll.subdiv = value)//, { min: 2 })
         const buttons = () => 

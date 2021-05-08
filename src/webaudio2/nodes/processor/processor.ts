@@ -346,7 +346,7 @@ export class ProcessorNode
                 }
             this.editor = ace.edit(codeEditor, options)
 
-            const run = E('button', { text: 'Run', className: 'push-button' })
+            const run = E('button', { text: 'Run', className: 'push-button nice-btn2' })
                 run.onclick = this.playAudio.bind(this)
 
             topRow.append(run)

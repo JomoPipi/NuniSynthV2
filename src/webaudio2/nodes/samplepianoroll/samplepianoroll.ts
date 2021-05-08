@@ -174,7 +174,10 @@ export class SamplePianoRoll extends VolumeNodeContainer
     getController() {
         if (this.controller) return this.controller
 
-        const snapToGrid = createToggleButton(this.pianoRoll, 'snapToGrid', { text: 'snap to grid' })
+        const snapToGrid = createToggleButton(this.pianoRoll, 'snapToGrid', 
+            { text: 'snap to grid'
+            , className: 'nice-btn2'
+            })
         const timeBaseSelect = createSubdivSelect3(this.pianoRoll.subdiv, value => this.pianoRoll.subdiv = value)
         const buttons = () => 
             [ E('div', { className: 'push-button nice-btn', text: '-' })
@@ -191,7 +194,10 @@ export class SamplePianoRoll extends VolumeNodeContainer
                 this.pianoRoll.zoom(x_axis, amount)
             }
 
-        const writeMode = createToggleButton(this.pianoRoll, 'kbWriteMode', { text: 'WRITE' })
+        const writeMode = createToggleButton(this.pianoRoll, 'kbWriteMode',
+            { text: 'WRITE'
+            , className: 'nice-btn2'
+            })
             
         const fileReader = E('input'); fileReader.type = 'file'
         fileReader.oninput = () => {

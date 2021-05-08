@@ -16,7 +16,7 @@ const recordButtonGroup =
     createRadioButtonGroup(
     { buttons: ['Mic', 'Desktop']
     , selected: 'Mic'
-    , className: 'nunisynth!!'
+    , className: 'nice-btn2'
     , containerClassName: 'rec-buttons-container'
     })
 

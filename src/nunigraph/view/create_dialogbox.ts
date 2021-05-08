@@ -193,7 +193,7 @@ function activateKeyboardButton(an : NuniSourceNode) {
         an,
         'kbMode',
         { text: '🎹'
-        , className: 'kb-button neumorph2'
+        , className: 'kb-button nice-btn2'
         , 
             update(on : boolean) {
                 adsr.classList.toggle('hide', !on)

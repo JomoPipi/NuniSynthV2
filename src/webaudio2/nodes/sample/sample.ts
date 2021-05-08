@@ -144,7 +144,7 @@ export class NuniSampleNode extends NuniSourceNode
         // and don't depend on BufferUtils,
         // depend on BufferStorage, instead.
         ;['ᐊ','ᐅ'].forEach((op,i) => { // change the buffer index
-            const btn = E('button', { text: op, className: 'push-button' })
+            const btn = E('button', { text: op, className: 'push-button nice-btn2' })
             btn.onclick = () => {
                 const key = clamp(0,
                     this.bufferKey + Math.sign(i - .5), 
@@ -159,8 +159,9 @@ export class NuniSampleNode extends NuniSourceNode
         box.appendChild(createToggleButton(
             this, 
             'loop', 
-            { update : (on : boolean) => this.refresh() }
-            ))
+            { update : (on : boolean) => this.refresh() 
+            , className: 'nice-btn2'
+            }))
     
         box.appendChild(createToggleButton({}, '⟳', 
             { 
@@ -169,6 +170,7 @@ export class NuniSampleNode extends NuniSourceNode
                     this.loopStart = end
                     this.loopEnd = start
                 }
+                , className: 'nice-btn2'
             }))
     
         const container = E('div', 

@@ -2281,6 +2281,12 @@ a {
   opacity: 1;
 }
 
+.nice-btn2 {
+  border: 1px solid var(--color4);
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+
 .apply-btn {
   margin: 5px;
   padding: 0px 5px;
