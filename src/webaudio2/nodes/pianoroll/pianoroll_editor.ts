@@ -867,6 +867,8 @@ export class  PianoRollEditor {
             this.dragging.time = time
             this.dragging.length = length
             this.dragging.notes = [{ time, length, note, i: -1 }]
+
+            this.sortSequence()
             this.render()
             this.restart()
         }
