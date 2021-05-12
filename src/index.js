@@ -13,6 +13,9 @@ const { autoUpdater } = require("electron-updater")
 
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
+app.commandLine.appendSwitch('disable-http2')
+autoUpdater.requestHeaders = { 'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0' }
+
 log.info('App starting...');
 
 autoUpdater.setFeedURL({
@@ -52,7 +55,7 @@ function sendStatusToWindow(text) {
   win.webContents.send('message', text);
   console.log('sent a message!', text)
 }
-function createDefaultWindow() {
+function createUpdateWindow() {
   win = new BrowserWindow({
       width: 400,
       height: 400,
@@ -61,7 +64,7 @@ function createDefaultWindow() {
           contextIsolation: false
       }
   });
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
   win.on('closed', () => {
     win = null;
   });
@@ -175,7 +178,7 @@ app.on('ready', _ => {
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 
-  createDefaultWindow();
+  createUpdateWindow();
 
   // Transparency Workaround
   autoUpdater.checkForUpdatesAndNotify()

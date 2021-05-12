@@ -1,7 +1,7 @@
 {
   "name": "nunisynth",
   "productName": "nunpmnisynth",
-  "version": "1.0.48",
+  "version": "1.0.51",
   "description": "A modular audio graphical software sandbox ecosystem.",
   "main": "src/index.js",
   "email": "ronaldmcorona@gmail.com",
