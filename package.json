@@ -6,19 +6,13 @@
   "main": "src/index.js",
   "email": "ronaldmcorona@gmail.com",
   "scripts": {
-    "setup": "electron-installer-windows --src release-builds/NuniSynth-win32-ia32/ --dest installers/",
-    "do_it": "electron-packager . NuniSynth --verbose --platform=win32 --arch=x64 --out=release-builds",
     "test": "jest",
     "start": "electron .",
     "dev": "node './scripts/dev.mjs'",
-    "package": "electron-forge package",
-    "make": "electron-forge make --platform=win32 --arch=x64",
     "publish": "electron-builder --win -p always",
     "publish-mac": "electron-builder --mac -p always",
     "publish-all": "electron-builder --linux --win --mac -p always",
-    "lint": "echo \"No linting configured\"",
-    "pack": "electron-builder -npm inst-dir",
-    "dist": "electron-builder",
+    
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
     "package-win": "electron-packager . NuniSynth --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"NuniSynth\"",
     "package-linux": "electron-packager . NuniSynth --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
@@ -32,8 +26,8 @@
         "repo": "NuniSynthv2"
       }
     ],
-    "appId": "NuniSynth",
-    "productName": "NuniSynth",
+    "appId": "NUNISYNTH",
+    "productName": "NUNISYNTH",
     "directories": {
       "output": "build",
       "buildResources": "."
