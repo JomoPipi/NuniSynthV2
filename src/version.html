@@ -55,11 +55,11 @@ ipcRenderer.on('message', function(event, text) {
     const [str, percent] = text
     downloadMessagesText.innerText = str
     downloadMessages.style.display = 'block'
-    console.log('we here')
     update(percent)
   }
   else
   {
+    console.log('message =',message)
     const message = document.createElement('div');
     message.innerText = text;
     container.appendChild(message);
