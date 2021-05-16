@@ -22,7 +22,6 @@ const
     , tanh, trunc
     } = Math
 
-const SAMPLE_RATE = 48000
 export function formulateBuffer(index : number) {
     
     const seconds = BufferUtils.nextBufferDuration
@@ -31,6 +30,7 @@ export function formulateBuffer(index : number) {
         .createBuffer(1, audioCtx.sampleRate * seconds, audioCtx.sampleRate)
         
     // For the eval:
+    const SAMPLE_RATE = audioCtx.sampleRate
     const nSamples = Math.round(seconds * SAMPLE_RATE)
 
     const isError = validateExp(formulaInput.value)
@@ -105,17 +105,17 @@ export function formulateBuffer(index : number) {
                     const nowBuffering = buffer.getChannelData(channel)
                     for (let n = 1; n < length; n++) 
                     {
-                        nowBuffering[n] = clamp(-1, ${expression}, 1)
+                        nowBuffering[n] = clamp(-1, (${expression}) * 0.999, 1)
                     }
                     
                     // Reduce clipping by curving the ends
-                    const amount = 500
-                    for (let n = 1; n < amount; n++)
-                    {
-                        const value = (n / amount) ** 0.75
-                        nowBuffering[n] *= value
-                        nowBuffering[length-n] *= value
-                    }
+                    // const amount = 500
+                    // for (let n = 1; n < amount; n++)
+                    // {
+                    //     const value = (n / amount) ** 0.75
+                    //     nowBuffering[n] *= value
+                    //     nowBuffering[length-n] *= value
+                    // }
                 }
             `)
         }
@@ -129,20 +129,21 @@ export function formulateBuffer(index : number) {
 }
 
 const bufferPresets = 
-    { 'Hard Wave': 'sin(n / 32.0) + sin(n / 512.0)'
-    , 'Kick-1A': '0.9 * sin(n / sqrt(n/3.0))'
-    , 'Kick-2A': '0.9 * sin(n / (2*sqrt(n/4.0)))'
-    , 'Kick-3A': '0.9 * sin(n / (0.4*sqrt(n/1.0)))'
-    , 'Kick-1B': '0.9 * sin(n / sqrt((n+20000)/10.0))'
-    , 'Kick-2B': '0.9 * sin(n / (2*sqrt(n/10.0))) * (sin(n/32) + sin(n/27))'
-    , 'Drum-1A': '0.9 * sin(n / (0.4*sqrt((n+20000)/20.0)))'
-    , 'Bass-1A': '0.9 * sin(n / sqrt(n/3.0)) - cos(n ** 0.3) * 0.25'
-    , 'Bass-1B': '0.9 * sin(n / sqrt(n/3.0)) - cos(n ** 0.5) * 0.25'
-    , 'Bass-1C': '0.9 * sin(n / sqrt(n/3.0)) - cos(n ** 0.57) * 0.25'
-    , 'Bass-1D': '0.9 * sin(n / sqrt(n/3.0)) - cos(n ** 0.58) * 0.25'
-    , 'Bass-1E': '0.9 * sin(n / sqrt(n/3.0)) - cos(n ** 0.59) * 0.25'
-    , 'Bass-1F': '0.9 * sin(n / sqrt(n/3.0)) - cos(n ** 0.6) * 0.25'
-    , 'Bass-2A': '0.9 * sin(n / sqrt(n/3.0)) + sin(n/70) * cos(n ** 0.5) * 0.25'
+    { 'Middle C': 'Math.sin((523.25113*Math.PI * n) / SAMPLE_RATE)'
+    , 'Hard Wave': 'sin(n / 32.0) + sin(n / 512.0)'
+    , 'Kick-1A': 'sin(n / sqrt(n/3.0))'
+    , 'Kick-2A': 'sin(n / (2*sqrt(n/4.0)))'
+    , 'Kick-3A': 'sin(n / (0.4*sqrt(n/1.0)))'
+    , 'Kick-1B': 'sin(n / sqrt((n+20000)/10.0))'
+    , 'Kick-2B': 'sin(n / (2*sqrt(n/10.0))) * (sin(n/32) + sin(n/27))'
+    , 'Drum-1A': 'sin(n / (0.4*sqrt((n+20000)/20.0)))'
+    , 'Bass-1A': 'sin(n / sqrt(n/3.0)) - cos(n ** 0.3) * 0.25'
+    , 'Bass-1B': 'sin(n / sqrt(n/3.0)) - cos(n ** 0.5) * 0.25'
+    , 'Bass-1C': 'sin(n / sqrt(n/3.0)) - cos(n ** 0.57) * 0.25'
+    , 'Bass-1D': 'sin(n / sqrt(n/3.0)) - cos(n ** 0.58) * 0.25'
+    , 'Bass-1E': 'sin(n / sqrt(n/3.0)) - cos(n ** 0.59) * 0.25'
+    , 'Bass-1F': 'sin(n / sqrt(n/3.0)) - cos(n ** 0.6) * 0.25'
+    , 'Bass-2A': 'sin(n / sqrt(n/3.0)) + sin(n/70) * cos(n ** 0.5) * 0.25'
     , 'Warble Laser': '0.5 * sin(n / 10 / sqrt(n/5.0)) * cos(n /  sqrt(n/50.0))'
     , 'Noise 1': 'random() * .5 - .25'
     , 'Noise 2': 'sin(n/(2- sin(n/11))) * sin(n/23) * 0.5'
