@@ -59,7 +59,7 @@ ipcRenderer.on('message', function(event, text) {
   }
   else
   {
-    console.log('message =',message)
+    console.log('message =',text)
     const message = document.createElement('div');
     message.innerText = text;
     container.appendChild(message);

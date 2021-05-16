@@ -806,6 +806,8 @@ export class NuniGraphController {
         const leave = this.selectedNodes.length === 1
             && this.getOpenWindow[this.selectedNodes[0].id]
             
+        // console.log('e.key,e.keyCode =',e.key, e.keyCode)
+
         if (leave)
         {
             const node = this.selectedNodes[0]
@@ -817,8 +819,7 @@ export class NuniGraphController {
             }
         }
 
-        // 46 for Windows, 8 for Apple
-        if (e.keyCode === 46 || (ISMAC && e.keyCode === 8))
+        if (e.keyCode === 46)
         {   // this.save()
             for (const node of this.selectedNodes) 
             {
