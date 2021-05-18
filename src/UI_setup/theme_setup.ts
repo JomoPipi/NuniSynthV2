@@ -88,6 +88,9 @@ function setTheme(n : number) {
     document.documentElement 
         .style
         .setProperty('--dark-mode', Theme.isDark ? 'invert(0%)' : 'invert(100%)')
+    document.documentElement 
+        .style
+        .setProperty('--light-mode', Theme.isDark ? 'invert(100%)' : 'invert(0%)')
 
     document.documentElement
         .style

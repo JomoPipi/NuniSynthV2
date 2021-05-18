@@ -90,7 +90,7 @@ $wob: rgb($a, $a, $a);
     &._1 {
         background-image: url('images/knob1.png');
         opacity: .9;
-        filter: invert(1);
+        filter: var(--light-mode);
     }
     &._2 {
         background-image: url('images/knob0.png');

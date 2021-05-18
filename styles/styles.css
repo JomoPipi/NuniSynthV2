@@ -1003,8 +1003,8 @@ code {
 .js-dial._1, .js-dial.shadow-knob._4, .js-dial.shadow-knob._6 {
   background-image: url("images/knob1.png");
   opacity: .9;
-  -webkit-filter: invert(1);
-          filter: invert(1);
+  -webkit-filter: var(--light-mode);
+          filter: var(--light-mode);
 }
 
 .js-dial._2 {
