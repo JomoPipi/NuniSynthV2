@@ -7,7 +7,7 @@
 
 import { createSubdivSelect3 } from "../../../nunigraph/view/create_subdivselect.js"
 import { AutomationPointsEditor } from "./automation_editor.js"
-import { createRadioButtonGroup, createToggleButton } from "../../../UI_library/internal.js"
+import { createRadioButtonGroup, createToggleButton, JsDial } from "../../../UI_library/internal.js"
 import { VolumeNodeContainer } from "../../volumenode_container.js"
 import { MasterClock } from "../../sequencers/master_clock.js"
 import { createDraglineElement } from "../../../UI_library/components/dragline.js"
@@ -172,12 +172,41 @@ export class AutomationNode extends VolumeNodeContainer
                 , createToggleButton(this.pointEditor, 'snap')
             ]
         })
+        let lastX = 1
+        const latchDial = new JsDial({ style: 7, size: 30, 
+            func: (n : number) => {
+                const time = this.ctx.currentTime
+                const phase = this.phaseShift * this.durationOfLoop
+                const currentTime = time + phase + 0.2
+                
+                const x = clamp(0, 1 - (this.measureTime - currentTime) / this.durationOfLoop, 1)
+                this.pointEditor.clearPointsBetween(lastX, x >= lastX ? x : 1)
+                if (x < lastX) 
+                {
+                    this.pointEditor.clearPointsBetween(0, x)
+                    this.pointEditor.insertPoint(0, n)
+                }
+                this.pointEditor.insertPoint(x, n)
+                lastX = x
+            },
+            mouseup: () => {
+                this.pointEditor.optimizePoints()
+                this.pointEditor.render()
+            }
+            }).html
+        const latchKnob = E('div', {
+            children: 
+                [ createToggleButton(this.pointEditor, 'latch', { update(on) { latchDial.style.display = on ? 'block' : 'none' } })
+                , E('br')
+                , latchDial
+                ]
+        })
             
         const phaseShifter = createDraglineElement(this, 'phaseShift', { min: 0, max: 1 })
 
         const hardwareControls = E('div', 
             { className: 'space-between some-padding _0'
-            , children: [subdivSelect, modeSelect, markerSelect, phaseShifter] 
+            , children: [subdivSelect, modeSelect, markerSelect, latchKnob, phaseShifter] 
             })
 
         const controller = E('div', { children: [nodeCanvas, this.progressLine, hardwareControls] })

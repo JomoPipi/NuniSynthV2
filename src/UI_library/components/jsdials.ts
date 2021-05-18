@@ -12,7 +12,7 @@ type Options = {
     mouseup? : MouseHandler
 }
 
-interface ConstructorOptions { style? : number, size? : number }
+interface ConstructorOptions { style? : number, size? : number, func? : (n : number) => void, mouseup? : MouseHandler }
 
 export class JsDial {
     
@@ -62,6 +62,8 @@ export class JsDial {
             this.render()
         }
         this.rounds = 1
+
+        if (options.func) this.attach(options.func, options)
     }
 
     set size(px : number) {

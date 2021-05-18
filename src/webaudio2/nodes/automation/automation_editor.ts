@@ -162,7 +162,7 @@ export class AutomationPointsEditor {
         this.render()
     }
 
-    private render() {
+    render() {
         this.H = this.canvas.offsetHeight
         this.W = this.canvas.offsetWidth
         this.ctx.clearRect(0, 0, this.W, this.H)
@@ -267,7 +267,7 @@ export class AutomationPointsEditor {
             ])
     }
 
-    private insertPoint(x : number, y : number) {
+    insertPoint(x : number, y : number) {
         for (let i = 0; i < this.points.length; ++i)
         {
             if (x <= this.points[i].x)
@@ -285,6 +285,10 @@ export class AutomationPointsEditor {
             }
         }
         throw `invalid point: (${x},${y})`
+    }
+
+    clearPointsBetween(start : number, end : number) {
+        this.points = this.points.filter(({ x }) => x <= start || x >= end)
     }
     
     private getCanvasTarget(mouseX : number, mouseY : number) : TargetData {
@@ -642,35 +646,36 @@ export class AutomationPointsEditor {
         // differs by less than a certain amount
         // then we delete it
         // repeat the process until no more points need to be deleted
-        const optimizePoints = () => {
-            const threshold = 0.01
-            const toDelete = {} as Record<number, true>
-            let goAgain = false
-            for (let i = 0; i < this.points.length - 2; ++i)
-            {
-                const [p1, { x, y }, p3] = this.points.slice(i)
-                // Line 1:
-                const m1 = (p1.y - p3.y) / (p1.x - p3.x)
-                const b1 = p1.y - m1 * p1.x
-                // Line 2:
-                const m2 = -1 / m1
-                const b2 = y - m2 * x
-                // Solution:
-                const X = (b1 - b2) / (m2 - m1)
-                const Y = m1 * X + b1
-
-                const distanceToLine = m1 === 0
-                    ? Math.abs(y - p1.y) 
-                    : distance(x, y, X, Y)
-                if (distanceToLine < threshold)
-                {
-                    toDelete[++i] = goAgain = true
-                }
-            }
-            this.points = this.points.filter((_,i) => !toDelete[i])
-            if (goAgain) optimizePoints()
-        }
-        optimizePoints()
+        this.optimizePoints()
         this.render()
+    }
+    
+    optimizePoints() {
+        const threshold = 0.01
+        const toDelete = {} as Record<number, true>
+        let goAgain = false
+        for (let i = 0; i < this.points.length - 2; ++i)
+        {
+            const [p1, { x, y }, p3] = this.points.slice(i)
+            // Line 1:
+            const m1 = (p1.y - p3.y) / (p1.x - p3.x)
+            const b1 = p1.y - m1 * p1.x
+            // Line 2:
+            const m2 = -1 / m1
+            const b2 = y - m2 * x
+            // Solution:
+            const X = (b1 - b2) / (m2 - m1)
+            const Y = m1 * X + b1
+
+            const distanceToLine = m1 === 0
+                ? Math.abs(y - p1.y) 
+                : distance(x, y, X, Y)
+            if (distanceToLine < threshold)
+            {
+                toDelete[++i] = goAgain = true
+            }
+        }
+        this.points = this.points.filter((_,i) => !toDelete[i])
+        if (goAgain) this.optimizePoints()
     }
 }
