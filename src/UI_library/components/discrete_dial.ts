@@ -11,6 +11,7 @@ type Options = {
     mousedown? : MouseHandler
     mouseup? : MouseHandler
     CSS_classIndex? : number
+    dialSize? : number
 }
 
 export function createDiscreteDialComponent(
@@ -65,14 +66,44 @@ class DiscreteDial {
         this.n = n 
         this.options = options
         
-        this.dial = E('div', { className: `js-dial _${0}` })
+        // this.dial = E('div', { className: `js-dial _${0}` })
+        
+        // this.html = E('div', 
+        //     { className: `shadow-knob _2` // _${options.CSS_classIndex || 0}`
+        //     , children: [this.dial]
+        //     })
+
+        const KNOB_STYLES =
+            [ [4,0]
+            , [3,4]
+            , [0,1]
+            , [5,3]
+            , [0,6]
+            , [0,3]
+            , [1,2]
+            , [0,2]
+            , [1,5]
+            ]
+        
+        const [dial, shadow] = KNOB_STYLES[options.CSS_classIndex || 0]
+
+        this.dial = E('div', { className: `js-dial _${dial || 0}` })
         
         this.html = E('div', 
-            { className: `shadow-knob _2` // _${options.CSS_classIndex || 0}`
+            { className: `shadow-knob _${shadow || 0}`
             , children: [this.dial]
-            })
+            }) 
 
+        if (options.dialSize) this.size = options.dialSize
         this.update(0)
+    }
+
+    set size(px : number) {
+        this.dial.style.width = 
+        this.dial.style.height =
+        this.html.style.width = 
+        this.html.style.height =
+            px + 'px'
     }
 
     onrotation(fn : (index : number ) => void, { mousedown: md, mouseup: mu } : Options = {}) {

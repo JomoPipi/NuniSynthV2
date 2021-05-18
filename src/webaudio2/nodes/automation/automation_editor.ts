@@ -95,6 +95,7 @@ export class AutomationPointsEditor {
 
     constructor() {
         this.canvas = E('canvas', { className: 'dark-mode-invert' })
+        
         // this.canvas.style.backgroundColor = '#111'
         this.ctx = this.canvas.getContext('2d')!
         this.ctx.lineWidth = LINE_WIDTH
@@ -154,6 +155,12 @@ export class AutomationPointsEditor {
         this.render()
     }
 
+    private markerN = 4
+    setMarkers(n : number) {
+        if (!n) this.markerN = -1
+        this.markerN = n
+        this.render()
+    }
 
     private render() {
         this.H = this.canvas.offsetHeight
@@ -162,6 +169,7 @@ export class AutomationPointsEditor {
         this.ctx.strokeStyle = 'gray'
         this.ctx.lineWidth = 1
         this.ctx.strokeRect(MARGIN, MARGIN, this.W - MARGIN * 2, this.H - MARGIN * 2)
+        this.drawMarkerLines()
         this.ctx.strokeStyle =
         this.ctx.fillStyle = 'pink'
         this.ctx.lineWidth = LINE_WIDTH
@@ -183,6 +191,22 @@ export class AutomationPointsEditor {
             
             case FREEHAND_MODE: 
                 break
+        }
+    }
+
+    private drawMarkerLines() {
+        if (this.markerN < 2) return;
+        const { ctx } = this
+        for (let i = 1; i < this.markerN; i++) 
+        {
+            ctx.beginPath()
+            const x = MARGIN + i * (this.W - 2 * MARGIN) / this.markerN
+            const y1 = MARGIN
+            const y2 = this.H - MARGIN
+            ctx.moveTo(x, y1)
+            ctx.lineTo(x, y2)
+            ctx.stroke()
+            ctx.closePath()
         }
     }
     
@@ -346,6 +370,9 @@ export class AutomationPointsEditor {
         }
     }
 
+    private snapMode = false
+    set snap(s : boolean) { this.snapMode = s }
+    get snap() { return this.snapMode }
     private mousemove(e : MouseEvent) {
         const { x, y } = this.canvas.getBoundingClientRect()
         const mouseX = e.clientX - x
@@ -404,7 +431,11 @@ export class AutomationPointsEditor {
         }
         else if (this.draggingPoint >= 0) 
         {
-            this.dragSinglePoint(mouseX, mouseY)
+            const markerGap =((this.W - MARGIN*2) / this.markerN)
+            const x = this.snapMode && this.markerN >= 2
+                ? MARGIN + Math.floor(mouseX / markerGap + 0.5) * markerGap
+                : mouseX
+            this.dragSinglePoint(x, mouseY)
         }
         else if (this.mouseIsDown && this.lastMousedownMsg.type === 'empty')
         {
@@ -583,10 +614,16 @@ export class AutomationPointsEditor {
 
     private FREEHAND_MODE_iterations = 0
     private FREEHAND_MODE_mousemove(mouseX : number, mouseY : number) {
-        const [x, y] = this.mapCanvasCoordinateToPoint(mouseX, mouseY)
         const TICK = 3
+        // For performance reasons
         if (this.FREEHAND_MODE_iterations++ % TICK === 0)
         {
+            const markerGap =((this.W - MARGIN*2) / this.markerN)
+            const mx = this.snapMode && this.markerN >= 2
+                ? MARGIN + Math.floor(mouseX / markerGap + 0.5) * markerGap
+                : mouseX
+            const [x, y] = this.mapCanvasCoordinateToPoint(mx, mouseY)
+
             const nextX = clamp(0, x, 1)
             const [a, b] = [this.lastInsertedX, nextX].sort((a, b) => a - b)
             // Remove points we "run" over

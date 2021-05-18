@@ -590,6 +590,10 @@ code {
   padding: 10px;
 }
 
+.some-padding._0, ._0.sequencer-controls {
+  padding: 0.5rem 2rem;
+}
+
 .some-border {
   border: 10px solid transparent;
 }
@@ -817,6 +821,18 @@ code {
   -webkit-box-pack: space-evenly;
       -ms-flex-pack: space-evenly;
           justify-content: space-evenly;
+}
+
+.space-between {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 
 .vert-grid {

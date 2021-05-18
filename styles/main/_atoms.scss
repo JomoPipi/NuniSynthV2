@@ -28,6 +28,10 @@ code {
 } 
 .some-padding {
     padding: 10px;
+
+    &._0 {
+        padding: 0.5rem 2rem;
+    }
 }
 .some-border {
     border: 10px solid transparent;
@@ -190,6 +194,12 @@ code {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
+}
+
+.space-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .vert-grid {

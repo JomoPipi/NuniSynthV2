@@ -7,10 +7,11 @@
 
 import { createSubdivSelect3 } from "../../../nunigraph/view/create_subdivselect.js"
 import { AutomationPointsEditor } from "./automation_editor.js"
-import { createRadioButtonGroup } from "../../../UI_library/internal.js"
+import { createRadioButtonGroup, createToggleButton } from "../../../UI_library/internal.js"
 import { VolumeNodeContainer } from "../../volumenode_container.js"
 import { MasterClock } from "../../sequencers/master_clock.js"
 import { createDraglineElement } from "../../../UI_library/components/dragline.js"
+import { createDiscreteDialComponent } from "../../../UI_library/components/discrete_dial.js"
 
 export class AutomationNode extends VolumeNodeContainer
     implements AudioNodeInterfaces<NodeTypes.AUTO> {
@@ -31,6 +32,7 @@ export class AutomationNode extends VolumeNodeContainer
     constructor(ctx : AudioContext) {
         super(ctx)
         this.ctx = ctx
+        this.updateBoxDimensions(250, 500)
         this.setTempo(MasterClock.getTempo())
         this.play()
     }
@@ -42,6 +44,7 @@ export class AutomationNode extends VolumeNodeContainer
         this._nMeasures = m
         this.durationOfLoop = 60 * 4 * this._nMeasures / this.tempo
     }
+    set snap(s : boolean) { this.pointEditor.snap = s }
 
     getController() {
         this.dialogBoxIsOpen = true
@@ -157,12 +160,24 @@ export class AutomationNode extends VolumeNodeContainer
             , className: 'top-bar-btn'
             , onclick: (_, index) => this.pointEditor.setMode(index)
             })
+
+        const markerSelect = E('div', {
+            children: 
+                [ createDiscreteDialComponent(
+                    0, 'off,4,8,16,32,64,3,6,12,24,48'.split(','), 
+                    (s : string, index : number) => this.pointEditor.setMarkers(+s),
+                    { CSS_classIndex: 8, dialSize: 24 })
+                    .container
+                , E('br')
+                , createToggleButton(this.pointEditor, 'snap')
+            ]
+        })
             
         const phaseShifter = createDraglineElement(this, 'phaseShift', { min: 0, max: 1 })
 
         const hardwareControls = E('div', 
-            { className: 'space-evenly some-padding'
-            , children: [subdivSelect, modeSelect, phaseShifter] 
+            { className: 'space-between some-padding _0'
+            , children: [subdivSelect, modeSelect, markerSelect, phaseShifter] 
             })
 
         const controller = E('div', { children: [nodeCanvas, this.progressLine, hardwareControls] })

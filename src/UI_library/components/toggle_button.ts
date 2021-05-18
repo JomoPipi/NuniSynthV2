@@ -12,12 +12,12 @@ type ToggleButtonOptions = {
     }
 
 export function createToggleButton(
-    obj : Indexed, prop : string, options : ToggleButtonOptions) {
+    obj : Indexed, prop : string, options : ToggleButtonOptions = {}) {
 
     const { text, update, className } = options
     const btn = E('button', 
         { text: text || prop
-        , className 
+        , className: className || 'nice-btn2'
         })
         
     btn.classList.toggle('selected', obj[prop])
