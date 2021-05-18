@@ -68,6 +68,7 @@ const TRANSFORMS : [s : string, f : (points : Point[], args : TransformArgs) => 
 
 const MARGIN = 15
 const POINT_RADIUS = 2
+const HANDLEBAR_POINT_RADIUS = 3
 const LINE_WIDTH = 1
 
 // const SELECT_MODE = '👉'
@@ -237,9 +238,9 @@ export class AutomationPointsEditor {
         }
     }
 
-    private drawPoint(X : number, Y : number, color : string) {
+    private drawPoint(X : number, Y : number, color : string, radius? : number) {
         this.ctx.beginPath()
-        this.ctx.arc(X, Y, POINT_RADIUS, 0, TAU)
+        this.ctx.arc(X, Y, radius || POINT_RADIUS, 0, TAU)
         this.ctx.closePath()
         this.ctx.stroke()
         this.ctx.fillStyle = color
@@ -303,7 +304,7 @@ export class AutomationPointsEditor {
             {
                 const [x, y, color] = hb[i]
                 const [X, Y] = this.mapPointToCanvasCoordinate(x, y)
-                if (distance(mouseX, mouseY, X, Y) <= POINT_RADIUS + TOLERANCE)
+                if (distance(mouseX, mouseY, X, Y) <= HANDLEBAR_POINT_RADIUS + TOLERANCE)
                 {
                     return (
                         { type: 'handlebar'
@@ -467,7 +468,7 @@ export class AutomationPointsEditor {
     private drawTransformHandlebars() {
         for (const [x, y, color] of this.getTransformHandlebars())
         {
-            this.drawPoint(...this.mapPointToCanvasCoordinate(x, y), color)
+            this.drawPoint(...this.mapPointToCanvasCoordinate(x, y), color, HANDLEBAR_POINT_RADIUS)
         }
     }
 
