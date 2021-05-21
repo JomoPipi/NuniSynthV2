@@ -20,28 +20,30 @@ import { SamplePianoRoll } from './nodes/samplepianoroll/samplepianoroll.js'
 import { ProcessorNode } from './nodes/processor/processor.js'
 import { AutomationNode } from './nodes/automation/automation.js'
 import { NuniFilterNode } from './nodes/filter/filter.js'
+import { KeyboardGate } from './nodes/keyboard_gate.ts/kb_gate.js'
 
 export const AudioNodeMap = 
-    { [NodeTypes.OUTPUT]:     GainNode
-    , [NodeTypes.GAIN]:       GainNode
-    , [NodeTypes.OSC]:        OscillatorNode2
-    , [NodeTypes.FILTER]:     NuniFilterNode
-    , [NodeTypes.PANNER]:     StereoPannerNode
-    , [NodeTypes.DELAY]:      DelayNode
-    , [NodeTypes.SAMPLE]:     NuniSampleNode
-    , [NodeTypes.G_SEQ]:      GateSequencer
-    , [NodeTypes.S_SEQ]:      SampleSequencer
-    , [NodeTypes.NUM]:        ConstantSourceNode
-    , [NodeTypes.RECORD]:     NuniRecordingNode
-    , [NodeTypes.MODULE]:     NuniGraphAudioNode
-    , [NodeTypes.COMPRESSOR]: DynamicsCompressorNode
+    { [NodeTypes.OUTPUT]:        GainNode
+    , [NodeTypes.GAIN]:          GainNode
+    , [NodeTypes.OSC]:           OscillatorNode2
+    , [NodeTypes.FILTER]:        NuniFilterNode
+    , [NodeTypes.PANNER]:        StereoPannerNode
+    , [NodeTypes.DELAY]:         DelayNode
+    , [NodeTypes.SAMPLE]:        NuniSampleNode
+    , [NodeTypes.G_SEQ]:         GateSequencer
+    , [NodeTypes.S_SEQ]:         SampleSequencer
+    , [NodeTypes.NUM]:           ConstantSourceNode
+    , [NodeTypes.RECORD]:        NuniRecordingNode
+    , [NodeTypes.MODULE]:        NuniGraphAudioNode
+    , [NodeTypes.COMPRESSOR]:    DynamicsCompressorNode
 
     // , [NodeTypes.PIANOR]:     PianoRoll12Tone
-    , [NodeTypes.PIANOR]:     MonoPianoRoll
+    , [NodeTypes.PIANOR]:        MonoPianoRoll
 
-    , [NodeTypes.PROCESSOR]:  ProcessorNode
-    , [NodeTypes.AUTO]:       AutomationNode
+    , [NodeTypes.PROCESSOR]:     ProcessorNode
+    , [NodeTypes.AUTO]:          AutomationNode
     , [NodeTypes.SAMPLE_PIANOR]: SamplePianoRoll
+    , [NodeTypes.KB_GATE]:       KeyboardGate
     } as const
 
 class AudioContext2 extends AudioContext {

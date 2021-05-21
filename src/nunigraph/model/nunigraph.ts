@@ -207,8 +207,7 @@ export class NuniGraph {
 
         const destination = this.prepareDestination(connectionType)(node2.audioNode)
         
-        if (destination instanceof NuniGraphAudioNode || destination instanceof GateSequencer
-            || UsesConnectionProtocol2[node2.type])
+        if (UsesConnectionProtocol2[node2.type])
         {
             destination.addInput(node1)
         }
@@ -237,8 +236,7 @@ export class NuniGraph {
         const destination = this.prepareDestination(connectionType)(node2.audioNode)
 
         // TODO: Change this methods to disconnect_node_from_destination, and put this condition in a config object.
-        if (destination instanceof GateSequencer || destination instanceof NuniGraphAudioNode
-            || UsesConnectionProtocol2[node2.type])
+        if (UsesConnectionProtocol2[node2.type])
         {
             destination.removeInput(node1)
         } 
@@ -525,7 +523,7 @@ export class NuniGraph {
                 {
                     const an = mapToNewNode[node.id].audioNode
                     const targetObj = an[propName as keyof typeof an] as Indexed
-                    const sourceObj = node.audioNode[propName]
+                    const sourceObj = node.audioNode[propName as keyof typeof node.audioNode] as Indexed
     
                     for (const key in sourceObj) 
                     {
@@ -686,15 +684,14 @@ export class NuniGraph {
             if (hasWeirdCopyProtocol(node))
             {
                 const thisNode = this.nodes.find(n => n.id === node.id)!
-                for (const prop of weirdArray[node.type]) 
+                for (const prop of PostConnection_Transferable_InputRemappable_AudioNodeProperties[node.type]) 
                 {
                     // TODO: remove the ignores and give the serialized data a proper type
                     // @ts-ignore
                     if (node.audioNodeProperties[prop] || node.audioNode[prop])
                     {
                         ;(thisNode.audioNode as Indexed)[prop] = // @ts-ignore
-                            node.audioNodeProperties[prop]
-                            || node.audioNode[prop] // <- legacy. TODO: remove, when graphs are transfererred.
+                            node.audioNodeProperties[prop] || node.audioNode[prop]
                     }
                 }
             }

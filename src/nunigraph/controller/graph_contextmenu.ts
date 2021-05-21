@@ -139,6 +139,7 @@ const contextmenuNodeTypes : NodeTypes[] =
     , NodeTypes.MODULE
     , NodeTypes.COMPRESSOR
     , NodeTypes.PROCESSOR
+    , NodeTypes.KB_GATE
     ]
 
 

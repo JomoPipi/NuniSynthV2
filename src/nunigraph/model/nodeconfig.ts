@@ -24,7 +24,9 @@ const enum NodeTypes
     PIANOR = 'piano-roll',
     PROCESSOR = 'processor',
     COMPRESSOR = 'compression',
-    SAMPLE_PIANOR = 'sample-pianooroll'
+    SAMPLE_PIANOR = 'sample-pianooroll',
+
+    KB_GATE = 'keyboard-gate'
 }
 
 type AudioParams 
@@ -71,6 +73,7 @@ const NodeLabel : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PROCESSOR]:  'Processor'
     , [NodeTypes.COMPRESSOR]: 'Compression'
     , [NodeTypes.SAMPLE_PIANOR]: 'Sample Piano Roll'
+    , [NodeTypes.KB_GATE]: 'Keyboard Gate'
     }
     
 type GraphIcon = string // typeof GraphIconUrls[number]
@@ -126,6 +129,8 @@ const DefaultNodeIcon : ReadonlyRecord<NodeTypes, SVGIconKey> =
     , [NodeTypes.COMPRESSOR]: 'compress'
 
     , [NodeTypes.SAMPLE_PIANOR]: 'keyboard'
+    
+    , [NodeTypes.KB_GATE]: 'knob'
     } as const
 
 const HasDynamicNodeIcon = 
@@ -184,6 +189,7 @@ const HasTitleEditor : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PROCESSOR]:true
     , [NodeTypes.COMPRESSOR]:true
     , [NodeTypes.SAMPLE_PIANOR]:true
+    , [NodeTypes.KB_GATE]: true
     }
 
 const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
@@ -204,6 +210,7 @@ const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PROCESSOR]:true
     , [NodeTypes.COMPRESSOR]:true
     , [NodeTypes.SAMPLE_PIANOR]:false
+    , [NodeTypes.KB_GATE]: true
     }
 
 const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
@@ -224,6 +231,7 @@ const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PROCESSOR]:false
     , [NodeTypes.COMPRESSOR]:false
     , [NodeTypes.SAMPLE_PIANOR]:false
+    , [NodeTypes.KB_GATE]: true
     }
 
 const ExposesAudioparamsInDialogBox =
@@ -262,6 +270,7 @@ const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PROCESSOR]: false
     , [NodeTypes.COMPRESSOR]:false
     , [NodeTypes.SAMPLE_PIANOR]: false
+    , [NodeTypes.KB_GATE]: false
     }
 
 const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } =
@@ -282,6 +291,7 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.PROCESSOR]:false
     , [NodeTypes.COMPRESSOR]:false
     , [NodeTypes.SAMPLE_PIANOR]: false
+    , [NodeTypes.KB_GATE]: false
     }
 
 // Goal: convert this to IsNativeAudioNode
@@ -293,16 +303,17 @@ const UsesConnectionProtocol2  : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.PANNER]: false
     , [NodeTypes.DELAY]:  false
     , [NodeTypes.SAMPLE]: false
-    , [NodeTypes.G_SEQ]:  false
+    , [NodeTypes.G_SEQ]:  true
     , [NodeTypes.S_SEQ]:  false
     , [NodeTypes.NUM]:    false
     , [NodeTypes.RECORD]: false
-    , [NodeTypes.MODULE]: false
+    , [NodeTypes.MODULE]: true
     , [NodeTypes.AUTO]:   true
     , [NodeTypes.PIANOR]: false
     , [NodeTypes.PROCESSOR]:false
     , [NodeTypes.COMPRESSOR]:false
     , [NodeTypes.SAMPLE_PIANOR]:false
+    , [NodeTypes.KB_GATE]: true
     }
     
 const ClockDependent =
@@ -340,6 +351,7 @@ const AudioNodeParams =
     , [NodeTypes.PROCESSOR]: []
     , [NodeTypes.COMPRESSOR]: ['threshold', 'knee', 'ratio', 'attack', 'release']
     , [NodeTypes.SAMPLE_PIANOR]: ['playbackRate','detune']
+    , [NodeTypes.KB_GATE]: []
     } as const
 
 const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
@@ -363,6 +375,7 @@ const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
     , [NodeTypes.PROCESSOR]: []
     , [NodeTypes.COMPRESSOR]:[]
     , [NodeTypes.SAMPLE_PIANOR]:[]
+    , [NodeTypes.KB_GATE]: []
     }
 
 const HasSubtypes =
@@ -391,6 +404,7 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PROCESSOR]: 'rgba(200,150,255,0.5)'
     , [NodeTypes.COMPRESSOR]:'rgba(200,180,220,0.5)'
     , [NodeTypes.SAMPLE_PIANOR]:'rgba(0,220,255,0.5)'
+    , [NodeTypes.KB_GATE]: 'rgba(155,200,200,0.5)'
     }
 
 const NodeTypeColors2 : { readonly [key in NodeTypes] : string } = 
@@ -412,6 +426,7 @@ const NodeTypeColors2 : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.PROCESSOR]: 'rgb(200,150,255)'
     , [NodeTypes.COMPRESSOR]:'rgb(200,180,220)'
     , [NodeTypes.SAMPLE_PIANOR]:'rgb(0,220,255)'
+    , [NodeTypes.KB_GATE]: 'rgba(155,200,200)'
     } as const
 
 const NodeTypeDescriptions =
@@ -433,6 +448,7 @@ const NodeTypeDescriptions =
     , [NodeTypes.PROCESSOR]: 'Processor nodes execute audio processing code.'
     , [NodeTypes.COMPRESSOR]:'Compressor nodes provide a compression effect which lowers the volume of the loudest parts of the signal in order to help prevent clipping and distortion that can occur when multiple sounds are played and multiplexed together at once.'
     , [NodeTypes.SAMPLE_PIANOR]: 'It\'s a piano sample roll'
+    , [NodeTypes.KB_GATE]: 'This helps you control connected nodes with the keyboard.'
     } as const
 
 const NodeTypeWarnings : { readonly [key in NodeTypes]? : string } = 
@@ -620,12 +636,17 @@ const Transferable_AudioNodeProperties =
     , attack: true
     , release: true
     , ...Transferable_Pianoroll_properties
+
+    , inputMap: true
     } as const
 
 const PostConnection_Transferable_InputRemappable_AudioNodeProperties = 
     { [NodeTypes.G_SEQ]: ['stepMatrix', 'channelData', 'mutedChannel']
+    , [NodeTypes.KB_GATE]: ['inputMap']
+    , [NodeTypes.KB_GATE]: ['pseudoIdentity']
+    , [NodeTypes.KB_GATE]: ['inputAliasMap']
     } as const
-    
+
 type NodeCreationSettings = { 
     x : number
     y : number
@@ -724,6 +745,15 @@ type IOverridesGraphOperationKeyboardShortcuts<T> = (T extends OverridesGraphOpe
     }
     : {})
 
+type ThatShit = typeof PostConnection_Transferable_InputRemappable_AudioNodeProperties
+type DoesThatShit = keyof ThatShit
+type IDoesThatShit<T> = (T extends DoesThatShit
+    ? {
+        [key in ThatShit[T][number]] : Record<number, unknown>
+    }
+    : {})
+    
+
 type AudioNodeInterfaces<T extends NodeTypes> =
     & BaseAudioNodeProperties
     & IClockDependent<T>
@@ -732,6 +762,7 @@ type AudioNodeInterfaces<T extends NodeTypes> =
     & IHasAResizableDialogBox<T>
     & IOverridesGraphOperationKeyboardShortcuts<T>
     & IReactsToBufferChange<T>
+    & IDoesThatShit<T>
 
 
 
