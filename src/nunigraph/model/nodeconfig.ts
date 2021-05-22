@@ -637,14 +637,12 @@ const Transferable_AudioNodeProperties =
     , release: true
     , ...Transferable_Pianoroll_properties
 
-    , inputMap: true
+    , inputData: true
     } as const
 
 const PostConnection_Transferable_InputRemappable_AudioNodeProperties = 
     { [NodeTypes.G_SEQ]: ['stepMatrix', 'channelData', 'mutedChannel']
-    , [NodeTypes.KB_GATE]: ['inputMap']
-    , [NodeTypes.KB_GATE]: ['pseudoIdentity']
-    , [NodeTypes.KB_GATE]: ['inputAliasMap']
+    // , [NodeTypes.KB_GATE]: ['inputData']
     } as const
 
 type NodeCreationSettings = { 

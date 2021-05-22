@@ -7,6 +7,7 @@
 
 import { UndoRedoModule } from "../../../helpers/simple_undo_redo.js"
 import { MasterClock } from "../../sequencers/master_clock.js"
+import { KB_KEYS } from '../../constants.js'
 
 // type NoteEvent = { start : number, end : number, n : number, sample : number }
 // type PlayCallback = (noteEvent : NoteEvent) => void
@@ -20,12 +21,6 @@ const SEMIFLAG = [6, 1, 0, 1, 0, 2, 1, 0, 1, 0, 1, 0]
 const OCTAVE_OFFSET = -1
 const TIMEBASE = 16
 const X_START = RULER_WIDTH + KB_WIDTH
-const KB_KEYS = (keys => 
-    [...keys.toUpperCase()]
-        .reduce((a, key, i) => (a[key] = i, a),
-    [...keys]
-        .reduce((a, key, i) => (a[key] = i, a), {} as Record<string,number>))
-)('1234567890-=qwertyuiop[]asdfghjkl;\'zxcvbnm,./')
 
 // Possible future class members:
 const SNAP = 1
@@ -1221,7 +1216,7 @@ export class  PianoRollEditor {
             }
             return;
         }
-        const key = this.keyboardBeginIndex + KB_KEYS[e.key]
+        const key = this.keyboardBeginIndex + KB_KEYS[e.key.toLowerCase()]
         if (this._kbWriteMode && !isNaN(key))
         {
             if (this.keyIsDownSoDontSpam[key]) return;
