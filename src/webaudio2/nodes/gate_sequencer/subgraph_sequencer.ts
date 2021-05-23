@@ -8,9 +8,6 @@
 import { ADSR_Controller } from '../../adsr/adsr.js'
 import { Sequencer } from '../../sequencers/linear_sequencers/sequencer.js'
 
-
-interface NuniNode { id : number, audioNode : Indexed }
-
 export class GateSequencer extends Sequencer
     implements AudioNodeInterfaces<NodeTypes.G_SEQ> {
 

@@ -6,6 +6,7 @@
 
 
 import { KB_KEYS } from '../../constants.js'
+import { VolumeNodeContainer } from '../../volumenode_container.js'
 
 // Pitch Number Property of KeyProperties
 // <checkbox "1 (no pitch)" /> <checkbox [n * 100] />
@@ -20,6 +21,7 @@ const kbHTML = `<div class="keyboard">
 type LowerCaseKeyboardKeys = string
 enum TriggerModes { play, toggle, pick }
 enum EnvelopeTypes { NONE, ATTACK_ONLY, AD, ADSR }
+type Envelope = { attack : number, decay : number, sustain : number, release : number }
 type KeyData = ({
     triggerMode : TriggerModes.play
     envelopeType : EnvelopeTypes.NONE | EnvelopeTypes.AD | EnvelopeTypes.ADSR
@@ -31,18 +33,29 @@ type KeyData = ({
     envelopeType : EnvelopeTypes.AD
 }) & {
     gain : number // Defaults to 1, can be used for pitch
+    envelope : Envelope
 }
 type KeyMap = { [key in LowerCaseKeyboardKeys] : KeyData }
 
 type NuniGraphNodeID = number
-export class KeyboardGate implements AudioNodeInterfaces<NodeTypes.KB_GATE> {
+export class KeyboardGate extends VolumeNodeContainer
+    implements AudioNodeInterfaces<NodeTypes.KB_GATE> {
     
     inputData : Record<NuniGraphNodeID, KeyMap> = {}
+    mono : boolean = false
 
-    connect() {
-
+    addInput({ id, audioNode } : NuniNode) {
+        this.inputData[id] = {}
     }
-    disconnect() {
 
+    removeInput({ id, audioNode } : NuniNode) {
+        delete this.inputData[id]
+    }
+
+    replaceInput({ id, audioNode } : NuniNode, newNode : NuniNode) {
+
+        this.addInput(newNode)
+        this.inputData[newNode.id] = this.inputData[id]
+        this.removeInput({ id, audioNode })
     }
 }

@@ -239,7 +239,7 @@ export class NuniGraph {
         if (UsesConnectionProtocol2[node2.type])
         {
             destination.removeInput(node1)
-        } 
+        }
         else if (destination instanceof ProcessorNode)
         {
             node1.audioNode.disconnect(destination.inputChannelNode)
@@ -719,8 +719,12 @@ export class NuniGraph {
         /* The idea here is to insert the node without having to actually disconnect fromNode from toNode.
         Why does this matter? Because of those pesky input-aware nodes (channel sequencers and modules at this time)
         whose states change when disconnecting the node. */
+        
+        const isAware = (node : NuniGraphNode) 
+            : node is NuniGraphNode<keyof OmitUntrue<typeof IsAwareOfInputIDs>> => 
+                IsAwareOfInputIDs[node.type]
 
-        if (IsAwareOfInputIDs[toNode.type])
+        if (isAware(toNode))
         {
         // Go around the disconnect and makeConnection functions..
 
@@ -754,16 +758,14 @@ export class NuniGraph {
             {
                 console.log('Prevented a duplicate')
             }
-            
-            const an = toNode.audioNode as GateSequencer | NuniGraphAudioNode
 
             if (connectionAlreadyExists)
             {
-                an.removeInput(fromNode)
+                toNode.audioNode.removeInput(fromNode)
             }
             else 
             {
-                an.replaceInput(fromNode, node)
+                toNode.audioNode.replaceInput(fromNode, node)
             }
 
             // Connect fromNode to node the normal way:

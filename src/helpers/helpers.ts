@@ -5,21 +5,7 @@
 
 
 
-type Endofunction<T> = (arg : T) => T;
-
-type Indexed = { [param : string] : any }
-
-type ReadonlyRecord<K extends number | string, V> = { readonly [key in K] : V }
-
-interface Indexable<T> { [param : string] : T }
-
-type Immutable<Type> = {
-    readonly [Key in keyof Type] : Immutable<Type[Key]>
-}
-
-type Values<T> = T[keyof T]
-
-type MouseHandler = (e : MouseEvent) => void
+function assertType<T extends true>() {}
 
 const trace = <T>(x : T) => (console.log(x), x)
 

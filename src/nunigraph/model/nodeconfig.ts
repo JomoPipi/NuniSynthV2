@@ -54,7 +54,7 @@ type ConnecteeDatum =
     
 type ConnecteeData = ConnecteeDatum[]
 
-const NodeLabel : { readonly [key in NodeTypes] : string } =  
+const NodeLabel : ReadonlyRecord<NodeTypes, string> =  
     { [NodeTypes.OUTPUT]: 'not used'
     , [NodeTypes.GAIN]:   'Gain'
     , [NodeTypes.OSC]:    'Oscillator'
@@ -136,7 +136,6 @@ const DefaultNodeIcon : ReadonlyRecord<NodeTypes, SVGIconKey> =
 const HasDynamicNodeIcon = 
     { [NodeTypes.OSC]: true
     , [NodeTypes.FILTER]: true
-    // , [NodeTypes.NUM]: true
     }
 type HasDynamicNodeIcon = keyof typeof HasDynamicNodeIcon
 
@@ -163,7 +162,7 @@ type KnowsWhenDialogBoxCloses = keyof typeof KnowsWhenDialogBoxCloses
 
 const HasAResizableDialogBox =
     { [NodeTypes.AUTO]:      true
-    // TODO: convert these:
+    // TODO: convert Module maybe?
     // , [NodeTypes.MODULE]:    true
     , [NodeTypes.PIANOR]:    true
     , [NodeTypes.PROCESSOR]: true
@@ -171,7 +170,7 @@ const HasAResizableDialogBox =
     }
 type HasAResizableDialogBox = keyof typeof HasAResizableDialogBox
 
-const HasTitleEditor : { readonly [key in NodeTypes] : boolean } =
+const HasTitleEditor : ReadonlyRecord<NodeTypes, boolean> =
     { [NodeTypes.OUTPUT]: false
     , [NodeTypes.GAIN]:   false
     , [NodeTypes.OSC]:    true
@@ -192,7 +191,7 @@ const HasTitleEditor : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.KB_GATE]: true
     }
 
-const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
+const SupportsInputChannels : ReadonlyRecord<NodeTypes, boolean> =
     { [NodeTypes.OUTPUT]: true
     , [NodeTypes.GAIN]:   true
     , [NodeTypes.OSC]:    false
@@ -213,7 +212,8 @@ const SupportsInputChannels : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.KB_GATE]: true
     }
 
-const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
+assertType<Equals<keyof typeof IsAwareOfInputIDs, NodeTypes>>()
+const IsAwareOfInputIDs =
     { [NodeTypes.OUTPUT]: false
     , [NodeTypes.GAIN]:   false
     , [NodeTypes.OSC]:    false
@@ -232,7 +232,8 @@ const IsAwareOfInputIDs : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.COMPRESSOR]:false
     , [NodeTypes.SAMPLE_PIANOR]:false
     , [NodeTypes.KB_GATE]: true
-    }
+    } as const
+type IsAwareOfInputIDs = keyof OmitUntrue<typeof IsAwareOfInputIDs>
 
 const ExposesAudioparamsInDialogBox =
     { [NodeTypes.GAIN]:       true
@@ -252,7 +253,7 @@ const OverridesGraphOperationKeyboardShortcuts =
     , NodeTypes.PROCESSOR
     ] as const
 
-const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
+const HasNoOutput : ReadonlyRecord<NodeTypes, boolean> =
     { [NodeTypes.OUTPUT]: true
     , [NodeTypes.GAIN]:   false
     , [NodeTypes.OSC]:    false
@@ -273,7 +274,7 @@ const HasNoOutput : { readonly [key in NodeTypes] : boolean } =
     , [NodeTypes.KB_GATE]: false
     }
 
-const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } =
+const OpensDialogBoxWhenConnectedTo : ReadonlyRecord<NodeTypes, boolean> =
     { [NodeTypes.OUTPUT]: false
     , [NodeTypes.GAIN]:   false
     , [NodeTypes.OSC]:    false
@@ -294,28 +295,29 @@ const OpensDialogBoxWhenConnectedTo : { readonly [key in NodeTypes] : boolean } 
     , [NodeTypes.KB_GATE]: false
     }
 
-// Goal: convert this to IsNativeAudioNode
-const UsesConnectionProtocol2  : { readonly [key in NodeTypes] : boolean } =
-    { [NodeTypes.OUTPUT]: false
-    , [NodeTypes.GAIN]:   false
-    , [NodeTypes.OSC]:    false
-    , [NodeTypes.FILTER]: false
-    , [NodeTypes.PANNER]: false
-    , [NodeTypes.DELAY]:  false
-    , [NodeTypes.SAMPLE]: false
-    , [NodeTypes.G_SEQ]:  true
-    , [NodeTypes.S_SEQ]:  false
-    , [NodeTypes.NUM]:    false
-    , [NodeTypes.RECORD]: false
-    , [NodeTypes.MODULE]: true
-    , [NodeTypes.AUTO]:   true
-    , [NodeTypes.PIANOR]: false
-    , [NodeTypes.PROCESSOR]:false
-    , [NodeTypes.COMPRESSOR]:false
-    , [NodeTypes.SAMPLE_PIANOR]:false
-    , [NodeTypes.KB_GATE]: true
-    }
-    
+assertType<Equals<keyof typeof UsesConnectionProtocol2, NodeTypes>>()
+const UsesConnectionProtocol2 =
+    { [NodeTypes.OUTPUT]:        false
+    , [NodeTypes.GAIN]:          false
+    , [NodeTypes.OSC]:           false
+    , [NodeTypes.FILTER]:        false
+    , [NodeTypes.PANNER]:        false
+    , [NodeTypes.DELAY]:         false
+    , [NodeTypes.SAMPLE]:        false
+    , [NodeTypes.G_SEQ]:         true
+    , [NodeTypes.S_SEQ]:         false
+    , [NodeTypes.NUM]:           false
+    , [NodeTypes.RECORD]:        false
+    , [NodeTypes.MODULE]:        true
+    , [NodeTypes.AUTO]:          true
+    , [NodeTypes.PIANOR]:        false
+    , [NodeTypes.PROCESSOR]:     false
+    , [NodeTypes.COMPRESSOR]:    false
+    , [NodeTypes.SAMPLE_PIANOR]: false
+    , [NodeTypes.KB_GATE]:       true
+    } as const
+type UsesConnectionProtocol2 = keyof OmitUntrue<typeof UsesConnectionProtocol2>
+
 const ClockDependent =
     { [NodeTypes.G_SEQ]:  true
     , [NodeTypes.S_SEQ]:  true
@@ -354,7 +356,7 @@ const AudioNodeParams =
     , [NodeTypes.KB_GATE]: []
     } as const
 
-const AudioNodeSubTypes : { readonly [key in NodeTypes] : string[] } =
+const AudioNodeSubTypes : ReadonlyRecord<NodeTypes, string[]> =
     { [NodeTypes.OUTPUT]: []
     , [NodeTypes.GAIN]:   []
     , [NodeTypes.OSC]:    ['sine','triangle','square','sawtooth'] // ,'custom'] <- might come back later
@@ -385,7 +387,7 @@ const HasSubtypes =
 type HasSubtypes = keyof typeof HasSubtypes
 
 
-const NodeTypeColors : { readonly [key in NodeTypes] : string } = 
+const NodeTypeColors : ReadonlyRecord<NodeTypes, string> = 
     { [NodeTypes.OUTPUT]: 'rgba(128,128,128,0.5)'
     , [NodeTypes.GAIN]:   'rgba(255,0,0,0.5)'
     , [NodeTypes.OSC]:    'rgba(0,0,255,0.55)'
@@ -407,7 +409,7 @@ const NodeTypeColors : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.KB_GATE]: 'rgba(155,200,200,0.5)'
     }
 
-const NodeTypeColors2 : { readonly [key in NodeTypes] : string } = 
+const NodeTypeColors2 : ReadonlyRecord<NodeTypes, string> = 
     { [NodeTypes.OUTPUT]: 'rgb(128,128,128)'
     , [NodeTypes.GAIN]:   'rgb(255,0,0)'
     , [NodeTypes.OSC]:    'rgb(0,0,255)'
@@ -429,7 +431,7 @@ const NodeTypeColors2 : { readonly [key in NodeTypes] : string } =
     , [NodeTypes.KB_GATE]: 'rgba(155,200,200)'
     } as const
 
-const NodeTypeDescriptions =
+const NodeTypeDescriptions : ReadonlyRecord<NodeTypes, string> =
     { [NodeTypes.OUTPUT]: 'NOT USED'
     , [NodeTypes.GAIN]:   'Gain nodes increase or decrease the intensity of signals. These should be used frequently.'
     , [NodeTypes.OSC]:    'Oscillator nodes output a basic tone.'
@@ -449,14 +451,14 @@ const NodeTypeDescriptions =
     , [NodeTypes.COMPRESSOR]:'Compressor nodes provide a compression effect which lowers the volume of the loudest parts of the signal in order to help prevent clipping and distortion that can occur when multiple sounds are played and multiplexed together at once.'
     , [NodeTypes.SAMPLE_PIANOR]: 'It\'s a piano sample roll'
     , [NodeTypes.KB_GATE]: 'This helps you control connected nodes with the keyboard.'
-    } as const
-
-const NodeTypeWarnings : { readonly [key in NodeTypes]? : string } = 
-    { [NodeTypes.FILTER]: `Filters may become unstable and we won't do anything about it. If this happens the program will cease to function properly and will need to be re-started.`
-    , [NodeTypes.DELAY]: `delayTime does not exceed 1 second.`
     }
 
-const ConnectionTypeColors : { readonly [key in ConnectionType] : string } =
+const NodeTypeWarnings = 
+    { [NodeTypes.FILTER]: `Filters may become unstable and we won't do anything about it. If this happens the program will cease to function properly and will need to be re-started.`
+    , [NodeTypes.DELAY]: `delayTime does not exceed 1 second.`
+    } as const
+
+const ConnectionTypeColors : ReadonlyRecord<ConnectionType, string> =
     { channel:      'gray'
     , frequency:    'rgb(50, 50, 255)'
     , gain:         'red'
@@ -474,7 +476,7 @@ const ConnectionTypeColors : { readonly [key in ConnectionType] : string } =
     , release: 'rgb(200,150,150)'
     }
 
-const DefaultParamValues : { readonly [key in AudioParams] : number } = 
+const DefaultParamValues : ReadonlyRecord<AudioParams, number> = 
     { gain:         1
     , frequency:    440
     , detune:       0
@@ -491,7 +493,7 @@ const DefaultParamValues : { readonly [key in AudioParams] : number } =
     , release: 0.1
     }
 
-const AudioParamRanges : { readonly [key in AudioParams] : [number,number] } = 
+const AudioParamRanges : ReadonlyRecord<AudioParams, [number, number]> = 
     { gain:         [0, 24000]
     , frequency:    [0, 24000]
     , detune:       [-153600, 153600]
@@ -508,7 +510,7 @@ const AudioParamRanges : { readonly [key in AudioParams] : [number,number] } =
     , release: [0, 1]
     }
 
-const hasLinearSlider : { readonly [key in AudioParams] : boolean } = 
+const hasLinearSlider : ReadonlyRecord<AudioParams, boolean> = 
     { gain:         false
     , frequency:    false
     , detune:       true
@@ -525,7 +527,7 @@ const hasLinearSlider : { readonly [key in AudioParams] : boolean } =
     , release: false
     }
 
-const isSubdividable : { readonly [key in AudioParams] : boolean } = 
+const isSubdividable : ReadonlyRecord<AudioParams, boolean> = 
     { gain:         false
     , frequency:    true
     , detune:       false
@@ -542,7 +544,7 @@ const isSubdividable : { readonly [key in AudioParams] : boolean } =
     , release: false
     }
 
-const AudioParamKnobTurns : { readonly [key in AudioParams] : number } = 
+const AudioParamKnobTurns : ReadonlyRecord<AudioParams, number> = 
     { gain:         2
     , frequency:    1
     , detune:       128
@@ -559,7 +561,7 @@ const AudioParamKnobTurns : { readonly [key in AudioParams] : number } =
     , release: 1
     }
 
-const AudioParamSliderFactor : { readonly [key in AudioParams] : number } = 
+const AudioParamSliderFactor : ReadonlyRecord<AudioParams, number> = 
     { gain:         2**-8
     , frequency:    2**-6
     , detune:       1
@@ -642,7 +644,7 @@ const Transferable_AudioNodeProperties =
 
 const PostConnection_Transferable_InputRemappable_AudioNodeProperties = 
     { [NodeTypes.G_SEQ]: ['stepMatrix', 'channelData', 'mutedChannel']
-    // , [NodeTypes.KB_GATE]: ['inputData']
+    , [NodeTypes.KB_GATE]: ['inputData']
     } as const
 
 type NodeCreationSettings = { 
@@ -743,6 +745,15 @@ type IOverridesGraphOperationKeyboardShortcuts<T> = (T extends OverridesGraphOpe
     }
     : {})
 
+interface NuniNode { id : number, audioNode : Indexed }
+
+type IUsesConnectionProtocol2<T> = (T extends UsesConnectionProtocol2
+    ? {
+        addInput(node : NuniNode) : void
+        removeInput(node : NuniNode) : void
+    }
+    : {})
+
 type ThatShit = typeof PostConnection_Transferable_InputRemappable_AudioNodeProperties
 type DoesThatShit = keyof ThatShit
 type IDoesThatShit<T> = (T extends DoesThatShit
@@ -750,7 +761,12 @@ type IDoesThatShit<T> = (T extends DoesThatShit
         [key in ThatShit[T][number]] : Record<number, unknown>
     }
     : {})
-    
+
+type IIsAwareOfInputIDs<T> = (T extends IsAwareOfInputIDs
+    ? {
+        replaceInput({ id, audioNode } : NuniNode, newNode : NuniNode) : void
+    }
+    : {}) 
 
 type AudioNodeInterfaces<T extends NodeTypes> =
     & BaseAudioNodeProperties
@@ -760,7 +776,9 @@ type AudioNodeInterfaces<T extends NodeTypes> =
     & IHasAResizableDialogBox<T>
     & IOverridesGraphOperationKeyboardShortcuts<T>
     & IReactsToBufferChange<T>
+    & IUsesConnectionProtocol2<T>
     & IDoesThatShit<T>
+    & IIsAwareOfInputIDs<T>
 
 
 
