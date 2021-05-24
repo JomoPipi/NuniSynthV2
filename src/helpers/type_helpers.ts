@@ -33,7 +33,7 @@ type Equals<A, B> = _HalfEquals<A, B> extends true ? _HalfEquals<B, A> : false;
         ? true
         : false;
 
-type OmitUntrue<T> = { [K in keyof T as T[K] extends true ? K : never]: T[K] }
+type OmitUntrue<T> = { [K in keyof T as T[K] extends true ? K : never] : T[K] }
 type Endofunction<T> = (arg : T) => T;
 type Indexed = { [param : string] : any }
 type ReadonlyRecord<K extends number | string, V> = { readonly [key in K] : V }

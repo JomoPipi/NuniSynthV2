@@ -7,10 +7,6 @@
 
 import { audioCtx, AudioNodeMap } from '../../webaudio2/internal.js'
 
-const is
-    = <T extends NodeTypes>(node : NuniGraphNode, type : T)
-    : node is NuniGraphNode<T> => node.type === type
-
 export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
     readonly id : number
@@ -51,9 +47,9 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
             // TODO: put this in a function: audioNode.doBadCode()
             requestAnimationFrame(() => {
                 
-                if (is(this, NodeTypes.S_SEQ) || is(this, NodeTypes.G_SEQ))
+                if (this.isOfType(NodeTypes.S_SEQ) || this.isOfType(NodeTypes.G_SEQ))
                 {
-                    if (is(this, NodeTypes.S_SEQ))
+                    if (this.isOfType(NodeTypes.S_SEQ))
                     { // This fixed a bug:
                         this.audioNode.channelVolumes = {}
                     }
@@ -62,7 +58,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
                     {
                         if (!channelVolumes[key])
                         {
-                            if (is(this, NodeTypes.G_SEQ)) throw 'Oh, okay. Do it for SGS as well.'
+                            if (this.isOfType(NodeTypes.G_SEQ)) throw 'Oh, okay. Do it for SGS as well.'
                             this.audioNode.createChannelVolume(+key)
                         }
                         channelVolumes[key].gain.value = channelData[key].volume
@@ -74,7 +70,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
             })
         }
 
-        if (is(this, NodeTypes.NUM)) this.audioNode.start(0)
+        if (this.isOfType(NodeTypes.NUM)) this.audioNode.start(0)
 
         this.audioParamValues = JSON.parse(JSON.stringify(audioParamValues))
 
@@ -88,5 +84,13 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
     setValueOfParam(param : ParamsOf<T>, value: number) {
         this.audioParamValues[param] = value
         this.audioNode[param].value = value
+    }
+
+    is<T extends NodeTypes> (types : { [key in T] : boolean }) : this is NuniGraphNode<T> { 
+        return types[this.type as unknown as T]
+    }
+
+    isOfType<T extends NodeTypes> (type : T) : this is NuniGraphNode<T> { 
+        return this.type as NodeTypes === type
     }
 }

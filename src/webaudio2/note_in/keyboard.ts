@@ -5,7 +5,7 @@
 
 
 
-const keyCodes = ([] as number[]).concat(...[
+const keyCodes = (<number[]>[]).concat(...[
     '1234567890',
     'qwertyuiop',
     'asdfghjkl',
@@ -37,11 +37,11 @@ export const KB =
     , mode: 'poly' as 'mono' | 'poly'
     , nVoices: 10
     , attachToGraph
-    , connectedNodes: function*() { yield* [] as Indexed[] }
+    , updateKeyboardNodes: (keydown : boolean, key : number) => {}
     }
 
-function attachToGraph(getAudioNodes : () => Generator<Indexed>) {
-    KB.connectedNodes = getAudioNodes
+function attachToGraph(updateKeyboardNodes : (keydown : boolean, key : number) => void) {
+    KB.updateKeyboardNodes = updateKeyboardNodes
 
     document.onkeydown = updateKeys(true)
     document.onkeyup = updateKeys(false)
@@ -75,11 +75,7 @@ function updateKeys(keydown : boolean) {
             }
 
             // MAKE THE SOUND HAPPEN
-            for (const an of KB.connectedNodes()) 
-            {
-                an.update(keydown, key)
-            }
-
+            KB.updateKeyboardNodes(keydown, key)
         } 
         else 
         {

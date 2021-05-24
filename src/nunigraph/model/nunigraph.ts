@@ -23,10 +23,6 @@ const defaultNodeSettings = () => (
     , audioNodeProperties: {}
     })
 
-const is
-    = <T extends NodeTypes>(node : NuniGraphNode, type : T) 
-    : node is NuniGraphNode<T> => node.type === type
-
 export class NuniGraph {
     /**
      * The job of the NuniGraph is to keep track of nodes and their connections.
@@ -312,7 +308,7 @@ export class NuniGraph {
             { 
                 const b = nodeCopies[indexB]
 
-                if (is(b, NodeTypes.MODULE))
+                if (b.isOfType(NodeTypes.MODULE))
                 {
                     // Handle the input nodeCopies of b, again (TODO: cleanup)
                     const innerInputNode 
@@ -343,7 +339,7 @@ export class NuniGraph {
         {
             
             // Disconnect loose inputnodes
-            if (is(node, NodeTypes.MODULE))
+            if (node.isOfType(NodeTypes.MODULE))
             {
                 // Without spreading the array, we would skip over indexes
                 // Because deleteNode splices the array
@@ -484,7 +480,7 @@ export class NuniGraph {
         a : NuniGraphNode, b : NuniGraphNode, nodeA : NuniGraphNode, nodeB : NuniGraphNode) {
 
         // Handle the input node(s) of b
-        if (is(b, NodeTypes.MODULE) && b !== nodeB) 
+        if (b.isOfType(NodeTypes.MODULE) && b !== nodeB) 
         {
             const innerInputNode 
                 = b.audioNode.controller.g.nodes.find(node =>
@@ -661,7 +657,7 @@ export class NuniGraph {
                 const nodeA = this.nodes.find(node => node.id === +id)!
                 const nodeB = this.nodes.find(node => node.id === id2)!
                 
-                if (is(nodeB, NodeTypes.MODULE)) 
+                if (nodeB.isOfType(NodeTypes.MODULE)) 
                 { // ! WE NEED TO HANDLE THE INPUT NODES OF nodeB
 
                     const innerInputNode 

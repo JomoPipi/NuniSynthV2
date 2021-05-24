@@ -25,14 +25,7 @@ import { createADSREditor } from '../../webaudio2/adsr/adsr_editor.js'
 import { createSliderComponent } from '../../UI_library/components/sliderComponent.js'
 import { MonoPianoRoll } from '../../webaudio2/nodes/pianoroll/mono_pianoroll.js'
 import { SamplePianoRoll } from '../../webaudio2/nodes/samplepianoroll/samplepianoroll.js'
-
-
-const hasSubtypes = (node : NuniGraphNode) : node is NuniGraphNode<HasSubtypes> =>
-    node.type in HasSubtypes
-
-const exposesAudioParams = (node : NuniGraphNode) 
-: node is NuniGraphNode<keyof typeof ExposesAudioparamsInDialogBox> =>
-    node.type in ExposesAudioparamsInDialogBox
+import { KeyboardGate } from '../../webaudio2/nodes/keyboard_gate.ts/kb_gate.js'
 
 export function createValuesWindow(
     node : NuniGraphNode, 
@@ -53,7 +46,7 @@ export function createValuesWindow(
         controls.classList.add(bgClasses[node.type as keyof typeof bgClasses])
     }
     
-    if (hasSubtypes(node))
+    if (node.is(HasSubtypes))
     {
         controls.appendChild(showSubtypes(node, saveCallback))
     }
@@ -114,7 +107,7 @@ export function createValuesWindow(
         controls.appendChild(gainControls(
             node as NuniGraphNode<NodeTypes.OUTPUT>))
     }
-    else if (exposesAudioParams(node)) 
+    else if (node.is(ExposesAudioparamsInDialogBox)) 
     {
         controls.appendChild(exposeAudioParams(node, saveCallback))
     }
@@ -124,16 +117,17 @@ export function createValuesWindow(
         controls.appendChild(activateKeyboardButton(audioNode))
     }
 //////////////////////////////////////////////////////////
-    // if (audioNode instanceof PianoRoll12Tone)
-    // {
-    //     controls.appendChild(audioNode.pianoRoll)
-    // }
     if (audioNode instanceof MonoPianoRoll)
     {
         controls.appendChild(audioNode.getController())
     }
 //////////////////////////////////////////////////////////
     else if (audioNode instanceof ProcessorNode)
+    {
+        controls.appendChild(audioNode.getController())
+    }
+
+    else if (audioNode instanceof KeyboardGate)
     {
         controls.appendChild(audioNode.getController())
     }

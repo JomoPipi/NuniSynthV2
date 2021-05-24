@@ -35,14 +35,6 @@ type DeleteNodeOptions = {
 
 const dialogBoxesContainer = D('node-windows')
 
-const is
-    = <T extends NodeTypes>(node : NuniGraphNode, type : T) 
-    : node is NuniGraphNode<T> => node.type === type
-
-const iss
-    = <T extends NodeTypes>(node : NuniGraphNode, types : readonly T[]) 
-    : node is NuniGraphNode<T> => types.includes(node.type as any)
-
 export class NuniGraphController {
 /**
  *  Manipulates the graph and its' view
@@ -315,7 +307,7 @@ export class NuniGraphController {
             })
 
 
-        if (is(node, NodeTypes.MODULE))
+        if (node.isOfType(NodeTypes.MODULE))
         {
             // Mark the controller as 'active'
             const controller = node.audioNode.controller
@@ -408,7 +400,7 @@ export class NuniGraphController {
         const _this = this
 
         function moveTheWindowToTheTop(box : HTMLElement, node : NuniGraphNode) {
-            if (!is(node,NodeTypes.MODULE))
+            if (!node.isOfType(NodeTypes.MODULE))
             {
                 box.style.zIndex = (++DIRTYGLOBALS.RISING_GLOBAL_Z_INDEX).toString()
             }
@@ -472,11 +464,7 @@ export class NuniGraphController {
         const node = this.g.nodes.find(node => node.id === id)!
         if (!node) throw 'Not supposed to happen - figure out what to do from here'
 
-        const knowsWhenDialogBoxCloses = (node : NuniGraphNode)
-            : node is NuniGraphNode<KnowsWhenDialogBoxCloses> =>
-            node.type in KnowsWhenDialogBoxCloses
-
-        if (knowsWhenDialogBoxCloses(node)) 
+        if (node.is(KnowsWhenDialogBoxCloses)) 
         {
             node.audioNode.deactivateWindow()
         }
@@ -812,7 +800,7 @@ export class NuniGraphController {
         {
             const node = this.selectedNodes[0]
             const isSelected = this.getOpenWindow[node.id]?.classList.contains('selected3')
-            if (isSelected && iss(node, OverridesGraphOperationKeyboardShortcuts))
+            if (isSelected && node.is(OverridesGraphOperationKeyboardShortcuts))
             {
                 node.audioNode.keydown(e)
                 return;

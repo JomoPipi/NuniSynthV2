@@ -99,38 +99,37 @@ export class NuniSourceNode extends VolumeNodeContainer {
         this.stopLastNSources = []
     }
 
-    playKeyAtTime(key : number, time : number, duration : number) {
+    // playKeyAtTime(key : number, time : number, duration : number) {
 
-        const src = this.createSource()
-        src.detune.value = KB.scale[KB.keymap[key]]
+    //     const src = this.createSource()
+    //     src.detune.value = KB.scale[KB.keymap[key]]
 
-        const adsr = this.ctx.createGain()
-        adsr.gain.setValueAtTime(1.0/KB.nVoices, 0)
-        adsr.connect(this.volumeNode)
+    //     const adsr = this.ctx.createGain()
+    //     adsr.gain.setValueAtTime(1.0/KB.nVoices, 0)
+    //     adsr.connect(this.volumeNode)
         
-        src.connect(adsr)
-        ADSR_Controller.triggerSource(src, adsr.gain, time, 1, this.localADSR)
-        const stopTime = ADSR_Controller.untriggerAndGetStopTime(adsr.gain, time + duration, -1, this.localADSR)
-        src.stop(stopTime)
-    }
+    //     src.connect(adsr)
+    //     ADSR_Controller.triggerSource(src, adsr.gain, time, 1, this.localADSR)
+    //     const stopTime = ADSR_Controller.untriggerAndGetStopTime(adsr.gain, time + duration, -1, this.localADSR)
+    //     src.stop(stopTime)
+    // }
 
-    update(keydown : boolean, key : number, when? : number) {
+    takeKeyboardInput(keydown : boolean, key : number) { // }, when : number = this.ctx.currentTime) {
         if (!this.kbMode) return;
-        const time = when ?? this.ctx.currentTime
+        const when = this.ctx.currentTime
         if (keydown) 
         {
-            this.beginPlayingNote(key, time)
+            this.beginPlayingNote(key, when)
 
             this.stopLastNSources.push(this.playingKeys[key])
             while (this.stopLastNSources.length >= KB.nVoices + 1) 
             {
                 this.stopLastNSources.shift()!.stopImmediately()
             }
-            
         } 
         else 
         {
-            this.playingKeys[key]?.stop(time)
+            this.playingKeys[key]?.stop(when)
             delete this.playingKeys[key]
         }
     }

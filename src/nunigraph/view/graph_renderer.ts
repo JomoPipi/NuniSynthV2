@@ -19,10 +19,6 @@ export type HoverResponse
     | { type : HOVER.CONNECTION, node? : null, connectionId : string }
     | { type : HOVER.EMPTY, node? : null, connectionId? : never }
 
-const is
-    = <T extends NodeTypes>(node : NuniGraphNode, type : T) 
-    : node is NuniGraphNode<T> => node.type === type
-
 type GraphRenderOptions = {
     H : number
     W : number
@@ -455,11 +451,7 @@ export class NuniGraphRenderer {
             }
             if (UserOptions.config["Show Node Images"])
             {
-                const hasDynamicNodeIcon = (node : NuniGraphNode)
-                    : node is NuniGraphNode<HasDynamicNodeIcon> => 
-                    node.type in HasDynamicNodeIcon
-
-                const key = hasDynamicNodeIcon(node)
+                const key = node.is(HasDynamicNodeIcon)
                     ? node.audioNode.getNodeIcon()
                     : DefaultNodeIcon[node.type]
                 const img = GraphIconImageObjects[key]

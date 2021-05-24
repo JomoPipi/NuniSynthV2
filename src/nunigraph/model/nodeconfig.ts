@@ -6,7 +6,7 @@
 
 
 const enum NodeTypes
-{ //! DON'T CHANGE STRING VALUES //!
+{
     OUTPUT = 'output',
     GAIN = 'gain',
     OSC = 'oscillator',
@@ -24,7 +24,7 @@ const enum NodeTypes
     PIANOR = 'piano-roll',
     PROCESSOR = 'processor',
     COMPRESSOR = 'compression',
-    SAMPLE_PIANOR = 'sample-pianooroll',
+    SAMPLE_PIANOR = 'sample-pianooroll', // <- Do not fix typo
 
     KB_GATE = 'keyboard-gate'
 }
@@ -77,6 +77,7 @@ const NodeLabel : ReadonlyRecord<NodeTypes, string> =
     }
     
 type GraphIcon = string // typeof GraphIconUrls[number]
+type SVGIconKey = typeof GraphIconKeys[number]
 const GraphIconKeys = 
     [ 'sine'
     , 'triangle'
@@ -107,7 +108,6 @@ const GraphIconKeys =
     , 'button'
 
     ] as const
-type SVGIconKey = typeof GraphIconKeys[number]
 
 const DefaultNodeIcon : ReadonlyRecord<NodeTypes, SVGIconKey> =
     { [NodeTypes.OUTPUT]: 'loud-speaker'
@@ -133,12 +133,6 @@ const DefaultNodeIcon : ReadonlyRecord<NodeTypes, SVGIconKey> =
     , [NodeTypes.KB_GATE]: 'knob'
     } as const
 
-const HasDynamicNodeIcon = 
-    { [NodeTypes.OSC]: true
-    , [NodeTypes.FILTER]: true
-    }
-type HasDynamicNodeIcon = keyof typeof HasDynamicNodeIcon
-
 const GraphIconImageObjects =
     GraphIconKeys.reduce((acc, name) => {
         const url = `svg_images/${name}.svg`
@@ -147,28 +141,6 @@ const GraphIconImageObjects =
         acc[name] = img
         return acc
     }, {} as Record<SVGIconKey, HTMLImageElement>)
-
-const KnowsWhenDialogBoxCloses =
-    { [NodeTypes.G_SEQ]: true
-    , [NodeTypes.S_SEQ]: true
-    , [NodeTypes.AUTO]: true
-    , [NodeTypes.MODULE]: true
-    // , [NodeTypes.RECORD]: true
-    // TODO: make these true
-    // , [NodeTypes.PIANOR]: true
-    // , [NodeTypes.PROCESSOR]: true
-    }
-type KnowsWhenDialogBoxCloses = keyof typeof KnowsWhenDialogBoxCloses
-
-const HasAResizableDialogBox =
-    { [NodeTypes.AUTO]:      true
-    // TODO: convert Module maybe?
-    // , [NodeTypes.MODULE]:    true
-    , [NodeTypes.PIANOR]:    true
-    , [NodeTypes.PROCESSOR]: true
-    , [NodeTypes.SAMPLE_PIANOR]: true
-    }
-type HasAResizableDialogBox = keyof typeof HasAResizableDialogBox
 
 const HasTitleEditor : ReadonlyRecord<NodeTypes, boolean> =
     { [NodeTypes.OUTPUT]: false
@@ -211,47 +183,6 @@ const SupportsInputChannels : ReadonlyRecord<NodeTypes, boolean> =
     , [NodeTypes.SAMPLE_PIANOR]:false
     , [NodeTypes.KB_GATE]: true
     }
-
-assertType<Equals<keyof typeof IsAwareOfInputIDs, NodeTypes>>()
-const IsAwareOfInputIDs =
-    { [NodeTypes.OUTPUT]: false
-    , [NodeTypes.GAIN]:   false
-    , [NodeTypes.OSC]:    false
-    , [NodeTypes.FILTER]: false
-    , [NodeTypes.PANNER]: false
-    , [NodeTypes.DELAY]:  false
-    , [NodeTypes.SAMPLE]: false
-    , [NodeTypes.G_SEQ]:  true
-    , [NodeTypes.S_SEQ]:  false
-    , [NodeTypes.NUM]:    false
-    , [NodeTypes.RECORD]: false
-    , [NodeTypes.MODULE]: true
-    , [NodeTypes.AUTO]:   false
-    , [NodeTypes.PIANOR]: false
-    , [NodeTypes.PROCESSOR]:false
-    , [NodeTypes.COMPRESSOR]:false
-    , [NodeTypes.SAMPLE_PIANOR]:false
-    , [NodeTypes.KB_GATE]: true
-    } as const
-type IsAwareOfInputIDs = keyof OmitUntrue<typeof IsAwareOfInputIDs>
-
-const ExposesAudioparamsInDialogBox =
-    { [NodeTypes.GAIN]:       true
-    , [NodeTypes.OSC]:        true
-    , [NodeTypes.FILTER]:     true
-    , [NodeTypes.PANNER]:     true
-    , [NodeTypes.DELAY]:      true
-    , [NodeTypes.SAMPLE]:     true
-    , [NodeTypes.NUM]:        true
-    , [NodeTypes.COMPRESSOR]: true
-    } as const
-
-const OverridesGraphOperationKeyboardShortcuts =
-    [ NodeTypes.PIANOR
-    , NodeTypes.SAMPLE_PIANOR
-    , NodeTypes.MODULE
-    , NodeTypes.PROCESSOR
-    ] as const
 
 const HasNoOutput : ReadonlyRecord<NodeTypes, boolean> =
     { [NodeTypes.OUTPUT]: true
@@ -296,6 +227,7 @@ const OpensDialogBoxWhenConnectedTo : ReadonlyRecord<NodeTypes, boolean> =
     }
 
 assertType<Equals<keyof typeof UsesConnectionProtocol2, NodeTypes>>()
+type UsesConnectionProtocol2 = keyof OmitUntrue<typeof UsesConnectionProtocol2>
 const UsesConnectionProtocol2 =
     { [NodeTypes.OUTPUT]:        false
     , [NodeTypes.GAIN]:          false
@@ -316,7 +248,75 @@ const UsesConnectionProtocol2 =
     , [NodeTypes.SAMPLE_PIANOR]: false
     , [NodeTypes.KB_GATE]:       true
     } as const
-type UsesConnectionProtocol2 = keyof OmitUntrue<typeof UsesConnectionProtocol2>
+
+assertType<Equals<keyof typeof IsAwareOfInputIDs, NodeTypes>>()
+type IsAwareOfInputIDs = keyof OmitUntrue<typeof IsAwareOfInputIDs>
+const IsAwareOfInputIDs =
+    { [NodeTypes.OUTPUT]: false
+    , [NodeTypes.GAIN]:   false
+    , [NodeTypes.OSC]:    false
+    , [NodeTypes.FILTER]: false
+    , [NodeTypes.PANNER]: false
+    , [NodeTypes.DELAY]:  false
+    , [NodeTypes.SAMPLE]: false
+    , [NodeTypes.G_SEQ]:  true
+    , [NodeTypes.S_SEQ]:  false
+    , [NodeTypes.NUM]:    false
+    , [NodeTypes.RECORD]: false
+    , [NodeTypes.MODULE]: true
+    , [NodeTypes.AUTO]:   false
+    , [NodeTypes.PIANOR]: false
+    , [NodeTypes.PROCESSOR]:false
+    , [NodeTypes.COMPRESSOR]:false
+    , [NodeTypes.SAMPLE_PIANOR]:false
+    , [NodeTypes.KB_GATE]: true
+    } as const
+
+type KnowsWhenDialogBoxCloses = keyof typeof KnowsWhenDialogBoxCloses
+const KnowsWhenDialogBoxCloses =
+    { [NodeTypes.G_SEQ]: true
+    , [NodeTypes.S_SEQ]: true
+    , [NodeTypes.AUTO]: true
+    , [NodeTypes.MODULE]: true
+    // , [NodeTypes.RECORD]: true
+    // TODO: These should be true:
+    // , [NodeTypes.PIANOR]: true
+    // , [NodeTypes.PROCESSOR]: true
+    } as const
+
+type HasAResizableDialogBox = keyof typeof HasAResizableDialogBox
+const HasAResizableDialogBox =
+    { [NodeTypes.AUTO]:      true
+    //* Is actually resizable but we don't mark it here:
+    // , [NodeTypes.MODULE]:    true
+    , [NodeTypes.PIANOR]:    true
+    , [NodeTypes.PROCESSOR]: true
+    , [NodeTypes.SAMPLE_PIANOR]: true
+    } as const
+
+type HasDynamicNodeIcon = keyof typeof HasDynamicNodeIcon
+const HasDynamicNodeIcon = 
+    { [NodeTypes.OSC]: true
+    , [NodeTypes.FILTER]: true
+    } as const
+
+const ExposesAudioparamsInDialogBox =
+    { [NodeTypes.GAIN]:       true
+    , [NodeTypes.OSC]:        true
+    , [NodeTypes.FILTER]:     true
+    , [NodeTypes.PANNER]:     true
+    , [NodeTypes.DELAY]:      true
+    , [NodeTypes.SAMPLE]:     true
+    , [NodeTypes.NUM]:        true
+    , [NodeTypes.COMPRESSOR]: true
+    } as const
+
+const OverridesGraphOperationKeyboardShortcuts =
+    { [NodeTypes.PIANOR]: true
+    , [NodeTypes.SAMPLE_PIANOR]: true
+    , [NodeTypes.MODULE]: true
+    , [NodeTypes.PROCESSOR]: true
+    } as const
 
 const ClockDependent =
     { [NodeTypes.G_SEQ]:  true
@@ -333,6 +333,12 @@ const ReactsToBufferChange =
     , [NodeTypes.RECORD]: true
     , [NodeTypes.SAMPLE_PIANOR]: true
     } as const
+
+const TakesKeyboardInput = 
+    { [NodeTypes.SAMPLE]: true
+    , [NodeTypes.OSC]:    true
+    } as const
+type TakesKeyboardInput = keyof typeof TakesKeyboardInput
 
 const AudioNodeParams =
     { [NodeTypes.OUTPUT]: []
@@ -456,7 +462,7 @@ const NodeTypeDescriptions : ReadonlyRecord<NodeTypes, string> =
 const NodeTypeWarnings = 
     { [NodeTypes.FILTER]: `Filters may become unstable and we won't do anything about it. If this happens the program will cease to function properly and will need to be re-started.`
     , [NodeTypes.DELAY]: `delayTime does not exceed 1 second.`
-    } as const
+    } as ReadonlyRecord<NodeTypes, string>
 
 const ConnectionTypeColors : ReadonlyRecord<ConnectionType, string> =
     { channel:      'gray'
@@ -684,18 +690,16 @@ class NuniAudioParam extends ConstantSourceNode {
     }
 }
 
-const CanBeAutomated =
-    [ NodeTypes.GAIN
-    , NodeTypes.OSC
-    , NodeTypes.FILTER
-    , NodeTypes.PANNER
-    , NodeTypes.DELAY
-    , NodeTypes.SAMPLE
-    , NodeTypes.S_SEQ
-    , NodeTypes.NUM
-    , NodeTypes.COMPRESSOR
-    ] as const
-type CanBeAutomated = typeof CanBeAutomated[number]
+type CanBeAutomated =
+    | NodeTypes.GAIN
+    | NodeTypes.OSC
+    | NodeTypes.FILTER
+    | NodeTypes.PANNER
+    | NodeTypes.DELAY
+    | NodeTypes.SAMPLE
+    | NodeTypes.S_SEQ
+    | NodeTypes.NUM
+    | NodeTypes.COMPRESSOR
 
 type ParamsOf<T extends NodeTypes> = T extends CanBeAutomated
     ? typeof AudioNodeParams[T][number]
@@ -738,7 +742,7 @@ type IHasAResizableDialogBox<T> = (T extends HasAResizableDialogBox
     }
     : {})
 
-type OverridesGraphOperationKeyboardShortcuts = typeof OverridesGraphOperationKeyboardShortcuts[number]
+type OverridesGraphOperationKeyboardShortcuts = keyof typeof OverridesGraphOperationKeyboardShortcuts
 type IOverridesGraphOperationKeyboardShortcuts<T> = (T extends OverridesGraphOperationKeyboardShortcuts
     ? {
         keydown(e : KeyboardEvent) : void

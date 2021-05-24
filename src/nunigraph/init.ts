@@ -20,11 +20,6 @@ import { snapToGrid } from './view/snap_to_grid.js'
 import { WaveformUtils } from '../waveform_utils/mutable_waveform.js'
 import { NuniGraphNode } from './model/nunigraph_node.js'
 
-    
-const is
-    = <T extends NodeTypes>(node : NuniGraphNode, type : T)
-    : node is NuniGraphNode<T> => node.type === type
-    
 class Nuni extends NuniGraphController {
 
     volumeNode : GainNode
@@ -73,27 +68,18 @@ Graph_Attachments: {
     {
         (<any>window).getAudioNodes = () => [...yieldNodes(g)]
     }
-
-    //? Useful //?
-    // const Keyboardable = { [NodeTypes.OSC]:1, [NodeTypes.SAMPLE]:1 } as const
-    // type Keyboardable = keyof typeof Keyboardable
-    // const isKeyboardable = (node : NuniGraphNode) : node is NuniGraphNode<Keyboardable> =>
-    //     node.type in Keyboardable
-    KB.attachToGraph(function*() {
-        for (const { audioNode: an } of yieldNodes(g)) 
+    
+    KB.attachToGraph(function(keydown : boolean, key : number) {
+        for (const node of yieldNodes(g)) 
         {
-            if (an instanceof NuniSourceNode) 
-            { // && an.kbMode !== 'none') {
-                yield an
+            if (node.is(TakesKeyboardInput)) 
+            {
+                node.audioNode.takeKeyboardInput(keydown, key)
             }
         }
     })
-
-    const isClockDependent = 
-        (node : NuniGraphNode) : node is NuniGraphNode<ClockDependent> => 
-            node.type in ClockDependent
     
-    const yieldClockedNodes = yieldNodesFiltered(isClockDependent)
+    const yieldClockedNodes = yieldNodesFiltered(ClockDependent)
 
     let lastSchedule = Date.now()
     MasterClock.setSchedule(
@@ -126,11 +112,7 @@ Graph_Attachments: {
         }
     })
 
-    const reactsToBufferChange = 
-        (node : NuniGraphNode) : node is NuniGraphNode<ReactsToBufferChange> => 
-            node.type in ReactsToBufferChange
-    
-    const yieldBufferNodes = yieldNodesFiltered(reactsToBufferChange)
+    const yieldBufferNodes = yieldNodesFiltered(ReactsToBufferChange)
 
     BufferUtils.initBufferPresets(audioCtx)
     BufferUtils.setRefreshBufferFunc((index : number) => {
@@ -153,7 +135,7 @@ Graph_Attachments: {
     function* yieldNodes(g : NuniGraph) : Generator<NuniGraphNode> {
         for (const node of g.nodes) 
         {
-            if (is(node, NodeTypes.MODULE))
+            if (node.isOfType(NodeTypes.MODULE))
             {
                 yield* yieldNodes(node.audioNode.controller.g)
             } 
@@ -164,18 +146,17 @@ Graph_Attachments: {
         }
     }
 
-    function yieldNodesFiltered <T extends NodeTypes>
-        (isWhatever : (node : NuniGraphNode) => node is NuniGraphNode<T>) {
+    function yieldNodesFiltered <T extends NodeTypes> (whatever : Record<T, boolean>) {
              
         return function* yieldThem(g : NuniGraph) : Generator<NuniGraphNode<T>> {
 
             for (const node of g.nodes) 
             {
-                if (is(node, NodeTypes.MODULE))
+                if (node.isOfType(NodeTypes.MODULE))
                 {
                     yield* yieldThem(node.audioNode.controller.g)
                 } 
-                else if (isWhatever(node))
+                else if (node.is(whatever))
                 {
                     yield node
                 }
