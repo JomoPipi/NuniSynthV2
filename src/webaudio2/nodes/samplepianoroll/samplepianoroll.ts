@@ -258,7 +258,7 @@ export class SamplePianoRoll extends VolumeNodeContainer
                             continue;
                         }
                         if (!Array.isArray(data)) throw 'Error parsing midi event: ' + JSON.stringify(midiEvent)
-                        const [note, velocity] = data as number[]
+                        const [note, velocity] : number[] = data
                         noteTime += deltaTime / o.timeDivision
                         if (type === MidiEventTypes.NOTE_ON)
                         {

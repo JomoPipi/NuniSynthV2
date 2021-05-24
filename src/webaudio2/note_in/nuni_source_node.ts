@@ -33,8 +33,8 @@ export class NuniSourceNode extends VolumeNodeContainer {
         { attack: 0.01
         , decay: 0.17
         , sustain: 0.21
-        , release: 0.0//38
-        , curve: 'exponential' as CurveType
+        , release: 0.18
+        , curve: 'S' as CurveType
         }
     
     constructor(ctx : AudioContext) {

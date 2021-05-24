@@ -15,7 +15,7 @@ const map_to_new_range = (value : number, start : number, end : number) =>
 const widthConstant = 138
 const rainbow = '#C44,#AA4,#494,#4AB,#A4F,#E7E'.split(',')
 
-let [ctx, W, H, h2, gradient, bufferLength, sliceWidth] = [] as any[]
+let [ctx, W, H, h2, gradient, bufferLength, sliceWidth] : any[] = []
 
 const init = (e : MessageEvent) => {
     W = e.data.canvas.width

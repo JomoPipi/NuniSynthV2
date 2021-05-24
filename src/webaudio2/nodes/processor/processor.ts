@@ -284,7 +284,7 @@ export class ProcessorNode
 
     constructor (ctx : AudioContext) {
         this.audioWorkletNode = new AudioWorkletNode(ctx, 'bypass-processor')
-        this.inputChannelNode = ctx.createGain()//.connect(this.audioWorkletNode) as GainNode
+        this.inputChannelNode = ctx.createGain()
         this.ctx = ctx
         this.volumeNode = ctx.createGain()
         this.audioWorkletNode.connect(this.volumeNode)
@@ -292,11 +292,11 @@ export class ProcessorNode
     }
 
     connect(destination : Destination) {
-        this.volumeNode.connect(destination as any)
+        this.volumeNode.connect(destination)
     }
 
     disconnect(destination? : Destination) {
-        this.volumeNode.disconnect(destination as any)
+        this.volumeNode.disconnect(destination)
     }
 
     keydown(){}

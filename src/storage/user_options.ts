@@ -45,7 +45,7 @@ function getUserConfig() : UserConfig {
             config[key] = config[key] || DefaultConfig[k]
         }
         console.log('config = ',config)
-        return config as UserConfig
+        return config
     } 
     catch (e)
     {

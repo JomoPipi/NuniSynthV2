@@ -25,7 +25,7 @@ const keymap = keyCodes.reduce((map,key,i) => {
     return map
     }, {} as Indexable<number>)
 
-const held = [] as number[]
+const held :number[] = []
 
 const scale = keyCodes.map((_,i) => i * 100)
 

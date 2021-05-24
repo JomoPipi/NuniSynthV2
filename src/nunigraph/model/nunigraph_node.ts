@@ -77,7 +77,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         for (const param of AudioNodeParams[this.type]) 
         {
             const value = audioParamValues[param] ?? DefaultParamValues[param]
-            this.setValueOfParam(param as ParamsOf<T>, value)
+            this.setValueOfParam(param, value)
         }
     }
 
@@ -86,7 +86,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.audioNode[param].value = value
     }
 
-    is<T extends NodeTypes> (types : { [key in T] : boolean }) : this is NuniGraphNode<T> { 
+    is<T extends NodeTypes> (types : Record<T, boolean>) : this is NuniGraphNode<T> { 
         return types[this.type as unknown as T]
     }
 

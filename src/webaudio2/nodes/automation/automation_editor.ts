@@ -653,7 +653,7 @@ export class AutomationPointsEditor {
     
     optimizePoints() {
         const threshold = 0.01
-        const toDelete = {} as Record<number, true>
+        const toDelete : Record<number, true> = {}
         let goAgain = false
         for (let i = 0; i < this.points.length - 2; ++i)
         {

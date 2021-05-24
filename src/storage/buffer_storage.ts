@@ -13,10 +13,10 @@ import { audioCtx } from "../webaudio2/internal.js"
 
 
 
-const buffers = {} as Indexable<AudioBuffer>
-const reversedBuffers = {} as Indexable<AudioBuffer>
-const imageNeedsUpdate = {} as Indexable<boolean> 
-const importData = {} as Record<number,string | undefined>
+const buffers : Indexable<AudioBuffer> = {}
+const reversedBuffers : Indexable<AudioBuffer> = {}
+const imageNeedsUpdate : Indexable<boolean> = {}
+const importData : Record<number, string | undefined> = {}
 
 function get(key : number, reversed? : boolean) {
     return (reversed ? reversedBuffers : buffers)[key]

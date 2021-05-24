@@ -68,3 +68,20 @@ export class KeyboardGate extends VolumeNodeContainer
         return container
     }
 }
+
+
+
+
+
+
+type A = { kind: 'a', value: string };
+type B = { kind: 'b', value: number };
+
+function f3<T extends A | B>(x: T) {
+    if (x.kind === 'a') {
+        const y = x.value;  // Narrowed to string (wasn't narrowed before this PR)
+    }
+    else {
+        const y = x.value;  // Narrowed to number (wasn't narrowed before this PR)
+    }
+}

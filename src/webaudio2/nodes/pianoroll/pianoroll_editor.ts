@@ -1177,7 +1177,7 @@ export class  PianoRollEditor {
         this.layout()
     }
 
-    private keyIsDownSoDontSpam = {} as Record<string,boolean>
+    private keyIsDownSoDontSpam : Record<string,boolean> = {}
     private lastKeyPressId = -1
     keydown(e : KeyboardEvent) {
         if (this.lastKeyPressId < 0) this.undoRedo.save()

@@ -295,7 +295,7 @@ export class NuniGraph {
                 }
             const t = oldId === 0 ? NodeTypes.GAIN : type
             return this.createNewNode(t, settings)
-        }) as NuniGraphNode[]
+        })
 
         const retainedInputs = new Set()
 
@@ -374,7 +374,7 @@ export class NuniGraph {
                 for (const propName of weirdArray[node.type]) 
                 {
                     const targetObj : Indexed = (<Indexed>an)[propName] = {}
-                    const sourceObj = _an[propName as keyof typeof _an]
+                    const sourceObj = _an[propName]
     
                     // We look through they keys of the source object
                     for (const id in sourceObj) 
@@ -440,7 +440,7 @@ export class NuniGraph {
         const correspondenceMap = nodes.reduce((map,node) => {
             map[node.id] = this.reproduceNode(node)
             return map
-        }, {} as { [key : number] : NuniGraphNode })
+        }, {} as Record<number, NuniGraphNode>)
 
         this.reproduceConnections(correspondenceMap)
 

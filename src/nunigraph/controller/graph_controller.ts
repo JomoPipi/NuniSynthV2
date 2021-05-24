@@ -358,8 +358,8 @@ export class NuniGraphController {
             , contentContainer
             , color: NodeTypeColors2[node.type]
             , barContent
-            , resizeUpdate: node.type in HasAResizableDialogBox
-                ? (H, W) => (node as NuniGraphNode<HasAResizableDialogBox>).audioNode.updateBoxDimensions(H, W)
+            , resizeUpdate: node.is(HasAResizableDialogBox)
+                ? (H, W) => node.audioNode.updateBoxDimensions(H, W)
                 : undefined
             })
 

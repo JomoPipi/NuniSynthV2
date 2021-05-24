@@ -43,7 +43,7 @@ export function createDraggableNumberInput(
             , value: initialValue
             }
         })
-        for (const d of ['width','height'] as 'width'[])
+        for (const d of ['width','height'] as const)
         {
             if (settings[d]) valueInput.style[d] = settings[d] + 'px'
         }

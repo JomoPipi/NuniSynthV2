@@ -102,10 +102,9 @@ export function createValuesWindow(
         controls.appendChild(audioNode.getController())
     }
 
-    if (node.type === NodeTypes.OUTPUT)
+    if (node.isOfType(NodeTypes.OUTPUT))
     {
-        controls.appendChild(gainControls(
-            node as NuniGraphNode<NodeTypes.OUTPUT>))
+        controls.appendChild(gainControls(node))
     }
     else if (node.is(ExposesAudioparamsInDialogBox)) 
     {
