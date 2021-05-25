@@ -1866,25 +1866,18 @@ a {
 */
 .keyboard {
   text-align: center;
-  font-size: 5px;
+  font-size: 6px;
   font-family: sans-serif;
+  margin: 0px;
+  padding: 0px;
   margin-bottom: 2%;
 }
 
 .keyboard__row {
-  background-color: #ffae00;
-  display: inline-block;
+  background-color: #e5ff00;
+  display: block;
   height: 3em;
-  margin: 0.2em;
-}
-
-.keyboard__row--h1 {
-  height: 1.7em;
-  line-height: 1.4em;
-}
-
-.keyboard__row--h3 {
-  height: 3.3em;
+  margin: 0.5em;
 }
 
 .keyboard__row > * {

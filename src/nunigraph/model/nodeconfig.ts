@@ -6,7 +6,7 @@
 
 
 const enum NodeTypes
-{
+{ //! DO NOT CHANGE THE STRING VALUES !//
     OUTPUT = 'output',
     GAIN = 'gain',
     OSC = 'oscillator',

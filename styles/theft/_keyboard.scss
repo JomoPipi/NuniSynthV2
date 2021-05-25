@@ -12,25 +12,18 @@
 
 .keyboard {
     text-align: center;
-    font-size: 5px;
+    font-size: 6px;
     font-family: sans-serif;
+    margin: 0px;
+    padding: 0px;
     margin-bottom: 2%;
 }
 
 .keyboard__row {
-    background-color: rgb(255, 174, 0);
-    display: inline-block;
+    background-color: rgb(229, 255, 0);
+    display: block;
     height: 3em;
-    margin: 0.2em;
-}
-
-.keyboard__row--h1 {
-    height: 1.7em;
-    line-height: 1.4em;
-}
-
-.keyboard__row--h3 {
-    height: 3.3em;
+    margin: 0.5em;
 }
 
 .keyboard__row > * {

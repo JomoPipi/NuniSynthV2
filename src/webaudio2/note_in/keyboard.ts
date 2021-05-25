@@ -37,7 +37,7 @@ export const KB =
     , mode: 'poly' as 'mono' | 'poly'
     , nVoices: 10
     , attachToGraph
-    , updateKeyboardNodes: (keydown : boolean, key : number) => {}
+    , updateKeyboardNodes(keydown : boolean, key : number) {}
     }
 
 function attachToGraph(updateKeyboardNodes : (keydown : boolean, key : number) => void) {
@@ -91,13 +91,13 @@ slider.oninput = function () {
 } 
 
 function updateKBImage(code : number, keydown : boolean) {
-    // Updates the keyboard defined in UI/init_kb_image.ts
+    
     const selector = [
         '[data-key="' + code + '"]',
         '[data-char*="' + encodeURIComponent(String.fromCharCode(code)) + '"]'
         ].join(',')
 
-    document.querySelector(selector)!
+    ;[...document.querySelectorAll(selector)!].map(elem => elem
         .classList
-        .toggle('key-pressed', keydown)
+        .toggle('key-pressed', keydown))
 }
