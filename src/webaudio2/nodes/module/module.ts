@@ -62,7 +62,6 @@ export class NuniGraphAudioNode extends VolumeNodeContainer
     set graphCode(code : string) {
         this.controller.fromString(code)
     }
-
     
     addInput({ id, audioNode } : NuniNode) {
 
@@ -107,6 +106,10 @@ export class NuniGraphAudioNode extends VolumeNodeContainer
         {
             this.controller.renderer.render()
         }
+    }
+
+    hasInput({ id } : NuniNode) {
+        return id in this.inputs
     }
 
     replaceInput({ id, audioNode } : NuniNode, newNode : NuniNode) {

@@ -223,7 +223,7 @@ const OpensDialogBoxWhenConnectedTo : ReadonlyRecord<NodeTypes, boolean> =
     , [NodeTypes.PROCESSOR]:false
     , [NodeTypes.COMPRESSOR]:false
     , [NodeTypes.SAMPLE_PIANOR]: false
-    , [NodeTypes.KB_GATE]: false
+    , [NodeTypes.KB_GATE]: true
     }
 
 assertType<Equals<keyof typeof UsesConnectionProtocol2, NodeTypes>>()
@@ -249,26 +249,10 @@ const UsesConnectionProtocol2 =
     , [NodeTypes.KB_GATE]:       true
     } as const
 
-assertType<Equals<keyof typeof IsAwareOfInputIDs, NodeTypes>>()
-type IsAwareOfInputIDs = keyof OmitUntrue<typeof IsAwareOfInputIDs>
+type IsAwareOfInputIDs = keyof typeof IsAwareOfInputIDs
 const IsAwareOfInputIDs =
-    { [NodeTypes.OUTPUT]: false
-    , [NodeTypes.GAIN]:   false
-    , [NodeTypes.OSC]:    false
-    , [NodeTypes.FILTER]: false
-    , [NodeTypes.PANNER]: false
-    , [NodeTypes.DELAY]:  false
-    , [NodeTypes.SAMPLE]: false
-    , [NodeTypes.G_SEQ]:  true
-    , [NodeTypes.S_SEQ]:  false
-    , [NodeTypes.NUM]:    false
-    , [NodeTypes.RECORD]: false
+    { [NodeTypes.G_SEQ]:  true
     , [NodeTypes.MODULE]: true
-    , [NodeTypes.AUTO]:   false
-    , [NodeTypes.PIANOR]: false
-    , [NodeTypes.PROCESSOR]:false
-    , [NodeTypes.COMPRESSOR]:false
-    , [NodeTypes.SAMPLE_PIANOR]:false
     , [NodeTypes.KB_GATE]: true
     } as const
 
@@ -768,6 +752,7 @@ type IDoesThatShit<T> = (T extends DoesThatShit
 
 type IIsAwareOfInputIDs<T> = (T extends IsAwareOfInputIDs
     ? {
+        hasInput({ id } : NuniNode) : boolean
         replaceInput({ id, audioNode } : NuniNode, newNode : NuniNode) : void
     }
     : {}) 

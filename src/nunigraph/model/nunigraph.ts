@@ -102,35 +102,13 @@ export class NuniGraph {
 
 
 
-    private disconnectFromSpecialNodes(node : NuniGraphNode) { 
-        /** Motivation:
-         * Since some nodes get 
-         * disconnected in a custom way,
-         * they won't get the message when 
-         * an AudioNode calls disconnect() (with no arguments). 
-         * So This is a temporary fix, here.
-         * 
-         * A better solution may be to wrap disconnect(), or 
-         * stop using it all together.
-         *  */ 
+    private disconnectFromSpecialNodes(node : NuniGraphNode) {
         
-        for (const { audioNode, type } of this.nodes) 
+        for (const other of this.nodes) 
         {
-            // TODO: refactor into IsInputAware Object
-            // if (IsAwareOfInputIDs[type])
-            // {
-            //     audioNode.removeInput(node)
-            // }
-
-
-            // TODO: merge the duplicate if-bodies in a clean way
-            if (audioNode instanceof GateSequencer && audioNode.channelData[node.id])
+            if (other.is(IsAwareOfInputIDs) && other.audioNode.hasInput(node))
             {
-                audioNode.removeInput(node)
-            } 
-            else if (audioNode instanceof NuniGraphAudioNode && audioNode.inputs[node.id]) 
-            {
-                audioNode.removeInput(node)
+                other.audioNode.removeInput(node)
             }
         }
     }
@@ -180,7 +158,7 @@ export class NuniGraph {
 
     disconnect(node1 : NuniGraphNode, node2 : NuniGraphNode, connectionType : ConnectionType) {
         const connections = this.oneWayConnections[node1.id]
-
+        
         if (!connections) throw 'Check what happened here'
 
         const connectionIndex = 
@@ -230,7 +208,7 @@ export class NuniGraph {
         connectionType : ConnectionType) {
 
         const destination = this.prepareDestination(connectionType)(node2.audioNode)
-
+        console.log('hihouho')
         // TODO: Change this methods to disconnect_node_from_destination, and put this condition in a config object.
         if (UsesConnectionProtocol2[node2.type])
         {
@@ -711,16 +689,12 @@ export class NuniGraph {
 
 
 
-    insertNodeIntoConnection(node : NuniGraphNode, fromNode : NuniGraphNode, toNode : NuniGraphNode, connection_type : ConnectionType) {
+    insertNodeIntoConnection(node : NuniGraphNode, fromNode : NuniGraphNode, toNode : NuniGraphNode<IsAwareOfInputIDs>, connection_type : ConnectionType) {
         /* The idea here is to insert the node without having to actually disconnect fromNode from toNode.
         Why does this matter? Because of those pesky input-aware nodes (channel sequencers and modules at this time)
         whose states change when disconnecting the node. */
         
-        const isAware = (node : NuniGraphNode) 
-            : node is NuniGraphNode<keyof OmitUntrue<typeof IsAwareOfInputIDs>> => 
-                IsAwareOfInputIDs[node.type]
-
-        if (isAware(toNode))
+        if (node.is(IsAwareOfInputIDs))
         {
         // Go around the disconnect and makeConnection functions..
 

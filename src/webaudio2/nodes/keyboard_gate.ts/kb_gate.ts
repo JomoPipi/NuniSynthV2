@@ -56,7 +56,12 @@ export class KeyboardGate extends VolumeNodeContainer
 
     removeInput({ id, audioNode } : NuniNode) {
         delete this.inputData[id]
+        console.log('called remove input')
         this.render()
+    }
+
+    hasInput({ id } : NuniNode) {
+        return id in this.inputData
     }
 
     replaceInput({ id, audioNode } : NuniNode, newNode : NuniNode) {

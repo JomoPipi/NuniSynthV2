@@ -31,16 +31,7 @@ export class GateSequencer extends Sequencer
         this.refresh()
     }
 
-    refresh() {
-        for (const key in this.channelEnvelopes) 
-        {
-            this.channelEnvelopes[key].connect(this.channelVolumes[key])
-        }
-        Sequencer.prototype.refresh.call(this)
-    }
-
     removeInput({ id } : NuniNode) {
-
         this.channelEnvelopes[id].disconnect()
         this.channelVolumes[id].disconnect()
         delete this.channelEnvelopes[id]
@@ -49,6 +40,18 @@ export class GateSequencer extends Sequencer
         delete this.stepMatrix[id]
         delete this.mutedChannel[id]
         this.refresh()
+    }
+
+    hasInput({ id } : NuniNode) {
+        return id in this.channelVolumes
+    }
+
+    refresh() {
+        for (const key in this.channelEnvelopes) 
+        {
+            this.channelEnvelopes[key].connect(this.channelVolumes[key])
+        }
+        Sequencer.prototype.refresh.call(this)
     }
 
     playStepAtTime(id : number, time : number) {  
