@@ -51,10 +51,12 @@ export class KeyboardGate extends VolumeNodeContainer
 
     addInput({ id, audioNode } : NuniNode) {
         this.inputData[id] = {}
+        this.render()
     }
 
     removeInput({ id, audioNode } : NuniNode) {
         delete this.inputData[id]
+        this.render()
     }
 
     replaceInput({ id, audioNode } : NuniNode, newNode : NuniNode) {
@@ -64,16 +66,21 @@ export class KeyboardGate extends VolumeNodeContainer
         this.removeInput({ id, audioNode })
     }
 
+    private controller = E('div')
     getController() {
+        this.render()
+        return this.controller
+    }
+
+    private render() {
+        this.controller.innerHTML = ''
+
         const inputSelect = this.getInputSelect()
 
         const keyboardBox = E('div')
             keyboardBox.innerHTML = kbHTML
-        const container = E('div', 
-            { children: [inputSelect, keyboardBox] 
-            })
 
-        container.onclick = e => {
+        keyboardBox.onclick = e => {
             const el = e.target as HTMLElement
             const p = el.parentElement!
             const get = (s : string) => el.attributes.getNamedItem(s) || p.attributes.getNamedItem(s)
@@ -82,12 +89,12 @@ export class KeyboardGate extends VolumeNodeContainer
 
             console.log('elem',char)
         }
-        return container
+        this.controller.append(inputSelect, keyboardBox)
     }
 
     private getInputSelect() {
         return Object.keys(this.inputData).length === 0
             ? E('div', { text: 'No inputs available' })
-            : E('div', { text: 'implement' })
+            : E('div', { text: Object.keys(this.inputData).join(', ') })
     }
 }
