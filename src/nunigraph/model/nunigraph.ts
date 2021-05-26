@@ -651,13 +651,13 @@ export class NuniGraph {
         }
 
         // ! Transfer the post-connection properties
-        for (const _node of nodes) 
+        for (const node of nodes) 
         {   
-            const node = _node as NuniGraphNode
-            if (node.is(PostConnection_Transferable_InputRemappable_AudioNodeProperties))
+            // Can't use `node.is` here because it's JSON
+            if (node.type in PostConnection_Transferable_InputRemappable_AudioNodeProperties)
             {
                 const thisNode = this.nodes.find(n => n.id === node.id)!
-                for (const prop of PostConnection_Transferable_InputRemappable_AudioNodeProperties[node.type]) 
+                for (const prop of (PostConnection_Transferable_InputRemappable_AudioNodeProperties as any)[node.type]) 
                 {
                     // TODO: remove the ignores and give the serialized data a proper type
                     // @ts-ignore
