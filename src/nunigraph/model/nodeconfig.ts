@@ -29,6 +29,13 @@ const enum NodeTypes
     KB_GATE = 'keyboard-gate'
 }
 
+
+
+
+
+
+
+
 type AudioParams 
     = 'gain' 
     | 'frequency' 
@@ -106,8 +113,16 @@ const GraphIconKeys =
     , 'switch'
     , 'slider'
     , 'button'
-
     ] as const
+
+const GraphIconImageObjects =
+    GraphIconKeys.reduce((acc, name) => {
+        const url = `svg_images/${name}.svg`
+        const img = new Image()
+        img.src = url
+        acc[name] = img
+        return acc
+    }, {} as Record<SVGIconKey, HTMLImageElement>)
 
 const DefaultNodeIcon : ReadonlyRecord<NodeTypes, SVGIconKey> =
     { [NodeTypes.OUTPUT]: 'loud-speaker'
@@ -132,15 +147,6 @@ const DefaultNodeIcon : ReadonlyRecord<NodeTypes, SVGIconKey> =
     
     , [NodeTypes.KB_GATE]: 'knob'
     } as const
-
-const GraphIconImageObjects =
-    GraphIconKeys.reduce((acc, name) => {
-        const url = `svg_images/${name}.svg`
-        const img = new Image()
-        img.src = url
-        acc[name] = img
-        return acc
-    }, {} as Record<SVGIconKey, HTMLImageElement>)
 
 const HasTitleEditor : ReadonlyRecord<NodeTypes, boolean> =
     { [NodeTypes.OUTPUT]: false
@@ -226,8 +232,28 @@ const OpensDialogBoxWhenConnectedTo : ReadonlyRecord<NodeTypes, boolean> =
     , [NodeTypes.KB_GATE]: true
     }
 
+const ExposesAudioparamsInDialogBox =
+    { [NodeTypes.GAIN]:       true
+    , [NodeTypes.OSC]:        true
+    , [NodeTypes.FILTER]:     true
+    , [NodeTypes.PANNER]:     true
+    , [NodeTypes.DELAY]:      true
+    , [NodeTypes.SAMPLE]:     true
+    , [NodeTypes.NUM]:        true
+    , [NodeTypes.COMPRESSOR]: true
+    } as const
+
+
+
+
 assertType<Equals<keyof typeof UsesConnectionProtocol2, NodeTypes>>()
 type UsesConnectionProtocol2 = keyof OmitUntrue<typeof UsesConnectionProtocol2>
+type IUsesConnectionProtocol2<T> = (T extends UsesConnectionProtocol2
+    ? {
+        addInput(node : NuniNode) : void
+        removeInput(node : NuniNode) : void
+    }
+    : {})
 const UsesConnectionProtocol2 =
     { [NodeTypes.OUTPUT]:        false
     , [NodeTypes.GAIN]:          false
@@ -249,14 +275,29 @@ const UsesConnectionProtocol2 =
     , [NodeTypes.KB_GATE]:       true
     } as const
 
+
+
+
 type IsAwareOfInputIDs = keyof typeof IsAwareOfInputIDs
+type IIsAwareOfInputIDs<T> = (T extends IsAwareOfInputIDs
+    ? {
+        hasInput({ id } : NuniNode) : boolean
+        replaceInput({ id, audioNode } : NuniNode, newNode : NuniNode) : void
+    }
+    : {})
 const IsAwareOfInputIDs =
     { [NodeTypes.G_SEQ]:  true
     , [NodeTypes.MODULE]: true
     , [NodeTypes.KB_GATE]: true
     } as const
 
+
+
+
 type KnowsWhenDialogBoxCloses = keyof typeof KnowsWhenDialogBoxCloses
+type IKnowsWhenDialogBoxCloses<T> = (T extends KnowsWhenDialogBoxCloses
+    ? { deactivateWindow() : void }
+    : {})
 const KnowsWhenDialogBoxCloses =
     { [NodeTypes.G_SEQ]: true
     , [NodeTypes.S_SEQ]: true
@@ -268,7 +309,13 @@ const KnowsWhenDialogBoxCloses =
     // , [NodeTypes.PROCESSOR]: true
     } as const
 
+
+
+
 type HasAResizableDialogBox = keyof typeof HasAResizableDialogBox
+type IHasAResizableDialogBox<T> = (T extends HasAResizableDialogBox
+    ? { updateBoxDimensions(H : number, W : number) : void }
+    : {})
 const HasAResizableDialogBox =
     { [NodeTypes.AUTO]:      true
     //* Is actually resizable but we don't mark it here:
@@ -278,23 +325,25 @@ const HasAResizableDialogBox =
     , [NodeTypes.SAMPLE_PIANOR]: true
     } as const
 
+
+
+
 type HasDynamicNodeIcon = keyof typeof HasDynamicNodeIcon
+type IHasDynamicNodeIcon<T> = (T extends HasDynamicNodeIcon
+    ? { getNodeIcon() : SVGIconKey }
+    : {})
 const HasDynamicNodeIcon = 
     { [NodeTypes.OSC]: true
     , [NodeTypes.FILTER]: true
     } as const
 
-const ExposesAudioparamsInDialogBox =
-    { [NodeTypes.GAIN]:       true
-    , [NodeTypes.OSC]:        true
-    , [NodeTypes.FILTER]:     true
-    , [NodeTypes.PANNER]:     true
-    , [NodeTypes.DELAY]:      true
-    , [NodeTypes.SAMPLE]:     true
-    , [NodeTypes.NUM]:        true
-    , [NodeTypes.COMPRESSOR]: true
-    } as const
 
+
+
+type OverridesGraphOperationKeyboardShortcuts = keyof typeof OverridesGraphOperationKeyboardShortcuts
+type IOverridesGraphOperationKeyboardShortcuts<T> = (T extends OverridesGraphOperationKeyboardShortcuts
+    ? { keydown(e : KeyboardEvent) : void }
+    : {})
 const OverridesGraphOperationKeyboardShortcuts =
     { [NodeTypes.PIANOR]: true
     , [NodeTypes.SAMPLE_PIANOR]: true
@@ -302,6 +351,32 @@ const OverridesGraphOperationKeyboardShortcuts =
     , [NodeTypes.PROCESSOR]: true
     } as const
 
+
+
+
+type ReactsToBufferChange = keyof typeof ReactsToBufferChange
+type IReactsToBufferChange<T> = (T extends ReactsToBufferChange
+    ? { refreshBuffer(index : number) : void } 
+    : {})
+const ReactsToBufferChange =
+    { [NodeTypes.SAMPLE]: true
+    , [NodeTypes.S_SEQ]: true
+    , [NodeTypes.RECORD]: true
+    , [NodeTypes.SAMPLE_PIANOR]: true
+    } as const
+
+
+
+
+type ClockDependent = keyof typeof ClockDependent
+type IClockDependent<T> = (T extends ClockDependent
+    ? {
+        scheduleNotes(skipAhead : boolean) : void
+        setTempo(tempo : number) : void
+        sync() : void
+        isPlaying : boolean
+    }
+    : {})
 const ClockDependent =
     { [NodeTypes.G_SEQ]:  true
     , [NodeTypes.S_SEQ]:  true
@@ -311,18 +386,26 @@ const ClockDependent =
     // , [NodeTypes.RECORD]: true
     } as const
 
-const ReactsToBufferChange =
-    { [NodeTypes.SAMPLE]: true
-    , [NodeTypes.S_SEQ]: true
-    , [NodeTypes.RECORD]: true
-    , [NodeTypes.SAMPLE_PIANOR]: true
-    } as const
 
+
+
+type TakesKeyboardInput = keyof typeof TakesKeyboardInput
+type ITakesKeyboardInput<T> = (T extends TakesKeyboardInput 
+    ? { takeKeyboardInput(keydown : boolean, key : number) : void }
+    : {})
 const TakesKeyboardInput = 
     { [NodeTypes.SAMPLE]: true
     , [NodeTypes.OSC]:    true
+    , [NodeTypes.KB_GATE]: true
     } as const
-type TakesKeyboardInput = keyof typeof TakesKeyboardInput
+
+
+
+
+const PerformanceIterationSubscriber = 
+    { ...ClockDependent
+    , ...TakesKeyboardInput
+    } as const
 
 const AudioNodeParams =
     { [NodeTypes.OUTPUT]: []
@@ -637,6 +720,15 @@ const PostConnection_Transferable_InputRemappable_AudioNodeProperties =
     , [NodeTypes.KB_GATE]: ['inputData']
     } as const
 
+type Poop = typeof PostConnection_Transferable_InputRemappable_AudioNodeProperties
+type DoesThatShit = keyof Poop
+type IDoesThatShit<T> = (T extends DoesThatShit
+    ? Record<Poop[T][number], Record<number, unknown>>
+    : {})
+
+
+
+
 type NodeCreationSettings = { 
     x : number
     y : number
@@ -655,10 +747,6 @@ const TransferableNodeProperties =
     , title: true
     , INPUT_NODE_ID: true
     } as const
-
-
-
-
 
 
 
@@ -694,80 +782,23 @@ interface BaseAudioNodeProperties {
     disconnect(input? : Destination) : void
 }
 
-type ReactsToBufferChange = keyof typeof ReactsToBufferChange
-type IReactsToBufferChange<T> = (T extends ReactsToBufferChange
-    ? { refreshBuffer(index : number) : void } : {})
-
-type ClockDependent = keyof typeof ClockDependent
-type IClockDependent<T> = (T extends ClockDependent
-    ? {
-        scheduleNotes(skipAhead : boolean) : void
-        setTempo(tempo : number) : void
-        sync() : void
-        isPlaying : boolean
-    }
-    : {})
-
-type IHasDynamicNodeIcon<T> = (T extends HasDynamicNodeIcon
-    ? {
-        getNodeIcon() : SVGIconKey
-    }
-    : {})
-
-type IKnowsWhenDialogBoxCloses<T> = (T extends KnowsWhenDialogBoxCloses
-    ? { 
-        deactivateWindow() : void
-    }
-    : {})
-
-type IHasAResizableDialogBox<T> = (T extends HasAResizableDialogBox
-    ? { 
-        updateBoxDimensions(H : number, W : number) : void
-    }
-    : {})
-
-type OverridesGraphOperationKeyboardShortcuts = keyof typeof OverridesGraphOperationKeyboardShortcuts
-type IOverridesGraphOperationKeyboardShortcuts<T> = (T extends OverridesGraphOperationKeyboardShortcuts
-    ? {
-        keydown(e : KeyboardEvent) : void
-    }
-    : {})
-
 interface NuniNode { id : number, audioNode : Indexed }
 
-type IUsesConnectionProtocol2<T> = (T extends UsesConnectionProtocol2
-    ? {
-        addInput(node : NuniNode) : void
-        removeInput(node : NuniNode) : void
-    }
-    : {})
 
-type ThatShit = typeof PostConnection_Transferable_InputRemappable_AudioNodeProperties
-type DoesThatShit = keyof ThatShit
-type IDoesThatShit<T> = (T extends DoesThatShit
-    ? {
-        [key in ThatShit[T][number]] : Record<number, unknown>
-    }
-    : {})
 
-type IIsAwareOfInputIDs<T> = (T extends IsAwareOfInputIDs
-    ? {
-        hasInput({ id } : NuniNode) : boolean
-        replaceInput({ id, audioNode } : NuniNode, newNode : NuniNode) : void
-    }
-    : {}) 
 
 type AudioNodeInterfaces<T extends NodeTypes> =
     & BaseAudioNodeProperties
-    & IClockDependent<T>
-    & IHasDynamicNodeIcon<T>
+    & IUsesConnectionProtocol2<T>
+    & IIsAwareOfInputIDs<T>
     & IKnowsWhenDialogBoxCloses<T>
     & IHasAResizableDialogBox<T>
+    & IHasDynamicNodeIcon<T>
     & IOverridesGraphOperationKeyboardShortcuts<T>
     & IReactsToBufferChange<T>
-    & IUsesConnectionProtocol2<T>
+    & IClockDependent<T>
+    & ITakesKeyboardInput<T>
     & IDoesThatShit<T>
-    & IIsAwareOfInputIDs<T>
 
 
 

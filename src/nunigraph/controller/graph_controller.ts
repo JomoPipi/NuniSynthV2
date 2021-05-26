@@ -791,12 +791,10 @@ export class NuniGraphController {
 
     private keydown(e : KeyboardEvent) {
         
-        const leave = this.selectedNodes.length === 1
+        const mightLeave = this.selectedNodes.length === 1
             && this.getOpenWindow[this.selectedNodes[0].id]
-            
-        // console.log('e.key,e.keyCode =',e.key, e.keyCode)
-
-        if (leave)
+        
+        if (mightLeave)
         {
             const node = this.selectedNodes[0]
             const isSelected = this.getOpenWindow[node.id]?.classList.contains('selected3')
@@ -806,6 +804,8 @@ export class NuniGraphController {
                 return;
             }
         }
+
+        // Do some keyboard-shortcut stuff
 
         if (e.keyCode === 46)
         {   // this.save()

@@ -6,6 +6,7 @@
 
 
 import { audioCtx, AudioNodeMap } from '../../webaudio2/internal.js'
+import { PerformanceIterationSubscription } from './subscriptions.js'
 
 export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
 
@@ -79,6 +80,11 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
             const value = audioParamValues[param] ?? DefaultParamValues[param]
             this.setValueOfParam(param, value)
         }
+
+        if (this.is(PerformanceIterationSubscriber))
+        {
+            PerformanceIterationSubscription.apply(this)
+        }
     }
 
     setValueOfParam(param : ParamsOf<T>, value: number) {
@@ -86,7 +92,7 @@ export class NuniGraphNode<T extends NodeTypes = NodeTypes> {
         this.audioNode[param].value = value
     }
 
-    is<T extends NodeTypes> (types : Record<T, boolean>) : this is NuniGraphNode<T> { 
+    is<T extends NodeTypes> (types : Record<T, any>) : this is NuniGraphNode<T> { 
         return types[this.type as unknown as T]
     }
 

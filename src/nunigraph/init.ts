@@ -10,18 +10,15 @@ import { NuniGraph } from './model/nunigraph.js'
 import { BufferUtils } from '../buffer_utils/internal.js'
 import { NuniGraphController, OpenGraphControllers } from './controller/graph_controller.js'
 
-import 
-    { KB, audioCtx, NuniSampleNode
-    , MasterClock, NuniSourceNode
-    , NuniGraphAudioNode, OscillatorNode2
-    , SampleSequencer, NuniRecordingNode
-    } from '../webaudio2/internal.js'
+import { KB, audioCtx, MasterClock, NuniGraphAudioNode, OscillatorNode2 } from '../webaudio2/internal.js'
 import { snapToGrid } from './view/snap_to_grid.js'
 import { WaveformUtils } from '../waveform_utils/mutable_waveform.js'
 import { NuniGraphNode } from './model/nunigraph_node.js'
 
-class Nuni extends NuniGraphController {
 
+
+
+class NuniGraphWrapper extends NuniGraphController {
     volumeNode : GainNode
 
     constructor(canvas : HTMLCanvasElement, volumeNode : GainNode) {
@@ -41,11 +38,12 @@ class Nuni extends NuniGraphController {
     }
 }
 
-NuniGraphAudioNode.createController = // Nuni
-    (canvas : HTMLCanvasElement, volumeNode : GainNode) => new Nuni(canvas, volumeNode)
+NuniGraphAudioNode.createController =
+    (canvas : HTMLCanvasElement, volumeNode : GainNode) => 
+        new NuniGraphWrapper(canvas, volumeNode)
 
 export const GraphController 
-    = new Nuni(D('nunigraph-canvas') as HTMLCanvasElement, audioCtx.volume)
+    = new NuniGraphWrapper(D('nunigraph-canvas') as HTMLCanvasElement, audioCtx.volume)
 
 GraphController.activateEventHandlers()
 GraphController.g.masterGain.setValueOfParam('gain', 0.125)
@@ -53,6 +51,9 @@ GraphController.g.masterGain.setValueOfParam('gain', 0.125)
 OpenGraphControllers.list.push(GraphController)
 
 snapToGrid.attach(() => OpenGraphControllers.render())
+
+
+
 
 if (DEV_MODE_EQUALS_TRUE) 
 {
@@ -68,49 +69,6 @@ Graph_Attachments: {
     {
         (<any>window).getAudioNodes = () => [...yieldNodes(g)]
     }
-    
-    KB.attachToGraph(function(keydown : boolean, key : number) {
-        for (const node of yieldNodes(g)) 
-        {
-            if (node.is(TakesKeyboardInput)) 
-            {
-                node.audioNode.takeKeyboardInput(keydown, key)
-            }
-        }
-    })
-    
-    const yieldClockedNodes = yieldNodesFiltered(ClockDependent)
-
-    let lastSchedule = Date.now()
-    MasterClock.setSchedule(
-    {
-        scheduleNotes() {
-            const now = Date.now()
-            const delta = now - lastSchedule
-            const skipAhead = delta > 20000
-            lastSchedule = now
-            if (skipAhead) console.log(`${delta / 1000} seconds elapsed`)
-            for (const node of yieldClockedNodes(g))
-            {
-                if (node.audioNode.isPlaying)
-                {
-                    node.audioNode.scheduleNotes(skipAhead)
-                }
-            }
-        },
-        setTempo(tempo : number) {
-            for (const node of yieldClockedNodes(g))
-            {
-                node.audioNode.setTempo(tempo)
-            }
-        },
-        sync() {
-            for (const { audioNode: an } of yieldClockedNodes(g))
-            {
-                if (an.isPlaying) an.sync()
-            }
-        }
-    })
 
     const yieldBufferNodes = yieldNodesFiltered(ReactsToBufferChange)
 

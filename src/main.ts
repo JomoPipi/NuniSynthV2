@@ -43,7 +43,7 @@ window.onload = () => {
         })
     }
     // Wait for the tests to do their thing
-    setTimeout(loadLastSavedProject, 2000)
+    setTimeout(loadLastSavedProject, 1000)
 }
 
 // sequencer type

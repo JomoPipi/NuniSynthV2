@@ -70,6 +70,8 @@ export class KeyboardGate extends VolumeNodeContainer
         this.removeInput({ id, audioNode })
     }
 
+    takeKeyboardInput(keydown : boolean, key : number) {}
+
     private controller = E('div')
     getController() {
         this.render()

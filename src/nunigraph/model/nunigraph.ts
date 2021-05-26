@@ -6,8 +6,9 @@
 
 
 import { NuniGraphNode } from './nunigraph_node.js'
-import { GateSequencer, Sequencer, NuniGraphAudioNode } from '../../webaudio2/internal.js'
+import { Sequencer } from '../../webaudio2/internal.js'
 import { ProcessorNode } from '../../webaudio2/nodes/processor/processor.js'
+import { PerformanceIterationSubscription } from './subscriptions.js'
 
 const hasWeirdCopyProtocol = (node : NuniGraphNode)
     : node is NuniGraphNode<keyof typeof
@@ -64,10 +65,8 @@ export class NuniGraph {
 
 
     createNewNode<T extends NodeTypes>(type : T, settings : NodeCreationSettings = defaultNodeSettings()) {
-
         const node = new NuniGraphNode(this.nextId++, type, settings)
         this.nodes.push(node)
-
         return node
     }
 
@@ -79,6 +78,11 @@ export class NuniGraph {
         if (node.audioNode instanceof Sequencer) 
         {
             node.audioNode.stop()
+        }
+
+        if (node.is(PerformanceIterationSubscriber))
+        {
+            PerformanceIterationSubscription.terminate(node)
         }
 
         // Disconnect from other audioNodes:
@@ -621,6 +625,7 @@ export class NuniGraph {
 
             if (!INPUT_NODE_ID) settings.title = title
 
+            // The only function that gets to bypass `createNewNode` because the id should be the same as when saved.
             const newNode = new NuniGraphNode(id, type, JSON.parse(JSON.stringify(settings)))
             this.nodes.push(newNode)
         }
