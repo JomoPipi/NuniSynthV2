@@ -16,6 +16,7 @@ import './scale_utils/internal.js'
 import './buffer_utils/internal.js'
 import './nunigraph/controller/modularize_graph.js'
 import './storage/save_project.js'
+import { loadLastSavedProject } from './storage/dialog.js'
 
 window.onload = () => {
     console.log('[[((--##--)) Begin NuniSynth ((--##-))]]')
@@ -41,6 +42,8 @@ window.onload = () => {
             }
         })
     }
+    // Wait for the tests to do their thing
+    setTimeout(loadLastSavedProject, 2000)
 }
 
 // sequencer type

@@ -20,6 +20,7 @@ type UserConfig = {
     'Party Mode' : boolean
     theme : 0 | 1 | 2 | 3
     customTheme : string[]
+    lastSavedProjectPath : string
 }
 
 const DefaultConfig : UserConfig = 
@@ -27,6 +28,7 @@ const DefaultConfig : UserConfig =
     , theme: 0
     , "Party Mode": false
     , customTheme: [] as string[]
+    , lastSavedProjectPath: ''
     } as const
 
 export const UserOptions = 

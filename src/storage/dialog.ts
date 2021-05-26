@@ -12,6 +12,7 @@ import { BufferStorage } from "./buffer_storage.js"
 // File System Dialog
 
 import { makeNuniFile, loadNuniFile } from "./save_project.js"
+import { UserOptions } from "./user_options.js"
 
 const { dialog, app } = require('electron').remote
 const userDataPath : string = app.getPath('userData')
@@ -105,6 +106,8 @@ function setProjectTitle(pathToFile : string) {
 }
 
 function saveProtocol(filePath : string, file : string) {
+    UserOptions.config.lastSavedProjectPath = filePath
+    UserOptions.save()
     fs.writeFileSync(filePath, file)
     const fileName = filePath.split(path.sep).pop()!.replace('.nuni', '')
     saveBuffers(fileName)
@@ -301,3 +304,15 @@ function roundTripTest() {
     BufferStorage.set(1, newAudioBuffer)
 }
 // ;(window as any).testBuffer = roundTripTest
+
+
+export function loadLastSavedProject() {
+    const lastProjectPath = UserOptions.config.lastSavedProjectPath
+    if (lastProjectPath)
+    {
+        const file = fs.readFileSync(lastProjectPath, 'utf8')
+        loadNuniFile(file)
+        setProjectTitle(lastProjectPath)
+        loadBuffers(lastProjectPath)
+    }
+}

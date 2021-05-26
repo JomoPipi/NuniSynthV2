@@ -36,4 +36,3 @@ class BypassProcessor extends AudioWorkletProcessor {
 }
   
 registerProcessor('bypass-processor', BypassProcessor);
-console.log('hello hello');

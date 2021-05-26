@@ -689,12 +689,12 @@ export class NuniGraph {
 
 
 
-    insertNodeIntoConnection(node : NuniGraphNode, fromNode : NuniGraphNode, toNode : NuniGraphNode<IsAwareOfInputIDs>, connection_type : ConnectionType) {
+    insertNodeIntoConnection(node : NuniGraphNode, fromNode : NuniGraphNode, toNode : NuniGraphNode, connection_type : ConnectionType) {
         /* The idea here is to insert the node without having to actually disconnect fromNode from toNode.
         Why does this matter? Because of those pesky input-aware nodes (channel sequencers and modules at this time)
         whose states change when disconnecting the node. */
         
-        if (node.is(IsAwareOfInputIDs))
+        if (toNode.is(IsAwareOfInputIDs))
         {
         // Go around the disconnect and makeConnection functions..
 

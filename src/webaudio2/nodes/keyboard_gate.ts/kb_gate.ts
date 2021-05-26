@@ -56,7 +56,6 @@ export class KeyboardGate extends VolumeNodeContainer
 
     removeInput({ id, audioNode } : NuniNode) {
         delete this.inputData[id]
-        console.log('called remove input')
         this.render()
     }
 
@@ -81,6 +80,7 @@ export class KeyboardGate extends VolumeNodeContainer
         this.controller.innerHTML = ''
 
         const inputSelect = this.getInputSelect()
+        const topRow = E('div', { children: [inputSelect], className: 'center' })
 
         const keyboardBox = E('div')
             keyboardBox.innerHTML = kbHTML
@@ -94,12 +94,13 @@ export class KeyboardGate extends VolumeNodeContainer
 
             console.log('elem',char)
         }
-        this.controller.append(inputSelect, keyboardBox)
+        this.controller.append(topRow, keyboardBox)
     }
 
     private getInputSelect() {
         return Object.keys(this.inputData).length === 0
-            ? E('div', { text: 'No inputs available' })
-            : E('div', { text: Object.keys(this.inputData).join(', ') })
+            ? E('span', { text: 'No inputs available' })
+            : createRadioButtonGroup({ buttons: Object.keys(this.inputData), selected: 0 })
+            // : E('div', { text: Object.keys(this.inputData).join(', ') })
     }
 }
