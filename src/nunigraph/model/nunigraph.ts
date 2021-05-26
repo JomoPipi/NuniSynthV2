@@ -10,13 +10,6 @@ import { Sequencer } from '../../webaudio2/internal.js'
 import { ProcessorNode } from '../../webaudio2/nodes/processor/processor.js'
 import { PerformanceIterationSubscription } from './subscriptions.js'
 
-const hasWeirdCopyProtocol = (node : NuniGraphNode)
-    : node is NuniGraphNode<keyof typeof
-        PostConnection_Transferable_InputRemappable_AudioNodeProperties> =>
-    node.type in PostConnection_Transferable_InputRemappable_AudioNodeProperties
-
-const weirdArray = PostConnection_Transferable_InputRemappable_AudioNodeProperties
-
 const defaultNodeSettings = () => (
     { x: 0.5
     , y: 0.5
@@ -349,11 +342,11 @@ export class NuniGraph {
         for (const i in _nodeDataArray) 
         {
             const node = nodeCopies[i]
-            if (hasWeirdCopyProtocol(node))
+            if (node.is(PostConnection_Transferable_InputRemappable_AudioNodeProperties))
             {
                 const an = node.audioNode
                 const _an = _nodeDataArray[i].audioNodeProperties
-                for (const propName of weirdArray[node.type]) 
+                for (const propName of PostConnection_Transferable_InputRemappable_AudioNodeProperties[node.type]) 
                 {
                     const targetObj : Indexed = (<Indexed>an)[propName] = {}
                     const sourceObj = _an[propName]
@@ -495,9 +488,9 @@ export class NuniGraph {
         //* Here, we remap the inputs of the properties use them as keys
         for (const node of nodes) 
         {
-            if (hasWeirdCopyProtocol(node))
+            if (node.is(PostConnection_Transferable_InputRemappable_AudioNodeProperties))
             {
-                for (const propName of weirdArray[node.type]) 
+                for (const propName of PostConnection_Transferable_InputRemappable_AudioNodeProperties[node.type]) 
                 {
                     const an = mapToNewNode[node.id].audioNode
                     const targetObj = an[propName as keyof typeof an] as Indexed
@@ -658,9 +651,10 @@ export class NuniGraph {
         }
 
         // ! Transfer the post-connection properties
-        for (const node of nodes) 
-        {
-            if (hasWeirdCopyProtocol(node))
+        for (const _node of nodes) 
+        {   
+            const node = _node as NuniGraphNode
+            if (node.is(PostConnection_Transferable_InputRemappable_AudioNodeProperties))
             {
                 const thisNode = this.nodes.find(n => n.id === node.id)!
                 for (const prop of PostConnection_Transferable_InputRemappable_AudioNodeProperties[node.type]) 
