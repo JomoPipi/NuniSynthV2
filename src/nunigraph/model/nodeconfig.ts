@@ -782,7 +782,7 @@ interface BaseAudioNodeProperties {
     disconnect(input? : Destination) : void
 }
 
-interface NuniNode { id : number, audioNode : Indexed }
+interface NuniNode { id : number, audioNode : BaseAudioNodeProperties }
 
 
 

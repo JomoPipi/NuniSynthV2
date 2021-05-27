@@ -126,11 +126,11 @@ export const ADSR_Controller = {
         // source.start(time)
     },
 
-    untriggerAndGetStopTime(gain : AudioParam, time : number, index : number, adsrValues : Indexed) {
+    untriggerAndGetReleaseLength(gain : AudioParam, time : number, index : number, adsrValues : Indexed) {
         const { release } = adsrValues
         gain.cancelScheduledValues(time)
         gain.setTargetAtTime(0, time, release)
-        return time + release * releaseTimeConstant
+        return release * releaseTimeConstant
     },
 
     untriggerAdsr(gain : AudioParam, time : number, adsrIndex : number, adsrValues : Indexed) {

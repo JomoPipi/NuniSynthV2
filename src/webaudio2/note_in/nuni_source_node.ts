@@ -154,7 +154,7 @@ export class NuniSourceNode extends VolumeNodeContainer {
         
         this.playingKeys[key] = {
             stop: (time : number) =>
-                src.stop(ADSR_Controller.untriggerAndGetStopTime(adsr.gain, time, -1, this.localADSR)),
+                src.stop(time + ADSR_Controller.untriggerAndGetReleaseLength(adsr.gain, time, -1, this.localADSR)),
             
             stopImmediately: () => src.stop(this.ctx.currentTime)
         }

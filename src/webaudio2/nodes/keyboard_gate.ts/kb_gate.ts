@@ -6,6 +6,7 @@
 
 
 import { createRadioButtonGroup } from '../../../UI_library/internal.js'
+import { ADSR_Controller } from '../../adsr/adsr.js'
 import { KB_KEYS } from '../../constants.js'
 import { VolumeNodeContainer } from '../../volumenode_container.js'
 
@@ -26,36 +27,67 @@ const kbHTML = `<div class="keyboard"><!-- The image that shows the user what ke
 type LowerCaseKeyboardKeys = string
 enum TriggerModes { play, toggle, pick }
 enum EnvelopeTypes { NONE, ATTACK_ONLY, AD, ADSR }
-type Envelope = { attack : number, decay : number, sustain : number, release : number }
+type Envelope = { attack : number, decay : number, sustain : number, release : number, curve : CurveType }
 type KeyData = ({
     triggerMode : TriggerModes.play
     envelopeType : EnvelopeTypes.NONE | EnvelopeTypes.AD | EnvelopeTypes.ADSR
 } | {
     triggerMode : TriggerModes.toggle
     envelopeType : EnvelopeTypes.NONE | EnvelopeTypes.ATTACK_ONLY
+    active: false
 } | {
     triggerMode : TriggerModes.pick
     envelopeType : EnvelopeTypes.AD
 }) & {
     gain : number // Defaults to 1, can be used for pitch
-    envelope : Envelope
+    adsr : Envelope
 }
-type KeyMap = Record<LowerCaseKeyboardKeys, KeyData>
+type KeyDataMap = Record<LowerCaseKeyboardKeys, KeyData>
 
 type NuniGraphNodeID = number
+
+type EnvelopeID = string // `${NuniGraphNodeID}:${LowerCaseKeyboardKeys}`
+
 export class KeyboardGate extends VolumeNodeContainer
     implements AudioNodeInterfaces<NodeTypes.KB_GATE> {
     
-    inputData : Record<NuniGraphNodeID, KeyMap> = {}
+    private _inputData : Record<NuniGraphNodeID, KeyDataMap> = {}
+    get inputData() { return this._inputData }
+    set inputData(d) {
+//* Problem: when `inputData` is assigned from the outside, 
+//* any `active` (toggle mode) `KeyData`
+//* will need to be reactivated
+        this._inputData = d
+        for (const id in d)
+        {
+            const keymap = d[id]
+            for (const key in keymap)
+            {
+                const keydata = keymap[key]
+                if (keydata.triggerMode === TriggerModes.toggle && keydata.active)
+                {
+                    const envID = `${id}:${key}`
+                    const envelope = this.envelopes[envID] = this.ctx.createGain()
+                    envelope.connect(this.volumeNode)
+                    this.inputNodes[id].connect(envelope)
+                }
+            }
+        }
+
+    }
     mono : boolean = false
+    
+    private inputNodes : Record<NuniGraphNodeID, BaseAudioNodeProperties> = {}
+    private envelopes : Record<EnvelopeID, GainNode> = {}
 
     addInput({ id, audioNode } : NuniNode) {
-        this.inputData[id] = {}
+        this.inputNodes[id] = audioNode
         this.render()
     }
 
     removeInput({ id, audioNode } : NuniNode) {
         delete this.inputData[id]
+        delete this.inputNodes[id]
         this.render()
     }
 
@@ -70,7 +102,44 @@ export class KeyboardGate extends VolumeNodeContainer
         this.removeInput({ id, audioNode })
     }
 
-    takeKeyboardInput(keydown : boolean, key : number) {}
+    takeKeyboardInput(keydown : boolean, key : number) {
+        for (const id in this.inputData)
+        {
+            const data : KeyDataMap = this.inputData[id as any]
+            if (data[key])
+            {
+                const envID = `${id}:${key}`
+                const { attack, decay, sustain, release, curve } = data[key].adsr
+                const envelope = this.envelopes[envID] 
+                    || (this.envelopes[envID] = this.ctx.createGain())
+                switch (data[key].triggerMode)
+                {
+                    case TriggerModes.pick:
+                        ADSR_Controller.trigger(
+                            envelope.gain, this.ctx.currentTime, 69420,
+                            { attack, decay, sustain: 0 })
+                        break
+                    
+                    case TriggerModes.play:
+                        if (keydown)
+                        {
+                            ADSR_Controller.trigger(
+                                envelope.gain, this.ctx.currentTime, 69420, data[key].adsr)
+                        }
+                        else
+                        {
+                            const t = ADSR_Controller.untriggerAndGetReleaseLength(
+                                envelope.gain, this.ctx.currentTime, 69420, data[key].adsr)
+
+                            // setTimeout(() => , t * 1000)
+                        }
+
+                    case TriggerModes.toggle:
+                        break
+                }
+            }
+        }
+    }
 
     private controller = E('div')
     getController() {
