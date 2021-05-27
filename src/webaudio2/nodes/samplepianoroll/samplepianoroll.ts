@@ -9,7 +9,7 @@ import { createSubdivSelect3 } from "../../../nunigraph/view/create_subdivselect
 import { BufferStorage } from "../../../storage/buffer_storage.js";
 import { SampleSelectComponent } from "../../../UI_library/components/sample_select.js";
 import { createToggleButton } from "../../../UI_library/internal.js";
-import { ADSR_Controller } from "../../adsr/adsr.js";
+import { ADSR_Executor } from "../../adsr/adsr.js";
 import { createADSREditor } from "../../adsr/adsr_editor.js";
 import { VolumeNodeContainer } from "../../volumenode_container.js";
 import { PianoRollEditor } from "../pianoroll/pianoroll_editor.js";
@@ -117,10 +117,10 @@ export class SamplePianoRoll extends VolumeNodeContainer
     //     src.detune.value = n * 100
 
     //     // Schedule the envelope on
-    //     ADSR_Controller.triggerSource(src, adsr.gain, startTime, -1, this.localADSR)
+    //     ADSR_Executor.triggerSource(src, adsr.gain, startTime, -1, this.localADSR)
 
     //     // Schedule the envelope off
-    //     const stopTime = ADSR_Controller.untriggerAndGetStopTime(
+    //     const stopTime = ADSR_Executor.untriggerAndGetStopTime(
     //         adsr.gain,
     //         endTime, 
     //         sample,
@@ -146,12 +146,12 @@ export class SamplePianoRoll extends VolumeNodeContainer
         src.detune.value = n * 100
 
         // Schedule the envelope on
-        ADSR_Controller.triggerSource(src, adsr.gain, startTime, -1, this.localADSR)
+        ADSR_Executor.triggerSource(src, adsr.gain, startTime, -1, this.localADSR)
 
         return (endTime : number) => {
 
             // Schedule the envelope off
-            const stopTime = ADSR_Controller.untriggerAndGetStopTime(
+            const stopTime = endTime + ADSR_Executor.untriggerAndGetReleaseLength(
                 adsr.gain,
                 endTime, 
                 sample,

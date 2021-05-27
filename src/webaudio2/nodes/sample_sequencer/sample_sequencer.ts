@@ -5,7 +5,7 @@
 
 
 
-import { ADSR_Controller } from "../../adsr/adsr.js"
+import { ADSR_Executor } from "../../adsr/adsr.js"
 import { Sequencer } from "../../sequencers/linear_sequencers/sequencer.js"
 import { BufferStorage } from "../../../storage/buffer_storage.js"
 import { BufferUtils } from "../../../buffer_utils/init_buffers.js"
@@ -121,10 +121,10 @@ export class SampleSequencer extends Sequencer
         src.start(time)
 
         // Schedule the envelope on
-        ADSR_Controller.triggerSource(src, adsr.gain, time, this.adsrIndex, this.localADSR)
+        ADSR_Executor.triggerSource(src, adsr.gain, time, this.adsrIndex, this.localADSR)
 
         // Schedule the envelope off
-        const stopTime = time + ADSR_Controller.untriggerAndGetReleaseLength(
+        const stopTime = time + ADSR_Executor.untriggerAndGetReleaseLength(
             adsr.gain, 
             time + duration, 
             this.adsrIndex,

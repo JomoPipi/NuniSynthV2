@@ -9,7 +9,7 @@
 // import { createSliderComponent } from "../../../UI_library/components/sliderComponent.js"
 // import { createSVGIcon } from "../../../UI_library/components/svg_icon.js"
 // import { createNumberDialComponent3, createSVGRadioGroup } from "../../../UI_library/internal.js"
-// import { ADSR_Controller } from "../../adsr/adsr.js"
+// import { ADSR_Executor } from "../../adsr/adsr.js"
 // import { createADSREditor } from "../../adsr/adsr_editor.js"
 
 
@@ -134,9 +134,9 @@
 //         const beatButton = createSVGIcon('button', 50)
 //             beatButton.classList.add('push-button')
 //             beatButton.onmousedown = () => 
-//                 ADSR_Controller.trigger(this.offset, this.context.currentTime, -1, adsrValues)
+//                 ADSR_Executor.trigger(this.offset, this.context.currentTime, -1, adsrValues)
 //             beatButton.onmouseup = () => 
-//                 ADSR_Controller.untriggerAdsr(this.offset, this.context.currentTime, -1, adsrValues)
+//                 ADSR_Executor.untriggerAdsr(this.offset, this.context.currentTime, -1, adsrValues)
 
 //         const adsrComponent = createADSREditor(adsrValues)
 

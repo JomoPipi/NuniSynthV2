@@ -38,6 +38,7 @@ export const PerformanceIterationSubscription = {
 KB.attachToGraph(function(keydown : boolean, key : number) {
     for (const audioNode of PerformanceIterationSubscription.lists.TakesKeyboardInput) 
     {
+        console.log('we here')
         audioNode.takeKeyboardInput(keydown, key)
     }
 })

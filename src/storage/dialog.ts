@@ -310,9 +310,14 @@ export function loadLastSavedProject() {
     const lastProjectPath = UserOptions.config.lastSavedProjectPath
     if (lastProjectPath)
     {
-        const file = fs.readFileSync(lastProjectPath, 'utf8')
-        loadNuniFile(file)
-        setProjectTitle(lastProjectPath)
-        loadBuffers(lastProjectPath)
+        try {
+            const file = fs.readFileSync(lastProjectPath, 'utf8')
+            loadNuniFile(file)
+            setProjectTitle(lastProjectPath)
+            loadBuffers(lastProjectPath)
+        }
+        catch (e) {
+            console.warn('Error loading last saved project: ', e)
+        }
     }
 }

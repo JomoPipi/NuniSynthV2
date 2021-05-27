@@ -6,14 +6,14 @@
 
 
 import { GraphController } from '../nunigraph/init.js'
-import { ADSR_Controller } from '../webaudio2/adsr/adsr.js'
+import { ADSR_Executor } from '../webaudio2/adsr/adsr.js'
 import { MasterClock } from '../webaudio2/sequencers/master_clock.js'
 import { UserOptions } from './user_options.js'
 
 export function makeNuniFile() {
     return JSON.stringify(
         { graphCode: GraphController.g.toJSON()
-        , values: ADSR_Controller.values
+        , values: ADSR_Executor.values
         , tempo: MasterClock.getTempo()
         })
 }
@@ -24,11 +24,11 @@ export function loadNuniFile(nuniFile : string) {
     const { graphCode, values, tempo } = JSON.parse(nuniFile)
     GraphController.g.fromJSON(graphCode)
 
-    // ADSR_Controller.values = values
+    // ADSR_Executor.values = values
     for (let i = 0; i < 4; ++i) 
     // Older graphs do not support
     // Additional ADSRs
-        ADSR_Controller.values[i] = values[i]
+        ADSR_Executor.values[i] = values[i]
 
     const t = tempo ?? 120
     if (!tempo) console.warn('Tempo set to default: 120')
@@ -36,5 +36,5 @@ export function loadNuniFile(nuniFile : string) {
     MasterClock.setTempo(t)
 
     GraphController.renderer.render()
-    // ADSR_Controller.render({ updateKnobs: true })
+    // ADSR_Executor.render({ updateKnobs: true })
 }

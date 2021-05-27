@@ -81,7 +81,7 @@ const squareADSR = // Needs to be somewhat smooth to prevent pop sounds
 // const canvas = D('adsr-canvas') as HTMLCanvasElement
 // const ctx = canvas.getContext('2d')!
 
-export const ADSR_Controller = {
+export const ADSR_Executor = {
     // canvas,
 
     index: 0,
@@ -140,11 +140,11 @@ export const ADSR_Controller = {
     },
 
     // render(options? : any) {
-    //     const adsr = ADSR_Controller.values[this.index]
+    //     const adsr = ADSR_Executor.values[this.index]
     //     renderADSR(adsr, ctx, canvas.height, canvas.width, options)
     // }
 }
-// ADSR_Controller.render()
+// ADSR_Executor.render()
 
 const next = 
     { linear: 'exponential' // 'logarithmic'
@@ -155,10 +155,10 @@ const next =
     } as const
 
 // canvas.onclick = () => {
-//     const adsr = ADSR_Controller.values[ADSR_Controller.index]
+//     const adsr = ADSR_Executor.values[ADSR_Executor.index]
 
 //     adsr.curve = next[adsr.curve]
-//     ADSR_Controller.render()
+//     ADSR_Executor.render()
 // }
 
 type RenderOptions = Partial<{ 
@@ -239,7 +239,7 @@ export function renderADSR(
 // const adsrDials =
 //     ADSR.reduce((a,s) => {
 //         const dial = new JsDial(3)
-//         const adsr = ADSR_Controller as Indexed
+//         const adsr = ADSR_Executor as Indexed
         
 //         dial.value = adsr.values[adsr.index][s]
 //         dial.sensitivity = 2 ** -10
@@ -255,7 +255,7 @@ export function renderADSR(
 //     }, {} as Indexable<JsDial>)
     
 // function updateKnobs() {
-//     const adsr = ADSR_Controller
+//     const adsr = ADSR_Executor
 //     for (const s of ADSR) 
 //     {
 //         adsrDials[s].update((<Indexed>adsr.values[adsr.index])[s] ** .5)
@@ -268,7 +268,7 @@ export function renderADSR(
 //     , selected: 'A'
 //     , onclick: 
 //         (data : any, index : number) => {
-//             const adsr = ADSR_Controller
+//             const adsr = ADSR_Executor
 //             adsr.index = index
 
 //             adsr.render({ updateKnobs })

@@ -5,7 +5,7 @@
 
 
 
-import { ADSR_Controller } from '../adsr/adsr.js'
+import { ADSR_Executor } from '../adsr/adsr.js'
 import { KB } from './keyboard.js'
 import { VolumeNodeContainer } from '../volumenode_container.js'
 
@@ -109,8 +109,8 @@ export class NuniSourceNode extends VolumeNodeContainer {
     //     adsr.connect(this.volumeNode)
         
     //     src.connect(adsr)
-    //     ADSR_Controller.triggerSource(src, adsr.gain, time, 1, this.localADSR)
-    //     const stopTime = ADSR_Controller.untriggerAndGetStopTime(adsr.gain, time + duration, -1, this.localADSR)
+    //     ADSR_Executor.triggerSource(src, adsr.gain, time, 1, this.localADSR)
+    //     const stopTime = ADSR_Executor.untriggerAndGetStopTime(adsr.gain, time + duration, -1, this.localADSR)
     //     src.stop(stopTime)
     // }
 
@@ -150,11 +150,11 @@ export class NuniSourceNode extends VolumeNodeContainer {
         
         src.connect(adsr)
         
-        ADSR_Controller.triggerSource(src, adsr.gain, time, -1, this.localADSR)
+        ADSR_Executor.triggerSource(src, adsr.gain, time, -1, this.localADSR)
         
         this.playingKeys[key] = {
             stop: (time : number) =>
-                src.stop(time + ADSR_Controller.untriggerAndGetReleaseLength(adsr.gain, time, -1, this.localADSR)),
+                src.stop(time + ADSR_Executor.untriggerAndGetReleaseLength(adsr.gain, time, -1, this.localADSR)),
             
             stopImmediately: () => src.stop(this.ctx.currentTime)
         }

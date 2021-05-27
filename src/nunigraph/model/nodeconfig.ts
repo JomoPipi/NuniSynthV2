@@ -25,8 +25,7 @@ const enum NodeTypes
     PROCESSOR = 'processor',
     COMPRESSOR = 'compression',
     SAMPLE_PIANOR = 'sample-pianooroll', // <- Do not fix typo
-
-    KB_GATE = 'keyboard-gate'
+    KB_GATE = 'kb-gate'
 }
 
 
@@ -229,7 +228,7 @@ const OpensDialogBoxWhenConnectedTo : ReadonlyRecord<NodeTypes, boolean> =
     , [NodeTypes.PROCESSOR]:false
     , [NodeTypes.COMPRESSOR]:false
     , [NodeTypes.SAMPLE_PIANOR]: false
-    , [NodeTypes.KB_GATE]: true
+    , [NodeTypes.KB_GATE]: false
     }
 
 const ExposesAudioparamsInDialogBox =
@@ -288,7 +287,6 @@ type IIsAwareOfInputIDs<T> = (T extends IsAwareOfInputIDs
 const IsAwareOfInputIDs =
     { [NodeTypes.G_SEQ]:  true
     , [NodeTypes.MODULE]: true
-    , [NodeTypes.KB_GATE]: true
     } as const
 
 
@@ -501,7 +499,7 @@ const NodeTypeColors2 : ReadonlyRecord<NodeTypes, string> =
     , [NodeTypes.PROCESSOR]: 'rgb(200,150,255)'
     , [NodeTypes.COMPRESSOR]:'rgb(200,180,220)'
     , [NodeTypes.SAMPLE_PIANOR]:'rgb(0,220,255)'
-    , [NodeTypes.KB_GATE]: 'rgba(155,200,200)'
+    , [NodeTypes.KB_GATE]: 'rgb(155,200,200)'
     } as const
 
 const NodeTypeDescriptions : ReadonlyRecord<NodeTypes, string> =
@@ -523,7 +521,7 @@ const NodeTypeDescriptions : ReadonlyRecord<NodeTypes, string> =
     , [NodeTypes.PROCESSOR]: 'Processor nodes execute audio processing code.'
     , [NodeTypes.COMPRESSOR]:'Compressor nodes provide a compression effect which lowers the volume of the loudest parts of the signal in order to help prevent clipping and distortion that can occur when multiple sounds are played and multiplexed together at once.'
     , [NodeTypes.SAMPLE_PIANOR]: 'It\'s a piano sample roll'
-    , [NodeTypes.KB_GATE]: 'This helps you control connected nodes with the keyboard.'
+    , [NodeTypes.KB_GATE]: 'A keyboard-controlled gate that can go between connections'
     }
 
 const NodeTypeWarnings = 
@@ -711,13 +709,13 @@ const Transferable_AudioNodeProperties =
     , attack: true
     , release: true
     , ...Transferable_Pianoroll_properties
-
-    , inputData: true
+    
+    , 
     } as const
 
 const PostConnection_Transferable_InputRemappable_AudioNodeProperties = 
     { [NodeTypes.G_SEQ]: ['stepMatrix', 'channelData', 'mutedChannel']
-    , [NodeTypes.KB_GATE]: ['inputData']
+    // , [NodeTypes.KB_GATE__MULTI_INPUT__DRAFT]: ['inputData']
     } as const
 
 type Poop = typeof PostConnection_Transferable_InputRemappable_AudioNodeProperties

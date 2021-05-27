@@ -5,7 +5,7 @@
 
 
 
-import { ADSR_Controller } from '../../adsr/adsr.js'
+import { ADSR_Executor } from '../../adsr/adsr.js'
 import { Sequencer } from '../../sequencers/linear_sequencers/sequencer.js'
 
 export class GateSequencer extends Sequencer
@@ -61,8 +61,8 @@ export class GateSequencer extends Sequencer
         const adsr = this.channelEnvelopes[id]
         const gain = adsr.gain
         const duration = this.tick
-        ADSR_Controller.trigger(gain, time, this.adsrIndex, this.localADSR)
-        ADSR_Controller.untriggerAdsr(gain, time + duration, this.adsrIndex, this.localADSR)
+        ADSR_Executor.trigger(gain, time, this.adsrIndex, this.localADSR)
+        ADSR_Executor.untriggerAdsr(gain, time + duration, this.adsrIndex, this.localADSR)
     }
     
     replaceInput({ id, audioNode } : NuniNode, newNode : NuniNode) {

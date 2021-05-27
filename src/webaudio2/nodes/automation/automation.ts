@@ -60,11 +60,11 @@ export class AutomationNode extends VolumeNodeContainer
         this.dialogBoxIsOpen = false
     }
 
-    addInput(node : Indexed) {
+    addInput(node : NuniNode) {
         node.audioNode.connect(this.volumeNode)
     }
 
-    removeInput(node : Indexed) {
+    removeInput(node : NuniNode) {
         node.audioNode.disconnect(this.volumeNode)
     }
 
