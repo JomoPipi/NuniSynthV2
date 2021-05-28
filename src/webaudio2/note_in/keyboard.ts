@@ -16,8 +16,8 @@ const scale = CODES.map((_,i) => i * 100)
 
 export const KB = 
     { CODES
-        , held
-        , KEY_NUMBER
+    , held
+    , KEY_NUMBER
     , scale
     , mode: 'poly' as 'mono' | 'poly'
     , nVoices: 10

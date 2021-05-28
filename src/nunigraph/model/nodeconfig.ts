@@ -710,7 +710,7 @@ const Transferable_AudioNodeProperties =
     , release: true
     , ...Transferable_Pianoroll_properties
     
-    , 
+    , keyData: true
     } as const
 
 const PostConnection_Transferable_InputRemappable_AudioNodeProperties = 

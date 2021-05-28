@@ -1770,7 +1770,8 @@ a {
   cursor: pointer;
   background-color: var(--color1);
   color: var(--color5);
-  margin: 2px 2px;
+  margin: 2px;
+  padding: 2px;
   border: none;
   text-align: center;
   vertical-align: middle;
@@ -1898,6 +1899,14 @@ a {
   -webkit-box-shadow: 0 0.2em 0 0.05em #222;
           box-shadow: 0 0.2em 0 0.05em #222;
   border-bottom-color: #555;
+}
+
+.keyboard__row > *.active {
+  border: 2px solid cyan;
+}
+
+.keyboard__row > *.enabled {
+  background-color: blue;
 }
 
 .keyboard__row--h1 > div {
