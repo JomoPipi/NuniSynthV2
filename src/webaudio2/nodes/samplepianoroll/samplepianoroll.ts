@@ -32,7 +32,6 @@ export class SamplePianoRoll extends VolumeNodeContainer
  implements AudioNodeInterfaces<NodeTypes.SAMPLE_PIANOR> {
     
     isPlaying = true
-    ctx : AudioContext
     private sampleCanvas : SampleSelectComponent
     private pianoRoll : PianoRollEditor
     private controller? : HTMLElement
@@ -48,7 +47,6 @@ export class SamplePianoRoll extends VolumeNodeContainer
 
     constructor(ctx : AudioContext) {
         super(ctx)
-        this.ctx = ctx
         this.detune = new NuniAudioParam(ctx)
         this.playbackRate = new NuniAudioParam(ctx)
         this.playbackRate.offset.value = 1
@@ -159,14 +157,6 @@ export class SamplePianoRoll extends VolumeNodeContainer
                 
             src.stop(stopTime)
         }
-    }
-
-    connect(destination : Destination) {
-        this.volumeNode.connect(destination)
-    }
-    
-    disconnect(destination? : Destination) {
-        this.volumeNode.disconnect(destination)
     }
 
     private readonly SidePanelWidth = 100

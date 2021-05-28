@@ -31,7 +31,6 @@ export abstract class Sequencer extends VolumeNodeContainer {
     mutedChannel : Indexable<boolean>
     stepMatrix : Record<number|string,boolean[]>
     
-    readonly ctx : AudioContext
     protected tick : number
     private controls? : HTMLElement
     private tempo = 120
@@ -62,7 +61,6 @@ export abstract class Sequencer extends VolumeNodeContainer {
 
     constructor(ctx : AudioContext) {
         super(ctx)
-        this.ctx = ctx
         this.tick = (60*4 / MasterClock.getTempo()) / this._subdiv
         this.HTMLGrid = createBeatGrid()
         this.isPlaying = false // true // <- Wait for properties to arrive first

@@ -99,14 +99,14 @@ export class NuniSampleNode extends NuniSourceNode
         this.refresh()
     }
 
-    refresh() {
+    override refresh() {
         NuniSourceNode.prototype.refresh.call(this)
         this.bufferCanvas.setKey(this._bufferKey)
         // this.bufferCanvas.setZoom(0, 1)
         this.bufferCanvas.refresh()
     }
 
-    createSource() {
+    override createSource() {
         const src = this.ctx.createBufferSource()
         const reversed = this._loopStart > this._loopEnd
         src.buffer = BufferStorage.get(this._bufferKey, reversed)

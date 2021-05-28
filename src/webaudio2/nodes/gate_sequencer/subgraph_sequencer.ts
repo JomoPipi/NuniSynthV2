@@ -46,7 +46,7 @@ export class GateSequencer extends Sequencer
         return id in this.channelVolumes
     }
 
-    refresh() {
+    override refresh() {
         for (const key in this.channelEnvelopes) 
         {
             this.channelEnvelopes[key].connect(this.channelVolumes[key])

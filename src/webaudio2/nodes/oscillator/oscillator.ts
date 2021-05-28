@@ -17,7 +17,7 @@ export class OscillatorNode2 extends NuniSourceNode
     _type : OscillatorType
     detune : NuniAudioParam
     frequency : NuniAudioParam
-    soloSource? : OscillatorNode
+    override soloSource? : OscillatorNode
     customWave : PeriodicWave
 
     constructor(ctx : AudioContext) {
@@ -56,7 +56,7 @@ export class OscillatorNode2 extends NuniSourceNode
 
     getNodeIcon() { return this._type }
 
-    createSource() {
+    override createSource() {
         const src = this.ctx.createOscillator()
 
         src.frequency.setValueAtTime(0, this.ctx.currentTime)

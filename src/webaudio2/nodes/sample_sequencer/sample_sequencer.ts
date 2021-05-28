@@ -19,14 +19,12 @@ export class SampleSequencer extends Sequencer
 
     detune : NuniAudioParam
     playbackRate : NuniAudioParam
-    ctx : AudioContext
     private channelBufferKeyUpdate 
         : Record<number, (bufferKey : number) => void> 
         = {}
 
     constructor(ctx : AudioContext) {
         super(ctx)
-        this.ctx = ctx
         this.detune = new NuniAudioParam(ctx)
         this.playbackRate = new NuniAudioParam(ctx)
         this.addInput()
@@ -138,7 +136,7 @@ export class SampleSequencer extends Sequencer
         this.channelBufferKeyUpdate[channelKey](bufferKey)
     }
 
-    protected additionalRowItems(key : number) : HTMLElement[] { 
+    protected override additionalRowItems(key : number) : HTMLElement[] { 
         const items : HTMLElement[] = []
 
         const deleteRowBtn = E('button',

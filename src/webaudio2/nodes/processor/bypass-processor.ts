@@ -18,7 +18,7 @@ declare var AudioWorkletProcessor : {
 declare function registerProcessor(name : string, _class : typeof BypassProcessor) : void
 
 class BypassProcessor extends AudioWorkletProcessor {
-    process(inputs : any, outputs : any, parameters : any) {
+    override process(inputs : any, outputs : any, parameters : any) {
         // By default, the node has single input and output.
         const input = inputs[0];
         const output = outputs[0];

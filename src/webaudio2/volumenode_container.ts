@@ -32,10 +32,4 @@ export class VolumeNodeContainer {
         }
         this.volumeNode.disconnect(destination)
     }
-
-    // *** - these need 'any' because of `tsc -w`
-
-    refresh() {
-        throw 'This should be implemented in a child class.'
-    }
 }

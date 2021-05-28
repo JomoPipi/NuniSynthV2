@@ -16,7 +16,6 @@ import { createDiscreteDialComponent } from "../../../UI_library/components/disc
 export class AutomationNode extends VolumeNodeContainer
     implements AudioNodeInterfaces<NodeTypes.AUTO> {
         
-    ctx : AudioContext
     phaseShift = 0
     isPlaying = true
     private _nMeasures = 1
@@ -31,7 +30,6 @@ export class AutomationNode extends VolumeNodeContainer
 
     constructor(ctx : AudioContext) {
         super(ctx)
-        this.ctx = ctx
         this.updateBoxDimensions(250, 500)
         this.setTempo(MasterClock.getTempo())
         this.play()

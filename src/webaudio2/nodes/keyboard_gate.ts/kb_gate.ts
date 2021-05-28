@@ -90,7 +90,7 @@ export class KeyboardGate extends VolumeNodeContainer
             keyboardBox.innerHTML = kbHTML
             for (const row of keyboardBox.children[0].children)
                 for (const key of row.children)
-                    ;hjghsdfgsdfgsdfg
+                    // ;hjghsdfgsdfgsdfg
 
         // KB Gate node:
         // 2 modes - play | toggle
