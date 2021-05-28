@@ -63,7 +63,7 @@ export class KeyboardGate extends VolumeNodeContainer
     }
 
     takeKeyboardInput(keydown : boolean, key : number) {
-        console.log('yo yo', key, KEYSTRING[key])
+        // console.log('yo yo', key, KEYSTRING[key])
         if (this.keyData[KEYSTRING[key]])
         {
             ADSR_Executor[keydown ? 'trigger' : 'untriggerAdsr'](

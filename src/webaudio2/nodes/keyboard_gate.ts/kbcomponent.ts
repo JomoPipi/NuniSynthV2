@@ -104,5 +104,7 @@ export class KeyboardComponent {
             const adsr = createADSREditor(this.kbGate.keyData[char].adsr)
             this.keyControls.append(btn, adsr)
         }
+
+        this.keyControls.append(btn)
     }
 }
