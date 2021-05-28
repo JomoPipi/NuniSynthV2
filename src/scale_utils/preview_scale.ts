@@ -17,15 +17,15 @@ export function refreshKeys() {
 export function previewScale() {
     const mode = KB.mode // *
     let count = 0
-    for (const key of KB.keyCodes) 
+    for (let i = 0; i < KB.CODES.length; i++) 
     {
-        const cents = KB.scale[KB.keymap[key]]
+        const cents = KB.scale[i]
         if (cents > 2400) return;
         const speed = 100
         setTimeout(() => {
-            KB.updateKeyboardNodes(true, key)
+            KB.updateKeyboardNodes(true, i)
             setTimeout(() => 
-                KB.updateKeyboardNodes(false, key)
+                KB.updateKeyboardNodes(false, i)
             , (count + 0.5) * speed)
         }, count * speed)
         // for (const an of KB.connectedNodes()) 

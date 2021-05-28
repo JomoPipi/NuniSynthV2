@@ -15,7 +15,7 @@ export const setScaleFromCSV = (_ => {
         const N = arr.length
 
         KB.scale = 
-        KB.keyCodes.map((_,i) => 
+        KB.CODES.map((_,i) => 
             arr[i % N] + 1200 * (i / N | 0))
 
         refreshKeys()

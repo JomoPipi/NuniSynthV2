@@ -5,34 +5,19 @@
 
 
 
-const keyCodes = (<number[]>[]).concat(...[
-    '1234567890',
-    'qwertyuiop',
-    'asdfghjkl',
-    'zxcvbnm'
-    ].map((s,i) => 
-        [...s.toUpperCase()].map(c => c.charCodeAt(0))
-            .concat([ // add the [];',./ (aka {}:"<>?) keyCodes
-                [189,187],
-                [219,221],
-                [186,222],
-                [188,190,191]
-            ][i]) // some of these keyCodes might not work in browsers such as FireFox
-        ))
-        
-const keymap = keyCodes.reduce((map,key,i) => {
-    map[key] = i
-    return map
-    }, {} as Indexable<number>)
+const CODES = ["Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "Digit6", "Digit7", "Digit8", "Digit9", "Digit0", "Minus", "Equal", "KeyQ", "KeyW", "KeyE", "KeyR", "KeyT", "KeyY", "KeyU", "KeyI", "KeyO", "KeyP", "BracketLeft", "BracketRight", "KeyA", "KeyS", "KeyD", "KeyF", "KeyG", "KeyH", "KeyJ", "KeyK", "KeyL", "Semicolon", "Quote", "KeyZ", "KeyX", "KeyC", "KeyV", "KeyB", "KeyN", "KeyM", "Comma", "Period", "Slash"] as const
+const KEY_NUMBER = CODES.reduce((a,code,i) => 
+    (a[code] = i, a)
+    , {} as Record<typeof CODES[number], number>)
 
-const held :number[] = []
+const held : number[] = []
 
-const scale = keyCodes.map((_,i) => i * 100)
+const scale = CODES.map((_,i) => i * 100)
 
 export const KB = 
-    { keyCodes
-    , keymap
-    , held
+    { CODES
+        , held
+        , KEY_NUMBER
     , scale
     , mode: 'poly' as 'mono' | 'poly'
     , nVoices: 10
@@ -49,21 +34,21 @@ function attachToGraph(updateKeyboardNodes : (keydown : boolean, key : number) =
 
 function updateKeys(keydown : boolean) {
     return (e : KeyboardEvent) => {
-        console.log('key codes =', e.key, e.code)
-        const { keyCode: key } = e
-        if (key in keymap)
+        const code = e.code as typeof CODES[number]
+        if (code in KEY_NUMBER)
         { 
+            const n = KEY_NUMBER[code]
             // Maybe only do this when the keyboard image is visible?
             // TODO: make it match what it actually plays
-            updateKBImage(key, keydown)
+            updateKBImage(n, keydown)
 
             // UPDATE HELD-KEY ARRAY 
             // Sets up last-note priority, and prevents event spamming when keys are held.
-            const idx = held.indexOf(key)
+            const idx = held.indexOf(n)
             if (keydown) 
             {
                 if (idx >= 0) return;
-                held.push(key)
+                held.push(n)
             } 
             else
             {
@@ -75,13 +60,12 @@ function updateKeys(keydown : boolean) {
                     return;
                 }
             }
-
             // MAKE THE SOUND HAPPEN
-            KB.updateKeyboardNodes(keydown, key)
+            KB.updateKeyboardNodes(keydown, n)
         } 
         else 
         {
-            console.log('keyCode =', key)
+            console.log('code =', code)
         }
     }
 }
@@ -93,13 +77,9 @@ slider.oninput = function () {
 } 
 
 function updateKBImage(code : number, keydown : boolean) {
+    const arr = [...document.querySelectorAll(`[key-char="${code}"]`)!]
     
-    const selector = [
-        '[data-key="' + code + '"]',
-        '[data-char*="' + encodeURIComponent(String.fromCharCode(code)) + '"]'
-        ].join(',')
-
-    ;[...document.querySelectorAll(selector)!].map(elem => elem
+    arr.map(elem => elem
         .classList
         .toggle('key-pressed', keydown))
 }

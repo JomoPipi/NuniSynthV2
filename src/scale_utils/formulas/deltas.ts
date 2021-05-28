@@ -35,7 +35,7 @@ export const setDeltaExpressionScale = (_ => {
         try 
         {
             newScale = 
-            KB.keyCodes.reduce(function(a,_,n) { 
+            KB.CODES.reduce(function(a,_,n) { 
             /**
              * The 3rd param must be named `n` 
              * to be compatible with the expression.

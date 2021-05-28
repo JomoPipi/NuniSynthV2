@@ -15,7 +15,7 @@ export const setEqualTemperamentScale = (_ => {
 
     const assignToKeyboard = (centDelta : number) => {
 
-        KB.scale = KB.keyCodes.map((_,i) => i * centDelta)
+        KB.scale = KB.CODES.map((_,i) => i * centDelta)
         
         refreshKeys()
     }
