@@ -48,7 +48,9 @@ function attachToGraph(updateKeyboardNodes : (keydown : boolean, key : number) =
 }
 
 function updateKeys(keydown : boolean) {
-    return ({ keyCode: key } : KeyboardEvent) => {
+    return (e : KeyboardEvent) => {
+        console.log('key codes =', e.key, e.code)
+        const { keyCode: key } = e
         if (key in keymap)
         { 
             // Maybe only do this when the keyboard image is visible?
