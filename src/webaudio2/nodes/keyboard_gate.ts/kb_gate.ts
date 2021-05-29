@@ -9,7 +9,7 @@ import { createRadioButtonGroup } from '../../../UI_library/internal.js'
 import { ADSR_Executor } from '../../adsr/adsr.js'
 import { KB_KEYS, KEYSTRING } from '../../constants.js'
 import { VolumeNodeContainer } from '../../volumenode_container.js'
-import { KeyboardComponent } from './kbcomponent.js'
+import { KeyboardController } from './kbcontroller.js'
 
 
 
@@ -46,12 +46,12 @@ export class KeyboardGate extends VolumeNodeContainer
     triggerMode = TriggerModes.play
     lastToggledKey = ''
 
-    private kbcomponent : KeyboardComponent
+    private kbcomponent : KeyboardController
 
     constructor(ctx : AudioContext) {
         super(ctx)
         this.volumeNode.gain.value = 0
-        this.kbcomponent = new KeyboardComponent(this)
+        this.kbcomponent = new KeyboardController(this)
     }
     
     addInput(node : NuniNode) {
@@ -74,18 +74,20 @@ export class KeyboardGate extends VolumeNodeContainer
         }
     }
 
-    private controller? : HTMLElement
+    // private controller? : HTMLElement
     getController() {
-        if (this.controller) return this.controller
+        // if (this.controller) return this.controller
 
-        this.controller = E('div')
+        // this.controller = E('div')
 
-        const inputSelect = E('div', { text: 'mode: ' + this.triggerMode })
-        const topRow = E('div', { children: [inputSelect], className: 'center' })
+        // const inputSelect = E('div', { text: 'mode: ' + this.triggerMode })
+        // const topRow = E('div', { children: [inputSelect], className: 'center' })
 
-        this.controller.append(topRow, this.kbcomponent.container)
+        // this.controller.append(topRow, this.kbcomponent.container)
 
-        return this.controller
+        // return this.controller
+
+        return this.kbcomponent.container
     }
 
     toggleKeyEnabled(key : LowerCaseKeyboardKey, enabled : boolean) {
@@ -102,7 +104,6 @@ export class KeyboardGate extends VolumeNodeContainer
         {
             delete this.keyData[key]
         }
-        this.kbcomponent.updateView()
     }
 
     private assignKeyData(key : LowerCaseKeyboardKey, data : KeyData) {
