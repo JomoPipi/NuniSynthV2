@@ -13,17 +13,17 @@ import { createSVGIcon } from "./svg_icon.js"
 
 
 
-type RadioButtonOptions = {
-    buttons : string[]
+type RadioButtonOptions<T extends string> = {
+    buttons : readonly T[]
     selected : string | number
     className? : string
     text? : string
-    onclick? : (data : any, index : number) => void
+    onclick? : (data : T, index : number) => void
     containerClassName? : string
     orientation? : number
 }
 
-export function createRadioButtonGroup(
+export function createRadioButtonGroup<T extends string>(
     { buttons
     , selected
     , className
@@ -31,7 +31,7 @@ export function createRadioButtonGroup(
     , text
     , containerClassName
     , orientation 
-    } : RadioButtonOptions) {
+    } : RadioButtonOptions<T>) {
 
     const box = E('span',
         { text
@@ -64,7 +64,7 @@ export function createRadioButtonGroup(
         if (index >= 0)
         {
             box.dataset.selected = index.toString()
-            onclick && onclick(btn.innerText, index)
+            onclick && onclick(btn.innerText as T, index)
 
             for (const _btn of btns)
             {
@@ -76,7 +76,7 @@ export function createRadioButtonGroup(
     return box
 }
 
-export function createSVGRadioGroup(
+export function createSVGRadioGroup<T extends SVGIconKey>(
     { buttons
     , selected
     , className
@@ -84,7 +84,7 @@ export function createSVGRadioGroup(
     , text
     , containerClassName
     , orientation 
-    } : RadioButtonOptions) {
+    } : RadioButtonOptions<T>) {
     const selectionClass = 'opaque' // 'selected'
 
     const box = E('span',
@@ -94,7 +94,7 @@ export function createSVGRadioGroup(
         })
 
     const btns = buttons.map(text => {
-        const svg = createSVGIcon(text as SVGIconKey)
+        const svg = createSVGIcon(text)
         svg.classList.add('dim')
         return box.appendChild(svg)
     })
@@ -118,7 +118,7 @@ export function createSVGRadioGroup(
         if (index >= 0)
         {
             box.dataset.selected = index.toString()
-            onclick && onclick(btn.dataset.svgkey, index)
+            onclick && onclick(btn.dataset.svgkey as T, index)
 
             for (const _btn of btns)
             {

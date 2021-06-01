@@ -9,7 +9,8 @@ import { JsDial } from "../../UI_library/internal.js"
 import { renderADSR } from "./adsr.js"
 
 type Options = Partial<{
-    orientation: 'default' | 'square'
+    orientation : 'default' | 'square'
+    attackOnly : boolean
 }>
 
 export function createADSREditor(adsrValues : ADSRData, options : Options = {}) {
@@ -25,9 +26,10 @@ export function createADSREditor(adsrValues : ADSRData, options : Options = {}) 
         knobs.style.textAlign = 'start' // This stops the knobs from shifting
     const ADSR = 'attack,decay,sustain,release'.split(',')
     const render = () =>
-        renderADSR(adsrValues, ctx, canvas.height, canvas.width, { lineWidth: 2 })
+        renderADSR(adsrValues, ctx, canvas.height, canvas.width, { lineWidth: 2, ...options })
     const adsrDials =
         ADSR.reduce((a, s) => {
+            if (options.attackOnly && s !== 'attack') return a
             const dial = new JsDial({ style: 5 })
             const adsr = adsrValues as any
             // const epsilon = 0.00002
@@ -52,7 +54,7 @@ export function createADSREditor(adsrValues : ADSRData, options : Options = {}) 
         const adsr = adsrValues
         for (const s of ADSR) 
         {
-            adsrDials[s].update((<Indexed>adsr)[s] ** .5)
+            adsrDials[s]?.update((<Indexed>adsr)[s] ** .5)
         }
     }
     updateKnobs()
@@ -73,6 +75,5 @@ export function createADSREditor(adsrValues : ADSRData, options : Options = {}) 
     const localADSR = E('span', 
         { children: [canvas, knobs]
         })
-
     return localADSR
 }

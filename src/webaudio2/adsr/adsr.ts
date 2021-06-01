@@ -88,21 +88,20 @@ export const ADSR_Executor = {
 
     values: [...Array(N_ADSRs)].map(defaultADSR).concat([squareADSR]),
 
-    trigger(gain : AudioParam, time : number, adsrIndex : number, adsrValues : Indexed) {
+    trigger(gain : AudioParam, time : number, adsrIndex : number, adsrValues : Indexed, volume = 1) {
         const { attack, decay, sustain, curve } = adsrValues
         gain.cancelScheduledValues(time)
         
         if (curve === 'linear')
         {
-            gain.linearRampToValueAtTime(0.01, time)
-            gain.linearRampToValueAtTime(1, attack + time)
-            gain.linearRampToValueAtTime(sustain ** 2, time + attack + decay)
+            gain.linearRampToValueAtTime(volume, attack + time)
+            gain.linearRampToValueAtTime(volume * sustain ** 2, time + attack + decay)
         }
         else if (curve === 'exponential')
         {
-            gain.exponentialRampToValueAtTime(0.01, time)
-            gain.exponentialRampToValueAtTime(1, attack + time)
-            gain.exponentialRampToValueAtTime(sustain ** 2, time + attack + decay)
+            gain.linearRampToValueAtTime(0.01, time)
+            gain.exponentialRampToValueAtTime(volume, attack + time)
+            gain.exponentialRampToValueAtTime(volume * sustain ** 2, time + attack + decay)
         }
         // else if (curve === 'logarithmic') {
         //     gain.setValueCurveAtTime(logarUp, time, attack)
@@ -110,8 +109,35 @@ export const ADSR_Executor = {
         // }
         else
         {
-            gain.setTargetAtTime(1, time, attack)                        // Attack phase
-            gain.setTargetAtTime(sustain ** 2, time + attack, decay) // Decay phase
+            gain.setTargetAtTime(volume, time, attack)                        // Attack phase
+            gain.setTargetAtTime(volume * sustain ** 2, time + attack, decay) // Decay phase
+        }
+    },
+
+    attackTrigger(gain : AudioParam, time : number, adsrValues : Indexed, volume : number) {
+        const { attack, curve } = adsrValues
+        gain.cancelScheduledValues(time)
+        
+        if (curve === 'linear')
+        {
+            gain.linearRampToValueAtTime(volume, attack + time)
+        }
+        else if (curve === 'exponential')
+        {
+            if (volume === 0)
+            {
+                gain.exponentialRampToValueAtTime(0.001, attack + time)
+                gain.setValueAtTime(0, attack + time)
+            }
+            else
+            {
+                gain.linearRampToValueAtTime(0.01, time)
+                gain.exponentialRampToValueAtTime(volume, attack + time)
+            }
+        }
+        else
+        {
+            gain.setTargetAtTime(volume, time, attack)
         }
     },
 
@@ -162,8 +188,9 @@ const next =
 // }
 
 type RenderOptions = Partial<{ 
-    updateKnobs? : Function 
-    lineWidth? : number
+    updateKnobs : Function 
+    lineWidth : number
+    attackOnly : boolean
     }>
 
 export function renderADSR(
@@ -200,13 +227,16 @@ export function renderADSR(
     ctx.clearRect(0,0,W,H)
     let lastX = margin, lastY = H - margin
     arr.forEach(([x,y],i) => {
+        if (options.attackOnly && i > 0) return;
         ctx.beginPath()
         ctx.moveTo(lastX, lastY)
+        console.log('options.attackOnly',options.attackOnly)
         ctx.strokeStyle = '#8a8,#a88,#88a,#a8a'.split(',')[i]
 
         lastX = x * (W - margin * 2) + margin, 
         lastY = y * (H - margin * 2) + margin
         ctx.lineTo(lastX, lastY)
+        // ctx.bezierCurveTo(lastX, lastY, lastX, lastY, lastX, lastY)
 
         ctx.stroke() 
         ctx.closePath()

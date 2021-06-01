@@ -19,10 +19,8 @@ enum TriggerModes { play='play', toggle='toggle' }
 enum EnvelopeTypes { NONE, ATTACK_ONLY, AD, ADSR }
 type Envelope = { attack : number, decay : number, sustain : number, release : number, curve : CurveType }
 type KeyData = ({
-    triggerMode : TriggerModes.play
     envelopeType : EnvelopeTypes.NONE | EnvelopeTypes.AD | EnvelopeTypes.ADSR
 } | {
-    triggerMode : TriggerModes.toggle
     envelopeType : EnvelopeTypes.NONE | EnvelopeTypes.ATTACK_ONLY
     active: false
 }) & {
@@ -64,29 +62,30 @@ export class KeyboardGate extends VolumeNodeContainer
 
     takeKeyboardInput(keydown : boolean, key : number) {
         // console.log('yo yo', key, KEYSTRING[key])
-        if (this.keyData[KEYSTRING[key]])
+        const data = this.keyData[KEYSTRING[key]]
+        if (data)
         {
-            ADSR_Executor[keydown ? 'trigger' : 'untriggerAdsr'](
-                this.volumeNode.gain, this.ctx.currentTime, 69420,
-                this.keyData[KEYSTRING[key]].adsr)
+            const { adsr, envelopeType, gain } = data
+            if (this.triggerMode === TriggerModes.toggle)
+            {
+                if (!keydown) return;
+                const thisKeyIsOnAlready = this.lastToggledKey === KEYSTRING[key]
+                ADSR_Executor.attackTrigger(
+                    this.volumeNode.gain, this.ctx.currentTime, adsr, thisKeyIsOnAlready ? 0 : data.gain)
+                
+                this.lastToggledKey = thisKeyIsOnAlready ? '' : KEYSTRING[key]
+            }
+            else
+            {
+                ADSR_Executor[keydown ? 'trigger' : 'untriggerAdsr'](
+                    this.volumeNode.gain, this.ctx.currentTime, 69420, adsr, data.gain)
+            }
 
                 // { attack: 0.002, decay: 0.05, sustain: 0 })
         }
     }
 
-    // private controller? : HTMLElement
     getController() {
-        // if (this.controller) return this.controller
-
-        // this.controller = E('div')
-
-        // const inputSelect = E('div', { text: 'mode: ' + this.triggerMode })
-        // const topRow = E('div', { children: [inputSelect], className: 'center' })
-
-        // this.controller.append(topRow, this.kbcomponent.container)
-
-        // return this.controller
-
         return this.kbcomponent.container
     }
 
@@ -94,8 +93,7 @@ export class KeyboardGate extends VolumeNodeContainer
         if (enabled)
         {
             this.keyData[key] =
-                { triggerMode: TriggerModes.play
-                , envelopeType: EnvelopeTypes.ADSR
+                { envelopeType: EnvelopeTypes.ADSR
                 , gain: 1
                 , adsr: { attack: 0.01, decay: 0.1, sustain: 0.2, release: 0.3, curve: 'S' }
                 }
