@@ -17,7 +17,7 @@ export function sendNotificationBox(msg : string) {
         })
 
     box.style.zIndex = 
-        (++DIRTYGLOBALS.RISING_GLOBAL_Z_INDEX).toString()
+        (++DIRTYGLOBALS.RISING_GLOBAL_Z_INDEX + 1).toString() // Other windows are simultaneously clicked..
         box.style.left = 100 + 'px'
         box.style.top = 100 + 'px'
     

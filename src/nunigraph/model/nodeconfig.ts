@@ -389,7 +389,7 @@ const ClockDependent =
 
 type TakesKeyboardInput = keyof typeof TakesKeyboardInput
 type ITakesKeyboardInput<T> = (T extends TakesKeyboardInput 
-    ? { takeKeyboardInput(keydown : boolean, key : number) : void }
+    ? { takeKeyboardInput(keydown : boolean, key : number, preventIfMono : boolean) : void }
     : {})
 const TakesKeyboardInput = 
     { [NodeTypes.SAMPLE]: true

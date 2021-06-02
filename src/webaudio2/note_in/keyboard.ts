@@ -22,10 +22,10 @@ export const KB =
     , mode: 'poly' as 'mono' | 'poly'
     , nVoices: 10
     , attachToGraph
-    , updateKeyboardNodes(keydown : boolean, key : number) {}
+    , updateKeyboardNodes(keydown : boolean, key : number, preventIfMono : boolean) {}
     }
 
-function attachToGraph(updateKeyboardNodes : (keydown : boolean, key : number) => void) {
+function attachToGraph(updateKeyboardNodes : (keydown : boolean, key : number, preventIfMono : boolean) => void) {
     KB.updateKeyboardNodes = updateKeyboardNodes
 
     document.onkeydown = updateKeys(true)
@@ -45,6 +45,7 @@ function updateKeys(keydown : boolean) {
             // UPDATE HELD-KEY ARRAY 
             // Sets up last-note priority, and prevents event spamming when keys are held.
             const idx = held.indexOf(n)
+            let lastNotePriorityPreventTrigger = false
             if (keydown) 
             {
                 if (idx >= 0) return;
@@ -53,15 +54,16 @@ function updateKeys(keydown : boolean) {
             else
             {
                 held.splice(idx,1)
-                if (idx !== held.length && KB.mode === 'mono') 
+                if (idx !== held.length)// && KB.mode === 'mono') 
                 {
                     // We are lifting a note that wasnt the last, 
                     // and we're in last node priority.
+                    lastNotePriorityPreventTrigger = true
                     return;
                 }
             }
             // MAKE THE SOUND HAPPEN
-            KB.updateKeyboardNodes(keydown, n)
+            KB.updateKeyboardNodes(keydown, n, lastNotePriorityPreventTrigger)
         } 
         else 
         {

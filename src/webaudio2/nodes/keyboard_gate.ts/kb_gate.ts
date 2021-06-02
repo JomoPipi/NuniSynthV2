@@ -30,8 +30,6 @@ type KeyData = ({
 type KeyDataMap = Record<LowerCaseKeyboardKey, KeyData>
 
 
-
-
 export class KeyboardGate extends VolumeNodeContainer
     implements AudioNodeInterfaces<NodeTypes.KB_GATE> {
 
@@ -60,8 +58,8 @@ export class KeyboardGate extends VolumeNodeContainer
         node.audioNode.disconnect(this.volumeNode)
     }
 
-    takeKeyboardInput(keydown : boolean, key : number) {
-        // console.log('yo yo', key, KEYSTRING[key])
+    takeKeyboardInput(keydown : boolean, key : number, preventIfMono : boolean) {
+        if (preventIfMono) return; 
         const data = this.keyData[KEYSTRING[key]]
         if (data)
         {
@@ -80,8 +78,6 @@ export class KeyboardGate extends VolumeNodeContainer
                 ADSR_Executor[keydown ? 'trigger' : 'untriggerAdsr'](
                     this.volumeNode.gain, this.ctx.currentTime, 69420, adsr, data.gain)
             }
-
-                // { attack: 0.002, decay: 0.05, sustain: 0 })
         }
     }
 
