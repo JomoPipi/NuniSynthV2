@@ -72,11 +72,6 @@ export class SampleSequencer extends Sequencer
         delete this.stepMatrix[key]
         delete this.channelVolumes[key]
         this.refresh()
-
-        console.log('channelData, stepMatrix, channelVolume =',
-        this.channelData, 
-        this.stepMatrix,
-        this.channelVolumes)
     }
 
     createSource(id : number) {
@@ -129,7 +124,6 @@ export class SampleSequencer extends Sequencer
             this.adsrIndex,
             this.localADSR)
         
-        console.log(time.toFixed(3), stopTime.toFixed(3))
         src.stop(stopTime)
     }
 

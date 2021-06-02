@@ -142,7 +142,6 @@ export class NuniSourceNode extends VolumeNodeContainer {
         }
 
         const src = this.createSource()
-        console.log('key =',key,'KB.scale[key] =',KB.scale[key])
         src.detune.value = KB.scale[key]
 
         const adsr = this.ctx.createGain()
