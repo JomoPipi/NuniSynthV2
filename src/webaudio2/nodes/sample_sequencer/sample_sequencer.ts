@@ -122,12 +122,14 @@ export class SampleSequencer extends Sequencer
         ADSR_Executor.triggerSource(src, adsr.gain, time, this.adsrIndex, this.localADSR)
 
         // Schedule the envelope off
-        const stopTime = time + ADSR_Executor.untriggerAndGetReleaseLength(
+        const releaseTime = time + duration
+        const stopTime = releaseTime + ADSR_Executor.untriggerAndGetReleaseLength(
             adsr.gain, 
-            time + duration, 
+            releaseTime, 
             this.adsrIndex,
             this.localADSR)
-            
+        
+        console.log(time.toFixed(3), stopTime.toFixed(3))
         src.stop(stopTime)
     }
 
