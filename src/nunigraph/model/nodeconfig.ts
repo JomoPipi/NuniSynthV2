@@ -802,7 +802,7 @@ type AudioNodeInterfaces<T extends NodeTypes> =
 
     
 const PRODUCTION_MODE_EQUALS_TRUE 
-    = false
+    = true
     
 const DEV_MODE_EQUALS_TRUE : typeof PRODUCTION_MODE_EQUALS_TRUE extends true ? false : true 
     = !PRODUCTION_MODE_EQUALS_TRUE

@@ -128,7 +128,7 @@ const createWindow = () => {
     , fullscreenable: true
     , opacity: 1
     })
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
   // mainWindow.setMenu(null)
 
   // and load the index.html of the app.
