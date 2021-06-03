@@ -389,7 +389,7 @@ const ClockDependent =
 
 type TakesKeyboardInput = keyof typeof TakesKeyboardInput
 type ITakesKeyboardInput<T> = (T extends TakesKeyboardInput 
-    ? { takeKeyboardInput(keydown : boolean, key : number, preventIfMono : boolean) : void }
+    ? { takeKeyboardInput(keydown : boolean, key : number) : void }
     : {})
 const TakesKeyboardInput = 
     { [NodeTypes.SAMPLE]: true
@@ -802,7 +802,7 @@ type AudioNodeInterfaces<T extends NodeTypes> =
 
     
 const PRODUCTION_MODE_EQUALS_TRUE 
-    = true
+    = false
     
 const DEV_MODE_EQUALS_TRUE : typeof PRODUCTION_MODE_EQUALS_TRUE extends true ? false : true 
     = !PRODUCTION_MODE_EQUALS_TRUE

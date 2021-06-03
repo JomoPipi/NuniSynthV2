@@ -22,10 +22,10 @@ export const KB =
     , mode: 'poly' as 'mono' | 'poly'
     , nVoices: 10
     , attachToGraph
-    , updateKeyboardNodes(keydown : boolean, key : number, preventIfMono : boolean) {}
+    , updateKeyboardNodes(keydown : boolean, key : number) {}
     }
 
-function attachToGraph(updateKeyboardNodes : (keydown : boolean, key : number, preventIfMono : boolean) => void) {
+function attachToGraph(updateKeyboardNodes : (keydown : boolean, key : number) => void) {
     KB.updateKeyboardNodes = updateKeyboardNodes
 
     document.onkeydown = updateKeys(true)
@@ -63,7 +63,7 @@ function updateKeys(keydown : boolean) {
                 }
             }
             // MAKE THE SOUND HAPPEN
-            KB.updateKeyboardNodes(keydown, n, lastNotePriorityPreventTrigger)
+            KB.updateKeyboardNodes(keydown, n)
         } 
         else 
         {

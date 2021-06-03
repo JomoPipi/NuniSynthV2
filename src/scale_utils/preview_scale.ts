@@ -23,9 +23,9 @@ export function previewScale() {
         if (cents > 2400) return;
         const speed = 100
         setTimeout(() => {
-            KB.updateKeyboardNodes(true, i, false)
+            KB.updateKeyboardNodes(true, i)
             setTimeout(() => 
-                KB.updateKeyboardNodes(false, i, false)
+                KB.updateKeyboardNodes(false, i)
             , (count + 0.5) * speed)
         }, count * speed)
         // for (const an of KB.connectedNodes()) 

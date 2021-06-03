@@ -364,7 +364,7 @@ export class ProcessorNode
     private createNewCodeId() { return ProcessorNode._id++ }
 
     set processorCode(code : string) {
-        this._processorCode = code
+        this._processorCode = decodeURI(code)
         if (this.editor)
         {
             this.editor.getSession().setValue(code)
@@ -375,7 +375,7 @@ export class ProcessorNode
         }
     }
 
-    get processorCode() { return this._processorCode }
+    get processorCode() { return encodeURI(this._processorCode) }
     
     playAudio() {
         this.runEditorCode()

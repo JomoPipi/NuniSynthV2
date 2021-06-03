@@ -35,10 +35,10 @@ export const PerformanceIterationSubscription = {
 
 
 
-KB.attachToGraph(function(keydown : boolean, key : number, preventIfMono : boolean) {
+KB.attachToGraph(function(keydown : boolean, key : number) {
     for (const audioNode of PerformanceIterationSubscription.lists.TakesKeyboardInput) 
     {
-        audioNode.takeKeyboardInput(keydown, key, preventIfMono)
+        audioNode.takeKeyboardInput(keydown, key)
     }
 })
 

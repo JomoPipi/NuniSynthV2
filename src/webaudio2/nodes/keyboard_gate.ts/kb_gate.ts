@@ -58,8 +58,7 @@ export class KeyboardGate extends VolumeNodeContainer
         node.audioNode.disconnect(this.volumeNode)
     }
 
-    takeKeyboardInput(keydown : boolean, key : number, preventIfMono : boolean) {
-        if (preventIfMono) return; 
+    takeKeyboardInput(keydown : boolean, key : number) {
         const data = this.keyData[KEYSTRING[key]]
         if (data)
         {
